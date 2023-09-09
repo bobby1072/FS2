@@ -22,7 +22,7 @@ abstract class Program {
   private static readonly _app: Application = express();
   private static readonly _pgClient: DataSource = new DataSource({
     type: "postgres",
-    database: "main",
+    database: "fs",
     synchronize: true,
     schema: "public",
     username: process.env.MAINDBUSER ?? "postgres",
