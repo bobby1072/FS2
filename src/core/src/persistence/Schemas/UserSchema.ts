@@ -20,4 +20,4 @@ export const UserDBSchema = z.object({
   CreatedAt: z.date(),
 });
 
-export type UserType = z.infer<typeof UserDBSchema>;
+export type UserDbType = z.infer<typeof UserDBSchema>;

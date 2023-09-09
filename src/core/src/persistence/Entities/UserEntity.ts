@@ -1,10 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 import BaseEntity from "./BaseEntity";
-import { UserDBSchema, UserType } from "../Schemas/UserSchema";
+import { UserDBSchema, UserDbType } from "../Schemas/UserSchema";
 import User from "../../common/RuntimeTypes/User";
 
 @Entity({ name: "user" })
-export default class UserEntity extends BaseEntity implements UserType {
+export default class UserEntity extends BaseEntity implements UserDbType {
   private static readonly _schema = UserDBSchema;
   @PrimaryColumn({ type: "text" })
   Email!: string;
