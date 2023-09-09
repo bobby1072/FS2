@@ -1,0 +1,93 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "ApiBoiler"
+  },
+  "basePath": "/",
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "pass": {
+          "type": "string"
+        },
+        "phoneNum": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/user/login": {
+      "post": {
+        "summary": "Login a user",
+        "tags": ["User"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful login",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["User"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful registration",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/update": {
+      "post": {
+        "summary": "Update a user's information",
+        "tags": ["User"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User information updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/user/delete": {
+      "get": {
+        "summary": "Delete a user's account",
+        "tags": ["User"],
+        "produces": ["text/plain"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "User account deleted"
+          },
+          "404": {
+            "description": "No user to delete"
+          }
+        }
+      }
+    }
+  }
+}

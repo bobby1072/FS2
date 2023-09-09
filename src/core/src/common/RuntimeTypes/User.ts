@@ -1,0 +1,91 @@
+import { compareSync, genSaltSync, hashSync } from "bcryptjs";
+import { RunUserType, UserSchema } from "./Schemas/UserSchema";
+import { sign, verify } from "jsonwebtoken";
+import ApiError from "../ApiError";
+import Constants from "../Constants";
+import TokenData from "./TokenData";
+import UserEntity from "../../persistence/Entities/UserEntity";
+export default class User implements RunUserType {
+  public Email: string;
+  private static readonly _schema = UserSchema;
+  public PasswordHash: string;
+  public PhoneNumber?: string | null;
+  public CreatedAt: Date;
+  constructor({
+    email,
+    pass,
+    phoneNum,
+    createdAt,
+  }: {
+    email: string;
+    pass: string;
+    phoneNum?: string | null;
+    createdAt?: Date;
+  }) {
+    if (!createdAt) {
+      createdAt = new Date();
+    }
+    const { Email, PasswordHash, PhoneNumber, CreatedAt } = User._schema.parse({
+      PhoneNumber: phoneNum,
+      Email: email,
+      PasswordHash: pass,
+      CreatedAt: createdAt,
+    });
+    this.Email = Email;
+    this.CreatedAt = CreatedAt;
+    this.PhoneNumber = PhoneNumber;
+    this.PasswordHash = PasswordHash;
+    return this;
+  }
+  public static EncodeToken(email: string): string {
+    return sign(
+      {
+        user: email,
+      },
+      process.env.SK ?? "dev_secret_key",
+      { algorithm: "HS256", expiresIn: "1h" }
+    );
+  }
+  public static DecodeToken(token: string): TokenData {
+    try {
+      if (token.includes("Bearer ")) token = token.replace("Bearer ", "");
+      const decodedToken = verify(
+        token,
+        process.env.SK ?? "dev_secret_key"
+      ) as any;
+      return new TokenData(
+        decodedToken.user,
+        decodedToken.iat,
+        decodedToken.exp
+      );
+    } catch (e) {
+      throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
+    }
+  }
+  public ToEntity(): UserEntity {
+    return UserEntity.ParseSync({
+      phone_number: this.PhoneNumber,
+      Email: this.Email,
+      PasswordHash: this.PasswordHash,
+      CreatedAt: this.CreatedAt,
+    });
+  }
+  public async ToEntityAsync(): Promise<UserEntity> {
+    return UserEntity.ParseAsync({
+      PhoneNumber: this.PhoneNumber,
+      Email: this.Email,
+      PasswordHash: this.PasswordHash,
+      CreatedAt: this.CreatedAt,
+    });
+  }
+  public HashPassword(): string {
+    this.PasswordHash = hashSync(this.PasswordHash, genSaltSync());
+    return this.PasswordHash;
+  }
+  public static isHashedPasswordEqualTo(
+    stringPass: string,
+    passHash: string
+  ): boolean {
+    return compareSync(stringPass, passHash);
+  }
+}
