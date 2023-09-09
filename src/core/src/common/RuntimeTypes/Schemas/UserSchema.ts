@@ -5,7 +5,8 @@ export const UserSchema = z.object({
   Email: z
     .string()
     .email()
-    .refine((x) => !!x, Constants.ExceptionMessages.emailEmpty),
+    .refine((x) => !!x, Constants.ExceptionMessages.emailEmpty)
+    .transform((x) => x.toLowerCase()),
   PasswordHash: z
     .string()
     .refine((x) => !!x, Constants.ExceptionMessages.passwordEmpty),
@@ -20,4 +21,4 @@ export const UserSchema = z.object({
   CreatedAt: z.date(),
 });
 
-export type RunUserType = z.infer<typeof UserSchema>;
+export type UserType = z.infer<typeof UserSchema>;

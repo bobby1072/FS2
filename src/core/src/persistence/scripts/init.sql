@@ -1,5 +1,5 @@
 -- Creating tables
-CREATE TABLE public.permissions (
+CREATE TABLE public.permission (
     buzzword TEXT PRIMARY KEY
 );
 

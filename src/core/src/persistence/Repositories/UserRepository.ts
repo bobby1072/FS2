@@ -17,7 +17,9 @@ export default class UserRepository extends BaseRepository<UserEntity> {
   public async GetAllUsers(): Promise<User[]> {
     return this._repo
       .find()
-      .then((users) => users.map((x) => x.ToRunTimeType()));
+      .then((users) =>
+        Promise.all(users.map((x) => (async () => x.ToRuntimeTypeSync())()))
+      );
   }
   public async Get(user: User | string): Promise<User | undefined> {
     return this._repo
@@ -26,7 +28,7 @@ export default class UserRepository extends BaseRepository<UserEntity> {
         email: typeof user === "string" ? user : user.Email,
       })
       .getOne()
-      .then((dbUser) => dbUser?.ToRunTimeTypeAsync());
+      .then((dbUser) => dbUser?.ToRuntimeTypeAsync());
   }
   public async Create(user: User): Promise<User | undefined> {
     await this._repo.save(await user.ToEntityAsync());

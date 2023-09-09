@@ -1,11 +1,11 @@
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
-import { RunUserType, UserSchema } from "./Schemas/UserSchema";
+import { UserSchema, UserType } from "./Schemas/UserSchema";
 import { sign, verify } from "jsonwebtoken";
 import ApiError from "../ApiError";
 import Constants from "../Constants";
 import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
-export default class User implements RunUserType {
+export default class User implements UserType {
   public Email: string;
   private static readonly _schema = UserSchema;
   public PasswordHash: string;

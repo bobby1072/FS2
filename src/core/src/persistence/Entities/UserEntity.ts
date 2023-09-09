@@ -18,7 +18,7 @@ export default class UserEntity extends BaseEntity implements UserDbType {
   @Column({ type: "timestamptz", default: () => "CURRENT_TIMESTAMP" })
   CreatedAt!: Date;
 
-  public ToRunTimeType(): User {
+  public ToRuntimeTypeSync(): User {
     return new User({
       email: this.Email,
       pass: this.PasswordHash,
@@ -26,7 +26,7 @@ export default class UserEntity extends BaseEntity implements UserDbType {
       createdAt: this.CreatedAt,
     });
   }
-  public async ToRunTimeTypeAsync(): Promise<User> {
+  public async ToRuntimeTypeAsync(): Promise<User> {
     return new User({
       email: this.Email,
       pass: this.PasswordHash,
