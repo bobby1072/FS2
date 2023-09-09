@@ -1,6 +1,5 @@
 import compression from "compression";
 import express, { Application } from "express";
-import cors from "cors";
 import bodyParser from "body-parser";
 import BaseController from "./controllers/BaseController";
 import { DataSource } from "typeorm";
@@ -36,7 +35,6 @@ abstract class Program {
   });
   public static async Main(): Promise<void> {
     Program._app.use(compression());
-    Program._app.use(cors());
     Program._app.use(bodyParser.urlencoded({ extended: true }));
     Program._app.use(bodyParser.json());
     if (process.env.NODE_ENV === "development") {
@@ -78,11 +76,11 @@ abstract class Program {
       }
     });
 
-    await Promise.all(controllers.map(async (x) => x.InvokeRoutes())).then(
-      () => {
-        console.log("\nControllers invoked\n");
-      }
-    );
+    await Promise.all(
+      controllers.map((x) => (async () => x.InvokeRoutes())())
+    ).then(() => {
+      console.log("\nControllers invoked\n");
+    });
 
     this._app.listen(this._portVar, "0.0.0.0", () => {
       console.log(`\n\nServer running on port: ${this._portVar}\n\n`);
