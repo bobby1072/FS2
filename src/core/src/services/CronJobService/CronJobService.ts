@@ -42,22 +42,7 @@ export default class CronJobService implements ICronJobService {
     }
   }
   public async RegisterDailyJobs(): Promise<boolean> {
-    const userNumbersReportJob = new CronJob(
-      CronUtils.Daily(),
-      () => this._userService.UserNumbersReport(),
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      true
-    );
-
-    userNumbersReportJob.start();
-    if (userNumbersReportJob.running) {
-      return true;
-    } else {
-      return false;
-    }
+    return true;
   }
   public async RegisterWeeklyJobs(): Promise<boolean> {
     const ensureAdminJob = new CronJob(

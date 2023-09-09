@@ -81,12 +81,4 @@ export default class UserService extends BaseService<UserRepository> {
     }
     return dbUser;
   }
-  public async UserNumbersReport() {
-    const content = await this._repo
-      .GetAllUsers()
-      .then(
-        (x) => `${new Date().toISOString()}\nNumber of users: ${x.length}\n\n`
-      );
-    await appendFile("./reports/UserCountReport.txt", content);
-  }
 }
