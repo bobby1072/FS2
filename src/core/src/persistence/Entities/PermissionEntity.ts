@@ -13,7 +13,7 @@ export default class PermissionEntity
   public ToRuntimeTypeSync(): Permission {
     return new Permission({ buzzword: this.Buzzword });
   }
-  public async ToRuntimeTypeAsync() {
+  public async ToRuntimeTypeAsync(): Promise<Permission> {
     return new Permission({ buzzword: this.Buzzword });
   }
 }

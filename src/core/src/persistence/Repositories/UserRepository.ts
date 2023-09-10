@@ -17,9 +17,7 @@ export default class UserRepository extends BaseRepository<UserEntity> {
   public async GetAllUsers(): Promise<User[]> {
     return this._repo
       .find()
-      .then((users) =>
-        Promise.all(users.map((x) => (async () => x.ToRuntimeTypeSync())()))
-      );
+      .then((users) => Promise.all(users.map((x) => x.ToRuntimeTypeSync())));
   }
   public async Get(user: User | string): Promise<User | undefined> {
     return this._repo
