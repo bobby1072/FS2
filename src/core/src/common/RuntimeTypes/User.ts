@@ -5,7 +5,8 @@ import ApiError from "../ApiError";
 import Constants from "../Constants";
 import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
-export default class User implements UserType {
+import BaseRuntime from "./BaseRuntime";
+export default class User extends BaseRuntime implements UserType {
   public Email: string;
   private static readonly _schema = UserSchema;
   public PasswordHash: string;
@@ -22,6 +23,7 @@ export default class User implements UserType {
     phoneNum?: string | null;
     createdAt?: Date;
   }) {
+    super();
     if (!createdAt) {
       createdAt = new Date();
     }
@@ -63,20 +65,10 @@ export default class User implements UserType {
     }
   }
   public ToEntity(): UserEntity {
-    return UserEntity.ParseSync({
-      phone_number: this.PhoneNumber,
-      Email: this.Email,
-      PasswordHash: this.PasswordHash,
-      CreatedAt: this.CreatedAt,
-    });
+    return UserEntity.ParseSync(this._toJson());
   }
   public async ToEntityAsync(): Promise<UserEntity> {
-    return UserEntity.ParseAsync({
-      PhoneNumber: this.PhoneNumber,
-      Email: this.Email,
-      PasswordHash: this.PasswordHash,
-      CreatedAt: this.CreatedAt,
-    });
+    return UserEntity.ParseAsync(this._toJson());
   }
   public HashPassword(): string {
     this.PasswordHash = hashSync(this.PasswordHash, genSaltSync());

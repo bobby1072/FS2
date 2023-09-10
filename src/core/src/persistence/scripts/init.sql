@@ -5,6 +5,7 @@ CREATE TABLE public.permission (
 
 CREATE TABLE public.user_role (
     role_name TEXT PRIMARY KEY,
+    user_permissions TEXT[] NOT NULL,
     group_permissions TEXT[] NOT NULL
 );
 
@@ -33,7 +34,7 @@ VALUES
     ('Delete');
 
 INSERT INTO
-    public.user_role(role_name, group_permissions)
+    public.user_role(role_name, user_permissions, group_permissions)
 VALUES
-    ('AdminUser', ARRAY['Read', 'Update', 'Create', 'Delete']),
-    ('StanardUser', ARRAY['Read']);
+    ('AdminUser', ARRAY['Read', 'Create', 'Update', 'Delete'], ARRAY['Read', 'Create', 'Update', 'Delete']),
+    ('StandardUser', ARRAY['None'], ARRAY['Create', 'Delete', 'Update'])
