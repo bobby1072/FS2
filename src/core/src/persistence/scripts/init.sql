@@ -5,7 +5,7 @@ CREATE TABLE public.permission (
 
 CREATE TABLE public.user_role (
     role_name TEXT PRIMARY KEY,
-    group_permissions TEXT[] NOT NULL,
+    group_permissions TEXT[] NOT NULL
 );
 
 CREATE TABLE public.user (

@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn } from "typeorm";
-import BaseEntity from "./BaseEntity";
 import { PermissionDBType } from "../Schemas/PermissionSchema";
 import Permission from "../../common/RuntimeTypes/Permission";
+import { BaseEntity } from "./BaseEntity";
 
 @Entity({ name: "permission" })
 export default class PermissionEntity

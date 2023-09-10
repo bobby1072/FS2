@@ -12,10 +12,10 @@ import CronJobService from "./services/CronJobService/CronJobService";
 import { ICronJobService } from "./services/CronJobService/ICronJobService";
 import ApiError from "./common/ApiError";
 import Constants from "./common/Constants";
-import BaseEntity from "./persistence/Entities/BaseEntity";
 import BaseRepository from "./persistence/Repositories/BaseRepository";
 import BaseService from "./services/BaseService";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { BaseEntity } from "./persistence/Entities/BaseEntity";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;

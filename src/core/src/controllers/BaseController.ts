@@ -6,7 +6,7 @@ import ApiError from "../common/ApiError";
 import { ZodError } from "zod";
 import BaseService from "../services/BaseService";
 import BaseRepository from "../persistence/Repositories/BaseRepository";
-import BaseEntity from "../persistence/Entities/BaseEntity";
+import { BaseEntity } from "../persistence/Entities/BaseEntity";
 
 export default abstract class BaseController<
   TEntity extends BaseEntity,

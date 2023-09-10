@@ -1,7 +1,7 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import BaseEntity from "./BaseEntity";
 import { UserDBSchema, UserDbType } from "../Schemas/UserSchema";
 import User from "../../common/RuntimeTypes/User";
+import { BaseEntity } from "./BaseEntity";
 
 @Entity({ name: "user" })
 export default class UserEntity extends BaseEntity implements UserDbType {

@@ -1,4 +1,4 @@
-import BaseEntity from "../persistence/Entities/BaseEntity";
+import { BaseEntity } from "../persistence/Entities/BaseEntity";
 import BaseRepository from "../persistence/Repositories/BaseRepository";
 
 export default abstract class BaseService<
