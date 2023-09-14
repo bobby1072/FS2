@@ -15,7 +15,7 @@ CREATE TABLE public.user (
     verified BOOLEAN DEFAULT false,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    phone_number TEXT,
+    phone_number TEXT UNIQUE,
     created_at TIMESTAMP DEFAULT (CURRENT_TIMESTAMP AT TIME ZONE 'UTC'),
     role_name TEXT NOT NULL,
     CONSTRAINT fk_role_name FOREIGN KEY (role_name) REFERENCES public.user_role(role_name)

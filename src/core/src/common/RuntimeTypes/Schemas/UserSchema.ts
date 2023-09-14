@@ -7,6 +7,12 @@ export const UserSchema = z.object({
     .email()
     .refine((x) => !!x, Constants.ExceptionMessages.emailEmpty)
     .transform((x) => x.toLowerCase()),
+  Username: z
+    .string()
+    .refine((x) => !!x, Constants.ExceptionMessages.invalidOrEmptyUsername),
+  Name: z.string().nullable().optional(),
+  Description: z.string().nullable().optional(),
+  Verified: z.boolean().default(false),
   PasswordHash: z
     .string()
     .refine((x) => !!x, Constants.ExceptionMessages.passwordEmpty),
@@ -19,6 +25,7 @@ export const UserSchema = z.object({
       Constants.ExceptionMessages.inncorrectPhoneFormat
     ),
   CreatedAt: z.date(),
+  RoleName: z.string().refine((x) => !!x),
 });
 
 export type UserType = z.infer<typeof UserSchema>;

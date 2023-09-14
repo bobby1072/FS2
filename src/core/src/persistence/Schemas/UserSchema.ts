@@ -1,7 +1,14 @@
 import { z } from "zod";
 import Constants from "../../common/Constants";
+import { UserRoleDbSchema } from "./UserRoleSchema";
 
 export const UserDBSchema = z.object({
+  Username: z
+    .string()
+    .refine((x) => !!x, Constants.ExceptionMessages.invalidOrEmptyUsername),
+  Name: z.string().nullable().optional(),
+  Description: z.string().nullable().optional(),
+  Verified: z.boolean().default(false),
   Email: z
     .string()
     .email()
@@ -18,6 +25,7 @@ export const UserDBSchema = z.object({
       Constants.ExceptionMessages.inncorrectPhoneFormat
     ),
   CreatedAt: z.date(),
+  RoleName: z.string().refine((x) => !!x),
 });
 
 export type UserDbType = z.infer<typeof UserDBSchema>;

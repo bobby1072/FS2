@@ -2,6 +2,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 import { UserRoleDBType, UserRoleDbSchema } from "../Schemas/UserRoleSchema";
 import { BaseEntity } from "./BaseEntity";
 import UserRole from "../../common/RuntimeTypes/UserRole";
+import PermissionEntity from "./PermissionEntity";
 
 @Entity({ name: "user_role" })
 export default class UserRoleEntity
@@ -12,7 +13,7 @@ export default class UserRoleEntity
   @PrimaryColumn({ type: "text" })
   RoleName!: string;
 
-  @Column({ type: "string", array: true, default: [] })
+  @Column({ type: "text", array: true, default: [] })
   GroupPermissions!: string[];
 
   public async ToRuntimeTypeAsync() {
@@ -36,17 +37,5 @@ export default class UserRoleEntity
   }
   public static async ParseAsync(val: any): Promise<UserRoleEntity> {
     return UserRoleEntity.ParseSync(val);
-  }
-  public static TryParseSync(val: any): UserRoleEntity | undefined {
-    try {
-      return UserRoleEntity.ParseSync(val);
-    } catch (e) {
-      return undefined;
-    }
-  }
-  public static async TryParseAsync(
-    val: any
-  ): Promise<UserRoleEntity | undefined> {
-    return this.TryParseSync(val);
   }
 }

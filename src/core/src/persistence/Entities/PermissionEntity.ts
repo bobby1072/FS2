@@ -32,16 +32,4 @@ export default class PermissionEntity
   public static async ParseAsync(val: any): Promise<PermissionEntity> {
     return PermissionEntity.ParseSync(val);
   }
-  public static TryParseSync(val: any): PermissionEntity | undefined {
-    try {
-      return PermissionEntity.ParseSync(val);
-    } catch (e) {
-      return undefined;
-    }
-  }
-  public static async TryParseAsync(
-    val: any
-  ): Promise<PermissionEntity | undefined> {
-    return this.TryParseSync(val);
-  }
 }

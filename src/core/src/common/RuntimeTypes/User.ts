@@ -6,9 +6,16 @@ import Constants from "../Constants";
 import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
 import BaseRuntime from "./BaseRuntime";
+import UserRole from "./UserRole";
 export default class User extends BaseRuntime implements UserType {
-  public Email: string;
   private static readonly _schema = UserSchema;
+  public Email: string;
+  public Username: string;
+  public Name?: string | null;
+  public Description?: string | null;
+  public Verified: boolean;
+  public RoleName: string;
+  public Role?: UserRole | null;
   public PasswordHash: string;
   public PhoneNumber?: string | null;
   public CreatedAt: Date;
@@ -17,23 +24,56 @@ export default class User extends BaseRuntime implements UserType {
     pass,
     phoneNum,
     createdAt = new Date(),
+    username,
+    name,
+    description,
+    verified = false,
+    roleName,
+    role,
   }: {
     email: string;
     pass: string;
     phoneNum?: string | null;
     createdAt?: Date;
+    username: string;
+    name?: string | null;
+    description?: string | null;
+    verified: boolean;
+    roleName: string;
+    role?: UserRole | null;
   }) {
     super();
-    const { Email, PasswordHash, PhoneNumber, CreatedAt } = User._schema.parse({
+    const {
+      Email,
+      PasswordHash,
+      PhoneNumber,
+      CreatedAt,
+      RoleName,
+      Username,
+      Verified,
+      Description,
+      Name,
+    } = User._schema.parse({
       PhoneNumber: phoneNum,
       Email: email,
       PasswordHash: pass,
       CreatedAt: createdAt,
+      RoleName: roleName,
+      Username: username,
+      Verified: verified,
+      Description: description,
+      Name: name,
     });
     this.Email = Email;
     this.CreatedAt = CreatedAt;
     this.PhoneNumber = PhoneNumber;
     this.PasswordHash = PasswordHash;
+    this.Description = Description;
+    this.Role = role;
+    this.RoleName = RoleName;
+    this.Username = Username;
+    this.Verified = Verified;
+    this.Name = Name;
     return this;
   }
   public static EncodeToken(email: string): string {
