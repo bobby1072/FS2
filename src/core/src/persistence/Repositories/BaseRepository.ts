@@ -1,5 +1,5 @@
 import { Repository } from "typeorm";
-import BaseEntity from "../Entities/BaseEntity";
+import { BaseEntity } from "../Entities/BaseEntity";
 
 export default abstract class BaseRepository<TEntity extends BaseEntity> {
   protected readonly _repo: Repository<TEntity>;

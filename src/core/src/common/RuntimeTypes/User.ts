@@ -16,7 +16,7 @@ export default class User extends BaseRuntime implements UserType {
     email,
     pass,
     phoneNum,
-    createdAt,
+    createdAt = new Date(),
   }: {
     email: string;
     pass: string;
@@ -24,9 +24,6 @@ export default class User extends BaseRuntime implements UserType {
     createdAt?: Date;
   }) {
     super();
-    if (!createdAt) {
-      createdAt = new Date();
-    }
     const { Email, PasswordHash, PhoneNumber, CreatedAt } = User._schema.parse({
       PhoneNumber: phoneNum,
       Email: email,

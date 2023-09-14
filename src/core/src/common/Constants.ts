@@ -13,6 +13,7 @@ enum ExceptionMessages {
   inncorrectPhoneFormat = "Inncorect phone format",
   tokenExpired = "Auth token is expired",
   failedToRegisterJobs = "Failed to register scheduled jobs",
+  invalidOrEmptyUsername = "No username or invalid username",
 }
 export default abstract class Constants {
   public static readonly ExceptionMessages: typeof ExceptionMessages =

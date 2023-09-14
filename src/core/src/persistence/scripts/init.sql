@@ -5,13 +5,12 @@ CREATE TABLE public.permission (
 
 CREATE TABLE public.user_role (
     role_name TEXT PRIMARY KEY,
-    user_permissions TEXT[] NOT NULL,
     group_permissions TEXT[] NOT NULL
 );
 
 CREATE TABLE public.user (
-    username TEXT PRIMARY KEY UNIQUE,
-    name TEXT NOT NULL,
+    username TEXT PRIMARY KEY,
+    name TEXT,
     description TEXT, 
     verified BOOLEAN DEFAULT false,
     email TEXT NOT NULL UNIQUE,
@@ -27,14 +26,14 @@ CREATE TABLE public.user (
 INSERT INTO
     public.permissions(buzzword)
 VALUES
-    ('None')
+    ('None'),
     ('Read'),
     ('Create'),
     ('Update'),
     ('Delete');
 
 INSERT INTO
-    public.user_role(role_name, user_permissions, group_permissions)
+    public.user_role(role_name, group_permissions)
 VALUES
-    ('AdminUser', ARRAY['Read', 'Create', 'Update', 'Delete'], ARRAY['Read', 'Create', 'Update', 'Delete']),
-    ('StandardUser', ARRAY['None'], ARRAY['Create', 'Delete', 'Update'])
+    ('AdminUser', ARRAY['Read', 'Create', 'Update', 'Delete']),
+    ('StandardUser', ARRAY['Read']);

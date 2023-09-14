@@ -15,29 +15,22 @@ export default class UserRoleEntity
   @Column({ type: "string", array: true, default: [] })
   GroupPermissions!: string[];
 
-  @Column({ type: "string", array: true, default: [] })
-  UserPermissions!: string[];
-
   public async ToRuntimeTypeAsync() {
     return new UserRole({
       roleName: this.RoleName,
-      userPermissions: this.UserPermissions,
       groupPermissions: this.GroupPermissions,
     });
   }
   public ToRuntimeTypeSync() {
     return new UserRole({
       roleName: this.RoleName,
-      userPermissions: this.UserPermissions,
       groupPermissions: this.GroupPermissions,
     });
   }
   public static ParseSync(val: any): UserRoleEntity {
-    const { GroupPermissions, RoleName, UserPermissions } =
-      this._schema.parse(val);
+    const { GroupPermissions, RoleName } = this._schema.parse(val);
     const tempObj = new UserRoleEntity();
     tempObj.GroupPermissions = GroupPermissions;
-    tempObj.UserPermissions = UserPermissions;
     tempObj.RoleName = RoleName;
     return tempObj;
   }
