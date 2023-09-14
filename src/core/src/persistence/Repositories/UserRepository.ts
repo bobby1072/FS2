@@ -4,10 +4,10 @@ import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
 export default class UserRepository extends BaseRepository<UserEntity> {
-  public async UserExists(email: string): Promise<boolean> {
+  public async UserExists(username: string): Promise<boolean> {
     const dbUser = await this._repo
       .createQueryBuilder("u")
-      .where("u.email = :email", { email: email })
+      .where("u.username = :username", { username: username })
       .getOne();
     if (!dbUser) {
       return false;
@@ -19,13 +19,19 @@ export default class UserRepository extends BaseRepository<UserEntity> {
       .find()
       .then((users) => Promise.all(users.map((x) => x.ToRuntimeTypeSync())));
   }
-  public async Get(user: User | string): Promise<User | undefined> {
+  public async Get(
+    user: User | string,
+    options: { includeUserRole: boolean } = { includeUserRole: false }
+  ): Promise<User | undefined> {
     return this._repo
-      .createQueryBuilder("u")
-      .where("u.email = :email", {
-        email: typeof user === "string" ? user : user.Email,
+      .findOne({
+        where: {
+          Username: typeof user === "string" ? user : user.Username,
+        },
+        relations: {
+          Role: options.includeUserRole,
+        },
       })
-      .getOne()
       .then((dbUser) => dbUser?.ToRuntimeTypeAsync());
   }
   public async Create(user: User): Promise<User | undefined> {
@@ -36,8 +42,8 @@ export default class UserRepository extends BaseRepository<UserEntity> {
     return this._repo
       .createQueryBuilder()
       .delete()
-      .where("email = :email", {
-        email: typeof user === "string" ? user : user.Email,
+      .where("username = :username", {
+        username: typeof user === "string" ? user : user.Username,
       })
       .from("user")
       .execute()
@@ -46,12 +52,12 @@ export default class UserRepository extends BaseRepository<UserEntity> {
         throw new ApiError(Constants.ExceptionMessages.failedToDeleteUser, 500);
       });
   }
-  public async Update(newUser: User, oldEmail: string): Promise<Boolean> {
+  public async Update(newUser: User, oldUsername: string): Promise<Boolean> {
     return this._repo
       .createQueryBuilder()
       .update(UserEntity)
       .set(await newUser.ToEntityAsync())
-      .where("email = :email", { email: oldEmail })
+      .where("username = :username", { username: oldUsername })
       .execute()
       .then((data) => !!data.affected)
       .catch((error) => {
