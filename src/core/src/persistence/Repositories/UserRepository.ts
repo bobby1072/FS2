@@ -3,12 +3,30 @@ import UserEntity from "../Entities/UserEntity";
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
+import { SelectQueryBuilder } from "typeorm";
 export default class UserRepository extends BaseRepository<UserEntity> {
-  public async UserExists(username: string): Promise<boolean> {
-    const dbUser = await this._repo
-      .createQueryBuilder("u")
-      .where("u.username = :username", { username: username })
-      .getOne();
+  public async UserExists({
+    username,
+    email,
+  }: {
+    username?: string;
+    email?: string;
+  }): Promise<boolean> {
+    if (!email && !username) {
+      throw new ApiError(Constants.ExceptionMessages.missingEmailOrUsername);
+    }
+    const tempFunc = (x: SelectQueryBuilder<UserEntity>) => {
+      if (username) {
+        x = x.where("u.username = :username", { username: username });
+        if (email) {
+          x = x.andWhere("u.email = :email", { email: email });
+        }
+      } else if (email) {
+        x = x.where("u.email = :email", { email: email });
+      }
+      return x;
+    };
+    const dbUser = await tempFunc(this._repo.createQueryBuilder("u")).getOne();
     if (!dbUser) {
       return false;
     }
