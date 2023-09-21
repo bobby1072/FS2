@@ -1,5 +1,4 @@
 import { CronJob } from "cron";
-import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import UserService from "../UserService";
 import { ICronJobService } from "./ICronJobService";
@@ -23,10 +22,7 @@ export default class CronJobService implements ICronJobService {
     ])
       .then((data) => data.every((x) => !!x))
       .catch((err) => {
-        throw new ApiError(
-          Constants.ExceptionMessages.failedToRegisterJobs,
-          500
-        );
+        throw new Error(Constants.ExceptionMessages.failedToRegisterJobs);
       });
   }
   public async RegisterHourlyJobs(): Promise<boolean> {

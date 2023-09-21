@@ -24,7 +24,7 @@ export const UserSchema = z.object({
       (x) => !x || /^(\+44|0)\d{9,10}$/.test(x),
       Constants.ExceptionMessages.inncorrectPhoneFormat
     ),
-  CreatedAt: z.date(),
+  CreatedAt: z.coerce.date().default(new Date()),
   RoleName: z.string().refine((x) => !!x),
 });
 

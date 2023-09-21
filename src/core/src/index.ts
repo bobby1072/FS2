@@ -4,18 +4,20 @@ import bodyParser from "body-parser";
 import BaseController from "./controllers/BaseController";
 import { DataSource } from "typeorm";
 import UserEntity from "./persistence/Entities/UserEntity";
-import UserController from "./controllers/UserController";
 import UserRepository from "./persistence/Repositories/UserRepository";
 import { serve, setup } from "swagger-ui-express";
 import UserService from "./services/UserService";
 import CronJobService from "./services/CronJobService/CronJobService";
 import { ICronJobService } from "./services/CronJobService/ICronJobService";
-import ApiError from "./common/ApiError";
-import Constants from "./common/Constants";
 import BaseRepository from "./persistence/Repositories/BaseRepository";
 import BaseService from "./services/BaseService";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BaseEntity } from "./persistence/Entities/BaseEntity";
+import UserRoleEntity from "./persistence/Entities/UserRoleEntity";
+import PermissionEntity from "./persistence/Entities/PermissionEntity";
+import UserRoleRepository from "./persistence/Repositories/UserRoleRepository";
+import PermissionRepository from "./persistence/Repositories/PermissionRepository";
+import BaseRuntime from "./common/RuntimeTypes/BaseRuntime";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;
@@ -30,7 +32,7 @@ abstract class Program {
     ssl: false,
     port: Number(process.env.POSTGRESPORT) || 5560,
     host: process.env.POSTGRESHOST ?? "localhost",
-    entities: [UserEntity],
+    entities: [UserEntity, UserRoleEntity, PermissionEntity],
     namingStrategy: new SnakeNamingStrategy(),
   });
   public static async Main(): Promise<void> {
@@ -44,21 +46,23 @@ abstract class Program {
 
     await this._pgClient.initialize().then((x) => {
       console.log(
-        `\nDB connection initialised\n${x.options.database}\n${x.options.type}\n`
+        `\nDB connection initialised\n\n${x.options.database}\n${x.options.type}\n`
       );
     });
 
-    const [userRepo] = [
+    const [userRepo, userRoleRepo, permissionRepo] = [
       new UserRepository(this._pgClient.getRepository(UserEntity)),
+      new UserRoleRepository(this._pgClient.getRepository(UserRoleEntity)),
+      new PermissionRepository(this._pgClient.getRepository(PermissionEntity)),
     ];
 
-    const [userService] = [new UserService(userRepo)];
+    const [userService] = [new UserService(userRepo, userRoleRepo)];
 
     const controllers: BaseController<
       BaseEntity,
-      BaseRepository<BaseEntity>,
-      BaseService<BaseRepository<BaseEntity>>
-    >[] = [new UserController(userService, this._app)];
+      BaseRepository<BaseEntity, BaseRuntime>,
+      BaseService<BaseRepository<BaseEntity, BaseRuntime>>
+    >[] = [];
 
     const jobService: ICronJobService = new CronJobService(
       userService,
@@ -66,14 +70,7 @@ abstract class Program {
     );
 
     await jobService.RegisterAllJobs().then((jobs) => {
-      if (jobs === true) {
-        console.log(`\nAll Jobs successfully registered\n`);
-      } else {
-        throw new ApiError(
-          Constants.ExceptionMessages.failedToRegisterJobs,
-          500
-        );
-      }
+      console.log(`\nAll Jobs successfully registered\n`);
     });
 
     await Promise.all(

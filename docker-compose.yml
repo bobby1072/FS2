@@ -11,7 +11,7 @@ services:
       - 5560:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - "./src/core/src/persistence/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql"
+      - "./src/core/src/persistence/Scripts/init.sql:/docker-entrypoint-initdb.d/init.sql"
     environment:
       POSTGRES_DB: fs
       POSTGRES_USER: postgres
