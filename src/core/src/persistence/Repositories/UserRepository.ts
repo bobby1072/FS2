@@ -4,7 +4,7 @@ import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
 import { SelectQueryBuilder } from "typeorm";
-export default class UserRepository extends BaseRepository<UserEntity> {
+export default class UserRepository extends BaseRepository<UserEntity, User> {
   public async UserExists({
     username,
     email,
@@ -31,11 +31,6 @@ export default class UserRepository extends BaseRepository<UserEntity> {
       return false;
     }
     return true;
-  }
-  public async GetAllUsers(): Promise<User[]> {
-    return this._repo
-      .find()
-      .then((users) => Promise.all(users.map((x) => x.ToRuntimeTypeSync())));
   }
   public async Get(
     user: User | string,

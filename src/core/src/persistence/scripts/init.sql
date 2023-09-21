@@ -24,7 +24,7 @@ CREATE TABLE public.user (
 
 -- Inserting values
 INSERT INTO
-    public.permissions(buzzword)
+    public.permission(buzzword)
 VALUES
     ('None'),
     ('Read'),
