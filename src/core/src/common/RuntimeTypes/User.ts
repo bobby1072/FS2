@@ -29,7 +29,7 @@ export default class User extends BaseRuntime implements UserType {
     Name: name,
     Description: description,
     Verified: verified = false,
-    RoleName: roleName,
+    RoleName: roleName = Constants.UserRoleNames.standardUser,
     Role: role,
   }: DeepPartial<UserType> & { Role?: UserRole | null }) {
     super();

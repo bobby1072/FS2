@@ -1,6 +1,7 @@
 import ApiError from "../common/ApiError";
 import Constants from "../common/Constants";
 import User from "../common/RuntimeTypes/User";
+import { UsernamePasswordType } from "../controllers/RequestBodySchema/UsernamePassword";
 import UserRepository from "../persistence/Repositories/UserRepository";
 import UserRoleRepository from "../persistence/Repositories/UserRoleRepository";
 import BaseService from "./BaseService";
@@ -72,13 +73,17 @@ export default class UserService extends BaseService<UserRepository> {
     }
     return dbNewUser;
   }
-  public async LoginUser(user: User): Promise<User> {
-    const foundUser = await this._repo.Get(user);
+  public async LoginUser(user: User | UsernamePasswordType): Promise<User> {
+    const userUsername = user instanceof User;
+    const foundUser = await this._repo.Get(userUsername ? user : user.Username);
     if (!foundUser) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
     if (
-      User.isHashedPasswordEqualTo(user.PasswordHash, foundUser.PasswordHash)
+      User.isHashedPasswordEqualTo(
+        userUsername ? user.PasswordHash : user.Password,
+        foundUser.PasswordHash
+      )
     ) {
       return foundUser;
     } else {

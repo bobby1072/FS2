@@ -8,7 +8,7 @@ enum ExceptionMessages {
   failedToDeleteUser = "Failed to delete user",
   failedToUpdateUser = "Failed to update user",
   failedToCreateUser = "Failed to create user",
-  passwordEmpty = "You need to enter a password",
+  passwordEmptyOrInvalid = "You need to enter a valid password",
   emailEmpty = "You need to enter a email",
   inncorrectPhoneFormat = "Inncorect phone format",
   tokenExpired = "Auth token is expired",

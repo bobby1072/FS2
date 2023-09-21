@@ -71,7 +71,7 @@ export default abstract class BaseController<
       }
     };
   }
-  protected abstract _applyMiddleWare?(
+  protected abstract _applyDefaultMiddleWares?(
     routeFunc: (req: Request, resp: Response) => Promise<void>
   ): (req: Request, resp: Response) => Promise<void>;
   public abstract InvokeRoutes(): void;
