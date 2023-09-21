@@ -59,8 +59,6 @@ abstract class Program {
     const [userService] = [new UserService(userRepo, userRoleRepo)];
 
     const controllers: BaseController<
-      BaseEntity,
-      BaseRepository<BaseEntity, BaseRuntime>,
       BaseService<BaseRepository<BaseEntity, BaseRuntime>>
     >[] = [];
 

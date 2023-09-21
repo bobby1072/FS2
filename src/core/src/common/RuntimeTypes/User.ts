@@ -66,10 +66,11 @@ export default class User extends BaseRuntime implements UserType {
     this.Name = Name;
     return this;
   }
-  public static EncodeToken(email: string): string {
+  public static EncodeToken(user: string, roleName: string): string {
     return sign(
       {
-        user: email,
+        user,
+        roleName,
       },
       process.env.SK ?? "dev_secret_key",
       { algorithm: "HS256", expiresIn: "1h" }
@@ -82,11 +83,12 @@ export default class User extends BaseRuntime implements UserType {
         token,
         process.env.SK ?? "dev_secret_key"
       ) as any;
-      return new TokenData(
-        decodedToken.user,
-        decodedToken.iat,
-        decodedToken.exp
-      );
+      return new TokenData({
+        user: decodedToken.user,
+        iat: decodedToken.iat,
+        exp: decodedToken.exp,
+        roleName: decodedToken.roleName,
+      });
     } catch (e) {
       throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
     }

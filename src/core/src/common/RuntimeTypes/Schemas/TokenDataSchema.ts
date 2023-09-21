@@ -2,7 +2,7 @@ import { z } from "zod";
 import Constants from "../../Constants";
 
 export const TokenDataSchema = z.object({
-  user: z.string().refine((x) => !!x, Constants.ExceptionMessages.emailEmpty),
+  user: z.string().refine((x) => !!x, Constants.ExceptionMessages.invalidToken),
   iat: z
     .number()
     .int()
@@ -17,6 +17,9 @@ export const TokenDataSchema = z.object({
       (x) => x > new Date().getTime(),
       Constants.ExceptionMessages.invalidToken
     ),
+  roleName: z
+    .string()
+    .refine((x) => !!x, Constants.ExceptionMessages.invalidToken),
 });
 
 export type TokenDataType = z.infer<typeof TokenDataSchema>;

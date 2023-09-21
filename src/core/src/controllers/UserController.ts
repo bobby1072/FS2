@@ -6,11 +6,7 @@ import UserService from "../services/UserService";
 import UserRepository from "../persistence/Repositories/UserRepository";
 import UserEntity from "../persistence/Entities/UserEntity";
 
-export default class UserController extends BaseController<
-  UserEntity,
-  UserRepository,
-  UserService
-> {
+export default class UserController extends BaseController<UserService> {
   private _addPostValidation(
     routeFunc: (req: Request, resp: Response, user: User) => Promise<void>
   ) {

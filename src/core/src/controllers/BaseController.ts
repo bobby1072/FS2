@@ -7,11 +7,10 @@ import { ZodError } from "zod";
 import BaseService from "../services/BaseService";
 import BaseRepository from "../persistence/Repositories/BaseRepository";
 import { BaseEntity } from "../persistence/Entities/BaseEntity";
+import BaseRuntime from "../common/RuntimeTypes/BaseRuntime";
 
 export default abstract class BaseController<
-  TEntity extends BaseEntity,
-  TRepo extends BaseRepository<TEntity>,
-  TService extends BaseService<TRepo>
+  TService extends BaseService<BaseRepository<BaseEntity, BaseRuntime>>
 > {
   protected readonly _app: Application;
   protected readonly _service: TService;
