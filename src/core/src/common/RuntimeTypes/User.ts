@@ -7,6 +7,7 @@ import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
 import BaseRuntime from "./BaseRuntime";
 import UserRole from "./UserRole";
+import { DeepPartial } from "../DeepPartial";
 export default class User extends BaseRuntime implements UserType {
   private static readonly _schema = UserSchema;
   public Email: string;
@@ -20,28 +21,17 @@ export default class User extends BaseRuntime implements UserType {
   public PhoneNumber?: string | null;
   public CreatedAt: Date;
   constructor({
-    email,
-    pass,
-    phoneNum,
-    createdAt = new Date(),
-    username,
-    name,
-    description,
-    verified = false,
-    roleName,
-    role,
-  }: {
-    email: string;
-    pass: string;
-    phoneNum?: string | null;
-    createdAt?: Date;
-    username: string;
-    name?: string | null;
-    description?: string | null;
-    verified: boolean;
-    roleName: string;
-    role?: UserRole | null;
-  }) {
+    Email: email,
+    PasswordHash: pass,
+    PhoneNumber: phoneNum,
+    CreatedAt: createdAt = new Date(),
+    Username: username,
+    Name: name,
+    Description: description,
+    Verified: verified = false,
+    RoleName: roleName,
+    Role: role,
+  }: DeepPartial<UserType> & { Role?: UserRole | null }) {
     super();
     const {
       Email,

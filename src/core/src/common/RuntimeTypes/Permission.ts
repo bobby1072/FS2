@@ -1,15 +1,18 @@
 import { BaseEntity } from "../../persistence/Entities/BaseEntity";
 import PermissionEntity from "../../persistence/Entities/PermissionEntity";
+import { DeepPartial } from "../DeepPartial";
 import BaseRuntime from "./BaseRuntime";
 import { PermissionSchema, PermissionType } from "./Schemas/PermissionSchema";
 
 export default class Permission extends BaseRuntime implements PermissionType {
   public readonly Buzzword: string;
   private static readonly _schema = PermissionSchema;
-  constructor({ buzzword }: { buzzword: string }) {
+  constructor({ Buzzword }: DeepPartial<Permission>) {
     super();
-    const { Buzzword } = Permission._schema.parse({ Buzzword: buzzword });
-    this.Buzzword = Buzzword;
+    const { Buzzword: buzzword } = Permission._schema.parse({
+      Buzzword,
+    });
+    this.Buzzword = buzzword;
     return this;
   }
   public ToEntity(): PermissionEntity {

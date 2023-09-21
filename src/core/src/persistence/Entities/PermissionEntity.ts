@@ -16,11 +16,11 @@ export default class PermissionEntity
   Buzzword!: string;
 
   public ToRuntimeTypeSync(): Permission {
-    return new Permission({ buzzword: this.Buzzword });
+    return new Permission({ Buzzword: this.Buzzword });
   }
 
   public async ToRuntimeTypeAsync(): Promise<Permission> {
-    return new Permission({ buzzword: this.Buzzword });
+    return new Permission({ Buzzword: this.Buzzword });
   }
 
   public static ParseSync(val: any): PermissionEntity {
