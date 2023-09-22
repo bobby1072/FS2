@@ -18,11 +18,12 @@ import PermissionEntity from "./persistence/Entities/PermissionEntity";
 import UserRoleRepository from "./persistence/Repositories/UserRoleRepository";
 import PermissionRepository from "./persistence/Repositories/PermissionRepository";
 import BaseRuntime from "./common/RuntimeTypes/BaseRuntime";
+import UserController from "./controllers/UserController";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;
   private static readonly _app: Application = express();
-  private static readonly _pgClient: DataSource = new DataSource({
+  private static readonly _dbClient: DataSource = new DataSource({
     type: "postgres",
     database: "fs",
     synchronize: true,
@@ -44,30 +45,30 @@ abstract class Program {
       console.log(`\nSwagger available at /api-docs\n`);
     }
 
-    await this._pgClient.initialize().then((x) => {
+    await this._dbClient.initialize().then((x) => {
       console.log(
         `\nDB connection initialised\n\n${x.options.database}\n${x.options.type}\n`
       );
     });
 
     const [userRepo, userRoleRepo, permissionRepo] = [
-      new UserRepository(this._pgClient.getRepository(UserEntity)),
-      new UserRoleRepository(this._pgClient.getRepository(UserRoleEntity)),
-      new PermissionRepository(this._pgClient.getRepository(PermissionEntity)),
+      new UserRepository(this._dbClient.getRepository(UserEntity)),
+      new UserRoleRepository(this._dbClient.getRepository(UserRoleEntity)),
+      new PermissionRepository(this._dbClient.getRepository(PermissionEntity)),
     ];
 
     const [userService] = [new UserService(userRepo, userRoleRepo)];
 
     const controllers: BaseController<
       BaseService<BaseRepository<BaseEntity, BaseRuntime>>
-    >[] = [];
+    >[] = [new UserController(userService, Program._app)];
 
     const jobService: ICronJobService = new CronJobService(
       userService,
-      this._pgClient
+      this._dbClient
     );
 
-    await jobService.RegisterAllJobs().then((jobs) => {
+    await jobService.RegisterAllJobs().then(() => {
       console.log(`\nAll Jobs successfully registered\n`);
     });
 

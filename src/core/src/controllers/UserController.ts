@@ -30,7 +30,6 @@ export default class UserController extends BaseController<UserService> {
       "/user/register",
       this._applyDefaultMiddleWares(async (req, resp) => {
         const reqBodyUser = new User(req.body);
-        reqBodyUser.RoleName = Constants.UserRoleNames.standardUser;
         const dbUser = await this._service.RegisterUser(reqBodyUser);
         resp
           .status(200)
@@ -44,7 +43,6 @@ export default class UserController extends BaseController<UserService> {
       this._addErrorHandling(
         this._addAuthHandling(async (req, resp, userToken) => {
           const reqBodyUser = new User(req.body);
-          reqBodyUser.RoleName = Constants.UserRoleNames.standardUser;
           const dbUser = await this._service.UpdateUser(
             reqBodyUser,
             userToken.user

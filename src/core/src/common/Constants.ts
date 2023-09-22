@@ -14,6 +14,7 @@ enum ExceptionMessages {
   tokenExpired = "Auth token is expired",
   failedToRegisterJobs = "Failed to register scheduled jobs",
   invalidOrEmptyUsername = "No username or invalid username",
+  failedToCreateAdmin = "Failed to create admin user",
   missingEmailOrUsername = "Missing email or username",
 }
 enum Buzzwords {

@@ -4,6 +4,8 @@ import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
 import { SelectQueryBuilder } from "typeorm";
+type UserTypeExtens = boolean;
+type ObjectType<T> = T extends true ? UserEntity | undefined : User | undefined;
 export default class UserRepository extends BaseRepository<UserEntity, User> {
   public async UserExists({
     username,
@@ -48,8 +50,9 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
       .then((dbUser) => dbUser?.ToRuntimeTypeAsync());
   }
   public async Create(user: User): Promise<User | undefined> {
-    await this._repo.save(await user.ToEntityAsync());
-    return this.Get(user);
+    return (
+      await this._repo.save(await user.ToEntityAsync())
+    ).ToRuntimeTypeAsync();
   }
   public async Delete(user: string | User): Promise<boolean> {
     return this._repo
@@ -63,18 +66,6 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
       .then((data) => !!data.affected)
       .catch((error) => {
         throw new ApiError(Constants.ExceptionMessages.failedToDeleteUser, 500);
-      });
-  }
-  public async Update(newUser: User, oldUsername: string): Promise<Boolean> {
-    return this._repo
-      .createQueryBuilder()
-      .update(UserEntity)
-      .set(await newUser.ToEntityAsync())
-      .where("username = :username", { username: oldUsername })
-      .execute()
-      .then((data) => !!data.affected)
-      .catch((error) => {
-        throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
       });
   }
 }

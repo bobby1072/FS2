@@ -8,16 +8,42 @@ import BaseService from "../services/BaseService";
 import BaseRepository from "../persistence/Repositories/BaseRepository";
 import { BaseEntity } from "../persistence/Entities/BaseEntity";
 import BaseRuntime from "../common/RuntimeTypes/BaseRuntime";
+import UserService from "../services/UserService";
 
 export default abstract class BaseController<
   TService extends BaseService<BaseRepository<BaseEntity, BaseRuntime>>
 > {
   protected readonly _app: Application;
   protected readonly _service: TService;
-  constructor(service: TService, app: Application) {
+  protected readonly _userService?: UserService;
+  constructor(service: TService, app: Application, userService?: UserService) {
     this._service = service;
     this._app = app;
+    this._userService = userService;
     return this;
+  }
+  protected _addAuthHandlingWithFullUser(
+    routeFunc: (
+      req: Request,
+      resp: Response,
+      userToken: TokenData,
+      userFull: User
+    ) => Promise<void>
+  ) {
+    return this._addAuthHandling(async (req, resp, token) => {
+      const instanceCheck = this._service instanceof UserService;
+      if (instanceCheck || this._userService) {
+        const userServ = instanceCheck
+          ? this._service
+          : (this._userService as UserService);
+        const foundUser = await userServ.LoginUserFromTokenWithoutPassword(
+          token
+        );
+        await routeFunc(req, resp, token, foundUser);
+      } else {
+        throw new Error();
+      }
+    });
   }
   protected _addAuthHandling(
     routeFunc: (
@@ -43,10 +69,8 @@ export default abstract class BaseController<
       try {
         await routeFunc(req, resp);
       } catch (e) {
-        if (e instanceof Error && e.message) {
-          message = e.message;
-        }
         if (e instanceof ApiError && e.Status) {
+          message = e.message;
           status = e.Status;
         }
         if (e instanceof ZodError) {
