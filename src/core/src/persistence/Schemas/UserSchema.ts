@@ -24,7 +24,7 @@ export const UserDBSchema = z.object({
       (x) => !!x && !x.includes(" "),
       Constants.ExceptionMessages.passwordEmptyOrInvalid
     ),
-  PhoneNumber: z
+  PhoneNumber: z.coerce
     .string()
     .optional()
     .nullable()

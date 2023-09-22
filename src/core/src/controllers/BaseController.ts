@@ -34,7 +34,7 @@ export default abstract class BaseController<
       const instanceCheck = this._service instanceof UserService;
       if (instanceCheck || this._userService) {
         const userServ = instanceCheck
-          ? this._service
+          ? (this._service as any)
           : (this._userService as UserService);
         const foundUser = await userServ.LoginUserFromTokenWithoutPassword(
           token
@@ -80,9 +80,11 @@ export default abstract class BaseController<
               return `${acc} Required values for ${val.path
                 .map((x, index, array) => {
                   if (array.length > 1) {
-                    return index === array.length - 1 ? `and ${x}` : `, ${x}`;
+                    return index === array.length - 1
+                      ? `and '${x}'`
+                      : `, '${x}'`;
                   } else {
-                    return x;
+                    return `'${x}'`;
                   }
                 })
                 .join("")}.`;

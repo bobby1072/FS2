@@ -20,9 +20,9 @@ export default class UserRole extends BaseRuntime implements UserRoleType {
     return this;
   }
   public ToEntity(): UserRoleEntity {
-    return UserRoleEntity.ParseSync(this._toJson());
+    return UserRoleEntity.ParseSync(this.ToJson());
   }
   public ToEntityAsync(): Promise<UserRoleEntity> {
-    return UserRoleEntity.ParseAsync(this._toJson());
+    return UserRoleEntity.ParseAsync(this.ToJson());
   }
 }

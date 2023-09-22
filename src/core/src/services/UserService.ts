@@ -22,6 +22,7 @@ export default class UserService extends BaseService<UserRepository> {
       RoleName: Constants.UserRoleNames.admin,
       Username: "AdminUser123",
     });
+    newAdmin.HashPassword();
     const dbAdmin = await this._repo.Create(newAdmin);
     if (!dbAdmin) {
       throw new Error(Constants.ExceptionMessages.failedToCreateAdmin);
@@ -31,8 +32,8 @@ export default class UserService extends BaseService<UserRepository> {
   public async UpdateUser(
     newUser: User,
     username: string,
-    options: { updateUsername: boolean; existingUser?: User } = {
-      updateUsername: false,
+    options: { updateUsername?: boolean; existingUser?: User } = {
+      updateUsername: undefined,
       existingUser: undefined,
     }
   ): Promise<User> {
@@ -42,13 +43,16 @@ export default class UserService extends BaseService<UserRepository> {
     if (!userExist) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
-    if (options.updateUsername) {
+    if (!options.updateUsername) {
       newUser.Username = userExist.Username;
+    }
+    if (newUser.PasswordHash !== userExist.PasswordHash) {
+      newUser.HashPassword();
     }
     newUser.CreatedAt = userExist.CreatedAt;
     newUser.RoleName = userExist.RoleName;
     const safeUser = new User(newUser);
-    safeUser.HashPassword();
+
     const updated = options.updateUsername
       ? await this._repo.UpdatePrimaryKeyOfRecord(
           userExist.Username,
@@ -58,7 +62,9 @@ export default class UserService extends BaseService<UserRepository> {
         )
       : await this._repo.Create(safeUser);
     const createdDbUser =
-      updated instanceof User ? updated : await this._repo.Get(safeUser.Email);
+      updated instanceof User
+        ? updated
+        : await this._repo.Get(safeUser.Username);
     if (!createdDbUser) {
       throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
     }
@@ -77,7 +83,11 @@ export default class UserService extends BaseService<UserRepository> {
     }
   }
   public async RegisterUser(user: User): Promise<User> {
-    const userExist = await this._repo.UserExists({ username: user.Username });
+    const userExist = await this._repo.UserUnique({
+      username: user.Username,
+      email: user.Email,
+      phoneNumber: user.PhoneNumber ? user.PhoneNumber : undefined,
+    });
     if (userExist) {
       throw new ApiError(Constants.ExceptionMessages.userAlreadyExists, 403);
     }
@@ -112,7 +122,7 @@ export default class UserService extends BaseService<UserRepository> {
   ): Promise<User> {
     const foundUser = await this._repo.Get(user.user);
     if (!foundUser) {
-      throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
+      throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
     return foundUser;
   }

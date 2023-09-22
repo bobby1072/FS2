@@ -26,16 +26,7 @@ export default class CronJobService implements ICronJobService {
       });
   }
   public async RegisterHourlyJobs(): Promise<boolean> {
-    const initialiseDbJob = new CronJob(CronUtils.Hourly(), () =>
-      this._dataSource.initialize()
-    );
-
-    initialiseDbJob.start();
-    if (initialiseDbJob.running) {
-      return true;
-    } else {
-      return false;
-    }
+    return true;
   }
   public async RegisterDailyJobs(): Promise<boolean> {
     return true;

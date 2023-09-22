@@ -31,7 +31,7 @@ export default abstract class BaseRepository<
       .set(await newVal.ToEntityAsync())
       .where(`${primaryKeyName} = :oldKey`, { oldKey: oldPrimaryKey })
       .execute()
-      .then((data) => !!data.affected)
+      .then((data) => true)
       .catch((error) => {
         throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
       });

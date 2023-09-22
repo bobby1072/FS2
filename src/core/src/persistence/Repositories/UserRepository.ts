@@ -3,30 +3,36 @@ import UserEntity from "../Entities/UserEntity";
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
-import { SelectQueryBuilder } from "typeorm";
 export default class UserRepository extends BaseRepository<UserEntity, User> {
+  public async UserUnique({
+    email,
+    username,
+    phoneNumber,
+  }: {
+    email: string;
+    username: string;
+    phoneNumber?: string;
+  }) {
+    return this._repo
+      .createQueryBuilder("u")
+      .where("u.username = :username", { username })
+      .orWhere("u.email = :email", { email })
+      .orWhere("u.phone_number = :phoneNumber", { phoneNumber })
+      .getOne()
+      .then((x) => !!x);
+  }
   public async UserExists({
     username,
-    email,
   }: {
     username?: string;
-    email?: string;
   }): Promise<boolean> {
-    if (!email && !username) {
+    if (!username) {
       throw new ApiError(Constants.ExceptionMessages.missingEmailOrUsername);
     }
-    const tempFunc = (x: SelectQueryBuilder<UserEntity>) => {
-      if (username) {
-        x = x.where("u.username = :username", { username: username });
-        if (email) {
-          x = x.andWhere("u.email = :email", { email: email });
-        }
-      } else if (email) {
-        x = x.where("u.email = :email", { email: email });
-      }
-      return x;
-    };
-    const dbUser = await tempFunc(this._repo.createQueryBuilder("u")).getOne();
+    const dbUser = await this._repo
+      .createQueryBuilder("u")
+      .where("u.username = :username", { username })
+      .getOne();
     if (!dbUser) {
       return false;
     }
@@ -61,7 +67,7 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
       })
       .from("user")
       .execute()
-      .then((data) => !!data.affected)
+      .then((data) => true)
       .catch((error) => {
         throw new ApiError(Constants.ExceptionMessages.failedToDeleteUser, 500);
       });

@@ -1,7 +1,7 @@
 enum ExceptionMessages {
   internalServerError = "Internal server error",
   invalidToken = "Invalid token or no token",
-  noUserFound = "No user with that email found",
+  noUserFound = "No user with that email/username found",
   inncorrectPassword = "Inncorrect password",
   userAlreadyExists = "User already exists",
   emailOrPasswordNotIncluded = "Email or password not included",

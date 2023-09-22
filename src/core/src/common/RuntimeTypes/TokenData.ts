@@ -30,7 +30,4 @@ export default class TokenData implements TokenDataType {
     this.user = safeUser;
     return this;
   }
-  public Encode() {
-    return User.EncodeToken(this.user, this.roleName);
-  }
 }

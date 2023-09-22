@@ -66,7 +66,10 @@ export default class User extends BaseRuntime implements UserType {
     this.Name = Name;
     return this;
   }
-  public static EncodeToken(user: string, roleName: string): string {
+  public InstanceToToken(): string {
+    return User.EncodeToken(this.Username, this.RoleName);
+  }
+  private static EncodeToken(user: string, roleName: string): string {
     return sign(
       {
         user,

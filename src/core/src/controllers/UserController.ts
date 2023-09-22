@@ -20,9 +20,7 @@ export default class UserController extends BaseController<UserService> {
       this._applyDefaultMiddleWares(async (req, resp) => {
         const usernameAndPassword = UsernamePassword.parse(req.body);
         const dbUser = await this._service.LoginUser(usernameAndPassword);
-        resp
-          .status(200)
-          .json({ token: User.EncodeToken(dbUser.Email, dbUser.RoleName) });
+        resp.status(200).json({ token: dbUser.InstanceToToken() });
       })
     );
   }
@@ -32,9 +30,7 @@ export default class UserController extends BaseController<UserService> {
       this._applyDefaultMiddleWares(async (req, resp) => {
         const reqBodyUser = new User(req.body);
         const dbUser = await this._service.RegisterUser(reqBodyUser);
-        resp
-          .status(200)
-          .json({ token: User.EncodeToken(dbUser.Email, dbUser.RoleName) });
+        resp.status(200).json({ token: dbUser.InstanceToToken() });
       })
     );
   }
@@ -49,9 +45,11 @@ export default class UserController extends BaseController<UserService> {
             for (const key in tempUser) {
               try {
                 if (key in reqBodyUser) {
-                  tempUser[key] = Object.entries(reqBodyUser).find(
-                    ([reqKey]) => key === reqKey
-                  ) as any[1];
+                  tempUser[key] = (
+                    Object.entries(reqBodyUser).find(
+                      ([reqKey]) => key === reqKey
+                    ) as any
+                  )[1];
                 }
               } catch (e) {}
             }
@@ -64,9 +62,9 @@ export default class UserController extends BaseController<UserService> {
                 updateUsername: polishedNewUser.Username !== user.Username,
               }
             );
-            resp
-              .status(200)
-              .json({ token: User.EncodeToken(dbUser.Email, dbUser.RoleName) });
+            resp.status(200).json({
+              token: dbUser.InstanceToToken(),
+            });
           }
         )
       )
