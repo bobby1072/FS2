@@ -56,7 +56,7 @@ export default abstract class BaseController<
       if (!req.headers.authorization) {
         throw new ApiError(Constants.ExceptionMessages.invalidToken);
       }
-      const userToke = User.DecodeToken(req.headers.authorization);
+      const userToke = await User.DecodeTokenAsync(req.headers.authorization);
       await routeFunc(req, resp, userToke);
     };
   }

@@ -69,6 +69,9 @@ export default class User extends BaseRuntime implements UserType {
   public InstanceToToken(): string {
     return User.EncodeToken(this.Username, this.RoleName);
   }
+  public async InstanceToTokenAsync(): Promise<string> {
+    return User.EncodeTokenAsync(this.Username, this.RoleName);
+  }
   private static EncodeToken(user: string, roleName: string): string {
     return sign(
       {
@@ -78,6 +81,12 @@ export default class User extends BaseRuntime implements UserType {
       process.env.SK ?? "dev_secret_key",
       { algorithm: "HS256", expiresIn: "1h" }
     );
+  }
+  public static async EncodeTokenAsync(
+    user: string,
+    roleName: string
+  ): Promise<string> {
+    return User.EncodeToken(user, roleName);
   }
   public static DecodeToken(token: string): TokenData {
     try {
@@ -95,6 +104,9 @@ export default class User extends BaseRuntime implements UserType {
     } catch (e) {
       throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
     }
+  }
+  public static async DecodeTokenAsync(token: string): Promise<TokenData> {
+    return User.DecodeToken(token);
   }
   public ToEntity(): UserEntity {
     return UserEntity.ParseSync(this.ToJson());

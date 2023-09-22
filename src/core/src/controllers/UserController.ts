@@ -20,7 +20,7 @@ export default class UserController extends BaseController<UserService> {
       this._applyDefaultMiddleWares(async (req, resp) => {
         const usernameAndPassword = UsernamePassword.parse(req.body);
         const dbUser = await this._service.LoginUser(usernameAndPassword);
-        resp.status(200).json({ token: dbUser.InstanceToToken() });
+        resp.status(200).json({ token: await dbUser.InstanceToTokenAsync() });
       })
     );
   }
@@ -30,7 +30,7 @@ export default class UserController extends BaseController<UserService> {
       this._applyDefaultMiddleWares(async (req, resp) => {
         const reqBodyUser = new User(req.body);
         const dbUser = await this._service.RegisterUser(reqBodyUser);
-        resp.status(200).json({ token: dbUser.InstanceToToken() });
+        resp.status(200).json({ token: await dbUser.InstanceToTokenAsync() });
       })
     );
   }
@@ -63,7 +63,7 @@ export default class UserController extends BaseController<UserService> {
               }
             );
             resp.status(200).json({
-              token: dbUser.InstanceToToken(),
+              token: await dbUser.InstanceToTokenAsync(),
             });
           }
         )
