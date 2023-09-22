@@ -18,14 +18,12 @@ export default class UserRoleEntity
 
   public async ToRuntimeTypeAsync() {
     return new UserRole({
-      RoleName: this.RoleName,
-      GroupPermissions: this.GroupPermissions,
+      ...this,
     });
   }
   public ToRuntimeTypeSync() {
     return new UserRole({
-      RoleName: this.RoleName,
-      GroupPermissions: this.GroupPermissions,
+      ...this,
     });
   }
   public static ParseSync(val: any): UserRoleEntity {

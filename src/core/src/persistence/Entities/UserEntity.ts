@@ -39,32 +39,14 @@ export default class UserEntity extends BaseEntity implements UserDbType {
   Role?: UserRoleEntity | null;
 
   public ToRuntimeTypeSync(): User {
-    return new User({
-      Email: this.Email,
-      PasswordHash: this.PasswordHash,
-      PhoneNumber: this.PhoneNumber,
-      CreatedAt: this.CreatedAt,
-      RoleName: this.RoleName,
-      Username: this.Username,
-      Verified: this.Verified,
-      Description: this.Description,
-      Name: this.Name,
-      Role: this.Role?.ToRuntimeTypeSync(),
-    });
+    const tempUserObj = this.ToJson();
+    tempUserObj.Role = this.Role?.ToRuntimeTypeSync();
+    return new User(tempUserObj);
   }
   public async ToRuntimeTypeAsync(): Promise<User> {
-    return new User({
-      Email: this.Email,
-      PasswordHash: this.PasswordHash,
-      PhoneNumber: this.PhoneNumber,
-      CreatedAt: this.CreatedAt,
-      RoleName: this.RoleName,
-      Username: this.Username,
-      Verified: this.Verified,
-      Description: this.Description,
-      Name: this.Name,
-      Role: await this.Role?.ToRuntimeTypeAsync(),
-    });
+    const tempUserObj = this.ToJson();
+    tempUserObj.Role = await this.Role?.ToRuntimeTypeAsync();
+    return new User(tempUserObj);
   }
   public static ParseSync(val: any): UserEntity {
     const {
