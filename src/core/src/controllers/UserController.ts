@@ -40,7 +40,7 @@ export default class UserController extends BaseController<UserService> {
       this._addErrorHandling(
         this._addAuthHandlingWithFullUser(
           async (req, resp, userToken, user) => {
-            const reqBodyUser: UserType = req.body;
+            const reqBodyUser: Partial<UserType> = req.body;
             const tempUser = user.ToJson();
             for (const key in tempUser) {
               try {

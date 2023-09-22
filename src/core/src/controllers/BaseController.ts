@@ -1,4 +1,4 @@
-import { Application, Request, Response, application } from "express";
+import { Application, Request, Response } from "express";
 import TokenData from "../common/RuntimeTypes/TokenData";
 import User from "../common/RuntimeTypes/User";
 import Constants from "../common/Constants";
