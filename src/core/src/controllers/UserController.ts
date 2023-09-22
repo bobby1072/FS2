@@ -3,7 +3,8 @@ import BaseController from "./BaseController";
 import User from "../common/RuntimeTypes/User";
 import UserService from "../services/UserService";
 import { UsernamePassword } from "./RequestBodySchema/UsernamePassword";
-import Constants from "../common/Constants";
+import { DeepPartial } from "../common/DeepPartial";
+import { UserType } from "../common/RuntimeTypes/Schemas/UserSchema";
 
 export default class UserController extends BaseController<UserService> {
   protected _applyDefaultMiddleWares(
@@ -41,19 +42,37 @@ export default class UserController extends BaseController<UserService> {
     return this._app.post(
       "/user/update",
       this._addErrorHandling(
-        this._addAuthHandling(async (req, resp, userToken) => {
-          const reqBodyUser = new User(req.body);
-          const dbUser = await this._service.UpdateUser(
-            reqBodyUser,
-            userToken.user
-          );
-          resp
-            .status(200)
-            .json({ token: User.EncodeToken(dbUser.Email, dbUser.RoleName) });
-        })
+        this._addAuthHandlingWithFullUser(
+          async (req, resp, userToken, user) => {
+            const reqBodyUser: UserType = req.body;
+            const tempUser = user.ToJson();
+            for (const key in tempUser) {
+              try {
+                if (key in reqBodyUser) {
+                  tempUser[key] = Object.entries(reqBodyUser).find(
+                    ([reqKey]) => key === reqKey
+                  ) as any[1];
+                }
+              } catch (e) {}
+            }
+            const polishedNewUser = new User(tempUser);
+            const dbUser = await this._service.UpdateUser(
+              polishedNewUser,
+              userToken.user,
+              {
+                existingUser: user,
+                updateUsername: polishedNewUser.Username !== user.Username,
+              }
+            );
+            resp
+              .status(200)
+              .json({ token: User.EncodeToken(dbUser.Email, dbUser.RoleName) });
+          }
+        )
       )
     );
   }
+
   public DeleteUser() {
     return this._app.get(
       "/user/delete",

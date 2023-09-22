@@ -94,10 +94,10 @@ export default class User extends BaseRuntime implements UserType {
     }
   }
   public ToEntity(): UserEntity {
-    return UserEntity.ParseSync(this._toJson());
+    return UserEntity.ParseSync(this.ToJson());
   }
   public async ToEntityAsync(): Promise<UserEntity> {
-    return UserEntity.ParseAsync(this._toJson());
+    return UserEntity.ParseAsync(this.ToJson());
   }
   public HashPassword(): string {
     this.PasswordHash = hashSync(this.PasswordHash, genSaltSync());

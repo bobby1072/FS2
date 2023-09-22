@@ -4,8 +4,6 @@ import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
 import { SelectQueryBuilder } from "typeorm";
-type UserTypeExtens = boolean;
-type ObjectType<T> = T extends true ? UserEntity | undefined : User | undefined;
 export default class UserRepository extends BaseRepository<UserEntity, User> {
   public async UserExists({
     username,

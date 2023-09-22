@@ -3,6 +3,7 @@ import Constants from "../common/Constants";
 import TokenData from "../common/RuntimeTypes/TokenData";
 import User from "../common/RuntimeTypes/User";
 import { UsernamePasswordType } from "../controllers/RequestBodySchema/UsernamePassword";
+import UserEntity from "../persistence/Entities/UserEntity";
 import UserRepository from "../persistence/Repositories/UserRepository";
 import UserRoleRepository from "../persistence/Repositories/UserRoleRepository";
 import BaseService from "./BaseService";
@@ -27,21 +28,41 @@ export default class UserService extends BaseService<UserRepository> {
     }
     return dbAdmin;
   }
-  public async UpdateUser(newUser: User, username: string): Promise<User> {
-    const userExist = await this._repo.Get(username);
+  public async UpdateUser(
+    newUser: User,
+    username: string,
+    options: { updateUsername: boolean; existingUser?: User } = {
+      updateUsername: false,
+      existingUser: undefined,
+    }
+  ): Promise<User> {
+    const userExist = options.existingUser
+      ? options.existingUser
+      : await this._repo.Get(username);
     if (!userExist) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
+    if (options.updateUsername) {
+      newUser.Username = userExist.Username;
+    }
     newUser.CreatedAt = userExist.CreatedAt;
-    newUser.Username = userExist.Username;
     newUser.RoleName = userExist.RoleName;
     const safeUser = new User(newUser);
     safeUser.HashPassword();
-    const updated = await this._repo.Create(safeUser);
-    if (!updated) {
+    const updated = options.updateUsername
+      ? await this._repo.UpdatePrimaryKeyOfRecord(
+          userExist.Username,
+          safeUser,
+          UserEntity,
+          "username"
+        )
+      : await this._repo.Create(safeUser);
+    const createdDbUser =
+      updated instanceof User ? updated : await this._repo.Get(safeUser.Email);
+    if (!createdDbUser) {
       throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
     }
-    return updated;
+    return createdDbUser;
   }
   public async DeleteUser(user: User | string): Promise<void> {
     const userExist = await this._repo.UserExists({
@@ -91,7 +112,7 @@ export default class UserService extends BaseService<UserRepository> {
   ): Promise<User> {
     const foundUser = await this._repo.Get(user.user);
     if (!foundUser) {
-      throw new Error();
+      throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
     }
     return foundUser;
   }
