@@ -21,6 +21,8 @@ export default class UserService extends BaseService<UserRepository> {
       PasswordHash: process.env.ADMIN_PASSWORD ?? "admin",
       RoleName: Constants.UserRoleNames.admin,
       Username: "AdminUser123",
+      Verified: true,
+      CreatedAt: new Date(),
     });
     newAdmin.HashPassword();
     const dbAdmin = await this._repo.Create(newAdmin);

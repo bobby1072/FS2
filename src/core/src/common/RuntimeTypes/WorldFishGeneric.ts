@@ -1,4 +1,3 @@
-import { BaseEntity } from "../../persistence/Entities/BaseEntity";
 import WorldFishGenericEntity from "../../persistence/Entities/WorldFishGenericEntity";
 import BaseRuntime from "./BaseRuntime";
 import {

@@ -4,13 +4,20 @@ import UserService from "../UserService";
 import { ICronJobService } from "./ICronJobService";
 import CronUtils from "../../utils/CronUtils";
 import { DataSource } from "typeorm";
+import WorldFishService from "../WorldFishService/WorldFishService";
 
 export default class CronJobService implements ICronJobService {
   private readonly _userService: UserService;
   private readonly _dataSource: DataSource;
-  constructor(userService: UserService, dataSource: DataSource) {
+  private readonly _worldFishService: WorldFishService;
+  constructor(
+    userService: UserService,
+    dataSource: DataSource,
+    worldFishService: WorldFishService
+  ) {
     this._userService = userService;
     this._dataSource = dataSource;
+    this._worldFishService = worldFishService;
     return this;
   }
   public async RegisterAllJobs(): Promise<boolean> {

@@ -24,11 +24,8 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
   public async UserExists({
     username,
   }: {
-    username?: string;
+    username: string;
   }): Promise<boolean> {
-    if (!username) {
-      throw new ApiError(Constants.ExceptionMessages.missingEmailOrUsername);
-    }
     const dbUser = await this._repo
       .createQueryBuilder("u")
       .where("u.username = :username", { username })
