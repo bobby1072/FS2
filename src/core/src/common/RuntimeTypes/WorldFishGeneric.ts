@@ -5,9 +5,9 @@ import {
   WorldFishGenericSchema,
   WorldFishGenericSchemaType,
 } from "./Schemas/WorldFishSchema";
-import { FishExtended } from "./WorldFishExtended";
+import FishExtended from "./WorldFishExtended";
 
-class WorldFishGeneric
+export default class Fish
   extends BaseRuntime
   implements WorldFishGenericSchemaType
 {
@@ -26,8 +26,7 @@ class WorldFishGeneric
     this.ScientificName = ScientificName;
     this.Nickname = Nickname;
     if (EnglishName) {
-      const { alias, englishName } =
-        WorldFishGeneric._getNickNameAndName(EnglishName);
+      const { alias, englishName } = Fish._getNickNameAndName(EnglishName);
       if (alias && !Nickname) {
         this.Nickname = alias;
       }
@@ -73,4 +72,3 @@ class WorldFishGeneric
     return { englishName: fishNameFixed, alias: aka };
   }
 }
-export { WorldFishGeneric as Fish };

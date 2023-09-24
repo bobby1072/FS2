@@ -1,7 +1,6 @@
 import { WorldFishGenericSchemaType } from "./Schemas/WorldFishSchema";
-import { Fish } from "./WorldFishGeneric";
-
-class WorldFishExtended extends Fish {
+import Fish from "./WorldFishGeneric";
+export default class FishExtended extends Fish {
   public readonly PhysicalDescription?: string | null;
   public readonly SpeciesPhoto?: string | null;
   public readonly SpeciesNumbers?: object[] | null;
@@ -18,4 +17,3 @@ class WorldFishExtended extends Fish {
     return this;
   }
 }
-export { WorldFishExtended as FishExtended };

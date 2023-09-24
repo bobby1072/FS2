@@ -1,7 +1,7 @@
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
-import { FishExtended } from "../../common/RuntimeTypes/WorldFishExtended";
-import { Fish } from "../../common/RuntimeTypes/WorldFishGeneric";
+import FishExtended from "../../common/RuntimeTypes/WorldFishExtended";
+import Fish from "../../common/RuntimeTypes/WorldFishGeneric";
 import WorldFishRepository from "../../persistence/Repositories/WorldFishRepository";
 import BaseService from "../BaseService";
 export default class WorldFishService extends BaseService<WorldFishRepository> {

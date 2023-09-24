@@ -54,7 +54,7 @@ export default abstract class BaseController<
   ) {
     return async (req: Request, resp: Response) => {
       if (!req.headers.authorization) {
-        throw new ApiError(Constants.ExceptionMessages.invalidToken, 403);
+        throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
       }
       const userToke = await User.DecodeTokenAsync(req.headers.authorization);
       await routeFunc(req, resp, userToke);
@@ -74,7 +74,7 @@ export default abstract class BaseController<
           status = e.Status;
         }
         if (e instanceof ZodError) {
-          status = 401;
+          status = 422;
           message = e.issues.reduce((acc, val) => {
             if (val.message === "Required") {
               return `${acc} Required values for ${val.path

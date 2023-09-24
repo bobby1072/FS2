@@ -2,7 +2,9 @@ import { Request, Response } from "express";
 import WorldFishService from "../services/WorldFishService/WorldFishService";
 import BaseController from "./BaseController";
 import TokenData from "../common/RuntimeTypes/TokenData";
-import { Fish } from "../common/RuntimeTypes/WorldFishGeneric";
+import ApiError from "../common/ApiError";
+import Constants from "../common/Constants";
+import Fish from "../common/RuntimeTypes/WorldFishGeneric";
 
 export default class WorldFishController extends BaseController<WorldFishService> {
   protected _applyDefaultMiddleWares(
@@ -40,11 +42,23 @@ export default class WorldFishController extends BaseController<WorldFishService
       "/worldfish/similar",
       this._applyDefaultMiddleWares(async (req, resp, userToke) => {
         const searchTerm = req.params.searchTerm;
+        if (
+          !(typeof searchTerm === "string" && /^[A-Za-z\s]*$/.test(searchTerm))
+        ) {
+          throw new ApiError(
+            Constants.ExceptionMessages.expectedStringForSearchTerm,
+            422
+          );
+        }
         resp
           .status(200)
           .send(await this._service.SearchForSimilarLocalFish(searchTerm));
       })
     );
   }
-  public InvokeRoutes(): void {}
+  public InvokeRoutes(): void {
+    this.GetAllDetailsForFish();
+    this.GetAllLocalFish();
+    this.GetSimilarFish();
+  }
 }

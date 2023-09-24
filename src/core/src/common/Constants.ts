@@ -1,4 +1,5 @@
 enum ExceptionMessages {
+  expectedStringForSearchTerm = "String expected for 'searchTerm' param",
   internalServerError = "Internal server error",
   noFishFound = "No fish found",
   invalidToken = "Invalid token or no token",

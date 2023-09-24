@@ -1,4 +1,4 @@
-import { Fish } from "../../common/RuntimeTypes/WorldFishGeneric";
+import Fish from "../../common/RuntimeTypes/WorldFishGeneric";
 import WorldFishGenericEntity from "../Entities/WorldFishGenericEntity";
 import BaseRepository from "./BaseRepository";
 
