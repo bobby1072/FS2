@@ -54,7 +54,7 @@ export default abstract class BaseController<
   ) {
     return async (req: Request, resp: Response) => {
       if (!req.headers.authorization) {
-        throw new ApiError(Constants.ExceptionMessages.invalidToken);
+        throw new ApiError(Constants.ExceptionMessages.invalidToken, 403);
       }
       const userToke = await User.DecodeTokenAsync(req.headers.authorization);
       await routeFunc(req, resp, userToke);

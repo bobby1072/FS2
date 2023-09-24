@@ -39,6 +39,16 @@ export default class CronJobService implements ICronJobService {
     return true;
   }
   public async RegisterWeeklyJobs(): Promise<boolean> {
+    const migrateWorldFishToDbJob = new CronJob(
+      CronUtils.Weekly(),
+      () => this._worldFishService.MigrateJsonFishDataToDb(),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true
+    );
+
     const ensureAdminJob = new CronJob(
       CronUtils.Weekly(),
       () => this._userService.EnsureAdminUser(),
@@ -49,8 +59,10 @@ export default class CronJobService implements ICronJobService {
       true
     );
 
+    migrateWorldFishToDbJob.start();
     ensureAdminJob.start();
-    if (ensureAdminJob.running) {
+
+    if (ensureAdminJob.running && migrateWorldFishToDbJob.running) {
       return true;
     } else {
       return false;

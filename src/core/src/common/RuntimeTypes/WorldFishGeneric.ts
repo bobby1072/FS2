@@ -1,9 +1,11 @@
 import WorldFishGenericEntity from "../../persistence/Entities/WorldFishGenericEntity";
+import WorldFishApiServiceProvider from "../../services/WorldFishService/WorldFishApiServiceProvider";
 import BaseRuntime from "./BaseRuntime";
 import {
   WorldFishGenericSchema,
   WorldFishGenericSchemaType,
 } from "./Schemas/WorldFishSchema";
+import { FishExtended } from "./WorldFishExtended";
 
 class WorldFishGeneric
   extends BaseRuntime
@@ -22,10 +24,19 @@ class WorldFishGeneric
       this._schema.parse(input);
     this.A3Code = A3Code;
     this.ScientificName = ScientificName;
-    this.EnglishName = EnglishName;
+    this.Nickname = Nickname;
+    if (EnglishName) {
+      const { alias, englishName } =
+        WorldFishGeneric._getNickNameAndName(EnglishName);
+      if (alias && !Nickname) {
+        this.Nickname = alias;
+      }
+      this.EnglishName = englishName;
+    } else {
+      this.EnglishName = EnglishName;
+    }
     this.Isscaap = Isscaap;
     this.Taxocode = Taxocode;
-    this.Nickname = Nickname;
     return this;
   }
   public ToEntity(): WorldFishGenericEntity {
@@ -33,6 +44,33 @@ class WorldFishGeneric
   }
   public async ToEntityAsync(): Promise<WorldFishGenericEntity> {
     return WorldFishGenericEntity.ParseAsync(this.ToJson());
+  }
+  public async GetExtendedFish() {
+    const [speciesInfo, speciesNumbers] = await Promise.all([
+      WorldFishApiServiceProvider.GetFishInfo(
+        this.EnglishName ? this.EnglishName : ""
+      ),
+      WorldFishApiServiceProvider.GetSpeciesNumbers(
+        this.A3Code ? this.A3Code : ""
+      ),
+    ]);
+    return new FishExtended({
+      ...this,
+      SpeciesPhoto: speciesInfo?.SpeciesPhoto,
+      PhysicalDescription: speciesInfo?.PhysicalDescription,
+      SpeciesNumbers: speciesNumbers,
+    });
+  }
+  private static _getNickNameAndName(engName: string) {
+    const fishNameAka = /\(([^)]+)\)/.exec(engName);
+    let aka = fishNameAka && fishNameAka[1].replace(/[=]/g, " ");
+    if (aka && aka.charAt(0) === " ") {
+      aka = aka.substring(1);
+    }
+    const fishNameFixed: string = fishNameAka
+      ? engName.replace(fishNameAka[0], " ")
+      : engName;
+    return { englishName: fishNameFixed, alias: aka };
   }
 }
 export { WorldFishGeneric as Fish };

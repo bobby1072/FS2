@@ -19,6 +19,9 @@ import UserRoleRepository from "./persistence/Repositories/UserRoleRepository";
 import PermissionRepository from "./persistence/Repositories/PermissionRepository";
 import BaseRuntime from "./common/RuntimeTypes/BaseRuntime";
 import UserController from "./controllers/UserController";
+import WorldFishService from "./services/WorldFishService/WorldFishService";
+import WorldFishRepository from "./persistence/Repositories/WorldFishRepository";
+import WorldFishGenericEntity from "./persistence/Entities/WorldFishGenericEntity";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;
@@ -33,7 +36,12 @@ abstract class Program {
     ssl: false,
     port: Number(process.env.POSTGRESPORT) || 5560,
     host: process.env.POSTGRESHOST ?? "localhost",
-    entities: [UserEntity, UserRoleEntity, PermissionEntity],
+    entities: [
+      UserEntity,
+      UserRoleEntity,
+      PermissionEntity,
+      WorldFishGenericEntity,
+    ],
     namingStrategy: new SnakeNamingStrategy(),
   });
   public static async Main(): Promise<void> {
@@ -51,13 +59,19 @@ abstract class Program {
       );
     });
 
-    const [userRepo, userRoleRepo, permissionRepo] = [
+    const [userRepo, userRoleRepo, permissionRepo, worldFishRepo] = [
       new UserRepository(this._dbClient.getRepository(UserEntity)),
       new UserRoleRepository(this._dbClient.getRepository(UserRoleEntity)),
       new PermissionRepository(this._dbClient.getRepository(PermissionEntity)),
+      new WorldFishRepository(
+        this._dbClient.getRepository(WorldFishGenericEntity)
+      ),
     ];
 
-    const [userService] = [new UserService(userRepo, userRoleRepo)];
+    const [userService, worldFishService] = [
+      new UserService(userRepo, userRoleRepo),
+      new WorldFishService(worldFishRepo),
+    ];
 
     const controllers: BaseController<
       BaseService<BaseRepository<BaseEntity, BaseRuntime>>
@@ -65,7 +79,8 @@ abstract class Program {
 
     const jobService: ICronJobService = new CronJobService(
       userService,
-      this._dbClient
+      this._dbClient,
+      worldFishService
     );
 
     await jobService.RegisterAllJobs().then(() => {

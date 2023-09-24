@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
-import BaseRuntime from "../../common/RuntimeTypes/BaseRuntime";
 import {
   WorldFishGenericDbSchema,
   WorldFishGenericDbSchemaType,

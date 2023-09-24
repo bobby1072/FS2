@@ -1,5 +1,6 @@
 enum ExceptionMessages {
   internalServerError = "Internal server error",
+  noFishFound = "No fish found",
   invalidToken = "Invalid token or no token",
   noUserFound = "No user with that email/username found",
   inncorrectPassword = "Inncorrect password",

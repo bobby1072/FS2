@@ -14,24 +14,32 @@ export default abstract class WorldFishApiServiceProvider {
       }
     | undefined
   > {
-    const request = await this._fishWatchHttpClient.get(
-      `species/${speciesName}`
-    );
-    if (request.data.length >= 1) {
-      return {
-        PhysicalDescription: request.data[0]["Physical Description"],
-        SpeciesPhoto: request.data[0]["Species Illustration Photo"].src,
-      };
-    } else return undefined;
+    try {
+      const request = await this._fishWatchHttpClient.get(
+        `species/${speciesName}`
+      );
+      if (request.data.length >= 1) {
+        return {
+          PhysicalDescription: request.data[0]["Physical Description"],
+          SpeciesPhoto: request.data[0]["Species Illustration Photo"].src,
+        };
+      } else return undefined;
+    } catch (e) {
+      return undefined;
+    }
   }
   public static async GetSpeciesNumbers(
     code: string
   ): Promise<object[] | undefined> {
-    const request = await this._openFisheriesHttpClient.get(
-      `landings/species/${code}.json`
-    );
-    if (request.data.length >= 1) {
-      return request.data;
-    } else return undefined;
+    try {
+      const request = await this._openFisheriesHttpClient.get(
+        `landings/species/${code}.json`
+      );
+      if (request.data.length >= 1) {
+        return request.data;
+      } else return undefined;
+    } catch (e) {
+      return undefined;
+    }
   }
 }
