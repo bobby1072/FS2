@@ -61,7 +61,9 @@ abstract class Program {
       );
     });
     const migrationService = new MigrationService(this._dbClient.manager);
-    await migrationService.RunMigrations();
+    await migrationService.RunMigrations().then((x) => {
+      console.log("\nMigrations complete\n");
+    });
 
     const [userRepo, userRoleRepo, permissionRepo, worldFishRepo] = [
       new UserRepository(this._dbClient.getRepository(UserEntity)),
