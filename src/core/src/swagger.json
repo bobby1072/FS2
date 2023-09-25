@@ -6,16 +6,59 @@
   },
   "basePath": "/",
   "definitions": {
+    "FishLimited": {
+      "type": "object",
+      "properties": {
+        "ScientificName": {
+          "type": ["string", "undefined"]
+        },
+        "A3Code": {
+          "type": ["string", "undefined"]
+        },
+        "EnglishName": {
+          "type": ["string", "undefined"]
+        },
+        "Nickname": {
+          "type": ["string", "undefined"]
+        },
+        "Isscaap": {
+          "type": ["number", "undefined"]
+        },
+        "Taxocode": {
+          "type": "string"
+        }
+      }
+    },
     "User": {
       "type": "object",
       "properties": {
-        "email": {
+        "Username": {
           "type": "string"
         },
-        "pass": {
+        "Email": {
           "type": "string"
         },
-        "phoneNum": {
+        "PasswordHash": {
+          "type": "string"
+        },
+        "PhoneNumber": {
+          "type": ["string", "undefined"]
+        },
+        "Description": {
+          "type": ["string", "undefined"]
+        },
+        "Name": {
+          "type": ["string", "undefined"]
+        }
+      }
+    },
+    "UsernamePassword": {
+      "type": "object",
+      "properties": {
+        "Username": {
+          "type": "string"
+        },
+        "Password": {
           "type": "string"
         }
       }
@@ -28,12 +71,22 @@
         "tags": ["User"],
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "schema": {
+              "$ref": "#/definitions/UsernamePassword"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful login",
             "schema": {
-              "$ref": "#/definitions/User"
+              "Token": {
+                "type": "string"
+              }
             }
           }
         }
@@ -45,12 +98,22 @@
         "tags": ["User"],
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful registration",
             "schema": {
-              "$ref": "#/definitions/User"
+              "Token": {
+                "type": "string"
+              }
             }
           }
         }
@@ -62,12 +125,22 @@
         "tags": ["User"],
         "consumes": ["application/json"],
         "produces": ["application/json"],
-        "parameters": [],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "User information updated",
             "schema": {
-              "$ref": "#/definitions/User"
+              "Token": {
+                "type": "string"
+              }
             }
           }
         }
@@ -85,6 +158,22 @@
           },
           "404": {
             "description": "No user to delete"
+          }
+        }
+      }
+    },
+    "/worldfish/all": {
+      "get": {
+        "summary": "Get all fish from the database",
+        "tags": ["World fish"],
+        "produces": ["application/json"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "FishInfo",
+            "schema": {
+              "$ref": "#/definitions/FishLimited"
+            }
           }
         }
       }
