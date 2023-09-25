@@ -24,7 +24,9 @@ export default class WorldFishController extends BaseController<WorldFishService
     return this._app.get(
       "/worldfish/all",
       this._applyDefaultMiddleWares(async (req, resp, user) => {
-        resp.status(200).json(await this._service.GetAllFish());
+        resp
+          .status(200)
+          .json((await this._service.GetAllFish()).map((x) => x.ToJson()));
       })
     );
   }
@@ -33,15 +35,16 @@ export default class WorldFishController extends BaseController<WorldFishService
       "/worldfish/fish",
       this._applyDefaultMiddleWares(async (req, resp, user) => {
         const userFish = new Fish(req.body);
-        resp.status(200).json(await this._service.GetFullFish(userFish));
+        const extendedFish = await this._service.GetFullFish(userFish);
+        resp.status(200).json(extendedFish.ToJson());
       })
     );
   }
   public GetSimilarFish() {
     return this._app.get(
-      "/worldfish/similar",
+      "/worldfish/similar/",
       this._applyDefaultMiddleWares(async (req, resp, userToke) => {
-        const searchTerm = req.params.searchTerm;
+        const searchTerm = req.query.searchTerm;
         if (
           !(typeof searchTerm === "string" && /^[A-Za-z\s]*$/.test(searchTerm))
         ) {
@@ -52,7 +55,11 @@ export default class WorldFishController extends BaseController<WorldFishService
         }
         resp
           .status(200)
-          .json(await this._service.SearchForSimilarLocalFish(searchTerm));
+          .json(
+            (await this._service.SearchForSimilarLocalFish(searchTerm)).map(
+              (x) => x.ToJson()
+            )
+          );
       })
     );
   }

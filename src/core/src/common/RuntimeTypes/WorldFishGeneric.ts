@@ -41,18 +41,11 @@ export class Fish extends BaseRuntime implements WorldFishGenericSchemaType {
     return WorldFishGenericEntity.ParseAsync(this.ToJson());
   }
   public async GetExtendedFish() {
-    const [speciesInfo, speciesNumbers] = await Promise.all([
-      WorldFishApiServiceProvider.GetFishInfo(
-        this.EnglishName ? this.EnglishName : ""
-      ),
-      WorldFishApiServiceProvider.GetSpeciesNumbers(
-        this.A3Code ? this.A3Code : ""
-      ),
-    ]);
+    const speciesNumbers = await WorldFishApiServiceProvider.GetSpeciesNumbers(
+      this.A3Code ? this.A3Code : ""
+    );
     return new FishExtended({
       ...this,
-      SpeciesPhoto: speciesInfo?.SpeciesPhoto,
-      PhysicalDescription: speciesInfo?.PhysicalDescription,
       SpeciesNumbers: speciesNumbers,
     });
   }
@@ -82,6 +75,7 @@ export class FishExtended extends Fish {
     super(fishExtended);
     this.PhysicalDescription = fishExtended.PhysicalDescription;
     this.SpeciesPhoto = fishExtended.SpeciesPhoto;
+    this.SpeciesNumbers = fishExtended.SpeciesNumbers;
     return this;
   }
 }

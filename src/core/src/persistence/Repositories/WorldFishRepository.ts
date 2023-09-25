@@ -12,9 +12,15 @@ export default class WorldFishRepository extends BaseRepository<
   ): Promise<Fish[]> {
     return this._repo
       .createQueryBuilder("w")
-      .where(`w.english_name ${exact ? "=" : "LIKE"} :name`, { anyName })
-      .orWhere(`w.scientific_name ${exact ? "=" : "LIKE"} :name`, { anyName })
-      .orWhere(`w.nickname ${exact ? "=" : "LIKE"} :name`, { anyName })
+      .where(`w.english_name ${exact ? "=" : "LIKE"} :anyName`, {
+        anyName: exact ? anyName : `%${anyName}%`,
+      })
+      .orWhere(`w.scientific_name ${exact ? "=" : "LIKE"} :anyName`, {
+        anyName: exact ? anyName : `%${anyName}%`,
+      })
+      .orWhere(`w.nickname ${exact ? "=" : "LIKE"} :anyName`, {
+        anyName: exact ? anyName : `%${anyName}%`,
+      })
       .getMany()
       .then((x) => Promise.all(x.map((y) => y.ToRuntimeTypeAsync())));
   }

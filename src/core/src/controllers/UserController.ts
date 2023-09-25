@@ -3,7 +3,6 @@ import BaseController from "./BaseController";
 import User from "../common/RuntimeTypes/User";
 import UserService from "../services/UserService";
 import { UsernamePassword } from "./RequestBodySchema/UsernamePassword";
-import { DeepPartial } from "../common/DeepPartial";
 import { UserType } from "../common/RuntimeTypes/Schemas/UserSchema";
 
 export default class UserController extends BaseController<UserService> {
