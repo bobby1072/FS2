@@ -3,59 +3,70 @@ import UserEntity from "../Entities/UserEntity";
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
-export default class UserRepository extends BaseRepository<UserEntity> {
-  public async UserExists(email: string): Promise<boolean> {
+export default class UserRepository extends BaseRepository<UserEntity, User> {
+  public async UserUnique({
+    email,
+    username,
+    phoneNumber,
+  }: {
+    email: string;
+    username: string;
+    phoneNumber?: string;
+  }) {
+    return this._repo
+      .createQueryBuilder("u")
+      .where("u.username = :username", { username })
+      .orWhere("u.email = :email", { email })
+      .orWhere("u.phone_number = :phoneNumber", { phoneNumber })
+      .getOne()
+      .then((x) => !!x);
+  }
+  public async UserExists({
+    username,
+  }: {
+    username: string;
+  }): Promise<boolean> {
     const dbUser = await this._repo
       .createQueryBuilder("u")
-      .where("u.email = :email", { email: email })
+      .where("u.username = :username", { username })
       .getOne();
     if (!dbUser) {
       return false;
     }
     return true;
   }
-  public async GetAllUsers(): Promise<User[]> {
+  public async Get(
+    user: User | string,
+    options: { includeUserRole: boolean } = { includeUserRole: false }
+  ): Promise<User | undefined> {
     return this._repo
-      .find()
-      .then((users) => users.map((x) => x.ToRunTimeType()));
-  }
-  public async Get(user: User | string): Promise<User | undefined> {
-    return this._repo
-      .createQueryBuilder("u")
-      .where("u.email = :email", {
-        email: typeof user === "string" ? user : user.Email,
+      .findOne({
+        where: {
+          Username: typeof user === "string" ? user : user.Username,
+        },
+        relations: {
+          Role: options.includeUserRole,
+        },
       })
-      .getOne()
-      .then((dbUser) => dbUser?.ToRunTimeTypeAsync());
+      .then((dbUser) => dbUser?.ToRuntimeTypeAsync());
   }
   public async Create(user: User): Promise<User | undefined> {
-    await this._repo.save(await user.ToEntityAsync());
-    return this.Get(user);
+    return (
+      await this._repo.save(await user.ToEntityAsync())
+    ).ToRuntimeTypeAsync();
   }
   public async Delete(user: string | User): Promise<boolean> {
     return this._repo
       .createQueryBuilder()
       .delete()
-      .where("email = :email", {
-        email: typeof user === "string" ? user : user.Email,
+      .where("username = :username", {
+        username: typeof user === "string" ? user : user.Username,
       })
       .from("user")
       .execute()
-      .then((data) => !!data.affected)
+      .then((data) => true)
       .catch((error) => {
         throw new ApiError(Constants.ExceptionMessages.failedToDeleteUser, 500);
-      });
-  }
-  public async Update(newUser: User, oldEmail: string): Promise<Boolean> {
-    return this._repo
-      .createQueryBuilder()
-      .update(UserEntity)
-      .set(await newUser.ToEntityAsync())
-      .where("email = :email", { email: oldEmail })
-      .execute()
-      .then((data) => !!data.affected)
-      .catch((error) => {
-        throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
       });
   }
 }

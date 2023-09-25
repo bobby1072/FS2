@@ -1,29 +1,35 @@
 import compression from "compression";
 import express, { Application } from "express";
-import cors from "cors";
 import bodyParser from "body-parser";
 import BaseController from "./controllers/BaseController";
 import { DataSource } from "typeorm";
 import UserEntity from "./persistence/Entities/UserEntity";
-import UserController from "./controllers/UserController";
 import UserRepository from "./persistence/Repositories/UserRepository";
 import { serve, setup } from "swagger-ui-express";
 import UserService from "./services/UserService";
 import CronJobService from "./services/CronJobService/CronJobService";
 import { ICronJobService } from "./services/CronJobService/ICronJobService";
-import ApiError from "./common/ApiError";
-import Constants from "./common/Constants";
-import BaseEntity from "./persistence/Entities/BaseEntity";
 import BaseRepository from "./persistence/Repositories/BaseRepository";
 import BaseService from "./services/BaseService";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { BaseEntity } from "./persistence/Entities/BaseEntity";
+import UserRoleEntity from "./persistence/Entities/UserRoleEntity";
+import PermissionEntity from "./persistence/Entities/PermissionEntity";
+import UserRoleRepository from "./persistence/Repositories/UserRoleRepository";
+import PermissionRepository from "./persistence/Repositories/PermissionRepository";
+import BaseRuntime from "./common/RuntimeTypes/BaseRuntime";
+import UserController from "./controllers/UserController";
+import WorldFishService from "./services/WorldFishService/WorldFishService";
+import WorldFishRepository from "./persistence/Repositories/WorldFishRepository";
+import WorldFishGenericEntity from "./persistence/Entities/WorldFishGenericEntity";
+import WorldFishController from "./controllers/WorldFishController";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;
   private static readonly _app: Application = express();
-  private static readonly _pgClient: DataSource = new DataSource({
+  private static readonly _dbClient: DataSource = new DataSource({
     type: "postgres",
-    database: "main",
+    database: "fs",
     synchronize: true,
     schema: "public",
     username: process.env.MAINDBUSER ?? "postgres",
@@ -31,12 +37,16 @@ abstract class Program {
     ssl: false,
     port: Number(process.env.POSTGRESPORT) || 5560,
     host: process.env.POSTGRESHOST ?? "localhost",
-    entities: [UserEntity],
+    entities: [
+      UserEntity,
+      UserRoleEntity,
+      PermissionEntity,
+      WorldFishGenericEntity,
+    ],
     namingStrategy: new SnakeNamingStrategy(),
   });
   public static async Main(): Promise<void> {
     Program._app.use(compression());
-    Program._app.use(cors());
     Program._app.use(bodyParser.urlencoded({ extended: true }));
     Program._app.use(bodyParser.json());
     if (process.env.NODE_ENV === "development") {
@@ -44,45 +54,48 @@ abstract class Program {
       console.log(`\nSwagger available at /api-docs\n`);
     }
 
-    await this._pgClient.initialize().then((x) => {
+    await this._dbClient.initialize().then((x) => {
       console.log(
-        `\nDB connection initialised\n${x.options.database}\n${x.options.type}\n`
+        `\nDB connection initialised\n\n${x.options.database}\n${x.options.type}\n`
       );
     });
 
-    const [userRepo] = [
-      new UserRepository(this._pgClient.getRepository(UserEntity)),
+    const [userRepo, userRoleRepo, permissionRepo, worldFishRepo] = [
+      new UserRepository(this._dbClient.getRepository(UserEntity)),
+      new UserRoleRepository(this._dbClient.getRepository(UserRoleEntity)),
+      new PermissionRepository(this._dbClient.getRepository(PermissionEntity)),
+      new WorldFishRepository(
+        this._dbClient.getRepository(WorldFishGenericEntity)
+      ),
     ];
 
-    const [userService] = [new UserService(userRepo)];
+    const [userService, worldFishService] = [
+      new UserService(userRepo, userRoleRepo),
+      new WorldFishService(worldFishRepo),
+    ];
 
     const controllers: BaseController<
-      BaseEntity,
-      BaseRepository<BaseEntity>,
-      BaseService<BaseRepository<BaseEntity>>
-    >[] = [new UserController(userService, this._app)];
+      BaseService<BaseRepository<BaseEntity, BaseRuntime>>
+    >[] = [
+      new UserController(userService, Program._app),
+      new WorldFishController(worldFishService, this._app),
+    ];
 
     const jobService: ICronJobService = new CronJobService(
       userService,
-      this._pgClient
+      this._dbClient,
+      worldFishService
     );
 
-    await jobService.RegisterAllJobs().then((jobs) => {
-      if (jobs === true) {
-        console.log(`\nAll Jobs successfully registered\n`);
-      } else {
-        throw new ApiError(
-          Constants.ExceptionMessages.failedToRegisterJobs,
-          500
-        );
-      }
+    await jobService.RegisterAllJobs().then(() => {
+      console.log(`\nAll Jobs successfully registered\n`);
     });
 
-    await Promise.all(controllers.map(async (x) => x.InvokeRoutes())).then(
-      () => {
-        console.log("\nControllers invoked\n");
-      }
-    );
+    await Promise.all(
+      controllers.map((x) => (async () => x.InvokeRoutes())())
+    ).then(() => {
+      console.log("\nControllers invoked\n");
+    });
 
     this._app.listen(this._portVar, "0.0.0.0", () => {
       console.log(`\n\nServer running on port: ${this._portVar}\n\n`);

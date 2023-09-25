@@ -1,4 +1,4 @@
-import { Application, Request, Response, application } from "express";
+import { Application, Request, Response } from "express";
 import TokenData from "../common/RuntimeTypes/TokenData";
 import User from "../common/RuntimeTypes/User";
 import Constants from "../common/Constants";
@@ -6,19 +6,44 @@ import ApiError from "../common/ApiError";
 import { ZodError } from "zod";
 import BaseService from "../services/BaseService";
 import BaseRepository from "../persistence/Repositories/BaseRepository";
-import BaseEntity from "../persistence/Entities/BaseEntity";
+import { BaseEntity } from "../persistence/Entities/BaseEntity";
+import BaseRuntime from "../common/RuntimeTypes/BaseRuntime";
+import UserService from "../services/UserService";
 
 export default abstract class BaseController<
-  TEntity extends BaseEntity,
-  TRepo extends BaseRepository<TEntity>,
-  TService extends BaseService<TRepo>
+  TService extends BaseService<BaseRepository<BaseEntity, BaseRuntime>>
 > {
   protected readonly _app: Application;
   protected readonly _service: TService;
-  constructor(service: TService, app: Application) {
+  protected readonly _userService?: UserService;
+  constructor(service: TService, app: Application, userService?: UserService) {
     this._service = service;
     this._app = app;
+    this._userService = userService;
     return this;
+  }
+  protected _addAuthHandlingWithFullUser(
+    routeFunc: (
+      req: Request,
+      resp: Response,
+      userToken: TokenData,
+      userFull: User
+    ) => Promise<void>
+  ) {
+    return this._addAuthHandling(async (req, resp, token) => {
+      const instanceCheck = this._service instanceof UserService;
+      if (instanceCheck || this._userService) {
+        const userServ = instanceCheck
+          ? (this._service as any)
+          : (this._userService as UserService);
+        const foundUser = await userServ.LoginUserFromTokenWithoutPassword(
+          token
+        );
+        await routeFunc(req, resp, token, foundUser);
+      } else {
+        throw new Error();
+      }
+    });
   }
   protected _addAuthHandling(
     routeFunc: (
@@ -29,9 +54,9 @@ export default abstract class BaseController<
   ) {
     return async (req: Request, resp: Response) => {
       if (!req.headers.authorization) {
-        throw new ApiError(Constants.ExceptionMessages.invalidToken);
+        throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
       }
-      const userToke = User.DecodeToken(req.headers.authorization);
+      const userToke = await User.DecodeTokenAsync(req.headers.authorization);
       await routeFunc(req, resp, userToke);
     };
   }
@@ -44,22 +69,22 @@ export default abstract class BaseController<
       try {
         await routeFunc(req, resp);
       } catch (e) {
-        if (e instanceof Error && e.message) {
-          message = e.message;
-        }
         if (e instanceof ApiError && e.Status) {
+          message = e.message;
           status = e.Status;
         }
         if (e instanceof ZodError) {
-          status = 401;
+          status = 422;
           message = e.issues.reduce((acc, val) => {
             if (val.message === "Required") {
               return `${acc} Required values for ${val.path
                 .map((x, index, array) => {
                   if (array.length > 1) {
-                    return index === array.length - 1 ? `and ${x}` : `, ${x}`;
+                    return index === array.length - 1
+                      ? `and '${x}'`
+                      : `, '${x}'`;
                   } else {
-                    return x;
+                    return `'${x}'`;
                   }
                 })
                 .join("")}.`;
@@ -72,7 +97,7 @@ export default abstract class BaseController<
       }
     };
   }
-  protected abstract _applyMiddleWare?(
+  protected abstract _applyDefaultMiddleWares?(
     routeFunc: (req: Request, resp: Response) => Promise<void>
   ): (req: Request, resp: Response) => Promise<void>;
   public abstract InvokeRoutes(): void;

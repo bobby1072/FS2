@@ -1,17 +1,23 @@
 import { CronJob } from "cron";
-import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import UserService from "../UserService";
 import { ICronJobService } from "./ICronJobService";
 import CronUtils from "../../utils/CronUtils";
 import { DataSource } from "typeorm";
+import WorldFishService from "../WorldFishService/WorldFishService";
 
 export default class CronJobService implements ICronJobService {
   private readonly _userService: UserService;
   private readonly _dataSource: DataSource;
-  constructor(userService: UserService, dataSource: DataSource) {
+  private readonly _worldFishService: WorldFishService;
+  constructor(
+    userService: UserService,
+    dataSource: DataSource,
+    worldFishService: WorldFishService
+  ) {
     this._userService = userService;
     this._dataSource = dataSource;
+    this._worldFishService = worldFishService;
     return this;
   }
   public async RegisterAllJobs(): Promise<boolean> {
@@ -23,28 +29,26 @@ export default class CronJobService implements ICronJobService {
     ])
       .then((data) => data.every((x) => !!x))
       .catch((err) => {
-        throw new ApiError(
-          Constants.ExceptionMessages.failedToRegisterJobs,
-          500
-        );
+        throw new Error(Constants.ExceptionMessages.failedToRegisterJobs);
       });
   }
   public async RegisterHourlyJobs(): Promise<boolean> {
-    const initialiseDbJob = new CronJob(CronUtils.Hourly(), () =>
-      this._dataSource.initialize()
-    );
-
-    initialiseDbJob.start();
-    if (initialiseDbJob.running) {
-      return true;
-    } else {
-      return false;
-    }
+    return true;
   }
   public async RegisterDailyJobs(): Promise<boolean> {
     return true;
   }
   public async RegisterWeeklyJobs(): Promise<boolean> {
+    const migrateWorldFishToDbJob = new CronJob(
+      CronUtils.Weekly(),
+      () => this._worldFishService.MigrateJsonFishDataToDb(),
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      true
+    );
+
     const ensureAdminJob = new CronJob(
       CronUtils.Weekly(),
       () => this._userService.EnsureAdminUser(),
@@ -55,8 +59,10 @@ export default class CronJobService implements ICronJobService {
       true
     );
 
+    migrateWorldFishToDbJob.start();
     ensureAdminJob.start();
-    if (ensureAdminJob.running) {
+
+    if (ensureAdminJob.running && migrateWorldFishToDbJob.running) {
       return true;
     } else {
       return false;

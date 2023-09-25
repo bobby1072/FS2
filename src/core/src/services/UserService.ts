@@ -1,56 +1,80 @@
-import { appendFile } from "fs/promises";
 import ApiError from "../common/ApiError";
 import Constants from "../common/Constants";
+import TokenData from "../common/RuntimeTypes/TokenData";
 import User from "../common/RuntimeTypes/User";
+import { UsernamePasswordType } from "../controllers/RequestBodySchema/UsernamePassword";
+import UserEntity from "../persistence/Entities/UserEntity";
 import UserRepository from "../persistence/Repositories/UserRepository";
+import UserRoleRepository from "../persistence/Repositories/UserRoleRepository";
 import BaseService from "./BaseService";
 
 export default class UserService extends BaseService<UserRepository> {
-  public async EnsureAdminUser(): Promise<User> {
-    const foundAdmin = await this._repo.Get("admin@null.null");
-    const newAdmin = new User({
-      email: "admin@null.null",
-      pass: process.env.ADMIN_PASSWORD ?? "admin",
-    });
-    if (!foundAdmin) {
-      const dbAdmin = await this._repo.Create(newAdmin);
-      if (!dbAdmin) {
-        throw new ApiError(Constants.ExceptionMessages.failedToCreateUser, 500);
-      }
-      return dbAdmin;
-    } else {
-      return this.UpdateUser(newAdmin, "admin@null.null");
-    }
+  private readonly _userRoleRepo: UserRoleRepository;
+  constructor(superRepo: UserRepository, userRoleRepo: UserRoleRepository) {
+    super(superRepo);
+    this._userRoleRepo = userRoleRepo;
+    return this;
   }
-  public async LoginUser(user: User): Promise<User> {
-    const foundUser = await this._repo.Get(user);
-    if (!foundUser) {
+  public async EnsureAdminUser(): Promise<User> {
+    const newAdmin = new User({
+      Email: "admin@null.null",
+      PasswordHash: process.env.ADMIN_PASSWORD ?? "admin",
+      RoleName: Constants.UserRoleNames.admin,
+      Username: "AdminUser123",
+      Verified: true,
+      CreatedAt: new Date(),
+    });
+    newAdmin.HashPassword();
+    const dbAdmin = await this._repo.Create(newAdmin);
+    if (!dbAdmin) {
+      throw new Error(Constants.ExceptionMessages.failedToCreateAdmin);
+    }
+    return dbAdmin;
+  }
+  public async UpdateUser(
+    newUser: User,
+    username: string,
+    options: { updateUsername?: boolean; existingUser?: User } = {
+      updateUsername: undefined,
+      existingUser: undefined,
+    }
+  ): Promise<User> {
+    const userExist = options.existingUser
+      ? options.existingUser
+      : await this._repo.Get(username);
+    if (!userExist) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
-    if (
-      User.isHashedPasswordEqualTo(user.PasswordHash, foundUser.PasswordHash)
-    ) {
-      return foundUser;
-    } else {
-      throw new ApiError(Constants.ExceptionMessages.inncorrectPassword, 401);
+    if (!options.updateUsername) {
+      newUser.Username = userExist.Username;
     }
-  }
-  public async RegisterUser(user: User): Promise<User> {
-    const userExist = await this._repo.UserExists(user.Email);
-    if (userExist) {
-      throw new ApiError(Constants.ExceptionMessages.userAlreadyExists, 403);
+    if (newUser.PasswordHash !== userExist.PasswordHash) {
+      newUser.HashPassword();
     }
-    user.HashPassword();
-    const dbNewUser = await this._repo.Create(user);
-    if (!dbNewUser) {
-      throw new ApiError(Constants.ExceptionMessages.failedToCreateUser, 500);
+    newUser.ApplyStandards(userExist);
+    const safeUser = new User(newUser);
+
+    const updated = options.updateUsername
+      ? await this._repo.UpdatePrimaryKeyOfRecord(
+          userExist.Username,
+          safeUser,
+          UserEntity,
+          "username"
+        )
+      : await this._repo.Create(safeUser);
+    const createdDbUser =
+      updated instanceof User
+        ? updated
+        : await this._repo.Get(safeUser.Username);
+    if (!createdDbUser) {
+      throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
     }
-    return dbNewUser;
+    return createdDbUser;
   }
   public async DeleteUser(user: User | string): Promise<void> {
-    const userExist = await this._repo.UserExists(
-      typeof user === "string" ? user : user.Email
-    );
+    const userExist = await this._repo.UserExists({
+      username: typeof user === "string" ? user : user.Username,
+    });
     if (!userExist) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
@@ -59,26 +83,47 @@ export default class UserService extends BaseService<UserRepository> {
       throw new ApiError(Constants.ExceptionMessages.failedToDeleteUser, 500);
     }
   }
-  public async UpdateUser(newUser: User, userEmail: string): Promise<User> {
-    const userExist = await this._repo.Get(userEmail);
-    if (!userExist) {
-      throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
-    }
-    const safeUser = new User({
-      email: newUser.Email,
-      pass: newUser.PasswordHash,
-      createdAt: userExist.CreatedAt,
-      phoneNum: newUser.PhoneNumber,
+  public async RegisterUser(user: User): Promise<User> {
+    const userExist = await this._repo.UserUnique({
+      username: user.Username,
+      email: user.Email,
+      phoneNumber: user.PhoneNumber ? user.PhoneNumber : undefined,
     });
-    safeUser.HashPassword();
-    const updated = await this._repo.Update(safeUser, userEmail);
-    if (!updated) {
-      throw new ApiError(Constants.ExceptionMessages.failedToUpdateUser, 500);
+    if (userExist) {
+      throw new ApiError(Constants.ExceptionMessages.userAlreadyExists, 403);
     }
-    const dbUser = await this._repo.Get(newUser.Email);
-    if (!dbUser) {
+    user.ApplyStandards({});
+    user.HashPassword();
+    const dbNewUser = await this._repo.Create(user);
+    if (!dbNewUser) {
+      throw new ApiError(Constants.ExceptionMessages.failedToCreateUser, 500);
+    }
+    return dbNewUser;
+  }
+  public async LoginUser(user: User | UsernamePasswordType): Promise<User> {
+    const userUsername = user instanceof User;
+    const foundUser = await this._repo.Get(userUsername ? user : user.Username);
+    if (!foundUser) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
-    return dbUser;
+    if (
+      User.isHashedPasswordEqualTo(
+        userUsername ? user.PasswordHash : user.Password,
+        foundUser.PasswordHash
+      )
+    ) {
+      return foundUser;
+    } else {
+      throw new ApiError(Constants.ExceptionMessages.inncorrectPassword, 401);
+    }
+  }
+  public async LoginUserFromTokenWithoutPassword(
+    user: TokenData
+  ): Promise<User> {
+    const foundUser = await this._repo.Get(user.user);
+    if (!foundUser) {
+      throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
+    }
+    return foundUser;
   }
 }
