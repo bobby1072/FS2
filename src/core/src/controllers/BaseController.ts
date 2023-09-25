@@ -56,7 +56,9 @@ export default abstract class BaseController<
       if (!req.headers.authorization) {
         throw new ApiError(Constants.ExceptionMessages.invalidToken, 401);
       }
-      const userToke = await User.DecodeTokenAsync(req.headers.authorization);
+      const userToke = await TokenData.DecodeTokenAsync(
+        req.headers.authorization
+      );
       await routeFunc(req, resp, userToke);
     };
   }
@@ -69,11 +71,12 @@ export default abstract class BaseController<
       try {
         await routeFunc(req, resp);
       } catch (e) {
-        if (e instanceof ApiError && e.Status) {
+        if (e instanceof ApiError) {
           message = e.message;
-          status = e.Status;
-        }
-        if (e instanceof ZodError) {
+          if (e.Status) {
+            status = e.Status;
+          }
+        } else if (e instanceof ZodError) {
           status = 422;
           message = e.issues.reduce((acc, val) => {
             if (val.message === "Required") {
