@@ -4,7 +4,7 @@ import BaseController from "./BaseController";
 import TokenData from "../common/RuntimeTypes/TokenData";
 import ApiError from "../common/ApiError";
 import Constants from "../common/Constants";
-import Fish from "../common/RuntimeTypes/WorldFishGeneric";
+import { Fish } from "../common/RuntimeTypes/WorldFishGeneric";
 
 export default class WorldFishController extends BaseController<WorldFishService> {
   protected _applyDefaultMiddleWares(
@@ -52,7 +52,7 @@ export default class WorldFishController extends BaseController<WorldFishService
         }
         resp
           .status(200)
-          .send(await this._service.SearchForSimilarLocalFish(searchTerm));
+          .json(await this._service.SearchForSimilarLocalFish(searchTerm));
       })
     );
   }

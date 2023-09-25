@@ -5,12 +5,8 @@ import {
   WorldFishGenericSchema,
   WorldFishGenericSchemaType,
 } from "./Schemas/WorldFishSchema";
-import FishExtended from "./WorldFishExtended";
 
-export default class Fish
-  extends BaseRuntime
-  implements WorldFishGenericSchemaType
-{
+export class Fish extends BaseRuntime implements WorldFishGenericSchemaType {
   private readonly _schema = WorldFishGenericSchema;
   public readonly ScientificName?: string | null;
   public readonly A3Code?: string | null;
@@ -70,5 +66,22 @@ export default class Fish
       ? engName.replace(fishNameAka[0], " ")
       : engName;
     return { englishName: fishNameFixed, alias: aka };
+  }
+}
+export class FishExtended extends Fish {
+  public readonly PhysicalDescription?: string | null;
+  public readonly SpeciesPhoto?: string | null;
+  public readonly SpeciesNumbers?: object[] | null;
+  constructor(
+    fishExtended: WorldFishGenericSchemaType & {
+      PhysicalDescription?: string | null;
+      SpeciesPhoto?: string | null;
+      SpeciesNumbers?: object[] | null;
+    }
+  ) {
+    super(fishExtended);
+    this.PhysicalDescription = fishExtended.PhysicalDescription;
+    this.SpeciesPhoto = fishExtended.SpeciesPhoto;
+    return this;
   }
 }

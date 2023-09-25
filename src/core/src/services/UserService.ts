@@ -51,8 +51,7 @@ export default class UserService extends BaseService<UserRepository> {
     if (newUser.PasswordHash !== userExist.PasswordHash) {
       newUser.HashPassword();
     }
-    newUser.CreatedAt = userExist.CreatedAt;
-    newUser.RoleName = userExist.RoleName;
+    newUser.ApplyStandards(userExist);
     const safeUser = new User(newUser);
 
     const updated = options.updateUsername
@@ -93,8 +92,7 @@ export default class UserService extends BaseService<UserRepository> {
     if (userExist) {
       throw new ApiError(Constants.ExceptionMessages.userAlreadyExists, 403);
     }
-    user.CreatedAt = new Date();
-    user.RoleName = Constants.UserRoleNames.standardUser;
+    user.ApplyStandards({});
     user.HashPassword();
     const dbNewUser = await this._repo.Create(user);
     if (!dbNewUser) {

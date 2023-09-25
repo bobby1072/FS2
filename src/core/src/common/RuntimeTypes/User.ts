@@ -7,8 +7,21 @@ import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
 import BaseRuntime from "./BaseRuntime";
 import UserRole from "./UserRole";
-import { DeepPartial } from "../DeepPartial";
 export default class User extends BaseRuntime implements UserType {
+  public ApplyStandards({
+    CreatedAt = new Date(),
+    Verified = false,
+    RoleName = Constants.UserRoleNames.standardUser,
+  }: {
+    CreatedAt?: Date;
+    Verified?: boolean;
+    RoleName?: string;
+  }) {
+    this.Verified = Verified;
+    this.CreatedAt = CreatedAt;
+    this.RoleName = RoleName;
+    return this;
+  }
   private static readonly _schema = UserSchema;
   public Email: string;
   public Username: string;

@@ -4,7 +4,7 @@ import {
   WorldFishGenericDbSchemaType,
 } from "../Schemas/WorldFishSchema";
 import { BaseEntity } from "./BaseEntity";
-import Fish from "../../common/RuntimeTypes/WorldFishGeneric";
+import { Fish } from "../../common/RuntimeTypes/WorldFishGeneric";
 
 @Entity({ name: "world_fish" })
 export default class WorldFishGenericEntity
