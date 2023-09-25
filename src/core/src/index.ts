@@ -23,6 +23,7 @@ import WorldFishService from "./services/WorldFishService/WorldFishService";
 import WorldFishRepository from "./persistence/Repositories/WorldFishRepository";
 import WorldFishGenericEntity from "./persistence/Entities/WorldFishGenericEntity";
 import WorldFishController from "./controllers/WorldFishController";
+import MigrationService from "./services/MigrationService";
 const SwaggerDoc = require("./swagger.json");
 abstract class Program {
   private static readonly _portVar: number = Number(process.env.PORT) || 5000;
@@ -59,6 +60,8 @@ abstract class Program {
         `\nDB connection initialised\n\n${x.options.database}\n${x.options.type}\n`
       );
     });
+    const migrationService = new MigrationService(this._dbClient.manager);
+    await migrationService.RunMigrations();
 
     const [userRepo, userRoleRepo, permissionRepo, worldFishRepo] = [
       new UserRepository(this._dbClient.getRepository(UserEntity)),
@@ -96,7 +99,6 @@ abstract class Program {
     ).then(() => {
       console.log("\nControllers invoked\n");
     });
-
     this._app.listen(this._portVar, "0.0.0.0", () => {
       console.log(`\n\nServer running on port: ${this._portVar}\n\n`);
     });

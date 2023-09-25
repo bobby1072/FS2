@@ -92,7 +92,7 @@ export default class UserService extends BaseService<UserRepository> {
     if (userExist) {
       throw new ApiError(Constants.ExceptionMessages.userAlreadyExists, 403);
     }
-    user.ApplyStandards({});
+    user.ApplyStandards();
     user.HashPassword();
     const dbNewUser = await this._repo.Create(user);
     if (!dbNewUser) {

@@ -16,7 +16,7 @@ export default class User extends BaseRuntime implements UserType {
     CreatedAt?: Date;
     Verified?: boolean;
     RoleName?: string;
-  }) {
+  } = {}) {
     this.Verified = Verified;
     this.CreatedAt = CreatedAt;
     this.RoleName = RoleName;
