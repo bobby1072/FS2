@@ -1,22 +1,23 @@
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
-import { WorldFishGenericSchemaType } from "../../common/RuntimeTypes/Schemas/WorldFishSchema";
 import { Fish, FishExtended } from "../../common/RuntimeTypes/WorldFishGeneric";
 import WorldFishRepository from "../../persistence/Repositories/WorldFishRepository";
 import BaseService from "../BaseService";
 export default class WorldFishService extends BaseService<WorldFishRepository> {
   public async MigrateJsonFishDataToDb(): Promise<void> {
     const allFish: Fish[] = require("../../data/allFish.json").map(
-      (x: WorldFishGenericSchemaType) => new Fish(x)
+      (x: any) =>
+        new Fish({
+          Taxocode: x.taxocode,
+          A3Code: x.a3_code,
+          EnglishName: x.english_name,
+          Isscaap: Number(x.isscaap) ? x.isscaap : undefined,
+          ScientificName: x.scientific_name,
+        })
     );
     const allDbFish = await this._repo.GetAll();
-    await this._repo.Create(
-      allFish
-        .filter((x) => !allDbFish.includes(x))
-        .filter((x, index, array) => {
-          const cleanedArray = array.splice(index, index);
-          return !cleanedArray.some((y) => y.Isscaap === x.Isscaap);
-        })
+    const savedFish = await this._repo.Create(
+      allFish.filter((x) => !allDbFish.includes(x))
     );
   }
   public async SearchForSimilarLocalFish(searchTerm: string): Promise<Fish[]> {
