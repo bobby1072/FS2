@@ -29,7 +29,4 @@ export default class PermissionEntity
     tempObj.Buzzword = Buzzword;
     return tempObj;
   }
-  public static async ParseAsync(val: any): Promise<PermissionEntity> {
-    return PermissionEntity.ParseSync(val);
-  }
 }

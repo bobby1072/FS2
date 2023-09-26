@@ -1,12 +1,11 @@
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
 import { UserSchema, UserType } from "./Schemas/UserSchema";
-import { sign, verify } from "jsonwebtoken";
-import ApiError from "../ApiError";
 import Constants from "../Constants";
 import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
 import BaseRuntime from "./BaseRuntime";
 import UserRole from "./UserRole";
+import PublicUser from "./PublicUser";
 export default class User extends BaseRuntime implements UserType {
   public ApplyStandards({
     CreatedAt = new Date(),
@@ -89,7 +88,7 @@ export default class User extends BaseRuntime implements UserType {
     return UserEntity.ParseSync(this.ToJson());
   }
   public async ToEntityAsync(): Promise<UserEntity> {
-    return UserEntity.ParseAsync(this.ToJson());
+    return UserEntity.ParseSync(this.ToJson());
   }
   public HashPassword(): string {
     this.PasswordHash = hashSync(this.PasswordHash, genSaltSync());
@@ -100,5 +99,11 @@ export default class User extends BaseRuntime implements UserType {
     passHash: string
   ): boolean {
     return compareSync(stringPass, passHash);
+  }
+  public GetSafeUser(): PublicUser {
+    return new PublicUser({ ...this });
+  }
+  public async GetSafeUserAsync(): Promise<PublicUser> {
+    return new PublicUser({ ...this });
   }
 }

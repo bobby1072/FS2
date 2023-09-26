@@ -19,6 +19,6 @@ export default class Permission extends BaseRuntime implements PermissionType {
     return PermissionEntity.ParseSync(this.ToJson());
   }
   public async ToEntityAsync(): Promise<PermissionEntity> {
-    return PermissionEntity.ParseAsync(this.ToJson());
+    return PermissionEntity.ParseSync(this.ToJson());
   }
 }

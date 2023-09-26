@@ -33,7 +33,4 @@ export default class UserRoleEntity
     tempObj.RoleName = RoleName;
     return tempObj;
   }
-  public static async ParseAsync(val: any): Promise<UserRoleEntity> {
-    return UserRoleEntity.ParseSync(val);
-  }
 }
