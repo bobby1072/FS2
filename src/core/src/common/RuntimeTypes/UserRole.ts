@@ -1,4 +1,3 @@
-import { BaseEntity } from "../../persistence/Entities/BaseEntity";
 import UserRoleEntity from "../../persistence/Entities/UserRoleEntity";
 import { DeepPartial } from "../DeepPartial";
 import BaseRuntime from "./BaseRuntime";
