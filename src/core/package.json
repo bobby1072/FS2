@@ -11,7 +11,7 @@
     "prettier-format": "prettier --config .prettierrc ./src/*.ts --write",
     "build": "tsc",
     "check-types": "tsc --noemit --p tsconfig.json",
-    "start:dev": "set NODE_ENV=development&& nodemon"
+    "start:dev": "set DEBUG=express:*&& set NODE_ENV=development&& nodemon"
   },
   "keywords": [],
   "author": "",

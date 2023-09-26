@@ -15,8 +15,8 @@ export default abstract class BaseController<
 > {
   protected readonly _app: Application;
   protected readonly _service: TService;
-  protected readonly _userService?: UserService;
-  constructor(service: TService, app: Application, userService?: UserService) {
+  protected readonly _userService: UserService;
+  constructor(service: TService, app: Application, userService: UserService) {
     this._service = service;
     this._app = app;
     this._userService = userService;
@@ -31,18 +31,9 @@ export default abstract class BaseController<
     ) => Promise<void>
   ) {
     return this._addAuthHandling(async (req, resp, token) => {
-      const instanceCheck = this._service instanceof UserService;
-      if (instanceCheck || this._userService) {
-        const userServ = instanceCheck
-          ? (this._service as any)
-          : (this._userService as UserService);
-        const foundUser = await userServ.LoginUserFromTokenWithoutPassword(
-          token
-        );
-        await routeFunc(req, resp, token, foundUser);
-      } else {
-        throw new Error();
-      }
+      const foundUser =
+        await this._userService.LoginUserFromTokenWithoutPassword(token);
+      await routeFunc(req, resp, token, foundUser);
     });
   }
   protected _addAuthHandling(

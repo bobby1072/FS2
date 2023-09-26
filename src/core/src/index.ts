@@ -82,8 +82,8 @@ abstract class Program {
     const controllers: BaseController<
       BaseService<BaseRepository<BaseEntity, BaseRuntime>>
     >[] = [
-      new UserController(userService, Program._app),
-      new WorldFishController(worldFishService, this._app),
+      new UserController(userService, Program._app, userService),
+      new WorldFishController(worldFishService, this._app, userService),
     ];
 
     const jobService: ICronJobService = new CronJobService(
@@ -101,6 +101,7 @@ abstract class Program {
     ).then(() => {
       console.log("\nControllers invoked\n");
     });
+
     this._app.listen(this._portVar, "0.0.0.0", () => {
       console.log(`\n\nServer running on port: ${this._portVar}\n\n`);
     });
