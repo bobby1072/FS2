@@ -30,7 +30,7 @@ export default class PublicUser implements PublicUserType {
     return this;
   }
   public ToJson(): any {
-    const parsObj = this as any;
+    const parsObj = { ...this };
     if ("_schema" in parsObj) {
       parsObj._schema = undefined;
     }

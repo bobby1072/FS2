@@ -3,6 +3,7 @@ import UserEntity from "../Entities/UserEntity";
 import ApiError from "../../common/ApiError";
 import Constants from "../../common/Constants";
 import BaseRepository from "./BaseRepository";
+import { In } from "typeorm";
 export default class UserRepository extends BaseRepository<UserEntity, User> {
   public async UserUnique({
     email,
@@ -49,6 +50,23 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
         },
       })
       .then((dbUser) => dbUser?.ToRuntimeTypeAsync());
+  }
+  public async GetManyByUsername(
+    user: string[],
+    options: { includeUserRole: boolean } = { includeUserRole: false }
+  ): Promise<User[]> {
+    return this._repo
+      .find({
+        where: {
+          Username: In(user),
+        },
+        relations: {
+          Role: options.includeUserRole,
+        },
+      })
+      .then((dbUsers) =>
+        Promise.all(dbUsers.map((dbUser) => dbUser.ToRuntimeTypeAsync()))
+      );
   }
   public async Create(user: User): Promise<User | undefined> {
     return (

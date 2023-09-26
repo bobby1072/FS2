@@ -2,7 +2,6 @@ import { sign, verify } from "jsonwebtoken";
 import ApiError from "../ApiError";
 import Constants from "../Constants";
 import { TokenDataSchema, TokenDataType } from "./Schemas/TokenDataSchema";
-import User from "./User";
 
 export default class TokenData implements TokenDataType {
   public readonly user: string;
