@@ -1,0 +1,25 @@
+[
+  {
+    "SubjectId": "f4b31d1d-6c6f-44f2-af6a-5f63f50e7a25",
+    "Username": "demo",
+    "Password": "demo",
+    "Claims": [
+      {
+        "Type": "name",
+        "Value": "Demo User"
+      },
+      {
+        "Type": "givenname",
+        "Value": "Demo"
+      },
+      {
+        "Type": "surname",
+        "Value": "User"
+      },
+      {
+        "Type": "emailaddress",
+        "Value": "demo@demo.com"
+      }
+    ]
+  }
+]
