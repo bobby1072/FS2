@@ -14,9 +14,7 @@ import BaseService from "./services/BaseService";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { BaseEntity } from "./persistence/Entities/BaseEntity";
 import UserRoleEntity from "./persistence/Entities/UserRoleEntity";
-import PermissionEntity from "./persistence/Entities/PermissionEntity";
 import UserRoleRepository from "./persistence/Repositories/UserRoleRepository";
-import PermissionRepository from "./persistence/Repositories/PermissionRepository";
 import BaseRuntime from "./common/RuntimeTypes/BaseRuntime";
 import UserController from "./controllers/UserController";
 import WorldFishService from "./services/WorldFishService/WorldFishService";
@@ -38,12 +36,7 @@ abstract class Program {
     ssl: false,
     port: Number(process.env.POSTGRESPORT) || 5560,
     host: process.env.POSTGRESHOST ?? "localhost",
-    entities: [
-      UserEntity,
-      UserRoleEntity,
-      PermissionEntity,
-      WorldFishGenericEntity,
-    ],
+    entities: [UserEntity, UserRoleEntity, WorldFishGenericEntity],
     namingStrategy: new SnakeNamingStrategy(),
   });
   public static async Main(): Promise<void> {
@@ -65,10 +58,9 @@ abstract class Program {
       console.log("\nMigrations complete\n");
     });
 
-    const [userRepo, userRoleRepo, permissionRepo, worldFishRepo] = [
+    const [userRepo, userRoleRepo, worldFishRepo] = [
       new UserRepository(this._dbClient.getRepository(UserEntity)),
       new UserRoleRepository(this._dbClient.getRepository(UserRoleEntity)),
-      new PermissionRepository(this._dbClient.getRepository(PermissionEntity)),
       new WorldFishRepository(
         this._dbClient.getRepository(WorldFishGenericEntity)
       ),
@@ -82,8 +74,8 @@ abstract class Program {
     const controllers: BaseController<
       BaseService<BaseRepository<BaseEntity, BaseRuntime>>
     >[] = [
-      new UserController(userService, Program._app),
-      new WorldFishController(worldFishService, this._app),
+      new UserController(userService, Program._app, userService),
+      new WorldFishController(worldFishService, this._app, userService),
     ];
 
     const jobService: ICronJobService = new CronJobService(
@@ -101,6 +93,7 @@ abstract class Program {
     ).then(() => {
       console.log("\nControllers invoked\n");
     });
+
     this._app.listen(this._portVar, "0.0.0.0", () => {
       console.log(`\n\nServer running on port: ${this._portVar}\n\n`);
     });

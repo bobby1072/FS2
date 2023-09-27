@@ -42,7 +42,4 @@ export default class WorldFishGenericEntity
     tempObj.Taxocode = Taxocode;
     return tempObj;
   }
-  public static async ParseAsync(val: any) {
-    return WorldFishGenericEntity.ParseSync(val);
-  }
 }

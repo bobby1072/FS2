@@ -1,5 +1,6 @@
 import ApiError from "../common/ApiError";
 import Constants from "../common/Constants";
+import PublicUser from "../common/RuntimeTypes/PublicUser";
 import TokenData from "../common/RuntimeTypes/TokenData";
 import User from "../common/RuntimeTypes/User";
 import { UsernamePasswordType } from "../controllers/RequestBodySchema/UsernamePassword";
@@ -14,6 +15,15 @@ export default class UserService extends BaseService<UserRepository> {
     super(superRepo);
     this._userRoleRepo = userRoleRepo;
     return this;
+  }
+  public async FindManySafeUsersByUsername(
+    usernames: string[]
+  ): Promise<PublicUser[]> {
+    const foundUsers = await this._repo.GetManyByUsername(usernames);
+    if (foundUsers.length <= 0) {
+      throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
+    }
+    return foundUsers.map((x) => x.GetSafeUser());
   }
   public async EnsureAdminUser(): Promise<User> {
     const newAdmin = new User({

@@ -22,7 +22,7 @@ export default class WorldFishRepository extends BaseRepository<
         anyName: exact ? anyName : `%${anyName}%`,
       })
       .getMany()
-      .then((x) => Promise.all(x.map((y) => y.ToRuntimeTypeAsync())));
+      .then((x) => x.map((y) => y.ToRuntimeTypeSync()));
   }
   public async GetOne(
     name: string,
@@ -35,9 +35,7 @@ export default class WorldFishRepository extends BaseRepository<
       .then((x) => x?.ToRuntimeTypeAsync());
   }
   public async Create(fish: Fish[]): Promise<Fish[]> {
-    const dbUSers = await this._repo.save(
-      await Promise.all(fish.map((x) => x.ToEntityAsync()))
-    );
-    return Promise.all(dbUSers.map((x) => x.ToRuntimeTypeAsync()));
+    const dbUSers = await this._repo.save(fish.map((x) => x.ToEntity()));
+    return dbUSers.map((x) => x.ToRuntimeTypeSync());
   }
 }

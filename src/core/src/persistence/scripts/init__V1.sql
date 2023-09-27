@@ -8,10 +8,6 @@ CREATE TABLE public.world_fish (
     nickname TEXT
 );
 
-CREATE TABLE public.permission (
-    buzzword TEXT PRIMARY KEY
-);
-
 CREATE TABLE public.user_role (
     role_name TEXT PRIMARY KEY,
     group_permissions TEXT[] NOT NULL
@@ -32,15 +28,6 @@ CREATE TABLE public.user (
 
 
 -- Inserting values
-INSERT INTO
-    public.permission(buzzword)
-VALUES
-    ('None'),
-    ('Read'),
-    ('Create'),
-    ('Update'),
-    ('Delete');
-
 INSERT INTO
     public.user_role(role_name, group_permissions)
 VALUES

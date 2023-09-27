@@ -7,25 +7,28 @@
   "basePath": "/",
   "definitions": {
     "FishLimited": {
-      "type": "object",
-      "properties": {
-        "ScientificName": {
-          "type": ["string", "undefined"]
-        },
-        "A3Code": {
-          "type": ["string", "undefined"]
-        },
-        "EnglishName": {
-          "type": ["string", "undefined"]
-        },
-        "Nickname": {
-          "type": ["string", "undefined"]
-        },
-        "Isscaap": {
-          "type": ["number", "undefined"]
-        },
-        "Taxocode": {
-          "type": "string"
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ScientificName": {
+            "type": ["string", "undefined"]
+          },
+          "A3Code": {
+            "type": ["string", "undefined"]
+          },
+          "EnglishName": {
+            "type": ["string", "undefined"]
+          },
+          "Nickname": {
+            "type": ["string", "undefined"]
+          },
+          "Isscaap": {
+            "type": ["number", "undefined"]
+          },
+          "Taxocode": {
+            "type": "string"
+          }
         }
       }
     },
@@ -74,7 +77,7 @@
         "parameters": [
           {
             "in": "body",
-            "name": "user",
+            "name": "username and password",
             "schema": {
               "$ref": "#/definitions/UsernamePassword"
             }
@@ -168,6 +171,59 @@
         "tags": ["World fish"],
         "produces": ["application/json"],
         "parameters": [],
+        "responses": {
+          "200": {
+            "description": "FishInfo",
+            "schema": {
+              "$ref": "#/definitions/FishLimited"
+            }
+          }
+        }
+      }
+    },
+    "/worldfish/fish": {
+      "get": {
+        "summary": "Get all fish from the database",
+        "tags": ["World fish"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Fish",
+            "schema": {
+              "$ref": "#/definitions/FishLimited"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "FishInfo",
+            "schema": {
+              "$ref": "#/definitions/FishLimited"
+            }
+          }
+        }
+      }
+    },
+    "/worldfish/similar": {
+      "get": {
+        "summary": "Get all fish from the database",
+        "tags": ["World fish"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Fish",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "searchTerm": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "FishInfo",

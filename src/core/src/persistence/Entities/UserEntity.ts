@@ -72,7 +72,4 @@ export default class UserEntity extends BaseEntity implements UserDbType {
     tempObj.CreatedAt = CreatedAt;
     return tempObj;
   }
-  public static async ParseAsync(val: any): Promise<UserEntity> {
-    return UserEntity.ParseSync(val);
-  }
 }

@@ -2,7 +2,6 @@ import { Column, Entity, PrimaryColumn } from "typeorm";
 import { UserRoleDBType, UserRoleDbSchema } from "../Schemas/UserRoleSchema";
 import { BaseEntity } from "./BaseEntity";
 import UserRole from "../../common/RuntimeTypes/UserRole";
-import PermissionEntity from "./PermissionEntity";
 
 @Entity({ name: "user_role" })
 export default class UserRoleEntity
@@ -32,8 +31,5 @@ export default class UserRoleEntity
     tempObj.GroupPermissions = GroupPermissions;
     tempObj.RoleName = RoleName;
     return tempObj;
-  }
-  public static async ParseAsync(val: any): Promise<UserRoleEntity> {
-    return UserRoleEntity.ParseSync(val);
   }
 }

@@ -22,7 +22,7 @@ export default class WorldFishService extends BaseService<WorldFishRepository> {
     await this._repo.Create(freshFish);
   }
   public async SearchForSimilarLocalFish(searchTerm: string): Promise<Fish[]> {
-    const alikeFish = await this._repo.GetMany(searchTerm, false);
+    const alikeFish = await this._repo.GetMany(searchTerm);
     if (alikeFish.length <= 0) {
       throw new ApiError(Constants.ExceptionMessages.noFishFound, 404);
     }

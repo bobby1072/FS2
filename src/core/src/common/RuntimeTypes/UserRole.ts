@@ -1,4 +1,3 @@
-import { BaseEntity } from "../../persistence/Entities/BaseEntity";
 import UserRoleEntity from "../../persistence/Entities/UserRoleEntity";
 import { DeepPartial } from "../DeepPartial";
 import BaseRuntime from "./BaseRuntime";
@@ -22,7 +21,7 @@ export default class UserRole extends BaseRuntime implements UserRoleType {
   public ToEntity(): UserRoleEntity {
     return UserRoleEntity.ParseSync(this.ToJson());
   }
-  public ToEntityAsync(): Promise<UserRoleEntity> {
-    return UserRoleEntity.ParseAsync(this.ToJson());
+  public async ToEntityAsync(): Promise<UserRoleEntity> {
+    return UserRoleEntity.ParseSync(this.ToJson());
   }
 }

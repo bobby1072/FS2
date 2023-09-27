@@ -26,7 +26,7 @@ enum Buzzwords {
   delete = "Delete",
   none = "None",
 }
-enum UserRoleNames {
+export enum UserRoleNames {
   admin = "AdminUser",
   standardUser = "StandardUser",
 }

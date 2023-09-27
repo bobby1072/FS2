@@ -1,12 +1,11 @@
 import { compareSync, genSaltSync, hashSync } from "bcryptjs";
 import { UserSchema, UserType } from "./Schemas/UserSchema";
-import { sign, verify } from "jsonwebtoken";
-import ApiError from "../ApiError";
-import Constants from "../Constants";
+import Constants, { UserRoleNames } from "../Constants";
 import TokenData from "./TokenData";
 import UserEntity from "../../persistence/Entities/UserEntity";
 import BaseRuntime from "./BaseRuntime";
 import UserRole from "./UserRole";
+import PublicUser from "./PublicUser";
 export default class User extends BaseRuntime implements UserType {
   public ApplyStandards({
     CreatedAt = new Date(),
@@ -19,7 +18,7 @@ export default class User extends BaseRuntime implements UserType {
   } = {}) {
     this.Verified = Verified;
     this.CreatedAt = CreatedAt;
-    this.RoleName = RoleName;
+    this.RoleName = RoleName as any;
     return this;
   }
   private static readonly _schema = UserSchema;
@@ -28,7 +27,7 @@ export default class User extends BaseRuntime implements UserType {
   public Name?: string | null;
   public Description?: string | null;
   public Verified: boolean;
-  public RoleName: string;
+  public RoleName: UserRoleNames;
   public Role?: UserRole | null;
   public PasswordHash: string;
   public PhoneNumber?: string | null;
@@ -73,7 +72,7 @@ export default class User extends BaseRuntime implements UserType {
     this.PasswordHash = PasswordHash;
     this.Description = Description;
     this.Role = role;
-    this.RoleName = RoleName;
+    this.RoleName = RoleName as any;
     this.Username = Username;
     this.Verified = Verified;
     this.Name = Name;
@@ -89,7 +88,7 @@ export default class User extends BaseRuntime implements UserType {
     return UserEntity.ParseSync(this.ToJson());
   }
   public async ToEntityAsync(): Promise<UserEntity> {
-    return UserEntity.ParseAsync(this.ToJson());
+    return UserEntity.ParseSync(this.ToJson());
   }
   public HashPassword(): string {
     this.PasswordHash = hashSync(this.PasswordHash, genSaltSync());
@@ -100,5 +99,11 @@ export default class User extends BaseRuntime implements UserType {
     passHash: string
   ): boolean {
     return compareSync(stringPass, passHash);
+  }
+  public GetSafeUser(): PublicUser {
+    return new PublicUser({ ...this });
+  }
+  public async GetSafeUserAsync(): Promise<PublicUser> {
+    return new PublicUser({ ...this });
   }
 }

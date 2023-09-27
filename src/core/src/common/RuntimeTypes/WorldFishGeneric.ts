@@ -38,7 +38,7 @@ export class Fish extends BaseRuntime implements WorldFishGenericSchemaType {
     return WorldFishGenericEntity.ParseSync(this.ToJson());
   }
   public async ToEntityAsync(): Promise<WorldFishGenericEntity> {
-    return WorldFishGenericEntity.ParseAsync(this.ToJson());
+    return WorldFishGenericEntity.ParseSync(this.ToJson());
   }
   public async GetExtendedFish() {
     const speciesNumbers = await WorldFishApiServiceProvider.GetSpeciesNumbers(
