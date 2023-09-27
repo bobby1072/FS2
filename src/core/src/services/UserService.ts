@@ -23,7 +23,7 @@ export default class UserService extends BaseService<UserRepository> {
     if (foundUsers.length <= 0) {
       throw new ApiError(Constants.ExceptionMessages.noUserFound, 404);
     }
-    return Promise.all(foundUsers.map((x) => x.GetSafeUserAsync()));
+    return foundUsers.map((x) => x.GetSafeUser());
   }
   public async EnsureAdminUser(): Promise<User> {
     const newAdmin = new User({

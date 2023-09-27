@@ -17,7 +17,7 @@ export default abstract class BaseRepository<
     return this._repo
       .createQueryBuilder()
       .getMany()
-      .then((x) => Promise.all(x.map((y) => y.ToRuntimeTypeAsync() as any)));
+      .then((x) => x.map((y) => y.ToRuntimeTypeSync() as any));
   }
   public async UpdatePrimaryKeyOfRecord(
     oldPrimaryKey: any,

@@ -64,9 +64,7 @@ export default class UserRepository extends BaseRepository<UserEntity, User> {
           Role: options.includeUserRole,
         },
       })
-      .then((dbUsers) =>
-        Promise.all(dbUsers.map((dbUser) => dbUser.ToRuntimeTypeAsync()))
-      );
+      .then((dbUsers) => dbUsers.map((dbUser) => dbUser.ToRuntimeTypeSync()));
   }
   public async Create(user: User): Promise<User | undefined> {
     return (

@@ -1,3 +1,4 @@
+
 CREATE TABLE public.group (
     group_id uuid PRIMARY KEY DEFAULT gen_random_uuid()
 );
@@ -7,5 +8,5 @@ CREATE TABLE public.custom_marker (
     raw_json TEXT NOT NULL,
     custom_marker_image BYTEA,
     group_id uuid NOT NULL,
-    CONSTRAINT fk_group_id FOREIGN (group_id) REFERENCES public.group(group_id)
+    CONSTRAINT fk_group_id FOREIGN KEY (group_id) REFERENCES public.group(group_id)
 );
