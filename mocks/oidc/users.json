@@ -13,7 +13,8 @@
         "Value": "test@example.com"
       },
       {
-        "email_verified": "True"
+        "Type": "email_verified",
+        "Value": "True"
       }
     ]
   }
