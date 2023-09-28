@@ -1,4 +1,5 @@
 ﻿using EvolveDb;
+using EvolveDb.Migration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
@@ -8,10 +9,12 @@ namespace Persistence.Migrations
     {
         private readonly ILogger<DatabaseMigrations> _logger;
         private readonly string _connectionString;
-        public DatabaseMigrations(ILogger<DatabaseMigrations> logger, string connectionUrl)
+        private readonly string _startVersion;
+        public DatabaseMigrations(ILogger<DatabaseMigrations> logger, string connectionUrl, string startVersion)
         {
             _logger = logger;
             _connectionString = connectionUrl;
+            _startVersion = startVersion;
         }
         public async Task Migrate()
         {
@@ -20,6 +23,7 @@ namespace Persistence.Migrations
             {
                 EmbeddedResourceAssemblies = new[] { typeof(DatabaseMigrations).Assembly },
                 EnableClusterMode = true,
+                StartVersion=new MigrationVersion(_startVersion),
                 IsEraseDisabled= true,
                 MetadataTableName = "migrations_changelog",
                 OutOfOrder = true

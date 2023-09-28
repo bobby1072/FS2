@@ -2,6 +2,7 @@ using Common;
 using Common.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Persistence;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,9 +35,10 @@ builder.Services
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
 builder.Services
-    .AddAuthorization();
+    .AddSqlPersistence(config);
 
 builder.Services
+    .AddAuthorization()
     .Configure<AuthoritySettings>(config.GetSection(AuthoritySettings.Key))
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 

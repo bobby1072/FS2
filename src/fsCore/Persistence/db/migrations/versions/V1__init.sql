@@ -1,4 +1,3 @@
--- Creating tables
 CREATE TABLE public.world_fish (
     scientific_name TEXT,
     taxocode TEXT PRIMARY KEY,
@@ -11,11 +10,11 @@ CREATE TABLE public.world_fish (
 CREATE TABLE public.user (
     name TEXT,
     email_verified BOOLEAN DEFAULT false,
-    email TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE
 );
 
 
-CREATE TABLE public.group (
+CREATE TABLE public."group" (
     group_id uuid PRIMARY KEY DEFAULT gen_random_uuid()
 );
 
