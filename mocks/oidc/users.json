@@ -9,16 +9,11 @@
         "Value": "Demo User"
       },
       {
-        "Type": "givenname",
-        "Value": "Demo"
+        "Type": "email",
+        "Value": "test@example.com"
       },
       {
-        "Type": "surname",
-        "Value": "User"
-      },
-      {
-        "Type": "emailaddress",
-        "Value": "demo@demo.com"
+        "email_verified": "True"
       }
     ]
   }

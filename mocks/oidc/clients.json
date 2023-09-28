@@ -1,7 +1,7 @@
 [
   {
-    "ClientId": "fs-local",
-    "Description": "FS client for implicit flow",
+    "ClientId": "fs-local-top",
+    "Description": "FS top level client",
     "AllowedGrantTypes": ["authorization_code"],
     "AllowAccessTokensViaBrowser": true,
     "RedirectUris": [
@@ -12,7 +12,7 @@
       "http://localhost:5000/oidc-signin",
       "http://localhost:5000/oidc-silent-renew"
     ],
-    "AllowedScopes": ["openid", "profile", "email"],
+    "AllowedScopes": ["openid", "profile", "email", "FSAPI", "GroupAdmin"],
     "RequireClientSecret": false,
     "IdentityTokenLifetime": 3600,
     "AccessTokenLifetime": 3600
