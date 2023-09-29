@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Common.Authentication;
 
-namespace Core.Controllers
+namespace FsCore.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
