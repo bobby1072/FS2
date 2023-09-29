@@ -2,27 +2,36 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Common.Authentication;
+using System.Runtime.InteropServices;
 
 namespace FsCore.Controllers
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
+    [Route("api/[controller]")]
     [AllowAnonymous]
-    public class ClientConfigController : Controller
+    public class ClientConfigController : BaseController
     {
         private readonly ClientConfigSettings _clientConfigSettings;
         public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings)
         {
             _clientConfigSettings = clientConfigSettings?.Value ?? throw new ArgumentNullException(nameof(clientConfigSettings));
         }
+        [ProducesDefaultResponseType(typeof(ClientConfigurationResponse))]
         [HttpGet]
-        public ClientConfigurationResponse Get()
+        public async Task<IActionResult> Get()
         {
-            return new ClientConfigurationResponse(
-                _clientConfigSettings.ApiHost,
-                _clientConfigSettings.AuthorityHost,
-                _clientConfigSettings.AuthorityScope,
-                _clientConfigSettings.AuthorityClientId);
+            try
+            {
+                return Ok(new ClientConfigurationResponse(
+                    _clientConfigSettings.ApiHost,
+                    _clientConfigSettings.AuthorityHost,
+                    _clientConfigSettings.AuthorityScope,
+                    _clientConfigSettings.AuthorityClientId));
+            }
+            catch (Exception e)
+            {
+                return await _routeErrorHandler(e);
+            }
         }
     }
 
