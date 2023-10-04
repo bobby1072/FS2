@@ -18,7 +18,7 @@ var issuerHost = config["JWT_ISSUER_HOST"];
 var authAudience = config["JWT_AUDIENCE"];
 
 
-if(string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience))
+if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(authAudience))
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }

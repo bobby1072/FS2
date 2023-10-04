@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Persistence.Migrations;
 using Persistence.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using Common.Dbinterfaces.Repository;
+using Persistence.EntityFramework.Repository;
 
 namespace Persistence
 {
@@ -15,7 +17,7 @@ namespace Persistence
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             var migrationStartVersion = configuration["Migration:StartVersion"];
-            if (string.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(migrationStartVersion))
             {
                 throw new Exception(ErrorConstants.MissingEnvVars);
             }
@@ -23,6 +25,9 @@ namespace Persistence
 
             services
                 .AddSingleton<IMigrator, DatabaseMigrations>(sp => new DatabaseMigrations(sp.GetRequiredService<ILoggerFactory>().CreateLogger<DatabaseMigrations>(), connectionString, migrationStartVersion));
+
+            services
+                .AddSingleton<IWorldFishRepository, WorldFishRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()
@@ -47,7 +52,7 @@ namespace Persistence
                 .AddHealthChecks();
 
             services
-                .AddScoped(sp => sp.GetRequiredService<IDbContextFactory<FsContext>>().CreateDbContext());
+                .AddScoped(sp => sp.GetRequiredService<IDbContextFactory<FsContext>>().CreateDbContextAsync());
 
             return services;
         }
