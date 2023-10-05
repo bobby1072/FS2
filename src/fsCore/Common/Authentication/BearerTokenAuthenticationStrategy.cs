@@ -23,7 +23,7 @@ namespace Common.Authentication
             get
             {
                 var value = GetHttpContext().User.Claims.FirstOrDefault(claim => claim.Type == ExpiryClaimKey)?.Value;
-                if (value == null) return null;
+                if (value is null) return null;
                 return Math.Abs(long.Parse(value) - DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             }
         }
@@ -31,11 +31,7 @@ namespace Common.Authentication
         {
             get
             {
-                var authHeaderValue = GetHttpContext().GetAuthorizationHeaderValue();
-                if (authHeaderValue == null)
-                {
-                    throw new InvalidOperationException("No authorization header found");
-                }
+                var authHeaderValue = GetHttpContext().GetAuthorizationHeaderValue() ?? throw new InvalidOperationException("No authorization header found");
                 return Tuple.Create(HttpRequestHeader.Authorization.ToString(), authHeaderValue);
             }
         }

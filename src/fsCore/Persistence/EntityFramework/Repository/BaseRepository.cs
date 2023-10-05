@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Common;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,35 @@ namespace Persistence.EntityFramework.Repository
                 var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName).Equals(field));
                 var runtimeObj = foundOne?.ToRuntime();
                 if (runtimeObj is TBase correctOBj)
+                {
+                    return correctOBj;
+                }
+                return null;
+            }
+            else
+            {
+                throw new Exception(ErrorConstants.FieldNotFound);
+            }
+        }
+        public async Task<ICollection<TBase>?> GetSomeLike<TField>(TField field, string fieldName)
+        {
+            var myProps = typeof(TEnt).GetProperties();
+            var foundDetail = myProps.FirstOrDefault(x =>
+            {
+                var xType = x.GetType();
+                return x.Name == fieldName && typeof(TField) == x.PropertyType;
+            });
+            if (foundDetail != null)
+            {
+                await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+                Expression<Func<TEnt, bool>> likePredicate = x =>
+                           EF.Property<TField>(x, fieldName).ToString().Contains(field.ToString());
+
+                var similarItems = await dbContext.Set<TEnt>()
+                    .Where(likePredicate)
+                    .ToListAsync();
+                var runtimeObj = similarItems?.Select(x => x.ToRuntime()).ToArray();
+                if (runtimeObj is ICollection<TBase> correctOBj)
                 {
                     return correctOBj;
                 }

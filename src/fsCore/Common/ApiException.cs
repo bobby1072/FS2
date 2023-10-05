@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Common
 {
-    public class ApiException: Exception
+    public class ApiException : Exception
     {
         public HttpStatusCode? StatusCode { get; set; }
-        public ApiException(string? message, HttpStatusCode? status): base(message)
+        public ApiException(string? message = null, HttpStatusCode? status = null) : base(message)
         {
             StatusCode = status;
         }
