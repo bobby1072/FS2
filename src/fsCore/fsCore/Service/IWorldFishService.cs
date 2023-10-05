@@ -10,6 +10,7 @@ namespace fsCore.Service
         Task<WorldFish> FindOne(WorldFish fish);
         Task<WorldFish> FindOne(string fishProp, string propertyName);
         Task<WorldFish> FindOne(int isscaap);
-        //Task<WorldFish> GetFullFish(WorldFish fish);
+        Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false);
+        Task MigrateJsonFishToDb();
     }
 }

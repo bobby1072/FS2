@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json;
 using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
@@ -8,6 +9,24 @@ namespace fsCore.Service
     public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
+        public async Task MigrateJsonFishToDb()
+        {
+            var file = File.ReadAllText(@"../Common/Data/allFish.json");
+            var allFileFish = JsonSerializer.Deserialize<ICollection<WorldFish>>(file) ?? throw new Exception();
+            var allDbFish = await _repo.GetAll();
+            if (allDbFish is null)
+            {
+                await _repo.Create(allFileFish);
+            }
+            else
+            {
+                var fishToCreate = allFileFish.Where(x => !allDbFish.Any(y => y.Taxocode == x.Taxocode));
+                if (fishToCreate is not null)
+                {
+                    await _repo.Create(fishToCreate.ToArray());
+                }
+            }
+        }
         public async Task<ICollection<WorldFish>> AllFish()
         {
             var allFish = await _repo.GetAll();
@@ -41,6 +60,16 @@ namespace fsCore.Service
         public async Task<WorldFish> FindOne(int isscaap)
         {
             return await _repo.GetOne(isscaap, typeof(WorldFish).GetProperty("Isscaap")?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+        }
+        public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)
+        {
+            var foundCopy = await _repo.GetOne(newFish);
+            if (foundCopy is not null)
+            {
+                throw new ApiException(ErrorConstants.FishAlreadyExists, HttpStatusCode.Conflict);
+            }
+            var createdFish = await _repo.Create(new List<WorldFish> { newFish }) ?? throw new ApiException(ErrorConstants.FailedToCreateFish);
+            return includeFish ? createdFish.FirstOrDefault() : null;
         }
     }
 }

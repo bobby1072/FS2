@@ -32,7 +32,7 @@ namespace Persistence.EntityFramework.Repository
                 var xType = x.GetType();
                 return x.Name == fieldName && typeof(TField) == x.PropertyType;
             });
-            if (foundDetail != null)
+            if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
                 var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName).Equals(field));
@@ -56,7 +56,7 @@ namespace Persistence.EntityFramework.Repository
                 var xType = x.GetType();
                 return x.Name == fieldName && typeof(TField) == x.PropertyType;
             });
-            if (foundDetail != null)
+            if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
                 Expression<Func<TEnt, bool>> likePredicate = x =>
