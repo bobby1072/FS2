@@ -5,7 +5,7 @@ using Common.Authentication;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
-namespace FsCore.Controllers
+namespace fsCore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

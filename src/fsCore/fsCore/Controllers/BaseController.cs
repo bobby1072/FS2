@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 
-namespace FsCore.Controllers
+namespace fsCore.Controllers
 {
     public class BaseController : ControllerBase
     {

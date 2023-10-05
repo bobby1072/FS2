@@ -1,4 +1,3 @@
-using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,5 @@ namespace Persistence.EntityFramework.Repository
         public Task<ICollection<WorldFish>?> Create(ICollection<WorldFish> fishToCreate) => _create(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToArray());
         public Task<ICollection<WorldFish>?> Update(ICollection<WorldFish> fishToCreate) => _update(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToArray());
         public Task<ICollection<WorldFish>?> Delete(ICollection<WorldFish> fishToCreate) => _delete(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToArray());
-
-
     }
 }

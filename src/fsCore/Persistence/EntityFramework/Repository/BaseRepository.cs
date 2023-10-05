@@ -53,7 +53,7 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             await set.AddRangeAsync(entObj);
             await dbContext.SaveChangesAsync();
-            var createdRuntime = dbContext.Set<TEnt>().Local.FirstOrDefault()?.ToRuntime();
+            var createdRuntime = set.Local.FirstOrDefault()?.ToRuntime();
             if (createdRuntime is ICollection<TBase> correctRuntime)
             {
                 return correctRuntime;
@@ -67,7 +67,7 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             set.RemoveRange(entObj);
             await dbContext.SaveChangesAsync();
-            var createdRuntime = dbContext.Set<TEnt>().Local.FirstOrDefault()?.ToRuntime();
+            var createdRuntime = set.Local.FirstOrDefault()?.ToRuntime();
             if (createdRuntime is ICollection<TBase> correctRuntime)
             {
                 return correctRuntime;
@@ -81,7 +81,7 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             set.UpdateRange(entObj);
             await dbContext.SaveChangesAsync();
-            var createdRuntime = dbContext.Set<TEnt>().Local.FirstOrDefault()?.ToRuntime();
+            var createdRuntime = set.Local.FirstOrDefault()?.ToRuntime();
             if (createdRuntime is ICollection<TBase> correctRuntime)
             {
                 return correctRuntime;
