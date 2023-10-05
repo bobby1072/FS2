@@ -1,5 +1,7 @@
 using Common;
 using Common.Authentication;
+using fsCore.Service;
+using fsCore.Service.Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
@@ -29,6 +31,7 @@ builder.Services
     .AddResponseCompression()
     .AddLogging()
     .AddHttpClient()
+    .AddLogging()
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddControllers()
@@ -67,6 +70,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.ForwardDefaultSelector = (context) => JwtBearerDefaults.AuthenticationScheme;
     });
 
+
+builder.Services
+    .AddScoped<IWorldFishService, WorldFishService>()
+    .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 var app = builder.Build();
 

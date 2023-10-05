@@ -13,7 +13,7 @@ namespace Persistence.EntityFramework.Repository
         {
             _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
         }
-        public async Task<ICollection<TBase>> GetAll()
+        public async Task<ICollection<TBase>?> GetAll()
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var foundAllEnts = await dbContext.Set<TEnt>().ToArrayAsync();
@@ -22,7 +22,7 @@ namespace Persistence.EntityFramework.Repository
             {
                 return correctArray;
             }
-            return new List<TBase>();
+            return null;
         }
         public async Task<TBase?> GetOne<TField>(TField field, string fieldName)
         {
