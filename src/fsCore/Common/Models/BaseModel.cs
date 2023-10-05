@@ -1,6 +1,6 @@
 namespace Common.Models
 {
-    public abstract class BaseRuntime
+    public abstract class BaseModel
     {
     }
 }

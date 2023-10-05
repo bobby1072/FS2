@@ -5,7 +5,7 @@ using Persistence.EntityFramework.Entity;
 
 namespace Persistence.EntityFramework.Repository
 {
-    internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity where TBase : BaseRuntime
+    internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity where TBase : BaseModel
     {
         protected readonly IDbContextFactory<FsContext> _dbContextFactory;
         public BaseRepository(IDbContextFactory<FsContext> dbContextFactory)

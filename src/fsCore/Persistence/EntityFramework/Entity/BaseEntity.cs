@@ -4,6 +4,6 @@ namespace Persistence.EntityFramework.Entity
 {
     public abstract class BaseEntity
     {
-        public abstract BaseRuntime ToRuntime();
+        public abstract BaseModel ToRuntime();
     }
 }

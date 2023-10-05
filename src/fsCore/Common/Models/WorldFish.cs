@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class WorldFish : BaseRuntime
+    public class WorldFish : BaseModel
     {
         public string Taxocode { get; set; }
         public string? ScientificName { get; set; }

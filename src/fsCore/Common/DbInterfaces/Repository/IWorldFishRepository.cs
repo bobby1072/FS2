@@ -9,5 +9,7 @@ namespace Common.Dbinterfaces.Repository
         Task<WorldFish?> GetOne<T>(T field, string fieldName);
         Task<ICollection<WorldFish>?> Update(ICollection<WorldFish> fishToUpdate);
         Task<ICollection<WorldFish>?> Delete(ICollection<WorldFish> fishToDelete);
+        Task<ICollection<WorldFish>?> FindSomeLike(string anyFish);
+        Task<ICollection<WorldFish>?> FindSomeLike(WorldFish fish);
     }
 }
