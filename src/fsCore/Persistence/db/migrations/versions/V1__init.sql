@@ -1,7 +1,7 @@
 CREATE TABLE public.world_fish (
     scientific_name TEXT,
     taxocode TEXT PRIMARY KEY,
-    isscaap INTEGER,
+    isscaap TEXT,
     a3_code TEXT,
     english_name TEXT,
     nickname TEXT

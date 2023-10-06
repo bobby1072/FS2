@@ -2,6 +2,8 @@ using Common;
 using Common.Authentication;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
+using Hangfire;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
@@ -15,12 +17,13 @@ var config = builder.Configuration;
 var enviroment = builder.Environment;
 
 var authOptions = config.GetSection(AuthoritySettings.Key).Get<AuthoritySettings>();
+var dbConnectString = config.GetConnectionString("DefaultConnection");
 var clientId = config["ClientConfig:AuthorityClientId"];
 var issuerHost = config["JWT_ISSUER_HOST"];
 var authAudience = config["JWT_AUDIENCE"];
 
 
-if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(authAudience))
+if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
@@ -70,18 +73,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.ForwardDefaultSelector = (context) => JwtBearerDefaults.AuthenticationScheme;
     });
 
-
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
+builder.Services
+    .AddHangfire(configuration => configuration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(dbConnectString))
+    .AddHangfireServer();
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
-    var hangfireJobService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
-    hangfireJobService.RegisterRecurringJobs();
+    var hangfireService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
+    hangfireService.RegisterRecurringJobs();
 }
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

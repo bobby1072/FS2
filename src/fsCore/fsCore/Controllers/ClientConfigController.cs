@@ -2,13 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Common.Authentication;
-using System.Runtime.InteropServices;
-using System.ComponentModel;
 
 namespace fsCore.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
     [AllowAnonymous]
     public class ClientConfigController : BaseController
     {

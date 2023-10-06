@@ -12,10 +12,10 @@ namespace Persistence.EntityFramework.Entity
         public string Taxocode { get; set; }
         [Column(TypeName = "TEXT")]
         public string? ScientificName { get; set; }
-        [Column(TypeName = "INTEGER")]
-        public int? Isscaap { get; set; }
         [Column(TypeName = "TEXT")]
-        public string? A3Code { get; set; }
+        public string? Isscaap { get; set; }
+        [Column(TypeName = "TEXT")]
+        public string? A3_code { get; set; }
         [Column(TypeName = "TEXT")]
         public string? EnglishName { get; set; }
         [Column(TypeName = "TEXT")]
@@ -24,7 +24,7 @@ namespace Persistence.EntityFramework.Entity
         {
             var tempObj = new WorldFishEntity()
             {
-                A3Code = originalObj.A3Code,
+                A3_code = originalObj.A3Code,
                 EnglishName = originalObj.EnglishName,
                 Isscaap = originalObj.Isscaap,
                 Nickname = originalObj.Nickname,
@@ -35,7 +35,7 @@ namespace Persistence.EntityFramework.Entity
         }
         public override WorldFish ToRuntime()
         {
-            return new WorldFish(Taxocode, Isscaap, A3Code, ScientificName, EnglishName, Nickname);
+            return new WorldFish(Taxocode, Isscaap, A3_code, ScientificName, EnglishName, Nickname);
         }
     }
 }

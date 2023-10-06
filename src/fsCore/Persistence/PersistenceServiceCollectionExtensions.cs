@@ -39,7 +39,7 @@ namespace Persistence
                 .AddPooledDbContextFactory<FsContext>(
                     options =>
                     options
-                        .UseCamelCaseNamingConvention()
+                        .UseSnakeCaseNamingConvention()
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                         .UseNpgsql(
                             connectionStringBuilder.ConnectionString,

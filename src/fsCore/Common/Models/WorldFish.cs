@@ -9,7 +9,7 @@ namespace Common.Models
         [JsonPropertyName("scientificName")]
         public string? ScientificName { get; set; }
         [JsonPropertyName("isscaap")]
-        public int? Isscaap { get; set; }
+        public string? Isscaap { get; set; }
         [JsonPropertyName("a3Code")]
         public string? A3Code { get; set; }
         [JsonPropertyName("englishName")]
@@ -17,14 +17,48 @@ namespace Common.Models
         [JsonPropertyName("nickname")]
         public string? Nickname { get; set; }
         [JsonConstructor]
-        public WorldFish(string taxocode, int? isscaap, string? a3Code, string? scientificName, string? englishName, string? nickName)
+        public WorldFish(string taxocode, string? isscaap, string? a3Code, string? scientificName, string? englishName, string? nickname)
         {
             Taxocode = taxocode;
             Isscaap = isscaap;
             A3Code = a3Code;
             ScientificName = scientificName;
             EnglishName = englishName;
-            Nickname = nickName;
+            Nickname = nickname;
         }
     }
+    public class JsonFileWorldFish
+    {
+        [JsonPropertyName("taxocode")]
+        public string Taxocode { get; set; }
+
+        [JsonPropertyName("scientific_name")]
+        public string? ScientificName { get; set; }
+
+        private string? _isscaap;
+        [JsonPropertyName("isscaap")]
+        public object? Isscaap
+        {
+            get => _isscaap;
+            set
+            {
+                _isscaap = value?.ToString();
+            }
+        }
+
+
+        [JsonPropertyName("a3_code")]
+        public string? A3Code { get; set; }
+
+        [JsonPropertyName("english_name")]
+        public string? EnglishName { get; set; }
+
+        [JsonPropertyName("nickname")]
+        public string? Nickname { get; set; }
+        public WorldFish ToWorldFishRegular()
+        {
+            return new WorldFish(Taxocode, _isscaap, A3Code, ScientificName, EnglishName, Nickname);
+        }
+    }
+
 }

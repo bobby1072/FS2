@@ -12,18 +12,19 @@ namespace fsCore.Service
         public async Task MigrateJsonFishToDb()
         {
             var file = File.ReadAllText(@"../Common/Data/allFish.json");
-            var allFileFish = JsonSerializer.Deserialize<ICollection<WorldFish>>(file) ?? throw new Exception();
+            var allFileFish = JsonSerializer.Deserialize<ICollection<JsonFileWorldFish>>(file) ?? throw new Exception();
+            var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToList();
             var allDbFish = await _repo.GetAll();
             if (allDbFish is null)
             {
-                await _repo.Create(allFileFish);
+                await _repo.Create(allWorldFishFromFile);
             }
             else
             {
-                var fishToCreate = allFileFish.Where(x => !allDbFish.Any(y => y.Taxocode == x.Taxocode));
-                if (fishToCreate is not null)
+                var fishToCreate = allWorldFishFromFile.Where(x => !allDbFish.Any(y => y.Taxocode == x.Taxocode)).ToList();
+                if (fishToCreate is not null && fishToCreate.Count > 0)
                 {
-                    await _repo.Create(fishToCreate.ToArray());
+                    await _repo.Create(fishToCreate);
                 }
             }
         }

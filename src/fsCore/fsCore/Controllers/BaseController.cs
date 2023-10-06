@@ -5,6 +5,8 @@ using System.Net;
 
 namespace fsCore.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class BaseController : ControllerBase
     {
 
