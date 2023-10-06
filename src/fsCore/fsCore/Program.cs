@@ -76,6 +76,11 @@ builder.Services
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var hangfireJobService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
+    hangfireJobService.RegisterRecurringJobs();
+}
 
 if (app.Environment.IsDevelopment())
 {

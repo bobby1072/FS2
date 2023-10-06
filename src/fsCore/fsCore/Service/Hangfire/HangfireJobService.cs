@@ -39,8 +39,12 @@ namespace fsCore.Service.Hangfire
         }
         public void RegisterMonthlyJobs()
         {
-            _recurringJobManager.AddOrUpdate<IWorldFishService>("Migrate fish to db", service => service.MigrateJsonFishToDb(), Cron.Monthly());
-            _backgroundJobs.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
+            _setUpWorldFishMigration(_recurringJobManager, _backgroundJobs);
+        }
+        public void _setUpWorldFishMigration(IRecurringJobManager recuringJobManager, IBackgroundJobClient backgroundJobManager)
+        {
+            backgroundJobManager.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
+            recuringJobManager.AddOrUpdate<IWorldFishService>("Migrate fish to db", service => service.MigrateJsonFishToDb(), Cron.Monthly());
         }
     }
 }
