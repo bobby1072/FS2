@@ -2,50 +2,23 @@ using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
-using System.Linq;
 namespace Persistence.EntityFramework.Repository
 {
-    internal class WorldFishRepository : BaseRepository<WorldFishEntity>, IWorldFishRepository
+    internal class WorldFishRepository : BaseRepository<WorldFishEntity, WorldFish>, IWorldFishRepository
     {
         public WorldFishRepository(IDbContextFactory<FsContext> dbContextFactory) : base(dbContextFactory) { }
-        public async Task<ICollection<WorldFish>?> GetAll()
-        {
-            var allBaseModel = await _getAll();
-            return allBaseModel?.Select(x => x as WorldFish).ToList();
-        }
-        public async Task<WorldFish?> GetOne<TField>(TField field, string fieldName)
-        {
-            var baseModel = await _getOne(field, fieldName);
-            return baseModel as WorldFish;
-        }
-        public async Task<ICollection<WorldFish>?> GetSomeLike<TField>(TField field, string fieldName)
-        {
-            var baseModel = await _getSomeLike(field, fieldName);
-            return baseModel?.Select(x => x as WorldFish).ToList();
-        }
-        public async Task<ICollection<WorldFish>?> Create(ICollection<WorldFish> fishToCreate)
-        {
-            var localModels = await _create(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
-            return localModels?.Select(x => x as WorldFish).ToList();
-        }
-        public async Task<ICollection<WorldFish>?> Update(ICollection<WorldFish> fishToCreate)
-        {
-            var localModels = await _update(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
-            return localModels?.Select(x => x as WorldFish).ToList();
-        }
-        public async Task<ICollection<WorldFish>?> Delete(ICollection<WorldFish> fishToCreate)
-        {
-            var localModels = await _delete(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
-            return localModels?.Select(x => x as WorldFish).ToList();
-        }
+        public Task<ICollection<WorldFish>?> GetSomeLike<TField>(TField field, string fieldName) => _getSomeLike(field, fieldName);
+        public Task<ICollection<WorldFish>?> Create(ICollection<WorldFish> fishToCreate) => _create(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
+        public Task<ICollection<WorldFish>?> Update(ICollection<WorldFish> fishToCreate) => _update(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
+        public Task<ICollection<WorldFish>?> Delete(ICollection<WorldFish> fishToCreate) => _delete(fishToCreate.Select(x => WorldFishEntity.RuntimeToEntity(x)).ToList());
         public async Task<ICollection<WorldFish>?> FindSomeLike(WorldFish fish)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var entity = WorldFishEntity.RuntimeToEntity(fish);
             var foundEnts = await dbContext.WorldFish
-                .Where(x => EF.Functions.Like(x.Nickname.ToLower(), entity.Nickname.ToLower())
-                || EF.Functions.Like(x.ScientificName.ToLower(), entity.ScientificName.ToLower())
-                || EF.Functions.Like(x.EnglishName.ToLower(), entity.EnglishName.ToLower()))
+                .Where(x => (fish.Nickname != null && x.Nickname != null && x.Nickname.ToLower().Contains(fish.Nickname.ToLower())) ||
+                            (fish.ScientificName != null && x.ScientificName != null && x.ScientificName.ToLower().Contains(fish.ScientificName.ToLower())) ||
+                            (fish.EnglishName != null && x.EnglishName != null && x.EnglishName.ToLower().Contains(fish.EnglishName.ToLower())))
                 .ToListAsync();
             return foundEnts?.Select(x => x.ToRuntime()).ToList();
         }
@@ -53,9 +26,9 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var foundEnts = await dbContext.WorldFish
-                .Where(x => EF.Functions.Like(x.Nickname.ToLower(), anyFish.ToLower())
-                || EF.Functions.Like(x.ScientificName.ToLower(), anyFish.ToLower())
-                || EF.Functions.Like(x.EnglishName.ToLower(), anyFish.ToLower()))
+                .Where(x => (x.Nickname != null && x.Nickname.ToLower().Contains(anyFish.ToLower())) ||
+                            (x.ScientificName != null && x.ScientificName.ToLower().Contains(anyFish.ToLower())) ||
+                            (x.EnglishName != null && x.EnglishName.ToLower().Contains(anyFish.ToLower())))
                 .ToListAsync();
             return foundEnts?.Select(x => x.ToRuntime()).ToList();
         }

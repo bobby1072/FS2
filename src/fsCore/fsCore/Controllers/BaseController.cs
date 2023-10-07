@@ -14,7 +14,7 @@ namespace fsCore.Controllers
         {
             if (error is ApiException apiException)
             {
-                return StatusCode(apiException.StatusCode.HasValue ? (int)apiException.StatusCode : (int)HttpStatusCode.InternalServerError, string.IsNullOrEmpty(apiException.Message) ? ErrorConstants.InternalServerError : apiException.Message);
+                return StatusCode((int)apiException.StatusCode, apiException.Message);
             }
             return StatusCode((int)HttpStatusCode.InternalServerError, string.IsNullOrEmpty(error.Message) ? ErrorConstants.InternalServerError : error.Message);
         }

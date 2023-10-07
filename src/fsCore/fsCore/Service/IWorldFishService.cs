@@ -9,7 +9,6 @@ namespace fsCore.Service
         Task<ICollection<WorldFish>> FindSomeLike(string fishAnyProperty);
         Task<WorldFish> FindOne(WorldFish fish);
         Task<WorldFish> FindOne(string fishProp, string propertyName);
-        Task<WorldFish> FindOne(int isscaap);
         Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false);
         Task MigrateJsonFishToDb();
     }

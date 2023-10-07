@@ -58,10 +58,6 @@ namespace fsCore.Service
             }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
             return await _repo.GetOne(fishProp, propertyName) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
-        public async Task<WorldFish> FindOne(int isscaap)
-        {
-            return await _repo.GetOne(isscaap, typeof(WorldFish).GetProperty("Isscaap")?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-        }
         public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)
         {
             var foundCopy = await _repo.GetOne(newFish);
