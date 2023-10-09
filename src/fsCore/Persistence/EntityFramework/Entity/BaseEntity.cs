@@ -2,8 +2,8 @@ using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity<TBase> where TBase : BaseModel
     {
-        public abstract BaseModel ToRuntime();
+        public abstract TBase ToRuntime();
     }
 }

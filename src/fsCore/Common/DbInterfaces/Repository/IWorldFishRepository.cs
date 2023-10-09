@@ -4,7 +4,7 @@ namespace Common.Dbinterfaces.Repository
 {
     public interface IWorldFishRepository
     {
-        Task<ICollection<WorldFish>> GetAll();
+        Task<ICollection<WorldFish>?> GetAll();
         Task<ICollection<WorldFish>?> Create(ICollection<WorldFish> fishToCreate);
         Task<WorldFish?> GetOne<T>(T field, string fieldName);
         Task<WorldFish?> GetOne(WorldFish fish);

@@ -73,11 +73,9 @@ namespace Common.Models
         [JsonPropertyName("english_name")]
         public string? EnglishName { get; set; }
 
-        [JsonPropertyName("nickname")]
-        public string? Nickname { get; set; }
         public WorldFish ToWorldFishRegular()
         {
-            return new WorldFish(Taxocode, _isscaap, A3Code, ScientificName, EnglishName, Nickname);
+            return new WorldFish(Taxocode, _isscaap, A3Code, ScientificName, EnglishName, null);
         }
     }
 

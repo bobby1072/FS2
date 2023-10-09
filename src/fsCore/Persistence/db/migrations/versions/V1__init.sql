@@ -8,9 +8,8 @@ CREATE TABLE public.world_fish (
 );
 
 CREATE TABLE public.user (
+    email TEXT PRIMARY KEY,
     name TEXT,
-    email_verified BOOLEAN DEFAULT false,
-    email TEXT NOT NULL UNIQUE
 );
 
  --- CREATE TABLE public.custom_marker (

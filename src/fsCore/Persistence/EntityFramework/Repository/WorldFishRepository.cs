@@ -31,11 +31,5 @@ namespace Persistence.EntityFramework.Repository
                 .ToListAsync();
             return foundEnts?.Select(x => x.ToRuntime()).ToList();
         }
-        public async Task<WorldFish?> GetOne(WorldFish fish)
-        {
-            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-            var foundFish = await dbContext.WorldFish.FirstOrDefaultAsync(x => WorldFishEntity.RuntimeToEntity(fish).Taxocode == x.Taxocode);
-            return foundFish?.ToRuntime();
-        }
     }
 }

@@ -7,7 +7,7 @@ using Persistence.EntityFramework.Entity;
 
 namespace Persistence.EntityFramework.Repository
 {
-    internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity where TBase : BaseModel
+    internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity<TBase> where TBase : BaseModel
     {
         protected readonly IDbContextFactory<FsContext> _dbContextFactory;
         public BaseRepository(IDbContextFactory<FsContext> dbContextFactory)
@@ -20,6 +20,17 @@ namespace Persistence.EntityFramework.Repository
             var foundAllEnts = await dbContext.Set<TEnt>().ToArrayAsync();
             var runtimeArray = foundAllEnts?.Select(x => x.ToRuntime()).ToArray();
             return runtimeArray?.OfType<TBase>().ToList();
+        }
+        public async Task<TBase?> GetOne(TBase baseUser)
+        {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => x.ToRuntime().Equals(baseUser));
+            var runtimeObj = foundOne?.ToRuntime();
+            if (runtimeObj is TBase correctOBj)
+            {
+                return correctOBj;
+            }
+            return null;
         }
         public async Task<TBase?> GetOne<TField>(TField field, string fieldName)
         {

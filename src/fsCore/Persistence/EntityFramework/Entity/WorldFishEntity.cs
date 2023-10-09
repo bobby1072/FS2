@@ -4,7 +4,7 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("world_fish", Schema = DbConstants.MainSchema)]
-    internal class WorldFishEntity : BaseEntity
+    internal class WorldFishEntity : BaseEntity<WorldFish>
     {
         [Key]
         [Column(TypeName = "TEXT")]
