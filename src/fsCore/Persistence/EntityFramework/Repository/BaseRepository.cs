@@ -27,12 +27,12 @@ namespace Persistence.EntityFramework.Repository
             var foundDetail = myProps.FirstOrDefault(x =>
             {
                 var xType = x.GetType();
-                return x.Name == fieldName.ToPascalCase() && typeof(TField) == x.PropertyType;
+                return x.Name == fieldName && typeof(TField) == x.PropertyType;
             });
             if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-                var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field));
+                var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName).Equals(field));
                 var runtimeObj = foundOne?.ToRuntime();
                 if (runtimeObj is TBase correctOBj)
                 {

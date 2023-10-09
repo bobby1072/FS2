@@ -9,7 +9,11 @@ namespace fsCore.Controllers
     [Route("api/[controller]")]
     public class BaseController : ControllerBase
     {
-
+        protected readonly ILogger _logger;
+        public BaseController(ILogger logger)
+        {
+            _logger = logger;
+        }
         protected async Task<IActionResult> _routeErrorHandler<T>(T error) where T : Exception
         {
             if (error is ApiException apiException)

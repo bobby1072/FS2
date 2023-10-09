@@ -11,7 +11,7 @@ namespace fsCore.Controllers
     public class WorldFishController : BaseController
     {
         private readonly IWorldFishService _worldFishService;
-        public WorldFishController(IWorldFishService worldFishService)
+        public WorldFishController(IWorldFishService worldFishService, ILogger<WorldFishController> logger) : base(logger)
         {
             _worldFishService = worldFishService;
         }

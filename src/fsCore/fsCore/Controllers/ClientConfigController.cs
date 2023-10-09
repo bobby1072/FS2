@@ -5,11 +5,11 @@ using Common.Authentication;
 
 namespace fsCore.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class ClientConfigController : BaseController
     {
         private readonly ClientConfigSettings _clientConfigSettings;
-        public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings)
+        public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings, ILogger<ClientConfigController> logger) : base(logger)
         {
             _clientConfigSettings = clientConfigSettings?.Value ?? throw new ArgumentNullException(nameof(clientConfigSettings));
         }

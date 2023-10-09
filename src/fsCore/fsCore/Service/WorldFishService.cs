@@ -3,6 +3,7 @@ using System.Text.Json;
 using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
+using Common.Utils;
 
 namespace fsCore.Service
 {
@@ -54,9 +55,9 @@ namespace fsCore.Service
             var foundDetail = worldFishProperties.FirstOrDefault(x =>
             {
                 var worldFishPropertyType = x.GetType();
-                return x.Name == propertyName && typeof(string) == x.PropertyType;
+                return x.Name == propertyName.ToPascalCase() && typeof(string) == x.PropertyType;
             }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
-            return await _repo.GetOne(fishProp, propertyName) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            return await _repo.GetOne(fishProp, propertyName.ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
         public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)
         {
