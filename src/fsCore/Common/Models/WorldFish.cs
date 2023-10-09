@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 namespace Common.Models
 {
@@ -24,7 +25,26 @@ namespace Common.Models
             A3Code = a3Code;
             ScientificName = scientificName;
             EnglishName = englishName;
-            Nickname = nickname;
+            if (nickname == null && englishName != null)
+            {
+                Nickname = _getNickname(englishName);
+            }
+            else
+            {
+                Nickname = nickname;
+            }
+        }
+        private static string? _getNickname(string engName)
+        {
+            var fishRegexPattern = @"\(([^)]*)\)";
+            var myRegex = new Regex(fishRegexPattern, RegexOptions.IgnoreCase);
+            var regexMatch = myRegex.Match(engName);
+            if (regexMatch.Success)
+            {
+                var aka = regexMatch.Value.Replace("(=", "").Replace(")", "").Replace("(", "").Replace("=", " ");
+                return aka;
+            }
+            return null;
         }
     }
     public class JsonFileWorldFish

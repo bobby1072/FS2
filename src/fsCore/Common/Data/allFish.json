@@ -1,5 +1,12 @@
 [
   {
+    "scientific_name": "Oncorhynchus keta",
+    "taxocode": "1230100903",
+    "a3_code": "CHU",
+    "isscaap": 23,
+    "english_name": "Chum(=Keta=Dog)salmon"
+  },
+  {
     "scientific_name": "Petromyzon marinus",
     "taxocode": "1020100101",
     "a3_code": "LAU",
@@ -8433,13 +8440,6 @@
     "a3_code": "PIN",
     "isscaap": 23,
     "english_name": "Pink(=Humpback)salmon"
-  },
-  {
-    "scientific_name": "Oncorhynchus keta",
-    "taxocode": "1230100903",
-    "a3_code": "CHU",
-    "isscaap": 23,
-    "english_name": "Chum(=Keta=Dog)salmon"
   },
   {
     "scientific_name": "Oncorhynchus clarki",
