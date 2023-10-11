@@ -27,7 +27,8 @@ namespace Persistence
                 .AddSingleton<IMigrator, DatabaseMigrations>(sp => new DatabaseMigrations(sp.GetRequiredService<ILoggerFactory>().CreateLogger<DatabaseMigrations>(), connectionString, migrationStartVersion));
 
             services
-                .AddSingleton<IWorldFishRepository, WorldFishRepository>();
+                .AddSingleton<IWorldFishRepository, WorldFishRepository>()
+                .AddSingleton<IUserRepository, UserRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()

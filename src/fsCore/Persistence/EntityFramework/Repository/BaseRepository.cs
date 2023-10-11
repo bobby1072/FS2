@@ -9,6 +9,7 @@ namespace Persistence.EntityFramework.Repository
 {
     internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity<TBase> where TBase : BaseModel
     {
+        protected abstract TEnt _runtimeToEntity(TBase runtimeObj);
         protected readonly IDbContextFactory<FsContext> _dbContextFactory;
         public BaseRepository(IDbContextFactory<FsContext> dbContextFactory)
         {
@@ -38,12 +39,12 @@ namespace Persistence.EntityFramework.Repository
             var foundDetail = myProps.FirstOrDefault(x =>
             {
                 var xType = x.GetType();
-                return x.Name == fieldName && typeof(TField) == x.PropertyType;
+                return x.Name == fieldName.ToPascalCase() && typeof(TField) == x.PropertyType;
             });
             if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-                var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName).Equals(field));
+                var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field));
                 var runtimeObj = foundOne?.ToRuntime();
                 if (runtimeObj is TBase correctOBj)
                 {
@@ -81,34 +82,36 @@ namespace Persistence.EntityFramework.Repository
                 throw new Exception(ErrorConstants.FieldNotFound);
             }
         }
-        public async Task<ICollection<TBase>?> _create(ICollection<TEnt> entObj)
+        public async Task<ICollection<TBase>?> Create(ICollection<TBase> entObj)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var set = dbContext.Set<TEnt>();
-            await set.AddRangeAsync(entObj);
+            await set.AddRangeAsync(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.OfType<TBase>().ToList();
+            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
 
         }
-        public async Task<ICollection<TBase>?> _delete(ICollection<TEnt> entObj)
+        public async Task<ICollection<TBase>?> Delete(ICollection<TBase> entObj)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var set = dbContext.Set<TEnt>();
-            set.RemoveRange(entObj);
+            set.RemoveRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.OfType<TBase>().ToList();
+            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+
 
         }
-        public async Task<ICollection<TBase>?> _update(ICollection<TEnt> entObj)
+        public async Task<ICollection<TBase>?> Update(ICollection<TBase> entObj)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
             var set = dbContext.Set<TEnt>();
-            set.UpdateRange(entObj);
+            set.UpdateRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.OfType<TBase>().ToList();
+            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+
         }
     }
 }

@@ -5,6 +5,8 @@ namespace Common.Models
 {
     public class User : BaseModel
     {
+        [JsonPropertyName("emailVerified")]
+        public bool EmailVerified { get; set; }
         private string _email;
         [JsonPropertyName("email")]
         public string Email
@@ -22,8 +24,9 @@ namespace Common.Models
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonConstructor]
-        public User(string email, string? name)
+        public User(string email, bool emailVerified, string? name)
         {
+            EmailVerified = emailVerified;
             Email = email;
             Name = name;
         }

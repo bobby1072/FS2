@@ -3,6 +3,8 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public static readonly string CantCreateUser = "Cant create user";
+        public static readonly string NoUserFound = "No user found";
         public static readonly string InvalidEmail = "Invalid email address";
         public static readonly string BadUrlParamsGiven = "Bad url params given";
         public static readonly string MissingEnvVars = "Missing env vars";

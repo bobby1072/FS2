@@ -7,6 +7,6 @@ namespace Persistence.EntityFramework
     {
         public FsContext(DbContextOptions options) : base(options) { }
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
-
+        public virtual DbSet<UserEntity> User { get; set; }
     }
 }
