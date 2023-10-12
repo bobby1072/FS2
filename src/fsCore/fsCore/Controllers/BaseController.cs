@@ -22,24 +22,5 @@ namespace fsCore.Controllers
             }
             return StatusCode((int)HttpStatusCode.InternalServerError, string.IsNullOrEmpty(error.Message) ? ErrorConstants.InternalServerError : error.Message);
         }
-        protected JwtSecurityToken? _getTokenData()
-        {
-            try
-            {
-                var bearer = ControllerContext.HttpContext.Request.Headers.Authorization.First();
-                if (string.IsNullOrEmpty(bearer))
-                {
-                    throw new Exception();
-                }
-                var handler = new JwtSecurityTokenHandler();
-                var token = bearer.Split(" ").Last();
-                var jsonToken = handler.ReadToken(token);
-                return jsonToken as JwtSecurityToken;
-            }
-            catch (Exception _)
-            {
-                return null;
-            }
-        }
     }
 }

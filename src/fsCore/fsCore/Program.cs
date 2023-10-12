@@ -1,5 +1,6 @@
 using Common;
 using Common.Authentication;
+using fsCore.Middleware;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
 using Hangfire;
@@ -111,7 +112,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.UseUserSessionMiddleware();
 app.Run();
 
 public static partial class Program { };
