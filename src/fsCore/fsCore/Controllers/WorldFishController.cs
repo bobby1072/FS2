@@ -7,26 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class WorldFishController : BaseController
     {
         private readonly IWorldFishService _worldFishService;
         public WorldFishController(IWorldFishService worldFishService, ILogger<WorldFishController> logger) : base(logger)
         {
             _worldFishService = worldFishService;
-        }
-        [ProducesDefaultResponseType(typeof(ICollection<WorldFish>))]
-        [HttpGet("AllFish")]
-        public async Task<IActionResult> GetAllFishRoute()
-        {
-            try
-            {
-                return Ok(await _worldFishService.AllFish());
-            }
-            catch (Exception e)
-            {
-                return await _routeErrorHandler(e);
-            }
         }
         [ProducesDefaultResponseType(typeof(ICollection<WorldFish>))]
         [HttpGet("FindSomeLike/{fishAnyName}")]

@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public static readonly string NotAuthorised = "Not authorised";
         public static readonly string UserAlreadyExists = "User already exists";
         public static readonly string CantCreateUser = "Cant create user";
         public static readonly string NoUserFound = "No user found";

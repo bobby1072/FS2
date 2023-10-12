@@ -28,8 +28,13 @@ if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-
 builder.Services
+    .AddSession(options =>
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(30);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    })
     .AddHttpContextAccessor()
     .AddResponseCompression()
     .AddLogging()
@@ -100,6 +105,7 @@ if (app.Environment.IsDevelopment())
     app.UseCors("corsapp");
 }
 
+app.UseSession();
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthentication();
