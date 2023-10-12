@@ -14,7 +14,7 @@ builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
 
 var config = builder.Configuration;
-var enviroment = builder.Environment;
+var environment = builder.Environment;
 
 var authOptions = config.GetSection(AuthoritySettings.Key).Get<AuthoritySettings>();
 var dbConnectString = config.GetConnectionString("DefaultConnection");
@@ -61,7 +61,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.Authority = authOptions.Host;
-        options.RequireHttpsMetadata = !enviroment.IsDevelopment();
+        options.RequireHttpsMetadata = !environment.IsDevelopment();
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -75,6 +75,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()
+    .AddScoped<IUserService, UserService>()
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 builder.Services
