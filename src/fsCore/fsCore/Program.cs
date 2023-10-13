@@ -112,7 +112,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseUserSessionMiddleware();
+app.UseDefaultMiddlewares();
 app.Run();
 
 public static partial class Program { };

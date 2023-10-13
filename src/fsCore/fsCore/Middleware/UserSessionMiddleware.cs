@@ -7,14 +7,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace fsCore.Middleware
 {
-    internal class UserSessionMiddleware
+    internal class UserSessionMiddleware : BaseMiddleware
     {
-        private readonly RequestDelegate _next;
-        public UserSessionMiddleware(RequestDelegate next)
-        {
-            _next = next;
-
-        }
+        public UserSessionMiddleware(RequestDelegate next) : base(next) { }
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();

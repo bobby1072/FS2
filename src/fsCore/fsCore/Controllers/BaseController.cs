@@ -13,13 +13,6 @@ namespace fsCore.Controllers
         {
             _logger = logger;
         }
-        protected async Task<IActionResult> _routeErrorHandler<T>(T error) where T : Exception
-        {
-            if (error is ApiException apiException)
-            {
-                return StatusCode((int)apiException.StatusCode, apiException.Message);
-            }
-            return StatusCode((int)HttpStatusCode.InternalServerError, string.IsNullOrEmpty(error.Message) ? ErrorConstants.InternalServerError : error.Message);
-        }
+
     }
 }
