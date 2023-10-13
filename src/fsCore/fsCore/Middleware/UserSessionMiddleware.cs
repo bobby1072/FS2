@@ -4,7 +4,7 @@ using System.Text.Json;
 using Common;
 using Common.Models;
 using Common.Utils;
-using fsCore.Service;
+using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
 namespace fsCore.Middleware

@@ -3,6 +3,7 @@ using Common.Authentication;
 using fsCore.Middleware;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
+using fsCore.Service.Interfaces;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

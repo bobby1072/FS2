@@ -5,7 +5,7 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("group", Schema = DbConstants.MainSchema)]
-    internal class GroupEntity : BaseEntity<GroupModel>
+    internal class GroupEntity : BaseEntity<Group>
     {
         [Key]
         [Required]
@@ -35,11 +35,11 @@ namespace Persistence.EntityFramework.Entity
         public bool Listed { get; set; }
         [Column(TypeName = "BYTEA")]
         public byte[]? Emblem { get; set; }
-        public override GroupModel ToRuntime()
+        public override Group ToRuntime()
         {
-            return new GroupModel(Id, Name, LeaderEmail, CreatedAt, Positions, Public, Listed, Emblem, Description);
+            return new Group(Name, LeaderEmail, Positions, Emblem, Description, Id, CreatedAt, Public, Listed);
         }
-        public static GroupEntity RuntimeToEntity(GroupModel group)
+        public static GroupEntity RuntimeToEntity(Group group)
         {
             return new GroupEntity
             {

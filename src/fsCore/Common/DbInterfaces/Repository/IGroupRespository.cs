@@ -4,11 +4,11 @@ namespace Common.Dbinterfaces.Repository
 {
     public interface IGroupRepository
     {
-        Task<ICollection<GroupModel>?> GetAll();
-        Task<ICollection<GroupModel>?> Create(ICollection<GroupModel> GroupModelToCreate);
-        Task<ICollection<GroupModel>?> Update(ICollection<GroupModel> fishToUpdate);
-        Task<ICollection<GroupModel>?> Delete(ICollection<GroupModel> fishToDelete);
-        Task<GroupModel?> GetOne<T>(T field, string fieldName);
-        Task<GroupModel?> GetOne(GroupModel GroupModel);
+        Task<ICollection<Group>?> GetAll();
+        Task<ICollection<Group>?> Create(ICollection<Group> GroupModelToCreate);
+        Task<ICollection<Group>?> Update(ICollection<Group> fishToUpdate);
+        Task<ICollection<Group>?> Delete(ICollection<Group> fishToDelete);
+        Task<Group?> GetOne<T>(T field, string fieldName);
+        Task<Group?> GetOne(Group GroupModel);
     }
 }

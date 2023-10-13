@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class GroupModel : BaseModel
+    public class Group : BaseModel
     {
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
@@ -23,28 +23,29 @@ namespace Common.Models
         [JsonPropertyName("emblem")]
         public byte[]? Emblem { get; set; }
         [JsonConstructor]
-        public GroupModel(Guid id, string name, string leaderEmail, DateTime createdAt, ICollection<string> positions, bool @public, bool listed, byte[]? emblem, string? description)
+        public Group(string name, string leaderEmail, ICollection<string> positions, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed)
         {
-            Id = id;
+            Id = id ?? Guid.NewGuid();
             Name = name;
             LeaderEmail = leaderEmail;
-            CreatedAt = createdAt;
+            CreatedAt = createdAt ?? DateTime.UtcNow;
             Positions = positions;
-            Public = @public;
-            Listed = listed;
+            Public = @public ?? false;
+            Listed = listed ?? false;
             Emblem = emblem;
             Description = description;
         }
-        public GroupModel ApplyDefaults(string? leaderEmail)
+        public Group ApplyDefaults(string? leaderEmail)
         {
-            this.CreatedAt = DateTime.UtcNow;
-            this.Public = false;
-            this.Listed = false;
+            Id = Guid.NewGuid();
+            CreatedAt = DateTime.UtcNow;
+            Public = false;
+            Listed = false;
             if (leaderEmail is not null && !string.IsNullOrEmpty(leaderEmail))
             {
-                this.LeaderEmail = leaderEmail;
+                LeaderEmail = leaderEmail;
             }
-            this.Positions = new List<string>();
+            Positions = new List<string>();
             return this;
         }
     }
