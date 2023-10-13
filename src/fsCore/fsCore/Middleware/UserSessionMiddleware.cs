@@ -1,6 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Text.Json;
 using Common;
+using Common.Models;
 using Common.Utils;
 using fsCore.Service;
 using Microsoft.AspNetCore.Authorization;
@@ -22,16 +24,25 @@ namespace fsCore.Middleware
             {
                 throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
             }
-            var tokenData = httpContext.Request.Headers.Authorization
+            var tokenUser = httpContext.Request.Headers.Authorization
                 .FirstOrDefault()?
                 .GetTokenData()?
                 .TokenClaimsToUser() ??
                 throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
-            var existingUserSession = httpContext.Session.GetString("email");
-            if (existingUserSession is null || existingUserSession != tokenData.Email)
+            var existingUserSession = httpContext.Session.GetString("user");
+            if (string.IsNullOrEmpty(existingUserSession))
             {
-                var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenData);
-                httpContext.Session.SetString("email", userExistence.Email);
+                var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
+                httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
+            }
+            else if (JsonSerializer.Deserialize<User>(existingUserSession) is not User user)
+            {
+                throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
+            }
+            else if (user.Email != tokenUser.Email)
+            {
+                var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
+                httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
             }
             await _next(httpContext);
         }
