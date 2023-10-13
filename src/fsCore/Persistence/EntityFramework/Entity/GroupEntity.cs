@@ -35,9 +35,10 @@ namespace Persistence.EntityFramework.Entity
         public bool Listed { get; set; }
         [Column(TypeName = "BYTEA")]
         public byte[]? Emblem { get; set; }
+        public virtual ICollection<GroupMemberEntity>? Members { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, LeaderEmail, Positions, Emblem, Description, Id, CreatedAt, Public, Listed);
+            return new Group(Name, LeaderEmail, Positions, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {

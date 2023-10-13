@@ -12,6 +12,8 @@ namespace Common.Models
         public string? Description { get; set; }
         [JsonPropertyName("leaderEmail")]
         public string LeaderEmail { get; set; }
+        [JsonPropertyName("leader")]
+        public User? Leader { get; set; }
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("positions")]
@@ -22,11 +24,14 @@ namespace Common.Models
         public bool Listed { get; set; }
         [JsonPropertyName("emblem")]
         public byte[]? Emblem { get; set; }
+        [JsonPropertyName("members")]
+        public ICollection<GroupMember>? Members { get; set; }
         [JsonConstructor]
-        public Group(string name, string leaderEmail, ICollection<string> positions, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed)
+        public Group(string name, string leaderEmail, ICollection<string> positions, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members)
         {
             Id = id ?? Guid.NewGuid();
             Name = name;
+            Leader = leader;
             LeaderEmail = leaderEmail;
             CreatedAt = createdAt ?? DateTime.UtcNow;
             Positions = positions;
@@ -34,6 +39,7 @@ namespace Common.Models
             Listed = listed ?? false;
             Emblem = emblem;
             Description = description;
+            Members = members;
         }
         public Group ApplyDefaults(string? leaderEmail)
         {

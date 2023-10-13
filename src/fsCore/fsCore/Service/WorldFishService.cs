@@ -8,7 +8,7 @@ using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
+    internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         public async Task MigrateJsonFishToDb()

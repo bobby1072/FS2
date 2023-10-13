@@ -12,7 +12,7 @@ CREATE TABLE public."group" (
 );
 
 CREATE TABLE public.group_member (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_id UUID NOT NULL,
     user_email TEXT NOT NULL,
     CONSTRAINT group_member_unique UNIQUE (group_id, user_email),
