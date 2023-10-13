@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [Authorize]
-    internal class WorldFishController : BaseController
+    [AllowAnonymous]
+    public class WorldFishController : BaseController
     {
         private readonly IWorldFishService _worldFishService;
         public WorldFishController(IWorldFishService worldFishService, ILogger<WorldFishController> logger) : base(logger)

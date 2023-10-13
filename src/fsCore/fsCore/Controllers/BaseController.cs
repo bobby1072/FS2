@@ -6,7 +6,7 @@ namespace fsCore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    internal abstract class BaseController : ControllerBase
+    public abstract class BaseController : ControllerBase
     {
         protected readonly ILogger _logger;
         public BaseController(ILogger logger)

@@ -36,6 +36,7 @@ builder.Services
         options.Cookie.HttpOnly = true;
         options.Cookie.IsEssential = true;
     })
+    .AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
     .AddLogging()

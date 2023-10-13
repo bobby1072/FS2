@@ -13,16 +13,17 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();
-            if (endpoint?.Metadata.GetMetadata<AuthorizeAttribute>() is null)
+            if (endpoint?.Metadata.GetMetadata<AllowAnonymousAttribute>() is not null || endpoint?.Metadata.GetMetadata<AuthorizeAttribute>() is null)
             {
                 await _next(httpContext);
+                return;
             }
             if (httpContext.User.Identity?.IsAuthenticated is false)
             {
                 throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
             }
             var tokenData = httpContext.Request.Headers.Authorization
-                .First()?
+                .FirstOrDefault()?
                 .GetTokenData()?
                 .TokenClaimsToUser() ??
                 throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);

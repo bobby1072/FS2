@@ -10,5 +10,5 @@ CREATE TABLE public.world_fish (
 CREATE TABLE public.user (
     email TEXT PRIMARY KEY,
     name TEXT,
-    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE
 );
