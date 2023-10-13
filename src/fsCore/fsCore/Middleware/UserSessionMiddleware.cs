@@ -15,21 +15,6 @@ namespace fsCore.Middleware
             _next = next;
 
         }
-        private JwtSecurityToken? _getTokenData(HttpContext context)
-        {
-            try
-            {
-                var bearer = context.Request.Headers.Authorization.First();
-                var handler = new JwtSecurityTokenHandler();
-                var token = bearer.Split(" ").Last();
-                var jsonToken = handler.ReadToken(token);
-                return jsonToken as JwtSecurityToken;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();
@@ -37,7 +22,15 @@ namespace fsCore.Middleware
             {
                 await _next(httpContext);
             }
-            var tokenData = _getTokenData(httpContext)?.TokenClaimsToUser() ?? throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
+            if (httpContext.User.Identity?.IsAuthenticated is false)
+            {
+                throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
+            }
+            var tokenData = httpContext.Request.Headers.Authorization
+                .First()?
+                .GetTokenData()?
+                .TokenClaimsToUser() ??
+                throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
             var existingUserSession = httpContext.Session.GetString("email");
             if (existingUserSession is null || existingUserSession != tokenData.Email)
             {
@@ -47,7 +40,7 @@ namespace fsCore.Middleware
             await _next(httpContext);
         }
     }
-    public static class UserSessionMiddlewareExtensions
+    internal static class UserSessionMiddlewareExtensions
     {
         public static IApplicationBuilder UseUserSessionMiddleware(
             this IApplicationBuilder builder)

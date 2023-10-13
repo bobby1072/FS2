@@ -5,8 +5,8 @@ using Common.Authentication;
 
 namespace fsCore.Controllers
 {
-    [Authorize]
-    public class ClientConfigController : BaseController
+    [AllowAnonymous]
+    internal class ClientConfigController : BaseController
     {
         private readonly ClientConfigSettings _clientConfigSettings;
         public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings, ILogger<ClientConfigController> logger) : base(logger)
