@@ -14,10 +14,16 @@ namespace Common.Models
         public string UserEmail { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
+        [JsonPropertyName("positionId")]
+        public int PositionId { get; set; }
+        [JsonPropertyName("position")]
+        public Position? Position { get; set; }
         [JsonConstructor]
-        public GroupMember(int id, Guid groupId, Group? group, string userEmail, User? user)
+        public GroupMember(int id, Guid groupId, string userEmail, int positionId, User? user, Group? group, Position? position)
         {
             Id = id;
+            PositionId = positionId;
+            Position = position;
             GroupId = groupId;
             Group = group;
             UserEmail = userEmail;

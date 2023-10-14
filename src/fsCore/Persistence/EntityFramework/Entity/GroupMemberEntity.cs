@@ -4,6 +4,7 @@ using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
+    [Table("group_member", Schema = DbConstants.MainSchema)]
     internal class GroupMemberEntity : BaseEntity<GroupMember>
     {
         [Key]
@@ -20,9 +21,14 @@ namespace Persistence.EntityFramework.Entity
         public string UserEmail { get; set; }
         [ForeignKey(nameof(UserEmail))]
         public UserEntity? User { get; set; }
+        [Required]
+        [Column(TypeName = "INTEGER")]
+        public int PositionId { get; set; }
+        [ForeignKey(nameof(PositionId))]
+        public PositionEntity? Position { get; set; }
         public override GroupMember ToRuntime()
         {
-            return new GroupMember(Id, GroupId, Group?.ToRuntime(), UserEmail, User?.ToRuntime());
+            return new GroupMember(Id, GroupId, UserEmail, PositionId, User?.ToRuntime(), Group?.ToRuntime(), Position?.ToRuntime());
         }
         public static GroupMemberEntity RuntimeToEntity(GroupMember groupMember)
         {

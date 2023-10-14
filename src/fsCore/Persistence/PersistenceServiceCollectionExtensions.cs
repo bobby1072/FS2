@@ -29,7 +29,9 @@ namespace Persistence
             services
                 .AddSingleton<IWorldFishRepository, WorldFishRepository>()
                 .AddSingleton<IUserRepository, UserRepository>()
-                .AddSingleton<IGroupRepository, GroupRepository>();
+                .AddSingleton<IGroupRepository, GroupRepository>()
+                .AddSingleton<IPositionRepository, PositionRepository>()
+                .AddSingleton<IGroupMemberRepository, GroupMemberRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()

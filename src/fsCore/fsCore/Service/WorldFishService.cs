@@ -13,7 +13,7 @@ namespace fsCore.Service
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         public async Task MigrateJsonFishToDb()
         {
-            var file = File.ReadAllText(@"../Common/Data/allFish.json");
+            var file = await File.ReadAllTextAsync(@"../Common/Data/allFish.json");
             var allFileFish = JsonSerializer.Deserialize<ICollection<JsonFileWorldFish>>(file) ?? throw new Exception();
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToList();
             var allDbFish = await _repo.GetAll();
@@ -52,12 +52,6 @@ namespace fsCore.Service
         }
         public async Task<WorldFish> FindOne(string fishProp, string propertyName)
         {
-            var worldFishProperties = typeof(WorldFish).GetProperties();
-            var foundDetail = worldFishProperties.FirstOrDefault(x =>
-            {
-                var worldFishPropertyType = x.GetType();
-                return x.Name == propertyName.ToPascalCase() && typeof(string) == x.PropertyType;
-            }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
             return await _repo.GetOne(fishProp, propertyName.ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
         public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)

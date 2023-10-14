@@ -25,9 +25,6 @@ namespace Persistence.EntityFramework.Entity
         [Column(TypeName = "TIMESTAMP")]
         public DateTime CreatedAt { get; set; }
         [Required]
-        [Column(TypeName = "TEXT[]")]
-        public ICollection<string> Positions { get; set; }
-        [Required]
         [Column(TypeName = "BOOLEAN")]
         public bool Public { get; set; }
         [Required]
@@ -38,7 +35,7 @@ namespace Persistence.EntityFramework.Entity
         public virtual ICollection<GroupMemberEntity>? Members { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, LeaderEmail, Positions, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList());
+            return new Group(Name, LeaderEmail, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {
@@ -48,7 +45,6 @@ namespace Persistence.EntityFramework.Entity
                 Name = group.Name,
                 LeaderEmail = group.LeaderEmail,
                 CreatedAt = group.CreatedAt,
-                Positions = group.Positions,
                 Public = group.Public,
                 Listed = group.Listed,
                 Emblem = group.Emblem,

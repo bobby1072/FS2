@@ -6,8 +6,8 @@ namespace Common.Dbinterfaces.Repository
     {
         Task<ICollection<User>?> GetAll();
         Task<ICollection<User>?> Create(ICollection<User> userToCreate);
-        Task<ICollection<User>?> Update(ICollection<User> fishToUpdate);
-        Task<ICollection<User>?> Delete(ICollection<User> fishToDelete);
+        Task<ICollection<User>?> Update(ICollection<User> userToUpdate);
+        Task<ICollection<User>?> Delete(ICollection<User> userToDelete);
         Task<User?> GetOne<T>(T field, string fieldName);
         Task<User?> GetOne(User user);
 
