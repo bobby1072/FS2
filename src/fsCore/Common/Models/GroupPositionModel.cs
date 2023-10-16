@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class Position : BaseModel
+    public class GroupPosition : BaseModel
     {
         [JsonPropertyName("id")]
         public int Id { get; set; }
@@ -11,7 +11,7 @@ namespace Common.Models
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonConstructor]
-        public Position(int id, Guid groupId, string name)
+        public GroupPosition(int id, Guid groupId, string name)
         {
             Id = id;
             GroupId = groupId;

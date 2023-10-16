@@ -14,16 +14,16 @@ CREATE TABLE public."group_position" (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_id UUID NOT NULL,
     name TEXT NOT NULL,
-    CONSTRAINT position_unique UNIQUE (group_id, name),
-    CONSTRAINT position_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id)
+    CONSTRAINT group_position_unique UNIQUE (group_id, name),
+    CONSTRAINT group_position_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id)
 );
 CREATE TABLE public."group_member" (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_id UUID NOT NULL,
     user_email TEXT NOT NULL,
-    position_id TEXT NOT NULL,
+    position_id INTEGER NOT NULL,
     CONSTRAINT group_member_unique UNIQUE (group_id, user_email),
-    CONSTRAINT group_member_position_id_fk FOREIGN KEY (position_id) REFERENCES public."position"(id),
+    CONSTRAINT group_member_position_id_fk FOREIGN KEY (position_id) REFERENCES public."group_position"(id),
     CONSTRAINT group_member_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id),
     CONSTRAINT group_member_member_email_fk FOREIGN KEY (user_email) REFERENCES public."user"(email)
 );

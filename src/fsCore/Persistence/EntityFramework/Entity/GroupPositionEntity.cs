@@ -5,7 +5,7 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("group_position", Schema = DbConstants.MainSchema)]
-    internal class PositionEntity : BaseEntity<Position>
+    internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
         [Required]
@@ -19,13 +19,13 @@ namespace Persistence.EntityFramework.Entity
         [Required]
         [Column(TypeName = "TEXT")]
         public string Name { get; set; }
-        public override Position ToRuntime()
+        public override GroupPosition ToRuntime()
         {
-            return new Position(Id, GroupId, Name);
+            return new GroupPosition(Id, GroupId, Name);
         }
-        public static PositionEntity RuntimeToEntity(Position position)
+        public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {
-            return new PositionEntity
+            return new GroupPositionEntity
             {
                 Id = position.Id,
                 GroupId = position.GroupId,

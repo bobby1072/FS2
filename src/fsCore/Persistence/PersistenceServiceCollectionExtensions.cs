@@ -30,7 +30,7 @@ namespace Persistence
                 .AddSingleton<IWorldFishRepository, WorldFishRepository>()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<IGroupRepository, GroupRepository>()
-                .AddSingleton<IPositionRepository, PositionRepository>()
+                .AddSingleton<IGroupPositionRepository, GroupPositionRepository>()
                 .AddSingleton<IGroupMemberRepository, GroupMemberRepository>();
 
             services

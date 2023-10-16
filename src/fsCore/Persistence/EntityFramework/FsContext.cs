@@ -9,7 +9,7 @@ namespace Persistence.EntityFramework
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
         public virtual DbSet<UserEntity> User { get; set; }
         public virtual DbSet<GroupEntity> Group { get; set; }
-        public virtual DbSet<PositionEntity> Position { get; set; }
+        public virtual DbSet<GroupPositionEntity> Position { get; set; }
         public virtual DbSet<GroupMemberEntity> GroupMember { get; set; }
 
     }
