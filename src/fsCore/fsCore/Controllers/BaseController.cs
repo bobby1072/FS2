@@ -36,7 +36,7 @@ namespace fsCore.Controllers
         }
         protected User _getCurrentUser()
         {
-            var user = HttpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
+            var user = HttpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
             return parsedUser;
         }

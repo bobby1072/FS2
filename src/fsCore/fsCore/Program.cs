@@ -84,6 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()
     .AddScoped<IUserService, UserService>()
+    .AddScoped<IGroupService, GroupService>()
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 builder.Services

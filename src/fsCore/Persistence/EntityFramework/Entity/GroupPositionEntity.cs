@@ -8,8 +8,8 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
-        [Required]
         [Column(TypeName = "INTEGER")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
         [Column(TypeName = "UUID")]
@@ -21,16 +21,20 @@ namespace Persistence.EntityFramework.Entity
         public string Name { get; set; }
         public override GroupPosition ToRuntime()
         {
-            return new GroupPosition(Id, GroupId, Name, Group?.ToRuntime());
+            return new GroupPosition(GroupId, Name, Id, Group?.ToRuntime());
         }
         public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {
-            return new GroupPositionEntity
+            var ent = new GroupPositionEntity
             {
-                Id = position.Id,
                 GroupId = position.GroupId,
                 Name = position.Name
             };
+            if (position.Id.HasValue && position.Id.Value > 0)
+            {
+                ent.Id = position.Id.Value;
+            }
+            return ent;
         }
     }
 }
