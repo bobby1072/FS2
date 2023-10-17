@@ -52,6 +52,12 @@ namespace fsCore.Service
         }
         public async Task<WorldFish> FindOne(string fishProp, string propertyName)
         {
+            var worldFishProperties = typeof(WorldFish).GetProperties();
+            var foundDetail = worldFishProperties.FirstOrDefault(x =>
+            {
+                var worldFishPropertyType = x.GetType();
+                return x.Name == propertyName.ToPascalCase() && typeof(string) == x.PropertyType;
+            }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
             return await _repo.GetOne(fishProp, propertyName.ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
         public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)

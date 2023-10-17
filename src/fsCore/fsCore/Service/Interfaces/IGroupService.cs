@@ -6,8 +6,11 @@ namespace fsCore.Service.Interfaces
     {
         Task<ICollection<Group>> GetAllListedGroups();
         Task<bool> IsUserInGroup(User currentUser, Guid groupId);
-        Task<bool> IsUserInGroup(User currentUser, string groupName);
         Task<bool> IsUserLeader(User currentUser, Guid groupId);
-        Task<bool> IsUserLeader(User currentUser, string groupName);
+        Task<ICollection<Group>> GetAllGroupsForUser(User currentUser);
+        Task<GroupMember> UserJoinPublicGroup(User currentUser, Guid groupId);
+        Task<GroupMember> UserLeavePublicGroup(User currentUser, Guid groupId);
+        Task<GroupMember> UserChangePositionInGroup(User currentUser, Guid groupId);
+
     }
 }

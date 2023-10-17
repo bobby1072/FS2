@@ -12,6 +12,24 @@ namespace fsCore.Controllers
     public abstract class BaseController : ControllerBase
     {
         protected readonly ILogger _logger;
+        public JwtSecurityToken? TokenData => GetTokenData();
+
+        private JwtSecurityToken? GetTokenData()
+        {
+            try
+            {
+
+                var bearer = ControllerContext.HttpContext.Request.Headers.Authorization.First();
+                var handler = new JwtSecurityTokenHandler();
+                var token = bearer.Split(" ").Last();
+                var jsonToken = handler.ReadToken(token);
+                return jsonToken as JwtSecurityToken;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
         public BaseController(ILogger logger)
         {
             _logger = logger;

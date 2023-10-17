@@ -5,9 +5,14 @@ namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware
     {
-        public ExceptionHandlingMiddleware(RequestDelegate next) : base(next) { }
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger) : base(next)
+        {
+            _logger = logger;
+        }
         protected async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
         {
+            _logger.LogError(error, error.Message);
             httpContext.Response.Clear();
             httpContext.Response.ContentType = "text/plain";
             if (error is ApiException apiException)

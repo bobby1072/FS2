@@ -21,7 +21,7 @@ namespace Persistence.EntityFramework.Entity
         public string Name { get; set; }
         public override GroupPosition ToRuntime()
         {
-            return new GroupPosition(Id, GroupId, Name);
+            return new GroupPosition(Id, GroupId, Name, Group?.ToRuntime());
         }
         public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {
