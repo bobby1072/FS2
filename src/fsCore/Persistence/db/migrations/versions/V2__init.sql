@@ -21,7 +21,6 @@ CREATE TABLE public."group_position" (
     can_read_members BOOLEAN NOT NULL DEFAULT TRUE,
     can_manage_members BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT group_position_unique UNIQUE (group_id, name),
-    CONSTRAINT group_position_group_permissions_id_fk FOREIGN KEY (group_permissions_id) REFERENCES public."group_permissions"(id) ON UPDATE CASCADE,
     CONSTRAINT group_position_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_member" (
