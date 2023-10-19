@@ -3,6 +3,9 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string CouldntUpdateGroupMember = "Couldn't update group member";
+        public const string CouldntDeleteGroupMember = "Couldn't delete group member";
+        public const string CouldntCreateGroupMember = "Couldn't create group member";
         public const string UserAlreadyInGroup = "User already in group";
         public const string GroupIsNotPubliclyAvailable = "Group is not publicly available";
         public const string NoGroupPositionsFound = "No group positions found";

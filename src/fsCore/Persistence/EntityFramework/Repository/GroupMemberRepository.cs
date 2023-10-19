@@ -60,5 +60,16 @@ namespace Persistence.EntityFramework.Repository
             var runtimeArray = foundGroupMembers?.Select(x => x.ToRuntime());
             return runtimeArray?.OfType<GroupMember>().ToList();
         }
+        public async Task<ICollection<GroupMember>?> GetManyGroupMembersIncludingUserAndPosition(Guid groupId)
+        {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            var foundGroupMembers = await dbContext.GroupMember
+                .Include(x => x.User)
+                .Include(x => x.Position)
+                .Where(x => x.GroupId == groupId)
+                .ToArrayAsync();
+            var runtimeArray = foundGroupMembers?.Select(x => x.ToRuntime());
+            return runtimeArray?.OfType<GroupMember>().ToList();
+        }
     }
 }

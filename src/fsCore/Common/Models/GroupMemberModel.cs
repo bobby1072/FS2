@@ -19,7 +19,7 @@ namespace Common.Models
         [JsonPropertyName("position")]
         public GroupPosition? Position { get; set; }
         [JsonConstructor]
-        public GroupMember(Guid groupId, string userEmail, int positionId, int? id, User? user, Group? group, GroupPosition? position)
+        public GroupMember(Guid groupId, string userEmail, int positionId, int? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
         {
             Id = id;
             PositionId = positionId;
