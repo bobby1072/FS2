@@ -5,7 +5,7 @@ namespace Common.Models
     public class GroupMember : BaseModel
     {
         [JsonPropertyName("id")]
-        public int Id { get; set; }
+        public int? Id { get; set; }
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
@@ -19,7 +19,7 @@ namespace Common.Models
         [JsonPropertyName("position")]
         public GroupPosition? Position { get; set; }
         [JsonConstructor]
-        public GroupMember(int id, Guid groupId, string userEmail, int positionId, User? user, Group? group, GroupPosition? position)
+        public GroupMember(Guid groupId, string userEmail, int positionId, int? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
         {
             Id = id;
             PositionId = positionId;

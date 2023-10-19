@@ -22,13 +22,13 @@ namespace fsCore.Middleware
             }
             if (httpContext.User.Identity?.IsAuthenticated is false)
             {
-                throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
+                throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             }
             var tokenUser = httpContext.Request.Headers.Authorization
                 .FirstOrDefault()?
                 .GetTokenData()?
                 .TokenClaimsToUser() ??
-                throw new ApiException(ErrorConstants.NotAuthorised, HttpStatusCode.Unauthorized);
+                throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var existingUserSession = httpContext.Session.GetString("user");
             if (string.IsNullOrEmpty(existingUserSession))
             {

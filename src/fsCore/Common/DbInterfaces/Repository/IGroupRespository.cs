@@ -10,5 +10,8 @@ namespace Common.Dbinterfaces.Repository
         Task<ICollection<Group>?> Delete(ICollection<Group> groupModelToDelete);
         Task<Group?> GetOne<T>(T field, string fieldName);
         Task<Group?> GetOne(Group groupModel);
+        Task<ICollection<Group>?> GetMany<T>(T field, string fieldName);
+        Task<ICollection<Group>?> GetMany(Group groupModel);
+
     }
 }
