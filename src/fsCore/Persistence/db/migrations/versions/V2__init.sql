@@ -17,7 +17,7 @@ CREATE TABLE public."group_position" (
     name TEXT NOT NULL,
     can_manage_group BOOLEAN NOT NULL DEFAULT FALSE,
     can_read_catches BOOLEAN NOT NULL DEFAULT TRUE,
-    can_write_catches BOOLEAN NOT NULL DEFAULT FALSE,
+    can_manage_catches BOOLEAN NOT NULL DEFAULT FALSE,
     can_read_members BOOLEAN NOT NULL DEFAULT TRUE,
     can_manage_members BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT group_position_unique UNIQUE (group_id, name),
