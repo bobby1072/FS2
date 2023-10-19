@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace fsCore.Service
+namespace fsCore.Service.Interfaces
 {
     public interface IUserService
     {

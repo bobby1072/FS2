@@ -1,3 +1,4 @@
+using fsCore.Service.Interfaces;
 using Hangfire;
 
 namespace fsCore.Service.Hangfire

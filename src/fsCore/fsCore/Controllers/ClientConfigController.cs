@@ -5,7 +5,7 @@ using Common.Authentication;
 
 namespace fsCore.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     public class ClientConfigController : BaseController
     {
         private readonly ClientConfigSettings _clientConfigSettings;
@@ -17,18 +17,11 @@ namespace fsCore.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            try
-            {
-                return Ok(new ClientConfigurationResponse(
-                    _clientConfigSettings.ApiHost,
-                    _clientConfigSettings.AuthorityHost,
-                    _clientConfigSettings.AuthorityScope,
-                    _clientConfigSettings.AuthorityClientId));
-            }
-            catch (Exception e)
-            {
-                return await _routeErrorHandler(e);
-            }
+            return Ok(new ClientConfigurationResponse(
+                _clientConfigSettings.ApiHost,
+                _clientConfigSettings.AuthorityHost,
+                _clientConfigSettings.AuthorityScope,
+                _clientConfigSettings.AuthorityClientId));
         }
     }
 

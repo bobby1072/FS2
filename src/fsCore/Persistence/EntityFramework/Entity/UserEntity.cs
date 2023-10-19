@@ -13,6 +13,7 @@ namespace Persistence.EntityFramework.Entity
         public string Email { get; set; }
         [Column(TypeName = "TEXT")]
         public string? Name { get; set; }
+        [Required]
         [Column(TypeName = "BOOLEAN")]
         public bool EmailVerified { get; set; }
         public override User ToRuntime()

@@ -4,15 +4,16 @@ using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Common.Utils;
+using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
+    internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         public async Task MigrateJsonFishToDb()
         {
-            var file = File.ReadAllText(@"../Common/Data/allFish.json");
+            var file = await File.ReadAllTextAsync(@"../Common/Data/allFish.json");
             var allFileFish = JsonSerializer.Deserialize<ICollection<JsonFileWorldFish>>(file) ?? throw new Exception();
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToList();
             var allDbFish = await _repo.GetAll();

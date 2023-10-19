@@ -3,10 +3,11 @@ using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Common.Utils;
+using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    public class UserService : BaseService<User, IUserRepository>, IUserService
+    internal class UserService : BaseService<User, IUserRepository>, IUserService
     {
         public UserService(IUserRepository repository) : base(repository) { }
         public async Task<User> GetUser(User user)

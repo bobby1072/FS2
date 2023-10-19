@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 
@@ -33,6 +34,20 @@ namespace Common.Utils
             catch (FormatException)
             {
                 return false;
+            }
+        }
+        public static JwtSecurityToken? GetTokenData(this string bearerToken)
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var token = bearerToken.Split(" ").Last();
+                var jsonToken = handler.ReadToken(token);
+                return jsonToken as JwtSecurityToken;
+            }
+            catch (Exception _)
+            {
+                return null;
             }
         }
     }

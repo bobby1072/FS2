@@ -2,12 +2,12 @@ using Common.Models;
 
 namespace fsCore.Service
 {
-    public abstract class BaseService<TBase, IRepo> where TBase : BaseModel
+    internal abstract class BaseService<TBase, IRepo> where TBase : BaseModel
     {
         protected readonly IRepo _repo;
         public BaseService(IRepo repo)
         {
-            _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+            _repo = repo;
         }
     }
 }

@@ -1,45 +1,44 @@
 ﻿using Common;
+using Common.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
+using System.Text.Json;
 
 namespace fsCore.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BaseController : ControllerBase
+    public abstract class BaseController : ControllerBase
     {
         protected readonly ILogger _logger;
-        public BaseController(ILogger logger)
-        {
-            _logger = logger;
-        }
-        protected async Task<IActionResult> _routeErrorHandler<T>(T error) where T : Exception
-        {
-            if (error is ApiException apiException)
-            {
-                return StatusCode((int)apiException.StatusCode, apiException.Message);
-            }
-            return StatusCode((int)HttpStatusCode.InternalServerError, string.IsNullOrEmpty(error.Message) ? ErrorConstants.InternalServerError : error.Message);
-        }
-        protected JwtSecurityToken? _getTokenData()
+        public JwtSecurityToken? TokenData => GetTokenData();
+
+        private JwtSecurityToken? GetTokenData()
         {
             try
             {
+
                 var bearer = ControllerContext.HttpContext.Request.Headers.Authorization.First();
-                if (string.IsNullOrEmpty(bearer))
-                {
-                    throw new Exception();
-                }
                 var handler = new JwtSecurityTokenHandler();
                 var token = bearer.Split(" ").Last();
                 var jsonToken = handler.ReadToken(token);
                 return jsonToken as JwtSecurityToken;
             }
-            catch (Exception _)
+            catch (Exception ex)
             {
                 return null;
             }
+        }
+        public BaseController(ILogger logger)
+        {
+            _logger = logger;
+        }
+        protected User _getCurrentUser()
+        {
+            var user = HttpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+            var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
+            return parsedUser;
         }
     }
 }

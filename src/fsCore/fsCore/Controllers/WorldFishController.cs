@@ -1,7 +1,7 @@
 using System.Net;
 using Common;
 using Common.Models;
-using fsCore.Service;
+using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,51 +16,24 @@ namespace fsCore.Controllers
             _worldFishService = worldFishService;
         }
         [ProducesDefaultResponseType(typeof(ICollection<WorldFish>))]
-        [HttpGet("AllFish")]
-        public async Task<IActionResult> GetAllFishRoute()
-        {
-            try
-            {
-                return Ok(await _worldFishService.AllFish());
-            }
-            catch (Exception e)
-            {
-                return await _routeErrorHandler(e);
-            }
-        }
-        [ProducesDefaultResponseType(typeof(ICollection<WorldFish>))]
         [HttpGet("FindSomeLike/{fishAnyName}")]
         public async Task<IActionResult> FindSomeLikeRoute(string fishAnyName)
         {
-            try
+            if (string.IsNullOrEmpty(fishAnyName))
             {
-                if (string.IsNullOrEmpty(fishAnyName))
-                {
-                    throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.NotFound);
-                }
-                return Ok(await _worldFishService.FindSomeLike(fishAnyName));
+                throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.NotFound);
             }
-            catch (Exception e)
-            {
-                return await _routeErrorHandler(e);
-            }
+            return Ok(await _worldFishService.FindSomeLike(fishAnyName));
         }
         [ProducesDefaultResponseType(typeof(WorldFish))]
         [HttpGet("FindOne/{fishProp}/{propertyName}")]
         public async Task<IActionResult> FindOneRoute(string fishProp, string propertyName)
         {
-            try
+            if (string.IsNullOrEmpty(fishProp) || string.IsNullOrEmpty(propertyName))
             {
-                if (string.IsNullOrEmpty(fishProp) || string.IsNullOrEmpty(propertyName))
-                {
-                    throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.NotFound);
-                }
-                return Ok(await _worldFishService.FindOne(fishProp, propertyName));
+                throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.NotFound);
             }
-            catch (Exception e)
-            {
-                return await _routeErrorHandler(e);
-            }
+            return Ok(await _worldFishService.FindOne(fishProp, propertyName));
         }
     }
 }

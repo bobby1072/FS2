@@ -1,7 +1,9 @@
 using Common;
 using Common.Authentication;
+using fsCore.Middleware;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
+using fsCore.Service.Interfaces;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,8 +30,14 @@ if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-
 builder.Services
+    .AddSession(options =>
+    {
+        options.IdleTimeout = TimeSpan.FromMinutes(30);
+        options.Cookie.HttpOnly = true;
+        options.Cookie.IsEssential = true;
+    })
+    .AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
     .AddLogging()
@@ -76,6 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()
     .AddScoped<IUserService, UserService>()
+    .AddScoped<IGroupService, GroupService>()
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 builder.Services
@@ -100,12 +109,14 @@ if (app.Environment.IsDevelopment())
     app.UseCors("corsapp");
 }
 
+app.UseSession();
 app.UseHttpsRedirection();
+app.UseHttpLogging();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
+app.UseDefaultMiddlewares();
 app.Run();
 
 public static partial class Program { };
