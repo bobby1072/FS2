@@ -36,6 +36,7 @@ namespace Common.GroupPermissions
         public PermissionSet()
         {
         }
+        public static PermissionSet CreateSet() => new();
         public PermissionSet AddCan(string action, string subject, ICollection<string>? fields = null)
         {
             _abilities.Add(new Permission(action, subject, fields));
@@ -46,35 +47,39 @@ namespace Common.GroupPermissions
             _abilities.Add(new Permission(action, subject, fields));
             return this;
         }
-        public PermissionSet AddCan(string action, string subject, string fields)
+        public PermissionSet AddCan(string action, string subject, string field)
         {
-            _abilities.Add(new Permission(action, subject, new List<string> { fields }));
+            _abilities.Add(new Permission(action, subject, new List<string> { field }));
             return this;
         }
-        public PermissionSet AddCan<T>(string action, T subject, string fields) where T : class
+        public PermissionSet AddCan<T>(string action, T subject, string field) where T : class
         {
-            _abilities.Add(new Permission(action, subject, new List<string> { fields }));
+            _abilities.Add(new Permission(action, subject, new List<string> { field }));
             return this;
         }
         public bool Can(string action, string subject)
         {
             return _abilities.Any(x => x.Action == action && x.Subject is string newSubject && newSubject == subject && x.Fields is null);
         }
-        public bool Can<T>(string action, T subject) where T : class
+        public bool Can<T>(string action, T subject, bool exactSubjectObjectMatch = false) where T : class
         {
-            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && x.Fields is null);
+            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && (!exactSubjectObjectMatch || newSubject.Equals(subject)) && x.Fields is null);
         }
         public bool Can(string action, string subject, string field)
         {
             return _abilities.Any(x => x.Action == action && x.Subject is string newSubject && newSubject == subject && x.Fields?.Contains(field) == true);
         }
-        public bool Can<T>(string action, T subject, string field) where T : class
+        public bool Can<T>(string action, T subject, string field, bool exactSubjectObjectMatch = false) where T : class
         {
-            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && x.Fields?.Contains(field) == true);
+            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && (!exactSubjectObjectMatch || newSubject.Equals(subject)) && x.Fields?.Contains(field) == true);
         }
-        public bool Can<T>(string action, T subject, ICollection<string> field) where T : class
+        public bool Can<T>(string action, T subject, ICollection<string> fields, bool exactSubjectObjectMatch = false) where T : class
         {
-            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && newSubject == subject && field.All(y => x.Fields?.Contains(y) == true));
+            return _abilities.Any(x => x.Action == action && x.Subject is T newSubject && (!exactSubjectObjectMatch || newSubject.Equals(subject)) && fields.All(y => x.Fields?.Contains(y) == true));
+        }
+        public bool Can(string action, string subject, ICollection<string> fields)
+        {
+            return _abilities.Any(x => x.Action == action && x.Subject is string newSubject && newSubject == subject && fields.All(y => x.Fields?.Contains(y) == true));
         }
     }
 }
