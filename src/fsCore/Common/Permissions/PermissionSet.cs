@@ -1,4 +1,4 @@
-namespace Common.GroupPermissions
+namespace Common.Permissions
 {
     internal class Permission
     {

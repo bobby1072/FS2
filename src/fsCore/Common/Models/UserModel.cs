@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text.Json.Serialization;
-using Common.GroupPermissions;
+using Common.Permissions;
 using Common.Utils;
 namespace Common.Models
 {
