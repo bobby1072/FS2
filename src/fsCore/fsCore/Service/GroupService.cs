@@ -11,15 +11,12 @@ namespace fsCore.Service
     {
         private readonly IGroupMemberRepository _groupMemberRepo;
         private readonly IGroupPositionRepository _groupPositionRepo;
-        private readonly IUserService _userService;
         public GroupService(IGroupRepository repository,
         IGroupMemberRepository groupMemberRepo,
-        IGroupPositionRepository groupPositionRepo,
-        IUserService userService) : base(repository)
+        IGroupPositionRepository groupPositionRepo) : base(repository)
         {
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
-            _userService = userService;
         }
         public async Task<ICollection<Group>> GetAllListedGroups()
         {
@@ -45,6 +42,17 @@ namespace fsCore.Service
         {
             var allGroups = await _groupMemberRepo.GetManyGroupMemberForUserIncludingUserAndPositionAndGroup(currentUser.Email);
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+        }
+        public Task<ICollection<GroupMember>>? TryGetAllMembersForUserIncludingGroupAndUserAndPosition(User currentUser)
+        {
+            try
+            {
+                return GetAllMembersForUserIncludingGroupAndUserAndPosition(currentUser);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         public async Task<ICollection<GroupMember>> GetAllMembersForGroup(Guid groupId)
         {

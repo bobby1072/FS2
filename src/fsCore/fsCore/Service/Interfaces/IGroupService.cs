@@ -16,6 +16,7 @@ namespace fsCore.Service.Interfaces
         Task<GroupMember> UserJoinPublicGroup(GroupMember member);
         Task<GroupMember> UserLeavePublicGroup(User currentUser, Guid groupId);
         Task<GroupMember> UserChangePositionInGroup(GroupMember newMember);
+        Task<ICollection<GroupMember>>? TryGetAllMembersForUserIncludingGroupAndUserAndPosition(User currentUser);
 
     }
 }

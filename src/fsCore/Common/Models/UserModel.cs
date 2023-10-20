@@ -34,10 +34,20 @@ namespace Common.Models
     }
     public class UserWithGroupPermissionSet : User
     {
-        public readonly PermissionSet Permissions;
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name) : base(email, emailVerified, name)
+        public readonly PermissionSet Permissions = PermissionSet.CreateSet();
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
         {
-            Permissions = PermissionSet.CreateSet();
+            if (member is not null)
+            {
+                BuildPermissions(member);
+            }
+        }
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, ICollection<GroupMember>? member = null) : base(email, emailVerified, name)
+        {
+            if (member is not null)
+            {
+                BuildPermissions(member);
+            }
         }
         public UserWithGroupPermissionSet BuildPermissions(GroupMember member)
         {
