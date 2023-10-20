@@ -23,8 +23,7 @@ namespace fsCore.Middleware
             {
                 throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             }
-            var tokenUser = httpContext.Request.Headers.Authorization
-                .FirstOrDefault()?
+            var tokenUser = httpContext
                 .GetTokenData()?
                 .TokenClaimsToUser() ??
                 throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
