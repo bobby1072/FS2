@@ -4,5 +4,6 @@ namespace Common.Permissions
     {
         public const string Manage = "manage";
         public const string Read = "read";
+        public const string BelongsTo = "belongsTo";
     }
 }

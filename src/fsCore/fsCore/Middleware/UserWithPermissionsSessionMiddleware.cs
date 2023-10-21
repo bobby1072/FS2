@@ -14,7 +14,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService)
         {
             var endpointData = httpContext.GetEndpoint();
-            if (endpointData?.Metadata.GetMetadata<AllowAnonymousAttribute>() is null && endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is not null)
+            if (endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is not null)
             {
                 var user = httpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
@@ -33,11 +33,6 @@ namespace fsCore.Middleware
                 else if (foundUserWithPermissions is null)
                 {
                     var foundGroupMembers = await groupService.TryGetAllMembersForUserIncludingGroupAndUserAndPosition(parsedUser);
-                    if (foundGroupMembers is null)
-                    {
-                        await _next(httpContext);
-                        return;
-                    }
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                 }
@@ -45,10 +40,6 @@ namespace fsCore.Middleware
                 {
                     await _next(httpContext);
                     var foundGroupMembers = await groupService.TryGetAllMembersForUserIncludingGroupAndUserAndPosition(parsedUser);
-                    if (foundGroupMembers is null)
-                    {
-                        return;
-                    }
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                     return;

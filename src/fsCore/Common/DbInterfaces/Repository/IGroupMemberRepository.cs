@@ -16,5 +16,6 @@ namespace Common.Dbinterfaces.Repository
         Task<GroupMember?> GetGroupMemberIncludingPosition(string userEmail, Guid groupId);
         Task<ICollection<GroupMember>?> GetManyGroupMembersIncludingUserAndPosition(Guid groupId);
         Task<ICollection<GroupMember>?> GetManyGroupMemberForUserIncludingUserAndPositionAndGroup(string userEmail);
+        Task<ICollection<GroupMember>?> GetManyGroupMemberWithGroup(Guid groupId);
     }
 }

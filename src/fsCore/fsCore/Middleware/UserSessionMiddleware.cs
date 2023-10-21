@@ -15,7 +15,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();
-            if (endpoint?.Metadata.GetMetadata<AllowAnonymousAttribute>() is not null || endpoint?.Metadata.GetMetadata<RequiredUser>() is null)
+            if (endpoint?.Metadata.GetMetadata<RequiredUser>() is not null)
             {
                 await _next(httpContext);
                 return;

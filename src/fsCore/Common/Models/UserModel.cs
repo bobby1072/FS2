@@ -62,15 +62,20 @@ namespace Common.Models
             {
                 throw new Exception();
             }
+            Permissions
+                .AddCan(PermissionConstants.BelongsTo, member.Group);
             if (member.Group.LeaderEmail == Email)
             {
                 Permissions
-                    .AddCan(PermissionConstants.Manage, member.Group);
+                    .AddCan(PermissionConstants.Manage, member.Group)
+                    .AddCan(PermissionConstants.Read, member.Group);
                 return this;
             }
             if (member.Position.CanManageGroup)
             {
-                Permissions.AddCan(PermissionConstants.Manage, member.Group);
+                Permissions
+                    .AddCan(PermissionConstants.Read, member.Group)
+                    .AddCan(PermissionConstants.Manage, member.Group);
                 return this;
             }
             if (member.Position.CanManageCatches)
@@ -99,6 +104,7 @@ namespace Common.Models
             }
             return this;
         }
-
+        public bool HasGlobalGroupReadPermissions(Group group) => Permissions.Can(PermissionConstants.Read, group);
+        public bool HasGlobalGroupManagePermissions(Group group) => Permissions.Can(PermissionConstants.Manage, group);
     }
 }

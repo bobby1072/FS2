@@ -13,6 +13,16 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupMemberEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<ICollection<GroupMember>?> GetManyGroupMemberWithGroup(Guid groupId)
+        {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            var foundGroupMembers = await dbContext.GroupMember
+                .Include(x => x.Group)
+                .Where(x => x.GroupId == groupId)
+                .ToArrayAsync();
+            var runtimeArray = foundGroupMembers?.Select(x => x.ToRuntime());
+            return runtimeArray?.ToList();
+        }
         public async Task<GroupMember?> GetGroupMemberIncludingUser(string userEmail, Guid groupId)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();

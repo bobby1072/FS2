@@ -14,7 +14,7 @@ namespace fsCore.Controllers
     {
         protected readonly ILogger _logger;
 
-        private JwtSecurityToken? _getTokenData()
+        protected JwtSecurityToken? _getTokenData()
         {
             return ControllerContext.HttpContext.GetTokenData();
         }

@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string DontHavePermission = "User doesn't have permission/permissions for this action";
         public const string CouldntUpdateGroupMember = "Couldn't update group member";
         public const string CouldntDeleteGroupMember = "Couldn't delete group member";
         public const string CouldntCreateGroupMember = "Couldn't create group member";
