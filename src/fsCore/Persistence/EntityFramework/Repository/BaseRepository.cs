@@ -3,6 +3,7 @@ using Common;
 using Common.Models;
 using Common.Utils;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Persistence.EntityFramework.Entity;
 
 namespace Persistence.EntityFramework.Repository
@@ -15,25 +16,43 @@ namespace Persistence.EntityFramework.Repository
         {
             _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
         }
-        public virtual async Task<ICollection<TBase>?> GetAll()
+        private IQueryable<TEnt> _addRelationsToQuery(DbSet<TEnt> set, ICollection<string>? relationships = null)
         {
-            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-            var foundAllEnts = await dbContext.Set<TEnt>().ToArrayAsync();
-            var runtimeArray = foundAllEnts?.Select(x => x.ToRuntime());
-            return runtimeArray?.OfType<TBase>().ToList();
+            IQueryable<TEnt>? newQuery = null;
+            var foundRelationProperties = typeof(TEnt).GetProperties().Where(x => relationships?.Contains(x.Name) == true);
+            int index = 0;
+            foreach (var relation in foundRelationProperties)
+            {
+                if (index == 0)
+                {
+                    newQuery = set.Include(relation.Name);
+                    index++;
+                    continue;
+                }
+                newQuery = newQuery?.Include(relation.Name);
+                index++;
+            }
+            return newQuery is not null ? newQuery : set;
         }
-        public virtual async Task<TBase?> GetOne(TBase baseUser)
+        public virtual async Task<ICollection<TBase>?> GetAll(ICollection<string>? relationships = null)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-            var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => x.ToRuntime().Equals(baseUser));
-            var runtimeObj = foundOne?.ToRuntime();
+            var foundAllQuerySet = dbContext.Set<TEnt>();
+            var runtimeObj = await _addRelationsToQuery(foundAllQuerySet, relationships).ToArrayAsync();
+            return runtimeObj?.OfType<TBase>().ToList();
+        }
+        public virtual async Task<TBase?> GetOne(TBase baseUser, ICollection<string>? relationships = null)
+        {
+            await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+            var foundOneQuerySet = dbContext.Set<TEnt>();
+            var runtimeObj = await _addRelationsToQuery(foundOneQuerySet, relationships).FirstOrDefaultAsync(x => x.ToRuntime().Equals(baseUser));
             if (runtimeObj is TBase correctOBj)
             {
                 return correctOBj;
             }
             return null;
         }
-        public virtual async Task<TBase?> GetOne<TField>(TField field, string fieldName)
+        public virtual async Task<TBase?> GetOne<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
             var myProps = typeof(TEnt).GetProperties();
             var foundDetail = myProps.FirstOrDefault(x =>
@@ -44,7 +63,8 @@ namespace Persistence.EntityFramework.Repository
             if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-                var foundOne = await dbContext.Set<TEnt>().FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field));
+                var set = dbContext.Set<TEnt>();
+                var foundOne = await _addRelationsToQuery(set, relationships).FirstOrDefaultAsync(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field));
                 var runtimeObj = foundOne?.ToRuntime();
                 if (runtimeObj is TBase correctOBj)
                 {
@@ -57,7 +77,7 @@ namespace Persistence.EntityFramework.Repository
                 throw new Exception(ErrorConstants.FieldNotFound);
             }
         }
-        public virtual async Task<ICollection<TBase>?> GetMany<TField>(TField field, string fieldName)
+        public virtual async Task<ICollection<TBase>?> GetMany<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
             var myProps = typeof(TEnt).GetProperties();
             var foundDetail = myProps.FirstOrDefault(x =>
@@ -68,7 +88,8 @@ namespace Persistence.EntityFramework.Repository
             if (foundDetail is not null)
             {
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-                var foundMany = await dbContext.Set<TEnt>().Where(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field)).ToArrayAsync();
+                var set = dbContext.Set<TEnt>();
+                var foundMany = await _addRelationsToQuery(set, relationships).Where(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field)).ToArrayAsync();
                 var runtimeArray = foundMany?.Select(x => x.ToRuntime());
                 return runtimeArray?.OfType<TBase>().ToList();
             }
@@ -77,14 +98,15 @@ namespace Persistence.EntityFramework.Repository
                 throw new Exception(ErrorConstants.FieldNotFound);
             }
         }
-        public virtual async Task<ICollection<TBase>?> GetMany(TBase baseObj)
+        public virtual async Task<ICollection<TBase>?> GetMany(TBase baseObj, ICollection<string>? relationships = null)
         {
             await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
-            var foundMany = await dbContext.Set<TEnt>().Where(x => x.ToRuntime().Equals(baseObj)).ToArrayAsync();
+            var set = dbContext.Set<TEnt>();
+            var foundMany = await _addRelationsToQuery(set, relationships).Where(x => x.ToRuntime().Equals(baseObj)).ToArrayAsync();
             var runtimeArray = foundMany?.Select(x => x.ToRuntime());
             return runtimeArray?.OfType<TBase>().ToList();
         }
-        public virtual async Task<ICollection<TBase>?> _getSomeLike<TField>(TField field, string fieldName)
+        public virtual async Task<ICollection<TBase>?> _getSomeLike<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
             var myProps = typeof(TEnt).GetProperties();
             var foundDetail = myProps.FirstOrDefault(x =>
@@ -97,8 +119,8 @@ namespace Persistence.EntityFramework.Repository
                 await using var dbContext = await _dbContextFactory.CreateDbContextAsync();
                 Expression<Func<TEnt, bool>> likePredicate = x =>
                            EF.Property<TField>(x, fieldName.ToPascalCase()).ToString().Contains(field.ToString());
-
-                var similarItems = await dbContext.Set<TEnt>()
+                var set = dbContext.Set<TEnt>();
+                var similarItems = await _addRelationsToQuery(set, relationships)
                     .Where(likePredicate)
                     .ToListAsync();
                 var runtimeObj = similarItems?.Select(x => x.ToRuntime());

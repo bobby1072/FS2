@@ -32,14 +32,14 @@ namespace fsCore.Middleware
                 }
                 else if (foundUserWithPermissions is null)
                 {
-                    var foundGroupMembers = await groupService.TryGetAllMembersForUserIncludingGroupAndUserAndPosition(parsedUser);
+                    var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                 }
                 if (action == "create" || action == "update" || action == "delete")
                 {
                     await _next(httpContext);
-                    var foundGroupMembers = await groupService.TryGetAllMembersForUserIncludingGroupAndUserAndPosition(parsedUser);
+                    var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                     return;
