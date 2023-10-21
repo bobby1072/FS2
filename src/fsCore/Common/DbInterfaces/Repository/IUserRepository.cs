@@ -12,6 +12,5 @@ namespace Common.Dbinterfaces.Repository
         Task<User?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<User?> GetOne(User user, ICollection<string>? relationships = null);
         Task<ICollection<User>?> GetMany(User baseObj, ICollection<string>? relationships = null);
-
     }
 }

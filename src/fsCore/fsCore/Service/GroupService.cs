@@ -24,13 +24,21 @@ namespace fsCore.Service
             var allGroups = await _repo.GetMany(true, "listed".ToPascalCase());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
-        public async Task<bool> IsUserInGroup(UserWithGroupPermissionSet currentUser, Guid group)
-        {
-            var foundGroup = await _repo.GetOne(group, "id".ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            return currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup);
-        }
         public async Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser)
         {
+            var foundMember = await _groupMemberRepo.GetOne(new Dictionary<string, object>
+            {
+                { "groupId".ToPascalCase(), newMember.GroupId },
+                { "userEmail".ToPascalCase(), newMember.UserEmail }
+            }, new List<string> { nameof(Group), nameof(User) }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
+            if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundMember.Group, "Members") &&
+              !currentUser.HasGlobalGroupManagePermissions(foundMember.Group))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return (await _groupMemberRepo.Update(new List<GroupMember> { newMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
+
         }
         public async Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId);
         public async Task<GroupMember> GetMembership(UserWithGroupPermissionSet currentUser, Guid groupId, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
