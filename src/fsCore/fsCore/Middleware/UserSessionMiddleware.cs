@@ -3,6 +3,7 @@ using System.Text.Json;
 using Common;
 using Common.Models;
 using Common.Utils;
+using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,7 +15,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();
-            if (endpoint?.Metadata.GetMetadata<AllowAnonymousAttribute>() is not null || endpoint?.Metadata.GetMetadata<AuthorizeAttribute>() is null)
+            if (endpoint?.Metadata.GetMetadata<AllowAnonymousAttribute>() is not null || endpoint?.Metadata.GetMetadata<RequiredUser>() is null)
             {
                 await _next(httpContext);
                 return;

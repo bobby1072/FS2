@@ -2,7 +2,9 @@ using System.Net;
 using System.Text.Json;
 using Common;
 using Common.Models;
+using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace fsCore.Middleware
 {
@@ -11,14 +13,14 @@ namespace fsCore.Middleware
         public UserWithPermissionsSessionMiddleware(RequestDelegate next) : base(next) { }
         public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService)
         {
-            var routeData = httpContext.GetRouteData();
-            var controllerName = routeData.Values["controller"]?.ToString()?.ToLower();
-            var action = routeData.Values["action"]?.ToString()?.ToLower();
-            var user = httpContext.Session.GetString("user");
-            if (user is not null)
+            var endpointData = httpContext.GetEndpoint();
+            if (endpointData?.Metadata.GetMetadata<AllowAnonymousAttribute>() is null && endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is not null)
             {
+                var user = httpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 var foundUserWithPermissions = httpContext.Session.GetString("userWithPermissions");
+                var routeData = httpContext.GetRouteData();
+                var action = routeData.Values["action"]?.ToString()?.ToLower();
                 if (foundUserWithPermissions is not null && JsonSerializer.Deserialize<UserWithGroupPermissionSet>(foundUserWithPermissions) is null)
                 {
                     throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
