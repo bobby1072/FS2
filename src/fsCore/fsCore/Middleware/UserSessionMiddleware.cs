@@ -15,14 +15,10 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
         {
             var endpoint = httpContext.GetEndpoint();
-            if (endpoint?.Metadata.GetMetadata<RequiredUser>() is not null)
+            if (endpoint?.Metadata.GetMetadata<RequiredUser>() is null)
             {
                 await _next(httpContext);
                 return;
-            }
-            if (httpContext.User.Identity?.IsAuthenticated is false)
-            {
-                throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             }
             var tokenUser = httpContext
                 .GetTokenData()?
@@ -40,7 +36,7 @@ namespace fsCore.Middleware
             }
             else if (user.Email != tokenUser.Email)
             {
-                var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
+                var userExistence = await userService.UpdateUser(tokenUser);
                 httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
             }
             await _next(httpContext);
