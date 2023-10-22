@@ -1,6 +1,6 @@
 namespace Common.Permissions
 {
-    internal class Permission
+    public class Permission
     {
         public string Action { get; set; }
         private object _subject;
@@ -29,6 +29,14 @@ namespace Common.Permissions
         private readonly ICollection<Permission> _abilities = new HashSet<Permission>();
         public PermissionSet()
         {
+        }
+        public Permission? GetPermission(string action, object subject)
+        {
+            return _abilities.FirstOrDefault(x => x.Action == action && x.Subject.Equals(subject));
+        }
+        public Permission? GetPermissionSingleSubjectProperty<T>(string action, T singleSubjectProperty, string propertyName)
+        {
+            return _abilities.FirstOrDefault(x => x.Action == action && x.Subject.GetType().GetProperties().FirstOrDefault(x => x.Name == propertyName && x.GetType() == typeof(T))?.Equals(singleSubjectProperty) is not null);
         }
         public static PermissionSet CreateSet() => new();
         private void _add(ICollection<Permission> permissionList, Permission newPerm)
