@@ -12,22 +12,20 @@ namespace fsCore.Controllers.Attributes
     {
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (context is AuthorizationFilterContext foundContext)
+
+            if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
-                if (foundContext.HttpContext.User.Identity?.IsAuthenticated == true)
+                var user = context.HttpContext.Session.GetString("user");
+                if (user is null)
                 {
-                    var user = foundContext.HttpContext.Session.GetString("user");
-                    if (user is null)
-                    {
-                        foundContext.Result = new UnauthorizedResult();
-                        return;
-                    }
-                    var _ = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
+                    context.Result = new UnauthorizedResult();
                     return;
                 }
-                foundContext.Result = new UnauthorizedResult();
+                var _ = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 return;
             }
+            context.Result = new UnauthorizedResult();
+            return;
         }
     }
 }

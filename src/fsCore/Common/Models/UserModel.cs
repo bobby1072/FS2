@@ -88,11 +88,11 @@ namespace Common.Models
             }
             if (member.Position.CanManageMembers)
             {
-                Permissions.AddCan(PermissionConstants.Manage, member.Group, "Members");
+                Permissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupMember));
             }
             if (member.Position.CanReadMembers)
             {
-                Permissions.AddCan(PermissionConstants.Read, member.Group, "Members");
+                Permissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupMember));
             }
             return this;
         }
@@ -104,7 +104,7 @@ namespace Common.Models
             }
             return this;
         }
-        public bool HasGlobalGroupReadPermissions(Group group) => Permissions.Can(PermissionConstants.Read, group);
-        public bool HasGlobalGroupManagePermissions(Group group) => Permissions.Can(PermissionConstants.Manage, group);
+        public bool HasGlobalGroupReadPermissions(Group group) => Permissions.Can(PermissionConstants.Read, group) || Permissions.Can(PermissionConstants.Read, nameof(Group));
+        public bool HasGlobalGroupManagePermissions(Group group) => Permissions.Can(PermissionConstants.Manage, group) || Permissions.Can(PermissionConstants.Manage, nameof(Group));
     }
 }

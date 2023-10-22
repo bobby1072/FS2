@@ -14,7 +14,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService)
         {
             var endpointData = httpContext.GetEndpoint();
-            if (endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is not null)
+            if (endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is RequiredUserWithPermissions foundAttribute)
             {
                 var user = httpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
@@ -25,7 +25,7 @@ namespace fsCore.Middleware
                 {
                     throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 }
-                if ((action?.Contains("create") == true || action?.Contains("update") == true || action?.Contains("create") == true) == false && foundUserWithPermissions is not null)
+                if (!foundAttribute.UpdateBeforeAndAfter && foundUserWithPermissions is not null)
                 {
                     await _next(httpContext);
                     return;
@@ -36,7 +36,7 @@ namespace fsCore.Middleware
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                 }
-                if (action == "create" || action == "update" || action == "delete")
+                if (foundAttribute.UpdateBeforeAndAfter)
                 {
                     await _next(httpContext);
                     var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
