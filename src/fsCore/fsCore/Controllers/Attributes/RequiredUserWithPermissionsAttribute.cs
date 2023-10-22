@@ -10,10 +10,10 @@ namespace fsCore.Controllers.Attributes
 {
     internal sealed class RequiredUserWithPermissions : AuthorizeAttribute, IAuthorizationFilter
     {
-        public bool UpdateBeforeAndAfter { get; set; }
-        public RequiredUserWithPermissions(bool updateBeforeAndAfter = false)
+        public bool UpdateAfter { get; set; }
+        public RequiredUserWithPermissions(bool updateAfter = false)
         {
-            UpdateBeforeAndAfter = updateBeforeAndAfter;
+            UpdateAfter = updateAfter;
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {

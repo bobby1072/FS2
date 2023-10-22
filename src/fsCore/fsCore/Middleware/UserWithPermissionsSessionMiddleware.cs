@@ -25,7 +25,7 @@ namespace fsCore.Middleware
                 {
                     throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 }
-                if (!foundAttribute.UpdateBeforeAndAfter && foundUserWithPermissions is not null)
+                if (!foundAttribute.UpdateAfter && foundUserWithPermissions is not null)
                 {
                     await _next(httpContext);
                     return;
@@ -36,7 +36,7 @@ namespace fsCore.Middleware
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                 }
-                if (foundAttribute.UpdateBeforeAndAfter)
+                if (foundAttribute.UpdateAfter)
                 {
                     await _next(httpContext);
                     var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
