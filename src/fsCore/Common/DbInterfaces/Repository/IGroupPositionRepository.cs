@@ -7,7 +7,7 @@ namespace Common.Dbinterfaces.Repository
         Task<ICollection<GroupPosition>?> Create(ICollection<GroupPosition> groupPositionToCreate);
         Task<ICollection<GroupPosition>?> Update(ICollection<GroupPosition> groupPositionToUpdate);
         Task<ICollection<GroupPosition>?> Delete(ICollection<GroupPosition> groupPositionToDelete);
-        Task<ICollection<GroupPosition>?> GetAll(ICollection<string>? relationships = null);
+        Task<ICollection<GroupPosition>?> GetAll(params string[] relationships);
         Task<GroupPosition?> GetOne(IDictionary<string, object> fieldAndName, ICollection<string>? relationships = null);
         Task<ICollection<GroupPosition>?> GetMany<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<GroupPosition?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
