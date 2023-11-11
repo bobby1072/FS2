@@ -5,7 +5,7 @@ namespace Common.Models
     public class Group : BaseModel
     {
         [JsonPropertyName("id")]
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -27,7 +27,7 @@ namespace Common.Models
         [JsonConstructor]
         public Group(string name, string leaderEmail, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members)
         {
-            Id = id ?? Guid.NewGuid();
+            Id = id;
             Name = name;
             Leader = leader;
             LeaderEmail = leaderEmail;
@@ -42,8 +42,6 @@ namespace Common.Models
         {
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
-            Public = false;
-            Listed = false;
             if (leaderEmail is not null && !string.IsNullOrEmpty(leaderEmail))
             {
                 LeaderEmail = leaderEmail;
