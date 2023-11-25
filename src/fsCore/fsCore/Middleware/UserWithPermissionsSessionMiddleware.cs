@@ -4,7 +4,6 @@ using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace fsCore.Middleware
 {
