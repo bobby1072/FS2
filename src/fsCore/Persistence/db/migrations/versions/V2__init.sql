@@ -33,3 +33,18 @@ CREATE TABLE public."group_member" (
     CONSTRAINT group_member_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,
     CONSTRAINT group_member_member_email_fk FOREIGN KEY (user_email) REFERENCES public."user"(email) ON UPDATE CASCADE
 );
+
+CREATE TABLE public."group_catch" (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    group_id UUID NOT NULL,
+    user_email TEXT NOT NULL,
+    species TEXT NOT NULL,
+    weight DECIMAL,
+    length DECIMAL,
+    description TEXT,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    caught_at TIMESTAMP NOT NULL,
+    catch_photo BYTEA,
+    CONSTRAINT catches_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,
+    CONSTRAINT catches_user_email_fk FOREIGN KEY (user_email) REFERENCES public."user"(email) ON UPDATE CASCADE
+);

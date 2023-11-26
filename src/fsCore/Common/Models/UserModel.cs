@@ -80,11 +80,11 @@ namespace Common.Models
             }
             if (member.Position.CanManageCatches)
             {
-                Permissions.AddCan(PermissionConstants.Manage, member.Group, "Catches");
+                Permissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupCatch));
             }
             if (member.Position.CanReadCatches)
             {
-                Permissions.AddCan(PermissionConstants.Read, member.Group, "Catches");
+                Permissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupCatch));
             }
             if (member.Position.CanManageMembers)
             {

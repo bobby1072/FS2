@@ -41,7 +41,7 @@ namespace Persistence.EntityFramework.Entity
         {
             return new GroupEntity
             {
-                Id = group.Id,
+                Id = group.Id ?? Guid.NewGuid(),
                 Name = group.Name,
                 LeaderEmail = group.LeaderEmail,
                 CreatedAt = group.CreatedAt,

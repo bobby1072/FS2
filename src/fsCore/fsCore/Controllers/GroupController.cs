@@ -58,10 +58,31 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [HttpGet("JoinGroup")]
-        public async Task<IActionResult> UserJoinAGroup([FromBody] GroupMember groupMember)
+        [HttpPost("JoinGroup")]
+        public async Task<IActionResult> JoinGroup([FromBody] GroupMember groupMember)
         {
             return Ok(await _groupService.UserJoinGroup(groupMember, _getCurrentUserWithPermissions()));
+        }
+        [ProducesDefaultResponseType(typeof(GroupMember))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("LeaveGroup")]
+        public async Task<IActionResult> LeaveGroup(string targetUser, Guid groupId)
+        {
+            return Ok(await _groupService.UserLeaveGroup(_getCurrentUserWithPermissions(), targetUser, groupId));
+        }
+        [ProducesDefaultResponseType(typeof(Group))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("SaveGroup")]
+        public async Task<IActionResult> SaveGroup([FromBody] Group group)
+        {
+            return Ok(await _groupService.SaveGroup(group, _getCurrentUserWithPermissions()));
+        }
+        [ProducesDefaultResponseType(typeof(Group))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("DeleteGroup")]
+        public async Task<IActionResult> DeleteGroup([FromBody] Group group)
+        {
+            return Ok(await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions()));
         }
     }
 }
