@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-1. In your user profile run
+1. In the repo run
 
 ```
 dotnet dev-certs https -ep .aspnet/https/fs.pfx -p password -t -v

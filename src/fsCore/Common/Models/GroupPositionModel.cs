@@ -43,7 +43,6 @@ namespace Common.Models
             CanManageCatches = canManageCatches;
             CanReadMembers = canReadMembers;
             CanManageMembers = canManageMembers;
-            CanManageMembers = false;
         }
         public GroupPosition ApplyDefaults()
         {

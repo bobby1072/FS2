@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {
     [RequiredUser]
-    [RequiredUserWithPermissions]
     public class GroupController : BaseController
     {
         private readonly IGroupService _groupService;
@@ -14,8 +13,9 @@ namespace fsCore.Controllers
         {
             _groupService = groupService;
         }
-        [ProducesDefaultResponseType(typeof(ICollection<Common.Models.Group>))]
+        [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllListedGroups")]
         public async Task<IActionResult> GetAllListedGroupsRoute()
         {
@@ -23,6 +23,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("ChangePosition")]
         public async Task<IActionResult> ChangePosition([FromBody] GroupMember groupMember)
         {
@@ -30,6 +31,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupPosition>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllPositionsForGroup")]
         public async Task<IActionResult> GetAllPositionsForGroup(Guid groupId)
         {
@@ -37,6 +39,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetMemberships")]
         public async Task<IActionResult> GetMembership(string targetUser, Guid groupId)
         {
@@ -44,6 +47,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllMembershipsForUser")]
         public async Task<IActionResult> GetAllMemberships(string targetEmail)
         {
@@ -51,6 +55,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllMembershipsForGroup")]
         public async Task<IActionResult> GetAllMembershipsForGroup(Guid groupId)
         {
@@ -58,6 +63,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("JoinGroup")]
         public async Task<IActionResult> JoinGroup([FromBody] GroupMember groupMember)
         {
@@ -65,6 +71,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions(true)]
         [HttpGet("LeaveGroup")]
         public async Task<IActionResult> LeaveGroup(string targetUser, Guid groupId)
         {
@@ -72,6 +79,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("SaveGroup")]
         public async Task<IActionResult> SaveGroup([FromBody] Group group)
         {
@@ -79,6 +87,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("DeleteGroup")]
         public async Task<IActionResult> DeleteGroup([FromBody] Group group)
         {
