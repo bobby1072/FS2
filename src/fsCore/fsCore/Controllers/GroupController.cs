@@ -93,5 +93,21 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions()));
         }
+        [ProducesDefaultResponseType(typeof(GroupPosition))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpPost("SavePosition")]
+        public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
+        {
+            return Ok(await _groupService.SavePosition(position, _getCurrentUserWithPermissions()));
+        }
+        [ProducesDefaultResponseType(typeof(GroupPosition))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpPost("DeletePosition")]
+        public async Task<IActionResult> DeletePosition([FromBody] GroupPosition position)
+        {
+            return Ok(await _groupService.DeletePosition(position, _getCurrentUserWithPermissions()));
+        }
     }
 }

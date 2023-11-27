@@ -30,6 +30,7 @@ namespace fsCore.Middleware
                 }
                 else if (foundUserWithPermissions is null)
                 {
+                    // NEEDS TO BE UPDATED TO USE ALL GROUPS AND MEMBERSHIP METHODS
                     var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
@@ -37,6 +38,7 @@ namespace fsCore.Middleware
                 if (foundAttribute.UpdateAfter)
                 {
                     await _next(httpContext);
+                    // NEEDS TO BE UPDATED TO USE ALL GROUPS AND MEMBERSHIP METHODS
                     var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));

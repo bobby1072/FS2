@@ -5,6 +5,7 @@ namespace fsCore.Service.Interfaces
     public interface IGroupService
     {
         Task<ICollection<Group>> GetAllListedGroups();
+        Task<Group> GetGroup(Guid groupId);
         Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser);
         Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId);
         Task<GroupMember> GetMembership(UserWithGroupPermissionSet currentUser, string targetUserEmail, Guid groupId, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
@@ -17,5 +18,6 @@ namespace fsCore.Service.Interfaces
         Task<Group> DeleteGroup(Group group, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
+        Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser);
     }
 }
