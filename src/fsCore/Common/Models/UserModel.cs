@@ -35,8 +35,8 @@ namespace Common.Models
     public class UserWithGroupPermissionSet : User
     {
         [JsonPropertyName("permissions")]
-        public readonly PermissionSet Permissions = PermissionSet.CreateSet();
-        [JsonConstructor]
+        public PermissionSet Permissions = PermissionSet.CreateSet();
+        public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name) { }
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
         {
             if (member is not null)
@@ -44,13 +44,32 @@ namespace Common.Models
                 BuildPermissions(member);
             }
         }
-        [JsonConstructor]
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, ICollection<GroupMember>? member = null) : base(email, emailVerified, name)
         {
             if (member is not null)
             {
                 BuildPermissions(member);
             }
+        }
+        public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
+        {
+            foreach (var group in groups)
+            {
+                BuildPermissions(group);
+            }
+            return this;
+        }
+
+        public UserWithGroupPermissionSet BuildPermissions(Group group)
+        {
+            if (group.LeaderEmail == Email)
+            {
+                Permissions
+                    .AddCan(PermissionConstants.BelongsTo, group)
+                    .AddCan(PermissionConstants.Manage, group)
+                    .AddCan(PermissionConstants.Read, group);
+            }
+            return this;
         }
         public UserWithGroupPermissionSet BuildPermissions(GroupMember member)
         {

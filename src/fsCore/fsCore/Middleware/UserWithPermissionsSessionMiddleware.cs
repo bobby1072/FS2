@@ -30,17 +30,19 @@ namespace fsCore.Middleware
                 }
                 else if (foundUserWithPermissions is null)
                 {
-                    // NEEDS TO BE UPDATED TO USE ALL GROUPS AND MEMBERSHIP METHODS
-                    var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
-                    var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
+                    var (groups, members) = await groupService.GetAllGroupsAndMembershipsForUser(parsedUser);
+                    var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
+                    newUserWithPermissions.BuildPermissions(groups);
+                    newUserWithPermissions.BuildPermissions(members);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                 }
                 if (foundAttribute.UpdateAfter)
                 {
                     await _next(httpContext);
-                    // NEEDS TO BE UPDATED TO USE ALL GROUPS AND MEMBERSHIP METHODS
-                    var foundGroupMembers = await groupService.TryGetAllMemberships(parsedUser, true, false, true);
-                    var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser.Email, parsedUser.EmailVerified, parsedUser.Name, foundGroupMembers);
+                    var (groups, members) = await groupService.GetAllGroupsAndMembershipsForUser(parsedUser);
+                    var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
+                    newUserWithPermissions.BuildPermissions(groups);
+                    newUserWithPermissions.BuildPermissions(members);
                     httpContext.Session.SetString("userWithPermissions", JsonSerializer.Serialize(newUserWithPermissions));
                     return;
                 }
