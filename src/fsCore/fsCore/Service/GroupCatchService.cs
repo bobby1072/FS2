@@ -32,12 +32,12 @@ namespace fsCore.Service
         }
         public async Task<ICollection<GroupCatch>> GetAllCatchesAvailableToUser(UserWithGroupPermissionSet currentUser)
         {
-            var foundMemberShips = await _groupService.GetAllMemberships(currentUser, currentUser.Email, false, false, true);
-            if (!foundMemberShips.All(x => currentUser.Permissions.Can(PermissionConstants.Read, x.Group, nameof(GroupCatch)) || currentUser.HasGlobalGroupReadPermissions(x.Group)))
+            var (groups, _) = await _groupService.GetAllGroupsAndMembershipsForUser(currentUser);
+            if (!groups.All(x => currentUser.Permissions.Can(PermissionConstants.Read, x, nameof(GroupCatch)) || currentUser.HasGlobalGroupReadPermissions(x)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return await _repo.GetMany(foundMemberShips.Select(x => x.Group.Id).ToList(), typeof(GroupCatch).GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new List<String> { nameof(Group) }) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            return await _repo.GetMany(groups.Select(x => x.Id).ToList(), typeof(GroupCatch).GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new List<String> { nameof(Group) }) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
         public async Task<GroupCatch> SaveCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {
