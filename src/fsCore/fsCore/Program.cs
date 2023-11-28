@@ -68,7 +68,7 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = authOptions.Host;
+        options.Authority = authOptions?.Host;
         options.RequireHttpsMetadata = !environment.IsDevelopment();
         options.TokenValidationParameters = new TokenValidationParameters
         {
@@ -88,12 +88,12 @@ builder.Services
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 builder.Services
-    .AddHangfire(configuration => configuration
+    .AddHangfire(configuration => configuration?
         .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-        .UseSimpleAssemblyNameTypeSerializer()
-        .UseRecommendedSerializerSettings()
-        .UsePostgreSqlStorage(dbConnectString))
-    .AddHangfireServer();
+        ?.UseSimpleAssemblyNameTypeSerializer()
+        ?.UseRecommendedSerializerSettings()
+        ?.UsePostgreSqlStorage(dbConnectString))
+        ?.AddHangfireServer();
 
 var app = builder.Build();
 

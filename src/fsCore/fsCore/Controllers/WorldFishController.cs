@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [AllowAnonymous]
+    [Authorize]
     public class WorldFishController : BaseController
     {
         private readonly IWorldFishService _worldFishService;
@@ -16,6 +16,8 @@ namespace fsCore.Controllers
             _worldFishService = worldFishService;
         }
         [ProducesDefaultResponseType(typeof(ICollection<WorldFish>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [HttpGet("FindSomeLike/{fishAnyName}")]
         public async Task<IActionResult> FindSomeLikeRoute(string fishAnyName)
         {
@@ -26,6 +28,8 @@ namespace fsCore.Controllers
             return Ok(await _worldFishService.FindSomeLike(fishAnyName));
         }
         [ProducesDefaultResponseType(typeof(WorldFish))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [HttpGet("FindOne/{fishProp}/{propertyName}")]
         public async Task<IActionResult> FindOneRoute(string fishProp, string propertyName)
         {

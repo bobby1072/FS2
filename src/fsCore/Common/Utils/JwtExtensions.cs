@@ -13,6 +13,5 @@ namespace Common.Utils
             var name = token.Claims.First(c => c.Type == "name")?.Value;
             return new User(email, Convert.ToBoolean(emailVerified), name);
         }
-
     }
 }

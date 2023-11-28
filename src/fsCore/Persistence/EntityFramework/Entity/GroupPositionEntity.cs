@@ -19,9 +19,24 @@ namespace Persistence.EntityFramework.Entity
         [Required]
         [Column(TypeName = "TEXT")]
         public string Name { get; set; }
+        [Required]
+        [Column(TypeName = "BOOLEAN")]
+        public bool CanManageGroup { get; set; }
+        [Required]
+        [Column(TypeName = "BOOLEAN")]
+        public bool CanReadCatches { get; set; }
+        [Required]
+        [Column(TypeName = "BOOLEAN")]
+        public bool CanManageCatches { get; set; }
+        [Required]
+        [Column(TypeName = "BOOLEAN")]
+        public bool CanReadMembers { get; set; }
+        [Required]
+        [Column(TypeName = "BOOLEAN")]
+        public bool CanManageMembers { get; set; }
         public override GroupPosition ToRuntime()
         {
-            return new GroupPosition(GroupId, Name, Id, Group?.ToRuntime());
+            return new GroupPosition(GroupId, Name, Id, CanManageGroup, CanReadCatches, CanManageCatches, CanReadMembers, CanManageMembers, Group?.ToRuntime());
         }
         public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {

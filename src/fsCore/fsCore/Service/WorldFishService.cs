@@ -15,7 +15,7 @@ namespace fsCore.Service
         {
             var file = await File.ReadAllTextAsync(@"../Common/Data/allFish.json");
             var allFileFish = JsonSerializer.Deserialize<ICollection<JsonFileWorldFish>>(file) ?? throw new Exception();
-            var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToList();
+            var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
             var allDbFish = await _repo.GetAll();
             if (allDbFish is null)
             {

@@ -41,7 +41,7 @@ services:
         }
     volumes:
       - ./mocks/oidc:/tmp/config:ro
-      - ~/.aspnet/https:/https:ro
+      - ./.aspnet/https:/https:ro
 
   oidc-https-proxy:
     image: mockserver/mockserver:latest

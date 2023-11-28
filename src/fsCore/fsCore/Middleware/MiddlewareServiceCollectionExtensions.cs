@@ -7,7 +7,8 @@ namespace fsCore.Middleware
         {
             return builder
                 .UseMiddleware<ExceptionHandlingMiddleware>()
-                .UseMiddleware<UserSessionMiddleware>();
+                .UseMiddleware<UserSessionMiddleware>()
+                .UseMiddleware<UserWithPermissionsSessionMiddleware>();
         }
     }
 }
