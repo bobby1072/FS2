@@ -9,7 +9,7 @@ namespace fsCore.Controllers
     public class GroupController : BaseController
     {
         private readonly IGroupService _groupService;
-        public GroupController(ILogger<BaseController> logger, IGroupService groupService) : base(logger)
+        public GroupController(ILogger<GroupController> logger, IGroupService groupService) : base(logger)
         {
             _groupService = groupService;
         }
