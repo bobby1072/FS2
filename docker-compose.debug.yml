@@ -1,0 +1,17 @@
+version: "3.7"
+
+services:
+  fsapi:
+    build:
+      context: .
+      dockerfile: src/fsCore/dockerfile
+    ports:
+      - 9000:80
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+80
+      ClientConfig__AuthorityHost: http://oidc:80
+      Authority__Host: http://oidc:80
+    depends_on:
+      - "postgres"
+      - "oidc"
