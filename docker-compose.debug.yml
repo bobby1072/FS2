@@ -10,10 +10,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+80
-      ClientConfig__AuthorityHost: http://oidc:80
-      Authority__Host: http://oidc:80
-      ConnectionStrings__DefaultConnection: Server=localhost;Port=5560;Database=fs;User ID=postgres;Password=postgres;SslMode=Disable
-      ConnectionStrings__HangfireConnection: Server=localhost;Port=5560;Database=fs;User ID=postgres;Password=postgres;SslMode=Disable
+      ConnectionStrings__DefaultConnection: Server=postgres;Port=5432;Database=fs;User ID=postgres;Password=postgres;SslMode=Disable
     depends_on:
       - "postgres"
       - "oidc"

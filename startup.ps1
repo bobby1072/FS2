@@ -1,11 +1,12 @@
 param (
-    [switch] $debug = $true
+    [switch] $debug = $false
 )
 $ErrorActionPreference = "Stop"
 
-docker compose up --build
 
-if($debug -eq $true)
+if($debug -eq $false)
 {
-    docker compose -f docker-compose.debug.yml up --build
+    docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build
+} else {
+    docker compose up --build
 }
