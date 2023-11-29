@@ -4,13 +4,11 @@ import Constants from "../Constants";
 import { ClientConfigResponse } from "../../models/ClientConfigResponse";
 import { AxiosError } from "axios";
 export const useClientConfigQuery = () => {
-  const { data, isLoading, error } = useQuery<ClientConfigResponse, AxiosError>(
+  const queryResults = useQuery<ClientConfigResponse, AxiosError>(
     Constants.QueryKeys.ClientConfig,
     () => BackendApiServiceProvider.GetClientConfig()
   );
   return {
-    data,
-    isLoading,
-    error,
+    ...queryResults,
   };
 };

@@ -2,8 +2,22 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
-function App() {
+export const App: React.FC = () => {
+  return (
+    <QueryClientProvider {...{ client: queryClient }}></QueryClientProvider>
+  );
+};
+
+function HomePage() {
   const { data, error, isLoading } = useClientConfigQuery();
   return (
     <div className="App">
@@ -24,5 +38,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
