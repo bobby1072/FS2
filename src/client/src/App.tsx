@@ -1,19 +1,34 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { ThemeProvider } from "@mui/material";
 import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
-import { QueryClient, QueryClientProvider } from "react-query";
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+import { fsTheme } from "./theme";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { AuthWrapper } from "./common/login/Authentication";
+
+const { protocol, host } = window.location;
 
 export const App: React.FC = () => {
+  const { data } = useClientConfigQuery();
   return (
-    <QueryClientProvider {...{ client: queryClient }}></QueryClientProvider>
+    <ThemeProvider theme={fsTheme}>
+      <BrowserRouter>
+        {data && (
+          <AuthWrapper
+            authorityHost={data.authorityHost}
+            clientId={data.authorityClientId}
+            redirectUri={`${protocol}//${host}/oidc-signin`}
+            scope={data.authorityScope}
+            silentRedirect={`${protocol}//${host}/oidc-silent-renew`}
+          >
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+            </Routes>
+          </AuthWrapper>
+        )}
+      </BrowserRouter>
+    </ThemeProvider>
   );
 };
 
