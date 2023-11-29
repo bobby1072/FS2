@@ -6,7 +6,9 @@ $ErrorActionPreference = "Stop"
 
 if($debug -eq $false)
 {
-    docker compose -f docker-compose.yml -f docker-compose.debug.yml up --build
+    docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d --build
 } else {
-    docker compose up --build
+    docker compose up -d --build
 }
+
+npm start --prefix src/client
