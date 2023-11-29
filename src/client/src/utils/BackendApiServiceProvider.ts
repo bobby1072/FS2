@@ -7,6 +7,7 @@ export default abstract class BackendApiServiceProvider {
       process.env.NODE_ENV === "development"
         ? "http://localhost:7264/api"
         : undefined,
+    withCredentials: true,
   });
   public static async GetClientConfig() {
     const { data } = await this._httpClient.get<ClientConfigResponse>(

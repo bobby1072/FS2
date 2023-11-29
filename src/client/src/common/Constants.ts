@@ -1,3 +1,7 @@
+enum QueryKeys {
+  ClientConfig = "client-config",
+}
+enum ErrorMessages {}
 export default abstract class Constants {
-  public static readonly ClientConfigQueryKey = "client-config-query";
+  public static readonly QueryKeys: typeof QueryKeys = QueryKeys;
 }
