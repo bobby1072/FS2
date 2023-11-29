@@ -1,8 +1,10 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
 
 function App() {
+  const { data, error, isLoading } = useClientConfigQuery();
   return (
     <div className="App">
       <header className="App-header">

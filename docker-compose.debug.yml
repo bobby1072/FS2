@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: src/fsCore/dockerfile
     ports:
-      - 9000:80
+      - 7264:80
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+80
