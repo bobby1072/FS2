@@ -13,6 +13,14 @@ namespace fsCore.Controllers
         {
             _groupService = groupService;
         }
+        [ProducesDefaultResponseType(typeof(Group))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpGet("GetGroup")]
+        public async Task<IActionResult> GetFullGroup(Guid groupId)
+        {
+            return Ok(await _groupService.GetFullGroup(groupId, _getCurrentUserWithPermissions()));
+        }
         [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions]

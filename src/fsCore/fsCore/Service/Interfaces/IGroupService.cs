@@ -16,6 +16,7 @@ namespace fsCore.Service.Interfaces
         Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser);
         Task<Group> DeleteGroup(Group group, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
+        Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser);
     }

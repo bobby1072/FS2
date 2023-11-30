@@ -15,4 +15,12 @@ export default abstract class BackendApiServiceProvider {
     );
     return data;
   }
+  public static async GetAllListedGroups(accessToken: string) {
+    const { data } = await this._httpClient.get("GetAllListedGroups", {
+      headers: {
+        Authorization: accessToken,
+      },
+    });
+    return data;
+  }
 }

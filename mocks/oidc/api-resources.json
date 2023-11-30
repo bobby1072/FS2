@@ -1,6 +1,7 @@
 [
   {
     "Name": "FSAPI",
-    "Scopes": ["FSAPI"]
+    "Scopes": ["FSAPI"],
+    "UserClaims": ["name", "email", "email_verified"]
   }
 ]

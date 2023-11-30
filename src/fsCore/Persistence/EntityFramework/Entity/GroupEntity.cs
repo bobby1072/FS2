@@ -33,9 +33,11 @@ namespace Persistence.EntityFramework.Entity
         [Column(TypeName = "BYTEA")]
         public byte[]? Emblem { get; set; }
         public virtual ICollection<GroupMemberEntity>? Members { get; set; }
+        public virtual ICollection<GroupPositionEntity>? Positions { get; set; }
+        public virtual ICollection<GroupCatchEntity>? Catches { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, LeaderEmail, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList());
+            return new Group(Name, LeaderEmail, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList(), Positions?.Select(p => p.ToRuntime()).ToList(), Catches?.Select(c => c.ToRuntime()).ToList());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {
