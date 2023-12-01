@@ -15,6 +15,20 @@
     "AllowedScopes": ["openid", "profile", "email", "FSAPI", "GroupAdmin"],
     "RequireClientSecret": false,
     "IdentityTokenLifetime": 3600,
-    "AccessTokenLifetime": 3600
+    "AccessTokenLifetime": 3600,
+    "Claims": [
+      {
+        "Type": "name",
+        "Value": "Demo User"
+      },
+      {
+        "Type": "email",
+        "Value": "test@example.com"
+      },
+      {
+        "Type": "email_verified",
+        "Value": "True"
+      }
+    ]
   }
 ]

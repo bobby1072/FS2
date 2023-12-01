@@ -5,6 +5,9 @@ import { fsTheme } from "./theme";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthWrapper } from "./common/login/Authentication";
 import { LandingPage } from "./pages/LandingPage";
+import Login from "./common/login/Login";
+import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
+import { HomePage } from "./pages/HomePage";
 
 const { protocol, host } = window.location;
 
@@ -22,12 +25,14 @@ export const App: React.FC = () => {
             silentRedirect={`${protocol}//${host}/oidc-silent-renew`}
           >
             <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<Login />} />
               <Route
-                path="/"
+                path="/home"
                 element={
-                  <LandingPage
-                    redirectUri={`${protocol}//${host}/oidc-signin`}
-                  />
+                  <AuthenticatedRoute>
+                    <HomePage />
+                  </AuthenticatedRoute>
                 }
               />
             </Routes>

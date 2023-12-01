@@ -1,17 +1,7 @@
 import { Grid, Button, Paper } from "@mui/material";
-import { useAuthentication } from "../common/login/Authentication";
-import { useLocation } from "react-router-dom";
-import { useCallback } from "react";
-export const LandingPage: React.FC<{ redirectUri: string }> = ({
-  redirectUri,
-}) => {
-  const { signIn } = useAuthentication();
-  const location = useLocation();
-
-  const doLogin = useCallback(async () => {
-    // TODO: Needs to be changed redirect to a homepage when made
-    await signIn({ state: { targetUrl: location.pathname } });
-  }, [location.pathname, signIn]);
+import { useNavigate } from "react-router-dom";
+export const LandingPage: React.FC = () => {
+  const navigate = useNavigate();
   return (
     <div style={{ height: "100vh", width: "100%" }}>
       <Grid
@@ -25,7 +15,9 @@ export const LandingPage: React.FC<{ redirectUri: string }> = ({
           <Paper>
             <Button
               fullWidth
-              onClick={doLogin}
+              onClick={() => {
+                navigate("/home");
+              }}
               sx={{ padding: 2 }}
               variant="contained"
             >

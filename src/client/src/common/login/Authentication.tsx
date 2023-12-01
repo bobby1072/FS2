@@ -108,16 +108,3 @@ export const useAuthentication = (): Authentication => {
     },
   };
 };
-
-export const SignoutCallback: React.FC = () => {
-  const { logout } = useAuthentication();
-
-  useEffect(() => {
-    const handleCallback = async () => {
-      await logout();
-    };
-    handleCallback();
-  }, [logout]);
-
-  return null;
-};
