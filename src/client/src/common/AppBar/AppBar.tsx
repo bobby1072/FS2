@@ -5,14 +5,11 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -53,7 +50,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     },
   },
 }));
-export const MainAppBar: React.FC = () => {
+export const MainAppBar: React.FC<{
+  drawOpen: boolean;
+  setDrawOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ drawOpen, setDrawOpen }) => {
   const [appBarAnchor, setAppBarAnchor] = useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     useState<null | HTMLElement>(null);
@@ -136,6 +136,7 @@ export const MainAppBar: React.FC = () => {
             size="large"
             edge="start"
             color="inherit"
+            onClick={() => setDrawOpen((_) => !_)}
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
@@ -147,7 +148,7 @@ export const MainAppBar: React.FC = () => {
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            MUI
+            FS2
           </Typography>
           <Search>
             <SearchIconWrapper>

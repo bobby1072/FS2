@@ -1,10 +1,12 @@
 import React from "react";
-import { MainAppBar } from "../common/AppBar/AppBar";
+import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 
 export const HomePage: React.FC = () => {
   return (
     <div style={{ height: "100vh", width: "100%" }}>
-      <MainAppBar />
+      <AppAndDraw>
+        <></>
+      </AppAndDraw>
     </div>
   );
 };
