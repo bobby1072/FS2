@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { ThemeProvider } from "@mui/material";
 import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
 import { fsTheme } from "./theme";
@@ -8,8 +8,17 @@ import { LandingPage } from "./pages/LandingPage";
 import Login from "./common/login/Login";
 import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
 import { AccountPage } from "./pages/AccountPage";
+import { UserContextProvider } from "./common/UserContext";
 
 const { protocol, host } = window.location;
+
+const DefaultWrappers: React.FC<{ children: ReactNode }> = ({ children }) => {
+  return (
+    <AuthenticatedRoute>
+      <UserContextProvider>{children}</UserContextProvider>
+    </AuthenticatedRoute>
+  );
+};
 
 export const App: React.FC = () => {
   const { data } = useClientConfigQuery();
@@ -30,9 +39,9 @@ export const App: React.FC = () => {
               <Route
                 path="/account"
                 element={
-                  <AuthenticatedRoute>
+                  <DefaultWrappers>
                     <AccountPage />
-                  </AuthenticatedRoute>
+                  </DefaultWrappers>
                 }
               />
             </Routes>
