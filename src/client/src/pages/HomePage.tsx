@@ -1,12 +1,6 @@
 import React from "react";
-import { AppAndDraw } from "../common/AppBar/AppAndDraw";
+import { PageBase } from "../common/PageBase";
 
 export const HomePage: React.FC = () => {
-  return (
-    <div style={{ height: "100vh", width: "100%" }}>
-      <AppAndDraw>
-        <></>
-      </AppAndDraw>
-    </div>
-  );
+  return <PageBase></PageBase>;
 };

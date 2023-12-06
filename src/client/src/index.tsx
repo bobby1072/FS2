@@ -4,10 +4,12 @@ import "./index.css";
 import { App } from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
 document.title = "FS2";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
+      retry: (count) => (count >= 3 ? false : true),
     },
   },
 });
