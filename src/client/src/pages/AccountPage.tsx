@@ -1,6 +1,5 @@
-import React from "react";
 import { PageBase } from "../common/PageBase";
 
-export const HomePage: React.FC = () => {
+export const AccountPage: React.FC = () => {
   return <PageBase></PageBase>;
 };

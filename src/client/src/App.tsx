@@ -7,7 +7,7 @@ import { AuthWrapper } from "./common/login/Authentication";
 import { LandingPage } from "./pages/LandingPage";
 import Login from "./common/login/Login";
 import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
-import { HomePage } from "./pages/HomePage";
+import { AccountPage } from "./pages/AccountPage";
 
 const { protocol, host } = window.location;
 
@@ -28,10 +28,10 @@ export const App: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
               <Route path="/login" element={<Login />} />
               <Route
-                path="/home"
+                path="/account"
                 element={
                   <AuthenticatedRoute>
-                    <HomePage />
+                    <AccountPage />
                   </AuthenticatedRoute>
                 }
               />
