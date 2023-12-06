@@ -1,5 +1,6 @@
 using Common;
 using Common.Authentication;
+using fsCore.Contexts;
 using fsCore.Middleware;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
@@ -80,6 +81,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
         options.ForwardDefaultSelector = (context) => JwtBearerDefaults.AuthenticationScheme;
     });
+
+builder.Services
+    .AddHttpClient<IUserInfoClient, UserInfoClient>();
 
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()

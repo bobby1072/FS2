@@ -1,8 +1,10 @@
 using System.Net;
 using System.Text.Json;
 using Common;
+using Common.Authentication;
 using Common.Models;
 using Common.Utils;
+using fsCore.Contexts;
 using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -12,15 +14,13 @@ namespace fsCore.Middleware
     internal class UserSessionMiddleware : BaseMiddleware
     {
         public UserSessionMiddleware(RequestDelegate next) : base(next) { }
-        public async Task InvokeAsync(HttpContext httpContext, IUserService userService)
+        public async Task InvokeAsync(HttpContext httpContext, IUserService userService, IUserInfoClient userInfoClient)
         {
             var endpoint = httpContext.GetEndpoint();
             if (endpoint?.Metadata.GetMetadata<RequiredUser>() is not null)
             {
-                var tokenUser = httpContext
-                    .GetTokenData()?
-                    .TokenClaimsToUser() ??
-                    throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+                var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+                var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                 var existingUserSession = httpContext.Session.GetString("user");
                 if (existingUserSession is null)
                 {

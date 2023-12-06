@@ -5,6 +5,7 @@ public class ClientConfigSettings
     public const string Key = "ClientConfig";
 
     public string ApiHost { get; init; }
+    public string UserInfoEndpoint { get; init; }
 
     public string ClientHost { get; init; }
 
