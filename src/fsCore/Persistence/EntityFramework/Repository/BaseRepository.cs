@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Reflection;
 using Common;
 using Common.Models;
 using Common.Utils;
@@ -36,7 +38,9 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundOneQuerySet = dbContext.Set<TEnt>();
-            var runtimeObj = await _addRelationsToQuery(foundOneQuerySet.AsQueryable(), relationships).FirstOrDefaultAsync(x => x.ToRuntime().Equals(baseUser));
+            var primaryKey = _runtimeToEntity(baseUser).GetType().GetProperties().FirstOrDefault(x => x.GetCustomAttribute<KeyAttribute>() is not null) ?? throw new Exception();
+            var baseValuePrimaryKey = primaryKey.GetValue(_runtimeToEntity(baseUser));
+            var runtimeObj = await GetOne(baseValuePrimaryKey, primaryKey.Name, relationships);
             if (runtimeObj is TBase correctOBj)
             {
                 return correctOBj;
@@ -49,8 +53,7 @@ namespace Persistence.EntityFramework.Repository
             var myProps = typeof(TEnt).GetProperties();
             var foundDetail = myProps.FirstOrDefault(x =>
             {
-                var xType = x.GetType();
-                return x.Name == fieldName.ToPascalCase() && typeof(TField) == x.PropertyType;
+                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
             });
             if (foundDetail is not null)
             {
@@ -126,7 +129,7 @@ namespace Persistence.EntityFramework.Repository
             var foundDetail = myProps.FirstOrDefault(x =>
             {
                 var xType = x.GetType();
-                return x.Name == fieldName.ToPascalCase() && typeof(TField) == x.PropertyType;
+                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
             });
             if (foundDetail is not null)
             {
@@ -154,8 +157,7 @@ namespace Persistence.EntityFramework.Repository
             var myProps = typeof(TEnt).GetProperties();
             var foundDetail = myProps.FirstOrDefault(x =>
             {
-                var xType = x.GetType();
-                return x.Name == fieldName.ToPascalCase() && typeof(TField) == x.PropertyType;
+                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
             });
             if (foundDetail is not null)
             {

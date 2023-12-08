@@ -116,9 +116,9 @@ if (app.Environment.IsDevelopment())
 app.UseSession();
 app.UseHttpsRedirection();
 app.UseHttpLogging();
-app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRouting();
 app.MapControllers();
 app.UseDefaultMiddlewares();
 app.Run();

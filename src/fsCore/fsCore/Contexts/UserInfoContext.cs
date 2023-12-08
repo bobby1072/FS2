@@ -24,7 +24,7 @@ namespace fsCore.Contexts
                 RequestUri = new Uri(_userInfoEndpoint),
                 Headers =
                 {
-                    { HttpRequestHeader.Authorization.ToString(), accessToken},
+                    { HttpRequestHeader.Authorization.ToString(), accessToken.Split("Bearer ").Length == 2 ? accessToken : $"Bearer {accessToken}"},
                 }
             };
 
