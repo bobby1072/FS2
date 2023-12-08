@@ -1,5 +1,6 @@
 using Common;
 using Common.Authentication;
+using fsCore.Contexts;
 using fsCore.Middleware;
 using fsCore.Service;
 using fsCore.Service.Hangfire;
@@ -25,7 +26,7 @@ var issuerHost = config["JWT_ISSUER_HOST"];
 var authAudience = config["JWT_AUDIENCE"];
 
 
-if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
+if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
@@ -80,6 +81,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
         options.ForwardDefaultSelector = (context) => JwtBearerDefaults.AuthenticationScheme;
     });
+
+builder.Services
+    .AddHttpClient<IUserInfoClient, UserInfoClient>();
 
 builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()

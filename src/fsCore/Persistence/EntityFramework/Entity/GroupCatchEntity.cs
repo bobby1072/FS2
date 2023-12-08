@@ -40,9 +40,15 @@ namespace Persistence.EntityFramework.Entity
         public DateTime CaughtAt { get; set; }
         [Column(TypeName = "BYTEA")]
         public byte[]? CatchPhoto { get; set; }
+        [Required]
+        [Column(TypeName = "DECIMAL")]
+        public double Latitude { get; set; }
+        [Required]
+        [Column(TypeName = "DECIMAL")]
+        public double Longitude { get; set; }
         public override GroupCatch ToRuntime()
         {
-            return new GroupCatch(UserEmail, GroupId, Species, Weight, CaughtAt, Length, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime());
+            return new GroupCatch(UserEmail, GroupId, Species, Weight, CaughtAt, Length, Latitude, Longitude, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime());
         }
         public static GroupCatchEntity RuntimeToEntity(GroupCatch groupCatch)
         {
@@ -57,7 +63,9 @@ namespace Persistence.EntityFramework.Entity
                 CreatedAt = groupCatch.CreatedAt,
                 CaughtAt = groupCatch.CaughtAt,
                 CatchPhoto = groupCatch.CatchPhoto,
-                GroupId = groupCatch.GroupId
+                GroupId = groupCatch.GroupId,
+                Latitude = groupCatch.Latitude,
+                Longitude = groupCatch.Longitude
             };
         }
     }

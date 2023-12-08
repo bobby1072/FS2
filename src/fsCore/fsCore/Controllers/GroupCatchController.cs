@@ -5,6 +5,7 @@ using Common.Models;
 using System.Net;
 namespace fsCore.Controllers
 {
+
     [RequiredUser]
     public class GroupCatchController : BaseController
     {

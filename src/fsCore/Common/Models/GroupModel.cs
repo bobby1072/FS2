@@ -24,10 +24,16 @@ namespace Common.Models
         public byte[]? Emblem { get; set; }
         [JsonPropertyName("members")]
         public ICollection<GroupMember>? Members { get; set; }
+        [JsonPropertyName("positions")]
+        public ICollection<GroupPosition>? Positions { get; set; }
+        [JsonPropertyName("catches")]
+        public ICollection<GroupCatch>? Catches { get; set; }
         [JsonConstructor]
-        public Group(string name, string leaderEmail, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members)
+        public Group(string name, string leaderEmail, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members, ICollection<GroupPosition>? positions, ICollection<GroupCatch>? catches)
         {
+            Positions = positions;
             Id = id;
+            Catches = catches;
             Name = name;
             Leader = leader;
             LeaderEmail = leaderEmail;

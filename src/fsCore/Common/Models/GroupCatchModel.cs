@@ -28,8 +28,12 @@ namespace Common.Models
         public DateTime CaughtAt { get; set; }
         [JsonPropertyName("catchPhoto")]
         public byte[]? CatchPhoto { get; set; }
+        [JsonPropertyName("latitude")]
+        public double Latitude { get; set; }
+        [JsonPropertyName("longitude")]
+        public double Longitude { get; set; }
         [JsonConstructor]
-        public GroupCatch(string userEmail, Guid groupId, string species, double weight, DateTime caughtAt, double length, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
+        public GroupCatch(string userEmail, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
         {
             Id = id;
             UserEmail = userEmail;

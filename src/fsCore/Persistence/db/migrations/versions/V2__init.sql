@@ -45,6 +45,8 @@ CREATE TABLE public."group_catch" (
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     caught_at TIMESTAMP NOT NULL,
     catch_photo BYTEA,
+    latitude DECIMAL NOT NULL,
+    longitude DECIMAL NOT NULL,
     CONSTRAINT catches_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,
     CONSTRAINT catches_user_email_fk FOREIGN KEY (user_email) REFERENCES public."user"(email) ON UPDATE CASCADE
 );

@@ -5,16 +5,20 @@
     "AllowedGrantTypes": ["authorization_code"],
     "AllowAccessTokensViaBrowser": true,
     "RedirectUris": [
-      "http://localhost:3000",
       "http://localhost:3000/oidc-signin",
       "http://localhost:3000/oidc-silent-renew",
-      "http://localhost:5000",
-      "http://localhost:5000/oidc-signin",
-      "http://localhost:5000/oidc-silent-renew"
+      "http://localhost:3000/oidc-signout"
     ],
     "AllowedScopes": ["openid", "profile", "email", "FSAPI", "GroupAdmin"],
     "RequireClientSecret": false,
     "IdentityTokenLifetime": 3600,
     "AccessTokenLifetime": 3600
+  },
+  {
+    "ClientId": "authorization_code-mock-client",
+    "Description": "Client for authorization code flow",
+    "AllowedGrantTypes": ["authorization_code"],
+    "RequireClientSecret": false,
+    "AllowedScopes": ["FSAPI"]
   }
 ]

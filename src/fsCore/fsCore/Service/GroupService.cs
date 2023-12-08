@@ -218,5 +218,15 @@ namespace fsCore.Service
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return foundGroup;
         }
+        public async Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
+        {
+            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Catches", "Positions", "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (!(currentUser.Permissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup))) &&
+                !currentUser.HasGlobalGroupReadPermissions(foundGroup))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return foundGroup;
+        }
     }
 }

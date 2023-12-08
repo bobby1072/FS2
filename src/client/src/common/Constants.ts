@@ -1,5 +1,6 @@
 enum QueryKeys {
   ClientConfig = "client-config",
+  GetUser = "get-user",
 }
 enum ErrorMessages {}
 export default abstract class Constants {
