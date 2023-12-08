@@ -1,13 +1,10 @@
 using System.Net;
 using System.Text.Json;
 using Common;
-using Common.Authentication;
 using Common.Models;
-using Common.Utils;
 using fsCore.Contexts;
 using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 
 namespace fsCore.Middleware
 {

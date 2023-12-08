@@ -14,5 +14,6 @@ export const UserContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const { data } = useGetUserQuery();
+  if (!data) return null;
   return <UserContext.Provider value={data}>{children}</UserContext.Provider>;
 };
