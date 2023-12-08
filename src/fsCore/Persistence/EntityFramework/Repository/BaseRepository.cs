@@ -32,7 +32,7 @@ namespace Persistence.EntityFramework.Repository
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundAllQuerySet = dbContext.Set<TEnt>();
             var runtimeObj = await _addRelationsToQuery(foundAllQuerySet.AsQueryable(), relationships).ToArrayAsync();
-            return runtimeObj?.OfType<TBase>().ToList();
+            return runtimeObj?.Select(x => x.ToRuntime()).OfType<TBase>().ToList();
         }
         public virtual async Task<TBase?> GetOne(TBase baseUser, ICollection<string>? relationships = null)
         {

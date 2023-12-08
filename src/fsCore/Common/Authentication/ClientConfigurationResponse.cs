@@ -1,11 +1,10 @@
 namespace Common.Authentication;
 public class ClientConfigurationResponse
 {
-    public ClientConfigurationResponse(string apiHost, string authorityHost, string authorityScope, string authorityClientId)
+    public ClientConfigurationResponse(string apiHost, string authorityHost, string authorityClientId)
     {
         ApiHost = apiHost;
         AuthorityHost = authorityHost;
-        AuthorityScope = authorityScope;
         AuthorityClientId = authorityClientId;
     }
 
@@ -14,7 +13,6 @@ public class ClientConfigurationResponse
 
     public string AuthorityHost { get; }
 
-    public string AuthorityScope { get; }
 
     public string AuthorityClientId { get; }
 }

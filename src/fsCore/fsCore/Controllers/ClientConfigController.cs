@@ -20,7 +20,6 @@ namespace fsCore.Controllers
             return Ok(new ClientConfigurationResponse(
                 _clientConfigSettings.ApiHost,
                 _clientConfigSettings.AuthorityHost,
-                _clientConfigSettings.AuthorityScope,
                 _clientConfigSettings.AuthorityClientId));
         }
     }

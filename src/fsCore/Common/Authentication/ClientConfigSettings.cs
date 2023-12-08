@@ -10,8 +10,5 @@ public class ClientConfigSettings
     public string ClientHost { get; init; }
 
     public string AuthorityHost { get; init; }
-
-    public string AuthorityScope { get; init; }
-
     public string AuthorityClientId { get; init; }
 }
