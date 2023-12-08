@@ -76,7 +76,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = false,
-            ValidIssuer = issuerHost,
+            ValidIssuer = issuerHost
         };
     });
 
