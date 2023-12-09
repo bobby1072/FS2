@@ -17,21 +17,16 @@ namespace fsCore.Middleware
             if (endpoint?.Metadata.GetMetadata<RequiredUser>() is not null)
             {
                 var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                 var existingUserSession = httpContext.Session.GetString("user");
                 if (existingUserSession is null)
                 {
+                    var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
                     httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
                 }
-                else if (JsonSerializer.Deserialize<User>(existingUserSession) is not User user)
+                else if (JsonSerializer.Deserialize<User>(existingUserSession) is null)
                 {
                     throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
-                }
-                else if (user.Name != tokenUser.Name)
-                {
-                    var userExistence = await userService.UpdateUser(tokenUser);
-                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
                 }
             }
             await _next(httpContext);

@@ -51,8 +51,6 @@ export const MainAppBar: React.FC<{
   drawOpen: boolean;
   setDrawOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ drawOpen, setDrawOpen }) => {
-  const push = useNavigate();
-
   const menuId = "primary-search-account-menu";
 
   return (
@@ -95,7 +93,7 @@ export const MainAppBar: React.FC<{
               aria-controls={menuId}
               aria-haspopup="true"
               onClick={(event) => {
-                push("/Account");
+                window.location.href = "/Account";
               }}
               color="inherit"
             >

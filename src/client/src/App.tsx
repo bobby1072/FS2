@@ -9,6 +9,7 @@ import Login from "./common/login/Login";
 import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
 import { AccountPage } from "./pages/AccountPage";
 import { UserContextProvider } from "./common/UserContext";
+import { Loading } from "./common/Loading";
 
 const { protocol, host } = window.location;
 
@@ -22,6 +23,7 @@ const DefaultWrappers: React.FC<{ children: ReactNode }> = ({ children }) => {
 
 export const App: React.FC = () => {
   const { data } = useClientConfigQuery();
+  if (!data) return <Loading fullScreen />;
   return (
     <ThemeProvider theme={fsTheme}>
       <BrowserRouter>

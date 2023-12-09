@@ -17,7 +17,6 @@ export const AccountPage: React.FC = () => {
         alignItems="center"
         direction="column"
         textAlign="center"
-        spacing={3}
       >
         <Paper elevation={2} sx={{ padding: 6 }}>
           <Grid item>
