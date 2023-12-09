@@ -2,12 +2,11 @@ using System.Net;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [Authorize]
+    [RequiredUser]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;

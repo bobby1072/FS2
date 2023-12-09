@@ -35,9 +35,9 @@ export const App: React.FC = () => {
           >
             <Routes>
               <Route path="/" element={<LandingPage />} />
-              <Route path="/login" element={<Login />} />
+              <Route path="/Login" element={<Login />} />
               <Route
-                path="/account"
+                path="/Account"
                 element={
                   <DefaultWrappers>
                     <AccountPage />

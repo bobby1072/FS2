@@ -9,6 +9,8 @@ services:
       - 7264:80
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ClientConfig__UserInfoEndpoint: http://oidc:80/connect/userinfo
+      JWT_ISSUER_HOST: http://oidc:80
       ASPNETCORE_URLS: http://+80
       ConnectionStrings__DefaultConnection: Server=postgres;Port=5432;Database=fs;User ID=postgres;Password=postgres;SslMode=Disable
     depends_on:
