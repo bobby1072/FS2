@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { ThemeProvider } from "@mui/material";
 import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
 import { fsTheme } from "./theme";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthWrapper } from "./common/login/Authentication";
 import { LandingPage } from "./pages/LandingPage";
 import Login from "./common/login/Login";
@@ -10,6 +10,7 @@ import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
 import { AccountPage } from "./pages/AccountPage";
 import { UserContextProvider } from "./common/UserContext";
 import { Loading } from "./common/Loading";
+import { AllGroupDisplayPage } from "./pages/GroupPage";
 
 const { protocol, host } = window.location;
 
@@ -46,6 +47,15 @@ export const App: React.FC = () => {
                   </DefaultWrappers>
                 }
               />
+              <Route
+                path="/Groups"
+                element={
+                  <DefaultWrappers>
+                    <AllGroupDisplayPage />
+                  </DefaultWrappers>
+                }
+              />
+              <Route path="/Home" element={<Navigate to="/Groups" />} />
             </Routes>
           </AuthWrapper>
         )}

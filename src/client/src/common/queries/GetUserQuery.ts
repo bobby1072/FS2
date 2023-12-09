@@ -6,7 +6,6 @@ import { UserModel } from "../../models/UserModel";
 
 export const useGetUserQuery = () => {
   const { bearerToken } = useAuthentication();
-
   const queryResults = useQuery<UserModel, Error>(
     Constants.QueryKeys.GetUser,
     () => {

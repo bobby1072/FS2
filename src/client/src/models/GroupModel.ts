@@ -1,6 +1,6 @@
 import { UserModel } from "./UserModel";
 
-export interface GrouopModel {
+export interface GroupModel {
   id?: string;
   name: string;
   description?: string;
