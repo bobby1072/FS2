@@ -19,7 +19,6 @@ builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 var config = builder.Configuration;
 var environment = builder.Environment;
 
-var authOptions = config.GetSection(AuthoritySettings.Key).Get<AuthoritySettings>();
 var dbConnectString = config.GetConnectionString("DefaultConnection");
 var clientId = config["ClientConfig:AuthorityClientId"];
 var issuerHost = config["JWT_ISSUER_HOST"];
@@ -69,17 +68,16 @@ builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = authOptions?.Host;
+        options.Authority = issuerHost;
         options.RequireHttpsMetadata = !environment.IsDevelopment();
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidateAudience = true,
+            ValidateAudience = false,
             ValidateLifetime = true,
-            ValidIssuers = issuerHost.Split(","),
-            ValidAudience = authAudience
+            ValidateIssuerSigningKey = false,
+            ValidIssuer = issuerHost
         };
-        options.ForwardDefaultSelector = (context) => JwtBearerDefaults.AuthenticationScheme;
     });
 
 builder.Services
@@ -112,15 +110,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseCors("corsapp");
 }
-
-app.UseSession();
-app.UseHttpsRedirection();
-app.UseHttpLogging();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseRouting();
-app.MapControllers();
+app.UseSession();
 app.UseDefaultMiddlewares();
+app.MapControllers();
+
 app.Run();
+
+
+
 
 public static partial class Program { };

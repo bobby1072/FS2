@@ -98,7 +98,10 @@ export const useAuthentication = (): Authentication => {
   const push = useNavigate();
 
   return {
-    bearerToken: oidcAuth?.userData?.access_token,
+    bearerToken:
+      oidcAuth?.userData?.access_token.split("Bearer ").length === 2
+        ? oidcAuth?.userData?.access_token
+        : `Bearer ${oidcAuth?.userData?.access_token}`,
     isLoggedIn: oidcAuth?.userData !== undefined && oidcAuth?.userData !== null,
     profile: oidcAuth?.userData?.profile,
     signIn: oidcAuth!.signIn,

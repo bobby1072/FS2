@@ -30,7 +30,7 @@ export const App: React.FC = () => {
             authorityHost={data.authorityHost}
             clientId={data.authorityClientId}
             redirectUri={`${protocol}//${host}/oidc-signin`}
-            scope={data.authorityScope}
+            scope={"email openid profile"}
             silentRedirect={`${protocol}//${host}/oidc-silent-renew`}
           >
             <Routes>
