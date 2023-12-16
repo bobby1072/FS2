@@ -16,12 +16,12 @@ export const Loading: React.FC<{ fullScreen?: boolean }> = ({
         sx={{ height: "100vh" }}
       >
         <Grid item width="100%">
-          <LinearProgress />
-        </Grid>
-        <Grid item width="100%">
           <Typography variant="h1" fontSize={50}>
             Loading...
           </Typography>
+        </Grid>
+        <Grid item width="70%">
+          <LinearProgress />
         </Grid>
       </Grid>
     </PageBase>

@@ -9,5 +9,5 @@ export interface GroupModel {
   createdAt: string;
   isPublic: boolean;
   isListed: boolean;
-  emblem?: number[] | null;
+  emblem?: Uint8Array | null;
 }

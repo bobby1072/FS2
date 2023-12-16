@@ -14,7 +14,7 @@ export const useCurrentUser = () => {
 export const UserContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { data } = useGetUserQuery();
-  if (!data) return <Loading fullScreen />;
+  const { data, isLoading } = useGetUserQuery();
+  if (isLoading && !data) return <Loading fullScreen />;
   return <UserContext.Provider value={data}>{children}</UserContext.Provider>;
 };

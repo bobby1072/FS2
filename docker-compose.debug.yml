@@ -16,3 +16,4 @@ services:
     depends_on:
       - "postgres"
       - "oidc"
+      - "oidc-https-proxy"
