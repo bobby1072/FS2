@@ -11,6 +11,7 @@ import { AccountPage } from "./pages/AccountPage";
 import { UserContextProvider } from "./common/UserContext";
 import { Loading } from "./common/Loading";
 import { AllGroupDisplayPage } from "./pages/GroupPage";
+import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
 
 const { protocol, host } = window.location;
 
@@ -47,14 +48,17 @@ export const App: React.FC = () => {
                   </DefaultWrappers>
                 }
               />
-              <Route
-                path="/Groups"
-                element={
-                  <DefaultWrappers>
-                    <AllGroupDisplayPage />
-                  </DefaultWrappers>
-                }
-              />
+              {AuthenticatedRoutes.map((x) => (
+                <Route
+                  key={x.link}
+                  path={x.link}
+                  element={
+                    <DefaultWrappers>
+                      <x.component />
+                    </DefaultWrappers>
+                  }
+                />
+              ))}
               <Route path="/Home" element={<Navigate to="/Groups" />} />
             </Routes>
           </AuthWrapper>

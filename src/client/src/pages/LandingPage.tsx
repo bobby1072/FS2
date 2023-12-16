@@ -16,7 +16,7 @@ export const LandingPage: React.FC = () => {
             <Button
               fullWidth
               onClick={() => {
-                navigate("/Account");
+                navigate("/Home");
               }}
               sx={{ padding: 2 }}
               variant="contained"

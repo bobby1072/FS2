@@ -8,6 +8,7 @@ import {
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SigninRedirectArgs } from "oidc-client-ts";
+import { Loading } from "../Loading";
 
 interface Authentication {
   bearerToken?: string;
@@ -89,7 +90,9 @@ export const AuthWrapper: React.FC<Props> = ({
   const loading = !isLoggedIn && oidcState !== null;
 
   return (
-    <AuthProvider {...oidcConfig}>{loading ? <div /> : children}</AuthProvider>
+    <AuthProvider {...oidcConfig}>
+      {loading ? <Loading fullScreen /> : children}
+    </AuthProvider>
   );
 };
 
