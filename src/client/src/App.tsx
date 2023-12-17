@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material";
 import { useClientConfigQuery } from "./common/queries/ClientConfigQuery";
 import { fsTheme } from "./theme";
@@ -10,10 +10,7 @@ import { AuthenticatedRoute } from "./common/login/AuthenticatedRoute";
 import { AccountPage } from "./pages/AccountPage";
 import { UserContextProvider } from "./common/UserContext";
 import { Loading } from "./common/Loading";
-import { AllGroupDisplayPage } from "./pages/GroupPage";
 import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
-
-const { protocol, host } = window.location;
 
 const DefaultWrappers: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
@@ -24,18 +21,28 @@ const DefaultWrappers: React.FC<{ children: ReactNode }> = ({ children }) => {
 };
 
 export const App: React.FC = () => {
+  const [authoritySettings, setAuthoritySettings] = useState<{
+    host: string;
+    clientId: string;
+  } | null>(null);
   const { data } = useClientConfigQuery();
-  if (!data) return <Loading fullScreen />;
+  useEffect(() => {
+    if (data) {
+      setAuthoritySettings({
+        clientId: data?.authorityClientId,
+        host: data?.authorityHost,
+      });
+    }
+  }, [data]);
+  if (!authoritySettings) return <Loading fullScreen />;
+
   return (
     <ThemeProvider theme={fsTheme}>
       <BrowserRouter>
         {data && (
           <AuthWrapper
-            authorityHost={data.authorityHost}
-            clientId={data.authorityClientId}
-            redirectUri={`${protocol}//${host}/oidc-signin`}
-            scope={"email openid profile"}
-            silentRedirect={`${protocol}//${host}/oidc-silent-renew`}
+            authorityHost={authoritySettings.host}
+            clientId={authoritySettings.clientId}
           >
             <Routes>
               <Route path="/" element={<LandingPage />} />

@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SigninRedirectArgs } from "oidc-client-ts";
 import { Loading } from "../Loading";
+import Settings from "../../settings";
 
 interface Authentication {
   bearerToken?: string;
@@ -21,33 +22,22 @@ interface Authentication {
 interface Props {
   authorityHost: string;
   clientId: string;
-  redirectUri: string;
-  silentRedirect: string;
-  scope: string;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export const AuthWrapper: React.FC<Props> = ({
   children,
   authorityHost,
-  redirectUri,
   clientId,
-  silentRedirect,
-  scope,
 }) => {
   const push = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userManager] = useState<UserManager>(
     new UserManager({
-      redirect_uri: redirectUri,
+      ...Settings.oidcSettings,
       authority: authorityHost,
       client_id: clientId,
-      silent_redirect_uri: silentRedirect,
-      response_type: "code",
-      loadUserInfo: true,
-      automaticSilentRenew: true,
-      scope: scope,
     })
   );
 
@@ -113,4 +103,17 @@ export const useAuthentication = (): Authentication => {
       push("/Login");
     },
   };
+};
+
+export const SignoutCallback: React.FC = () => {
+  const { logout } = useAuthentication();
+
+  useEffect(() => {
+    const handleCallback = async () => {
+      await logout();
+    };
+    handleCallback();
+  }, [logout]);
+
+  return null;
 };

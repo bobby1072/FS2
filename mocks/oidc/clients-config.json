@@ -19,6 +19,6 @@
     "Description": "Client for authorization code flow",
     "AllowedGrantTypes": ["authorization_code"],
     "RequireClientSecret": false,
-    "AllowedScopes": ["fs-local"]
+    "AllowedScopes": ["fs"]
   }
 ]
