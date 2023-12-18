@@ -50,6 +50,8 @@ namespace Common.Models
                 BuildPermissions(member);
             }
         }
+        [JsonConstructor]
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name) : base(email, emailVerified, name) { }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
         {
             foreach (var group in groups)
