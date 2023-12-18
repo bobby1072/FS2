@@ -22,7 +22,6 @@ namespace Common.Models
         public bool CanReadMembers { get; set; }
         [JsonPropertyName("canManageMembers")]
         public bool CanManageMembers { get; set; }
-        [JsonConstructor]
         public GroupPosition(
             Guid groupId,
             string name,

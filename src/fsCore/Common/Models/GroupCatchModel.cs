@@ -32,7 +32,6 @@ namespace Common.Models
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        [JsonConstructor]
         public GroupCatch(string userEmail, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
         {
             Id = id;

@@ -28,7 +28,6 @@ namespace Common.Models
         public ICollection<GroupPosition>? Positions { get; set; }
         [JsonPropertyName("catches")]
         public ICollection<GroupCatch>? Catches { get; set; }
-        [JsonConstructor]
         public Group(string name, string leaderEmail, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members, ICollection<GroupPosition>? positions, ICollection<GroupCatch>? catches)
         {
             Positions = positions;

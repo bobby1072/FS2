@@ -24,7 +24,6 @@ namespace Common.Models
         }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
-        [JsonConstructor]
         public User(string email, bool emailVerified, string? name)
         {
             EmailVerified = emailVerified;

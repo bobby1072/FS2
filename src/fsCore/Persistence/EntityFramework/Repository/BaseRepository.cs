@@ -125,11 +125,10 @@ namespace Persistence.EntityFramework.Repository
         }
         public virtual async Task<ICollection<TBase>?> GetMany<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt).GetProperties();
-            var foundDetail = myProps.FirstOrDefault(x =>
+            var myProps = typeof(TEnt);
+            var foundDetail = myProps.GetProperties().FirstOrDefault(x =>
             {
-                var xType = x.GetType();
-                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
+                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.PropertyType);
             });
             if (foundDetail is not null)
             {

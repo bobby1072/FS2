@@ -26,17 +26,17 @@ namespace Common.Permissions
     }
     public class PermissionSet
     {
-        private readonly ICollection<Permission> _abilities = new HashSet<Permission>();
+        public readonly ICollection<Permission> Abilities = new HashSet<Permission>();
         public PermissionSet()
         {
         }
         public Permission? GetPermission(string action, object subject)
         {
-            return _abilities.FirstOrDefault(x => x.Action == action && x.Subject.Equals(subject));
+            return Abilities.FirstOrDefault(x => x.Action == action && x.Subject.Equals(subject));
         }
         public Permission? GetPermissionSingleSubjectProperty<T>(string action, T singleSubjectProperty, string propertyName)
         {
-            return _abilities.FirstOrDefault(x => x.Action == action && x.Subject.GetType().GetProperties().FirstOrDefault(x => x.Name == propertyName && x.GetType() == typeof(T))?.Equals(singleSubjectProperty) is not null);
+            return Abilities.FirstOrDefault(x => x.Action == action && x.Subject.GetType().GetProperties().FirstOrDefault(x => x.Name == propertyName && x.GetType() == typeof(T))?.Equals(singleSubjectProperty) is not null);
         }
         public static PermissionSet CreateSet() => new();
         private void _add(ICollection<Permission> permissionList, Permission newPerm)
@@ -60,30 +60,30 @@ namespace Common.Permissions
         }
         public PermissionSet AddCan<T>(string action, T subject, ICollection<string>? fields = null) where T : class
         {
-            _add(_abilities, new Permission(action, subject, fields?.ToHashSet()));
+            _add(Abilities, new Permission(action, subject, fields?.ToHashSet()));
             return this;
         }
         public PermissionSet AddCan<T>(string action, T subject, string field) where T : class
         {
-            _add(_abilities, new Permission(action, subject, new HashSet<string> { field }));
+            _add(Abilities, new Permission(action, subject, new HashSet<string> { field }));
             return this;
         }
         public PermissionSet AddCan(string action, string subject)
         {
-            _add(_abilities, new Permission(action, subject));
+            _add(Abilities, new Permission(action, subject));
             return this;
         }
         public bool Can<T>(string action, T subject) where T : class
         {
-            return _abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && x.Fields is null) || (x.Action == action && x.Subject is true));
+            return Abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && x.Fields is null) || (x.Action == action && x.Subject is true));
         }
         public bool Can<T>(string action, T subject, string field) where T : class
         {
-            return _abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && (x.Fields?.Contains(field) == true || x.Fields is null)) || (x.Action == action && x.Subject is true));
+            return Abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && (x.Fields?.Contains(field) == true || x.Fields is null)) || (x.Action == action && x.Subject is true));
         }
         public bool Can<T>(string action, T subject, ICollection<string> fields) where T : class
         {
-            return _abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && (fields.All(y => x.Fields?.Contains(y) == true) || x.Fields is null)) || (x.Action == action && x.Subject is true));
+            return Abilities.Any(x => (x.Action == action && x.Subject is T newSubject && newSubject.Equals(subject) && (fields.All(y => x.Fields?.Contains(y) == true) || x.Fields is null)) || (x.Action == action && x.Subject is true));
         }
     }
 }
