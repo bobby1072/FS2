@@ -23,6 +23,7 @@ interface Props {
   settings: {
     authority: string;
     client_id: string;
+    scope: string;
   };
 }
 

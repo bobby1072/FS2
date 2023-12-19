@@ -8,12 +8,16 @@ import { useAppContext } from "./common/contexts/AppContext";
 const { protocol, host } = window.location;
 
 export const App: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { authorityClientId, authorityHost } = useAppContext();
+  const { authorityClientId, authorityHost, scope } = useAppContext();
 
   return (
     <AuthenticationContextProvider
       clientRootHost={`${protocol}//${host}`}
-      settings={{ authority: authorityHost, client_id: authorityClientId }}
+      settings={{
+        authority: authorityHost,
+        client_id: authorityClientId,
+        scope,
+      }}
     >
       <ThemeProvider theme={fsTheme}>{children}</ThemeProvider>
     </AuthenticationContextProvider>
