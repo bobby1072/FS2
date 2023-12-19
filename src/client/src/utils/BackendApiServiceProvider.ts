@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { ClientConfigResponse } from "../models/ClientConfigResponse";
 import { UserModel } from "../models/UserModel";
+import { GroupModel } from "../models/GroupModel";
 
 export default abstract class BackendApiServiceProvider {
   private static _httpClient: AxiosInstance = axios.create({
@@ -30,6 +31,18 @@ export default abstract class BackendApiServiceProvider {
         Authorization: accessToken,
       },
     });
+    return data;
+  }
+  public static async SaveGroup(accessToken: string, group: GroupModel) {
+    const { data } = await this._httpClient.post<string>(
+      "Group/SaveGroup",
+      group,
+      {
+        headers: {
+          Authorization: accessToken,
+        },
+      }
+    );
     return data;
   }
 }

@@ -17,6 +17,8 @@ import { AppContextProvider } from "./common/contexts/AppContext";
 import { useAuthentication } from "./common/contexts/AuthenticationContext";
 import { SignInCallback } from "./common/authentication/SignInCallback";
 import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
+import { ThemeProvider } from "@mui/material";
+import { fsTheme } from "./theme";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -27,15 +29,9 @@ const FallbackRoute: React.FC = () => {
   );
 };
 
-const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <React.StrictMode>
-      <AppContextProvider>
-        <App>{children}</App>
-      </AppContextProvider>
-    </React.StrictMode>
-  );
-};
+const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <App>{children}</App>
+);
 
 const AppRoutes: RouteObject[] = [
   {
@@ -100,11 +96,17 @@ if (window.location.pathname === "/oidc-silent-renew") {
   const root = createRoot(container!);
 
   root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider
-        router={router}
-        fallbackElement={<Loading fullScreen={true} />}
-      />
-    </QueryClientProvider>
+    <React.StrictMode>
+      <ThemeProvider theme={fsTheme}>
+        <QueryClientProvider client={queryClient}>
+          <AppContextProvider>
+            <RouterProvider
+              router={router}
+              fallbackElement={<Loading fullScreen={true} />}
+            />
+          </AppContextProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </React.StrictMode>
   );
 }

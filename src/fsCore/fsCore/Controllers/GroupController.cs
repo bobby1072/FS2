@@ -85,13 +85,13 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.UserLeaveGroup(_getCurrentUserWithPermissions(), targetUser, groupId));
         }
-        [ProducesDefaultResponseType(typeof(Group))]
+        [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SaveGroup")]
         public async Task<IActionResult> SaveGroup([FromBody] Group group)
         {
-            return Ok(await _groupService.SaveGroup(group, _getCurrentUserWithPermissions()));
+            return Ok((await _groupService.SaveGroup(group, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

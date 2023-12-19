@@ -1,6 +1,4 @@
 import React, { ReactNode } from "react";
-import { ThemeProvider } from "@mui/material";
-import { fsTheme } from "./theme";
 
 import { AuthenticationContextProvider } from "./common/contexts/AuthenticationContext";
 import { useAppContext } from "./common/contexts/AppContext";
@@ -19,7 +17,7 @@ export const App: React.FC<{ children: ReactNode }> = ({ children }) => {
         scope,
       }}
     >
-      <ThemeProvider theme={fsTheme}>{children}</ThemeProvider>
+      {children}
     </AuthenticationContextProvider>
   );
 };
