@@ -16,6 +16,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { AppContextProvider } from "./common/contexts/AppContext";
 import { useAuthentication } from "./common/contexts/AuthenticationContext";
 import { SignInCallback } from "./common/authentication/SignInCallback";
+import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -69,7 +70,9 @@ const AppRoutes: RouteObject[] = [
     path: option.link,
     element: (
       <Wrapper>
-        <option.component />
+        <AuthenticatedRoute>
+          <option.component />
+        </AuthenticatedRoute>
       </Wrapper>
     ),
   })),

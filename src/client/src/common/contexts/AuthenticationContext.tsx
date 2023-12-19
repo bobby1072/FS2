@@ -39,10 +39,10 @@ export const AuthenticationContextProvider: React.FC<Props> = ({
   const [initializing, setInitializing] = useState(true);
   const [silentRenewFailed, setSilentRenewFailed] = useState<boolean>(false);
   const [userData, setUserData] = useState<User | null>(null);
-
   const [userManager] = useState<UserManager>(
     new UserManager({
       ...settings,
+      scope: settings.scope,
       response_type: "code",
       redirect_uri: `${clientRootHost}/oidc-signin`,
       automaticSilentRenew: true,
