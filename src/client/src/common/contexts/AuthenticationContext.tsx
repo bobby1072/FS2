@@ -42,7 +42,6 @@ export const AuthenticationContextProvider: React.FC<Props> = ({
   const [userManager] = useState<UserManager>(
     new UserManager({
       ...settings,
-      scope: settings.scope,
       response_type: "code",
       redirect_uri: `${clientRootHost}/oidc-signin`,
       automaticSilentRenew: true,

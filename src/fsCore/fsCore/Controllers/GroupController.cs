@@ -93,13 +93,13 @@ namespace fsCore.Controllers
         {
             return Ok((await _groupService.SaveGroup(group, _getCurrentUserWithPermissions())).Id);
         }
-        [ProducesDefaultResponseType(typeof(Group))]
+        [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("DeleteGroup")]
         public async Task<IActionResult> DeleteGroup([FromBody] Group group)
         {
-            return Ok(await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions()));
+            return Ok((await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
