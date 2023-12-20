@@ -9,8 +9,8 @@ export const useGetAllListedGroups = () => {
   const queryResults = useQuery<GroupModel[], Error>(
     Constants.QueryKeys.GetAllListedGroups,
     () => {
-      if (!user?.id_token) throw new Error("No bearer token found");
-      return BackendApiServiceProvider.GetAllListedGroups(user.id_token);
+      if (!user?.access_token) throw new Error("No bearer token found");
+      return BackendApiServiceProvider.GetAllListedGroups(user.access_token);
     }
   );
   return { ...queryResults };

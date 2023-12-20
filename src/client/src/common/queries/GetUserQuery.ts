@@ -9,8 +9,8 @@ export const useGetUserQuery = () => {
   const queryResults = useQuery<UserModel, Error>(
     Constants.QueryKeys.GetUser,
     () => {
-      if (!user?.id_token) throw new Error("No bearer token found");
-      return BackendApiServiceProvider.GetUser(user.id_token);
+      if (!user?.access_token) throw new Error("No bearer token found");
+      return BackendApiServiceProvider.GetUser(user.access_token);
     }
   );
   return { ...queryResults };

@@ -56,7 +56,7 @@ namespace fsCore.Service
             }
             else
             {
-                return (await _repo.Update(new List<GroupCatch> { groupCatch.ApplyDefaults() }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+                return (await _repo.Update(new List<GroupCatch> { groupCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             }
         }
         public async Task<GroupCatch> DeleteCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
