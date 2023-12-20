@@ -22,7 +22,7 @@ namespace Persistence.EntityFramework.Entity
         [ForeignKey(nameof(LeaderEmail))]
         public UserEntity? Leader { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }
         [Required]
         [Column(TypeName = "BOOLEAN")]

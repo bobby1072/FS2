@@ -33,10 +33,10 @@ namespace Persistence.EntityFramework.Entity
         [Column(TypeName = "TEXT")]
         public string? Description { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CaughtAt { get; set; }
         [Column(TypeName = "BYTEA")]
         public byte[]? CatchPhoto { get; set; }
