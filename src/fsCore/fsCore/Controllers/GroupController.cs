@@ -92,7 +92,8 @@ namespace fsCore.Controllers
         [HttpPost("SaveGroup")]
         public async Task<IActionResult> SaveGroup([FromBody] SaveGroupInput group)
         {
-            return Ok((await _groupService.SaveGroup(group.ToGroup(), _getCurrentUserWithPermissions())).Id);
+            var savedGroup = await _groupService.SaveGroup(group.ToGroup(), _getCurrentUserWithPermissions());
+            return Ok(savedGroup.Id);
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

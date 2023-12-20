@@ -46,7 +46,7 @@ namespace Persistence.EntityFramework.Entity
                 Id = group.Id ?? Guid.NewGuid(),
                 Name = group.Name,
                 LeaderEmail = group.LeaderEmail,
-                CreatedAt = group.CreatedAt,
+                CreatedAt = DateTime.SpecifyKind(group.CreatedAt, DateTimeKind.Utc),
                 Public = group.Public,
                 Listed = group.Listed,
                 Emblem = group.Emblem,
