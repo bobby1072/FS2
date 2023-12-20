@@ -53,5 +53,6 @@ namespace Common.Models
             }
             return this;
         }
+        public Group() { }
     }
 }

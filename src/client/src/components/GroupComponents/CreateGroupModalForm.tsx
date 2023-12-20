@@ -1,45 +1,84 @@
 import { z } from "zod";
 import { GroupModel } from "../../models/GroupModel";
 import { useSaveGroupMutation } from "./hooks/SaveGroupMutation";
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Grid } from "@mui/material";
+import {
+  Alert,
+  FormControlLabel,
+  Grid,
+  Switch,
+  TextField,
+  Tooltip,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   isPublic: z.boolean(),
   isListed: z.boolean(),
   emblem: z.string().optional(),
+  id: z.string().optional(),
 });
-type FormValues = z.infer<typeof formSchema>;
-const mapDefaultValues = (group?: GroupModel): FormValues | undefined => {
+export type SaveGroupInput = z.infer<typeof formSchema>;
+const mapDefaultValues = (group?: GroupModel): SaveGroupInput | undefined => {
   if (!group) return undefined;
   return {
+    id: group?.id ?? "",
     name: group?.name ?? "",
     description: group?.description ?? "",
-    isPublic: group?.isPublic ?? false,
-    isListed: group?.isListed ?? false,
+    isPublic: group?.Public ?? true,
+    isListed: group?.Listed ?? true,
     emblem: group?.emblem?.toString() ?? "",
   };
 };
-export const CreateGroupModalForm: React.FC<{ group?: GroupModel }> = ({
-  group,
-}) => {
-  const { data, mutate, error, isLoading } = useSaveGroupMutation();
+export const CreateGroupModalForm: React.FC<{
+  group?: GroupModel;
+  setIsDirty?: (boolVal: boolean) => void;
+}> = ({ group, setIsDirty }) => {
   const {
-    watch,
+    data,
+    mutate,
+    error: mutationError,
+    reset: resetMutation,
+  } = useSaveGroupMutation();
+  const {
     handleSubmit,
     register,
-    formState: { errors, isDirty },
-  } = useForm<FormValues>({
+    watch,
+    formState: { errors: formError, isDirty },
+  } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
-  const submitHandler = (values: FormValues) => {
-    //mutate();
+  const { isListed, isPublic } = watch();
+  const [allErrors, setAllErrors] = useState<
+    | AxiosError
+    | FieldErrors<{
+        name: string;
+        isPublic: boolean;
+        isListed: boolean;
+        description?: string | undefined;
+        emblem?: string | undefined;
+        id?: string | undefined;
+      }>
+  >();
+  useEffect(() => {
+    setIsDirty?.(!isDirty);
+  }, [isDirty, setIsDirty]);
+  useEffect(() => {
+    if (formError) setAllErrors(formError);
+  }, [formError]);
+  useEffect(() => {
+    if (mutationError) setAllErrors(mutationError);
+  }, [mutationError]);
+  const submitHandler = (values: SaveGroupInput) => {
+    resetMutation();
+    mutate(values);
   };
   return (
-    <form onSubmit={handleSubmit(submitHandler)}>
+    <form onSubmit={handleSubmit(submitHandler)} id="groupSaveForm">
       <Grid
         container
         spacing={2}
@@ -48,7 +87,65 @@ export const CreateGroupModalForm: React.FC<{ group?: GroupModel }> = ({
         justifyContent="center"
         alignItems="center"
       >
-        <Grid item></Grid>
+        <Grid item width="50%">
+          <TextField
+            InputProps={{ required: true, ...register("name") }}
+            label="Group name"
+            fullWidth
+            multiline
+            rows={2}
+          />
+        </Grid>
+        <Grid item width="50%">
+          <TextField
+            InputProps={{ required: true, ...register("description") }}
+            label="Group description"
+            fullWidth
+            multiline
+            rows={2}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <Tooltip title="Public groups are visible to everyone. Private groups are only visible to members and are invite only.">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isPublic}
+                  inputProps={{ required: true, ...register("isPublic") }}
+                />
+              }
+              label="Public"
+            />
+          </Tooltip>
+        </Grid>
+        <Grid item width="25%">
+          <Tooltip title="Listed groups are visible to everyone. Unlisted groups are never visible on the main page.">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={isListed}
+                  inputProps={{ required: true, ...register("isListed") }}
+                />
+              }
+              label="Listed"
+            />
+          </Tooltip>
+        </Grid>
+        {allErrors instanceof AxiosError && (
+          <Grid item width={"100%"}>
+            <Alert severity="error">{allErrors.message}</Alert>
+          </Grid>
+        )}
+        {!(allErrors instanceof AxiosError) && allErrors?.root?.message && (
+          <Grid item width={"100%"}>
+            <Alert severity="error">{allErrors.root.message}</Alert>
+          </Grid>
+        )}
+        {data && (
+          <Grid item width={"100%"}>
+            <Alert severity="success">Group saved!</Alert>
+          </Grid>
+        )}
       </Grid>
     </form>
   );

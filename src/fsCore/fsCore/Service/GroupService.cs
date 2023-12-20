@@ -171,13 +171,14 @@ namespace fsCore.Service
             }
 
         }
-        public async Task<Group> DeleteGroup(Group group, UserWithGroupPermissionSet currentUser)
+        public async Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser)
         {
-            if (!currentUser.Permissions.Can(PermissionConstants.Manage, group) && !currentUser.HasGlobalGroupManagePermissions(group))
+            var foundGroup = await _repo.GetOne(group, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup) && !currentUser.HasGlobalGroupManagePermissions(foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _repo.Delete(new List<Group> { group }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
+            return (await _repo.Delete(new List<Group> { foundGroup }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
         }
         public async Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {

@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "react-query";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
-import { GroupModel } from "../../../models/GroupModel";
 import { AxiosError } from "axios";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import Constants from "../../../common/Constants";
 import { useEffect } from "react";
+import { SaveGroupInput } from "../CreateGroupModalForm";
 
 export const useSaveGroupMutation = () => {
   const { user } = useAuthentication();
@@ -12,7 +12,7 @@ export const useSaveGroupMutation = () => {
   if (!user) {
     throw new Error("User not found");
   }
-  const mutationProps = useMutation<string, AxiosError, GroupModel>((g) =>
+  const mutationProps = useMutation<string, AxiosError, SaveGroupInput>((g) =>
     BackendApiServiceProvider.SaveGroup(user.access_token, g)
   );
   useEffect(() => {

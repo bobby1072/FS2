@@ -1,6 +1,7 @@
 using System.Net;
 using Common.Models;
 using fsCore.Controllers.Attributes;
+using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
@@ -89,15 +90,15 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SaveGroup")]
-        public async Task<IActionResult> SaveGroup([FromBody] Group group)
+        public async Task<IActionResult> SaveGroup([FromBody] SaveGroupInput group)
         {
-            return Ok((await _groupService.SaveGroup(group, _getCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.SaveGroup(group.ToGroup(), _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("DeleteGroup")]
-        public async Task<IActionResult> DeleteGroup([FromBody] Group group)
+        public async Task<IActionResult> DeleteGroup([FromBody] Guid group)
         {
             return Ok((await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions())).Id);
         }

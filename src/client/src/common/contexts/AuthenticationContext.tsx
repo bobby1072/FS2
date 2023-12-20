@@ -71,14 +71,7 @@ export const AuthenticationContextProvider: React.FC<Props> = ({
 
   const onSignIn = useCallback(
     (user: User | null) => {
-      const tempUser = user;
-      if (tempUser) {
-        tempUser.id_token =
-          tempUser.access_token.toLowerCase().split("bearer ").length > 1
-            ? tempUser.access_token
-            : `Bearer ${tempUser.access_token}`;
-      }
-      setUserData(tempUser);
+      setUserData(user);
 
       if (user) {
         const state = user.state as UserState;

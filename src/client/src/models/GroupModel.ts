@@ -7,7 +7,7 @@ export interface GroupModel {
   leaderEmail: string;
   leader?: UserModel | null;
   createdAt: string;
-  isPublic: boolean;
-  isListed: boolean;
+  Public: boolean;
+  Listed: boolean;
   emblem?: string | null;
 }
