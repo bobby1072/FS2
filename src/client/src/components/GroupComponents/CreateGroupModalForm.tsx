@@ -49,6 +49,7 @@ export const CreateGroupModalForm: React.FC<{
     handleSubmit,
     register,
     watch,
+    setValue,
     formState: { errors: formError, isDirty },
   } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
@@ -91,7 +92,7 @@ export const CreateGroupModalForm: React.FC<{
       >
         <Grid item width="50%">
           <TextField
-            InputProps={{ required: true, ...register("name") }}
+            {...register("name", { required: true })}
             label="Group name"
             fullWidth
             multiline
@@ -100,7 +101,7 @@ export const CreateGroupModalForm: React.FC<{
         </Grid>
         <Grid item width="50%">
           <TextField
-            InputProps={{ required: true, ...register("description") }}
+            {...register("description", { required: false })}
             label="Group description"
             fullWidth
             multiline
@@ -117,7 +118,7 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isPublic}
-                  inputProps={{ ...register("isPublic") }}
+                  {...register("isPublic", { required: false })}
                 />
               }
               label="Public"
@@ -134,12 +135,35 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isListed}
-                  inputProps={{ ...register("isListed") }}
+                  {...register("isListed", { required: false })}
                 />
               }
               label="Listed"
             />
           </Tooltip>
+        </Grid>
+        <Grid
+          item
+          width="100%"
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const foundFile = e.target.files?.item(0);
+              if (foundFile) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  const result = reader.result as string;
+                  setValue("emblem", result);
+                };
+                reader.readAsDataURL(foundFile);
+              }
+            }}
+          />
         </Grid>
         {allErrors instanceof AxiosError && (
           <Grid item width={"100%"}>
