@@ -15,6 +15,7 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
         direction="column"
         justifyContent="center"
         alignItems="center"
+        textAlign={"center"}
         spacing={2}
         padding={2}
       >
@@ -31,12 +32,12 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
           </Typography>
         </Grid>
         <Grid item width="100%">
-          <Typography variant="h2" fontSize={30}>
+          <Typography variant="h2" fontSize={35}>
             {group.name}
           </Typography>
         </Grid>
         <Grid item width="100%">
-          <Typography variant="h3" fontSize={20}>
+          <Typography variant="h3" fontSize={25}>
             {group.description}
           </Typography>
         </Grid>

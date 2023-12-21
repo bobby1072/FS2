@@ -20,6 +20,11 @@ export const AccountPage: React.FC = () => {
           direction="column"
           textAlign="center"
         >
+          <Grid item sx={{ mb: 3 }}>
+            <Typography variant="h3" fontSize={50}>
+              Account
+            </Typography>
+          </Grid>
           <Paper elevation={2} sx={{ padding: 6 }}>
             <Grid item>
               <Avatar {...{ email }} initials={initials} />

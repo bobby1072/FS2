@@ -19,7 +19,9 @@ export const CreateGroupModal: React.FC<{
   return (
     <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
       <StyledDialogTitle>
-        <Typography variant="h6">Discard Warning</Typography>
+        <Typography variant="h6">
+          {group ? "Edit group" : "Create group"}
+        </Typography>
       </StyledDialogTitle>
       <DialogContent dividers={true}>
         <CreateGroupModalForm
@@ -37,12 +39,20 @@ export const CreateGroupModal: React.FC<{
           spacing={1}
           padding={1}
         >
-          <Grid item width="25%">
+          <Grid
+            item
+            width="40%"
+            sx={{ display: "flex", justifyContent: "flex-start" }}
+          >
             <Button variant="outlined" onClick={closeModal}>
               Cancel
             </Button>
           </Grid>
-          <Grid item width="25%">
+          <Grid
+            item
+            width="40%"
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
             <Button
               variant="contained"
               type="submit"

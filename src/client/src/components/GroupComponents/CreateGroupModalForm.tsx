@@ -22,15 +22,17 @@ const formSchema = z.object({
   id: z.string().optional(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
-const mapDefaultValues = (group?: GroupModel): SaveGroupInput | undefined => {
-  if (!group) return undefined;
+const mapDefaultValues = (
+  group?: GroupModel
+): Partial<SaveGroupInput> | undefined => {
+  if (!group) return { isListed: true, isPublic: true };
   return {
-    id: group?.id ?? "",
-    name: group?.name ?? "",
-    description: group?.description ?? "",
-    isPublic: group?.Public ?? true,
-    isListed: group?.Listed ?? true,
-    emblem: group?.emblem?.toString() ?? "",
+    id: group.id,
+    name: group.name,
+    description: group?.description,
+    isPublic: group.Public,
+    isListed: group.Listed,
+    emblem: group?.emblem?.toString(),
   };
 };
 export const CreateGroupModalForm: React.FC<{
@@ -105,26 +107,34 @@ export const CreateGroupModalForm: React.FC<{
             rows={2}
           />
         </Grid>
-        <Grid item width="25%">
+        <Grid
+          item
+          width="40%"
+          sx={{ display: "flex", justifyContent: "flex-start" }}
+        >
           <Tooltip title="Public groups are visible to everyone. Private groups are only visible to members and are invite only.">
             <FormControlLabel
               control={
                 <Switch
                   checked={isPublic}
-                  inputProps={{ required: true, ...register("isPublic") }}
+                  inputProps={{ ...register("isPublic") }}
                 />
               }
               label="Public"
             />
           </Tooltip>
         </Grid>
-        <Grid item width="25%">
+        <Grid
+          item
+          width="40%"
+          sx={{ display: "flex", justifyContent: "flex-end" }}
+        >
           <Tooltip title="Listed groups are visible to everyone. Unlisted groups are never visible on the main page.">
             <FormControlLabel
               control={
                 <Switch
                   checked={isListed}
-                  inputProps={{ required: true, ...register("isListed") }}
+                  inputProps={{ ...register("isListed") }}
                 />
               }
               label="Listed"

@@ -12,6 +12,7 @@ namespace Persistence.EntityFramework.Repository
     internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity<TBase> where TBase : BaseModel
     {
         protected abstract TEnt _runtimeToEntity(TBase runtimeObj);
+        private readonly Type _entType = typeof(TEnt);
         public readonly IDbContextFactory<FsContext> DbContextFactory;
         public BaseRepository(IDbContextFactory<FsContext> dbContextFactory)
         {
@@ -20,7 +21,7 @@ namespace Persistence.EntityFramework.Repository
         protected virtual IQueryable<TEnt> _addRelationsToQuery(IQueryable<TEnt> set, ICollection<string>? relationships = null)
         {
             var newQuery = set;
-            var foundRelationProperties = typeof(TEnt).GetProperties().Where(x => relationships?.Contains(x.Name.Replace("Entity", "")) == true);
+            var foundRelationProperties = _entType.GetProperties().Where(x => relationships?.Contains(x.Name.Replace("Entity", "")) == true);
             foreach (var relation in foundRelationProperties)
             {
                 newQuery = newQuery.Include(relation.Name);
@@ -50,11 +51,8 @@ namespace Persistence.EntityFramework.Repository
 
         public virtual async Task<TBase?> GetOne<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt).GetProperties();
-            var foundDetail = myProps.FirstOrDefault(x =>
-            {
-                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
-            });
+            var myProps = _entType.GetProperties();
+            var foundDetail = myProps.FirstOrDefault(x => x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.PropertyType));
             if (foundDetail is not null)
             {
                 await using var dbContext = await DbContextFactory.CreateDbContextAsync();
@@ -83,7 +81,7 @@ namespace Persistence.EntityFramework.Repository
         }
         public virtual async Task<ICollection<TBase>?> GetMany(IDictionary<string, object> fieldAndName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt).GetProperties();
+            var myProps = _entType.GetProperties();
             var neededKeyValPairs = fieldAndName.Where(x =>
                 myProps.Any(y => y.PropertyType == x.Value.GetType()) && myProps.FirstOrDefault(y => y.Name == x.Key) is not null
             ).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -102,7 +100,7 @@ namespace Persistence.EntityFramework.Repository
         }
         public virtual async Task<TBase?> GetOne(IDictionary<string, object> fieldAndName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt).GetProperties();
+            var myProps = _entType.GetProperties();
             var neededKeyValPairs = fieldAndName.Where(x =>
                 myProps.Any(y => y.PropertyType == x.Value.GetType()) && myProps.FirstOrDefault(y => y.Name == x.Key) is not null
             ).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -125,11 +123,8 @@ namespace Persistence.EntityFramework.Repository
         }
         public virtual async Task<ICollection<TBase>?> GetMany<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt);
-            var foundDetail = myProps.GetProperties().FirstOrDefault(x =>
-            {
-                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.PropertyType);
-            });
+            var myProps = _entType.GetProperties();
+            var foundDetail = myProps.FirstOrDefault(x => x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.PropertyType));
             if (foundDetail is not null)
             {
                 await using var dbContext = await DbContextFactory.CreateDbContextAsync();
@@ -153,11 +148,8 @@ namespace Persistence.EntityFramework.Repository
         }
         public virtual async Task<ICollection<TBase>?> _getSomeLike<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
-            var myProps = typeof(TEnt).GetProperties();
-            var foundDetail = myProps.FirstOrDefault(x =>
-            {
-                return x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.GetType());
-            });
+            var myProps = _entType.GetProperties();
+            var foundDetail = myProps.FirstOrDefault(x => x.Name == fieldName.ToPascalCase() && typeof(TField).IsAssignableFrom(x.PropertyType));
             if (foundDetail is not null)
             {
                 await using var dbContext = await DbContextFactory.CreateDbContextAsync();
@@ -181,8 +173,8 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             await set.AddRangeAsync(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
-            var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            var runtimeObjs = set.Local.Select(x => x.ToRuntime());
+            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
 
         }
         public virtual async Task<ICollection<TBase>?> Delete(ICollection<TBase> entObj)
@@ -191,8 +183,8 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             set.RemoveRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
-            var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            var runtimeObjs = set.Local.Select(x => x.ToRuntime());
+            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
 
 
         }
@@ -202,8 +194,8 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             set.UpdateRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
-            var runtimeObjs = set.Local.Select(x => x.ToRuntime()).ToArray();
-            return runtimeObjs?.Length > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            var runtimeObjs = set.Local.Select(x => x.ToRuntime());
+            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
 
         }
     }
