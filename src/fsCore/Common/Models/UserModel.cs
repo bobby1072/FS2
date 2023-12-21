@@ -34,7 +34,7 @@ namespace Common.Models
     public class UserWithGroupPermissionSet : User
     {
         [JsonPropertyName("permissions")]
-        public PermissionSet Permissions = PermissionSet.CreateSet();
+        public PermissionSet Permissions { get; set; } = PermissionSet.CreateSet();
         public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name) { }
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
         {

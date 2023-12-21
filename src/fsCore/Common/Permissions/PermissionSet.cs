@@ -1,9 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace Common.Permissions
 {
     public class Permission
     {
+        [JsonConstructor]
+        public Permission() { }
+        [JsonPropertyName("action")]
         public string Action { get; set; }
+        [JsonPropertyName("subject")]
         public object Subject { get; set; }
+        [JsonPropertyName("fields")]
         public ICollection<string>? Fields { get; set; }
         public Permission(string action, object subject, ICollection<string>? fields = null)
         {
@@ -14,7 +21,9 @@ namespace Common.Permissions
     }
     public class PermissionSet
     {
-        public ICollection<Permission> Abilities => new HashSet<Permission>();
+        [JsonPropertyName("abilities")]
+        public ICollection<Permission> Abilities { get; set; } = new HashSet<Permission>();
+        [JsonConstructor]
         public PermissionSet()
         {
         }
