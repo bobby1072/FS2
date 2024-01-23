@@ -1,12 +1,6 @@
 import { Grid, Paper, Typography } from "@mui/material";
 import { GroupModel } from "../../models/GroupModel";
-import Avatar from "react-avatar";
-
 export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
-  const initials = group.name
-    ?.split(" ")
-    .map((x) => x[0])
-    .join("");
   return (
     <Paper elevation={2}>
       <Grid
@@ -20,10 +14,11 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
         padding={2}
       >
         <Grid item width="100%">
-          {group.emblem ? (
-            <img src={group.emblem.toString()} alt={group.id ?? ""} />
-          ) : (
-            <Avatar initials={initials} />
+          {group.emblem && (
+            <img
+              src={`data:image/jpeg;base64,${group.emblem}`}
+              alt={group.id ?? ""}
+            />
           )}
         </Grid>
         <Grid item width="100%">

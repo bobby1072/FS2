@@ -13,8 +13,6 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AxiosError } from "axios";
-const encode = (str: string): string =>
-  Buffer.from(str, "binary").toString("base64");
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
@@ -158,11 +156,11 @@ export const CreateGroupModalForm: React.FC<{
               const foundFile = e.target.files?.item(0);
               if (foundFile) {
                 const reader = new FileReader();
-                reader.onload = () => {
+                reader.onloadend = () => {
                   const result = reader.result as string;
                   setValue("emblem", result);
                 };
-                reader.readAsBinaryString(foundFile);
+                reader.readAsDataURL(foundFile);
               }
             }}
           />
