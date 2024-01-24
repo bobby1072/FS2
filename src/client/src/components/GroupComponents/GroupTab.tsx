@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from "@mui/material";
+import { Box, Grid, Paper, Typography } from "@mui/material";
 import { GroupModel } from "../../models/GroupModel";
 export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
   return (
@@ -13,29 +13,41 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
         spacing={2}
         padding={2}
       >
-        <Grid item width="100%">
+        <Grid item width="100%" minHeight={"10vh"}>
           {group.emblem && (
-            <img
-              src={`data:image/jpeg;base64,${group.emblem}`}
-              alt={group.id ?? ""}
-            />
+            <>
+              <Box
+                component="img"
+                sx={{
+                  maxHeight: "50vh",
+                  width: "80%",
+                }}
+                src={`data:image/jpeg;base64,${group.emblem}`}
+                alt={`emblem: ${group.id}`}
+              />
+            </>
           )}
         </Grid>
         <Grid item width="100%">
           <Typography variant="h4" fontSize={16}>
+            <strong>Id: </strong>
             {group.id}
           </Typography>
         </Grid>
         <Grid item width="100%">
-          <Typography variant="h2" fontSize={35}>
+          <Typography variant="h2" fontSize={25}>
+            <strong>Name: </strong>
             {group.name}
           </Typography>
         </Grid>
-        <Grid item width="100%">
-          <Typography variant="h3" fontSize={25}>
-            {group.description}
-          </Typography>
-        </Grid>
+        {group.description && (
+          <Grid item width="100%">
+            <Typography variant="h3" fontSize={20}>
+              <strong>Description: </strong>
+              {group.description}
+            </Typography>
+          </Grid>
+        )}
       </Grid>
     </Paper>
   );

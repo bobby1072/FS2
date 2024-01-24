@@ -13,7 +13,7 @@ export const Loading: React.FC<{ fullScreen?: boolean }> = ({
         direction="column"
         spacing={4}
         textAlign="center"
-        sx={{ height: "100vh" }}
+        sx={{ minHeight: "103vh" }}
       >
         <Grid item width="100%">
           <Typography variant="h1" fontSize={50}>

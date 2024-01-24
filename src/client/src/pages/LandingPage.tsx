@@ -10,7 +10,7 @@ export const LandingPage: React.FC = () => {
   if (user) return <Navigate to={targetUrl} />;
 
   return (
-    <div style={{ minHeight: "101vh", width: "100%" }}>
+    <div style={{ height: "100vh", width: "100%" }}>
       <Grid
         container
         justifyContent="center"

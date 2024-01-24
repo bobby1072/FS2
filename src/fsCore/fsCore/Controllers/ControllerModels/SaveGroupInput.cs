@@ -27,7 +27,7 @@ namespace fsCore.Controllers.ControllerModels
                 Description = Description,
                 Public = IsPublic,
                 Listed = IsListed,
-                Emblem = Emblem is not null ? Encoding.Default.GetBytes(Emblem) : null,
+                Emblem = Emblem is not null ? Convert.FromBase64String(Emblem) : null,
             };
         }
     }

@@ -158,7 +158,10 @@ export const CreateGroupModalForm: React.FC<{
                 const reader = new FileReader();
                 reader.onloadend = () => {
                   const result = reader.result as string;
-                  setValue("emblem", result);
+                  setValue(
+                    "emblem",
+                    result.replace(/^data:image\/[^;]+;base64,/, "")
+                  );
                 };
                 reader.readAsDataURL(foundFile);
               }
