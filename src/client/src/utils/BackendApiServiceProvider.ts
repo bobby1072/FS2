@@ -23,9 +23,13 @@ export default abstract class BackendApiServiceProvider {
     );
     return data;
   }
-  public static async GetAllListedGroups(accessToken: string) {
+  public static async GetAllListedGroups(
+    accessToken: string,
+    startIndex: number,
+    count: number
+  ) {
     const { data } = await this._httpClient.get<GroupModel[]>(
-      "Group/GetAllListedGroups",
+      `Group/GetAllListedGroups?startIndex=${startIndex}&count=${count}`,
       {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),

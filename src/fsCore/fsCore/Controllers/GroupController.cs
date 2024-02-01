@@ -3,6 +3,7 @@ using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {
@@ -21,14 +22,6 @@ namespace fsCore.Controllers
         public async Task<IActionResult> GetFullGroup(Guid groupId)
         {
             return Ok(await _groupService.GetFullGroup(groupId, _getCurrentUserWithPermissions()));
-        }
-        [ProducesDefaultResponseType(typeof(ICollection<Group>))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpGet("GetAllListedGroups")]
-        public async Task<IActionResult> GetAllListedGroupsRoute()
-        {
-            return Ok(await _groupService.GetAllListedGroups());
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -119,5 +112,13 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.DeletePosition(position, _getCurrentUserWithPermissions()));
         }
+        [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("GetAllListedGroups")]
+        public async Task<IActionResult> ListedGroupsWithIndex(int startIndex, int count)
+        {
+            return Ok(await _groupService.GetAllListedGroups(startIndex, count));
+        }
+
     }
 }

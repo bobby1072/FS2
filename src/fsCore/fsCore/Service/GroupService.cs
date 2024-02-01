@@ -5,6 +5,7 @@ using Common.Models;
 using Common.Permissions;
 using Common.Utils;
 using fsCore.Service.Interfaces;
+using Microsoft.VisualBasic;
 
 namespace fsCore.Service
 {
@@ -22,6 +23,12 @@ namespace fsCore.Service
         {
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
+        }
+        public async Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count)
+        {
+            if (count >= 10) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);
+            var allGroups = await _repo.GetMany(startIndex, count, _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception(ErrorConstants.FieldNotFound));
+            return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
         public async Task<ICollection<Group>> GetAllListedGroups()
         {

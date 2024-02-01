@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string TooManyRecordsRequested = "To many records requested";
         public const string CouldntDeleteGroup = "Couldn't delete group";
         public const string CouldntSaveGroup = "Couldn't save group";
         public const string DontHavePermission = "User doesn't have permission/permissions for this action";

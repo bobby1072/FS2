@@ -20,6 +20,7 @@ namespace Persistence.EntityFramework.Repository
         }
         protected virtual IQueryable<TEnt> _addRelationsToQuery(IQueryable<TEnt> set, ICollection<string>? relationships = null)
         {
+            if (relationships is null) return set;
             var newQuery = set;
             var foundRelationProperties = _entType.GetProperties().Where(x => relationships?.Contains(x.Name.Replace("Entity", "")) == true);
             foreach (var relation in foundRelationProperties)
@@ -197,6 +198,17 @@ namespace Persistence.EntityFramework.Repository
             var runtimeObjs = set.Local.Select(x => x.ToRuntime());
             return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
 
+        }
+        public virtual async Task<ICollection<TBase>?> GetMany(int startIndex, int count, string fieldNameToOrderBy, ICollection<string>? relations = null)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var set = dbContext.Set<TEnt>();
+            var runtimeArray = (await _addRelationsToQuery(set, relations)
+                .OrderBy(x => EF.Property<object>(x, fieldNameToOrderBy.ToPascalCase()))
+                .Skip(startIndex)
+                .Take(count)
+            .ToArrayAsync()).Select(x => x.ToRuntime());
+            return runtimeArray?.Count() > 0 ? runtimeArray?.OfType<TBase>().ToList() : null;
         }
     }
 }

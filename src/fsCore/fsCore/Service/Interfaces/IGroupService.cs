@@ -5,6 +5,7 @@ namespace fsCore.Service.Interfaces
     public interface IGroupService
     {
         Task<ICollection<Group>> GetAllListedGroups();
+        Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count);
         Task<Group> GetGroup(Guid groupId);
         Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser);
         Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId);

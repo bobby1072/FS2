@@ -4,13 +4,17 @@ import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
 
-export const useGetAllListedGroups = () => {
+export const useGetAllListedGroups = (startIndex: number, count: number) => {
   const { user } = useAuthentication();
   const queryResults = useQuery<GroupModel[], Error>(
     Constants.QueryKeys.GetAllListedGroups,
     () => {
       if (!user?.access_token) throw new Error("No bearer token found");
-      return BackendApiServiceProvider.GetAllListedGroups(user.access_token);
+      return BackendApiServiceProvider.GetAllListedGroups(
+        user.access_token,
+        startIndex,
+        count
+      );
     }
   );
   return { ...queryResults };

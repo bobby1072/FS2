@@ -8,9 +8,7 @@ namespace Persistence.EntityFramework.Repository
     internal class GroupRepository : BaseRepository<GroupEntity, Group>, IGroupRepository
     {
         public GroupRepository(IDbContextFactory<FsContext> context) : base(context) { }
-        protected override GroupEntity _runtimeToEntity(Group runtimeObj)
-        {
-            return GroupEntity.RuntimeToEntity(runtimeObj);
-        }
+        protected override GroupEntity _runtimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
+
     }
 }

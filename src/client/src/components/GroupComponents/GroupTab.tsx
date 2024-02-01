@@ -42,13 +42,13 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
           )}
         </Grid>
         <Grid item width="100%">
-          {
+          {!viewId && (
             <Tooltip title="Show group id">
               <IconButton onClick={(_) => setViewId((viewOn) => !viewOn)}>
-                {!viewId && <VisibilityOffIcon />}
+                <VisibilityOffIcon />
               </IconButton>
             </Tooltip>
-          }
+          )}
           {viewId && (
             <Typography variant="h4" fontSize={15}>
               <Tooltip title="Hide group id">
