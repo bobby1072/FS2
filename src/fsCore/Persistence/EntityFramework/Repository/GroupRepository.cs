@@ -9,6 +9,10 @@ namespace Persistence.EntityFramework.Repository
     {
         public GroupRepository(IDbContextFactory<FsContext> context) : base(context) { }
         protected override GroupEntity _runtimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
-
+        public async Task<int> GetCount()
+        {
+            using var dbConext = await DbContextFactory.CreateDbContextAsync();
+            return await dbConext.Group.CountAsync();
+        }
     }
 }

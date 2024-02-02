@@ -1,24 +1,69 @@
-import { Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+} from "@mui/material";
 import { Loading } from "../common/Loading";
 import { PageBase } from "../common/PageBase";
 import { useGetAllListedGroups } from "../components/GroupComponents/hooks/GetAllListedGroups";
 import { GroupTab } from "../components/GroupComponents/GroupTab";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CreateGroupModal } from "../components/GroupComponents/CreateGroupModal";
+import { useGetGroupCount } from "../components/GroupComponents/hooks/GetGroupCount";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { useQueryClient } from "react-query";
+import Constants from "../common/Constants";
+
+interface IMatchRange {
+  groupStartIndex: number;
+  groupSeeCount: number;
+}
+
+const calcMaxPages = (len: number, matchRange: IMatchRange) => {
+  const remainder = len % matchRange.groupSeeCount;
+  return (len - remainder) / matchRange.groupSeeCount + 1;
+};
+const allowIndex = (indexNum: number, matchRange: IMatchRange): boolean => {
+  const topRange = matchRange.groupSeeCount * matchRange.groupStartIndex;
+  const bottomRange = topRange - matchRange.groupSeeCount;
+  return indexNum <= topRange && indexNum > bottomRange ? true : false;
+};
 
 export const AllGroupDisplayPage: React.FC = () => {
-  const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] = useState<{
-    groupStartIndex: number;
-    groupSeeCount: number;
-  }>({ groupStartIndex: 0, groupSeeCount: 5 });
-  const { data, isLoading } = useGetAllListedGroups(
-    groupStartIndex,
+  const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
+    useState<IMatchRange>({ groupStartIndex: 1, groupSeeCount: 5 });
+  const {
+    data: totalGroupCount,
+    isLoading: groupCountLoading,
+    error: countError,
+  } = useGetGroupCount();
+  const {
+    data: listedGroups,
+    refetch: listedGroupsRefetch,
+    isLoading: listedGroupsLoading,
+    error: listedGroupsError,
+  } = useGetAllListedGroups(
+    groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount - 1,
     groupSeeCount
   );
+  const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] =
     useState<boolean>(false);
-  if (isLoading && !data) return <Loading fullScreen />;
+  useEffect(() => {
+    queryClient.removeQueries(Constants.QueryKeys.GetAllListedGroups);
+    listedGroupsRefetch();
+  }, [groupSeeCount, groupStartIndex, queryClient, listedGroupsRefetch]);
+  const isLoading = groupCountLoading || listedGroupsLoading;
+  const isError = countError || (listedGroupsError as any);
   return (
     <PageBase>
       <AppAndDraw>
@@ -29,32 +74,108 @@ export const AllGroupDisplayPage: React.FC = () => {
           alignItems="center"
           spacing={3}
         >
-          <Grid item width="100%" sx={{ mb: 2 }}>
+          <Grid item width="100%">
             <Typography variant="h3" fontSize={50}>
               All listed groups
             </Typography>
+          </Grid>
+          <Grid
+            item
+            width="100%"
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setCreateNewGroupModal(true);
+              }}
+            >
+              Create new group
+            </Button>
           </Grid>
           <Grid item width="100%">
             <Paper>
               <Grid
                 container
                 direction="row"
-                spacing={3}
                 padding={3}
-                display="flex"
+                width="100%"
                 alignItems="center"
               >
+                <Grid item width="10%">
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                      Groups per page
+                    </InputLabel>
+                    <Select
+                      variant="outlined"
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      defaultValue={groupSeeCount}
+                      value={groupSeeCount}
+                      label="Matches per page"
+                      onChange={(val) => {
+                        if (totalGroupCount && listedGroups)
+                          setGroupsIndexing((_) => ({
+                            groupStartIndex: _.groupStartIndex,
+                            groupSeeCount: Number(val.target.value),
+                          }));
+                      }}
+                    >
+                      <MenuItem value={5}>5</MenuItem>
+                      <MenuItem value={10}>10</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item sx={{ marginLeft: 5, marginRight: 1 }}>
+                  <Typography variant="subtitle2" fontSize={18}>
+                    {`groups ${
+                      groupStartIndex === 1
+                        ? groupStartIndex
+                        : (groupStartIndex - 1) * groupSeeCount
+                    }-${groupStartIndex * groupSeeCount}`}
+                  </Typography>
+                </Grid>
                 <Grid item>
-                  <Button
-                    sx={{ display: "flex", justifyContent: "flex-end" }}
-                    variant="contained"
-                    color="primary"
+                  <div
+                    style={{ cursor: "pointer" }}
                     onClick={() => {
-                      setCreateNewGroupModal(true);
+                      if (totalGroupCount && listedGroups)
+                        setGroupsIndexing((_) =>
+                          groupStartIndex !== 1
+                            ? {
+                                groupStartIndex: _.groupStartIndex - 1,
+                                groupSeeCount: _.groupSeeCount,
+                              }
+                            : _
+                        );
                     }}
                   >
-                    Create new group
-                  </Button>
+                    <ArrowBackIcon fontSize="medium" />
+                  </div>
+                </Grid>
+                <Grid item>
+                  <div
+                    style={{ cursor: "pointer" }}
+                    aria-label="next-page"
+                    onClick={() => {
+                      if (totalGroupCount && listedGroups)
+                        setGroupsIndexing((_) =>
+                          calcMaxPages(totalGroupCount, {
+                            groupSeeCount,
+                            groupStartIndex,
+                          }) !== groupStartIndex
+                            ? {
+                                groupStartIndex: _.groupStartIndex + 1,
+                                groupSeeCount: _.groupSeeCount,
+                              }
+                            : _
+                        );
+                    }}
+                  >
+                    <ArrowForwardIcon fontSize="medium" />
+                  </div>
                 </Grid>
               </Grid>
             </Paper>
@@ -63,11 +184,33 @@ export const AllGroupDisplayPage: React.FC = () => {
             <Divider />
           </Grid>
           <Grid item sx={{ mb: 1 }}></Grid>
-          {data?.map((x) => (
-            <Grid item width="60%" key={x.id}>
-              <GroupTab group={x} />
+          {listedGroups && !isLoading && !isError ? (
+            <>
+              {listedGroups
+                ?.filter((_, index) =>
+                  allowIndex(index + 1, { groupSeeCount, groupStartIndex })
+                )
+                .map((x) => (
+                  <Grid item width="60%" key={x.id}>
+                    <GroupTab group={x} />
+                  </Grid>
+                ))}
+            </>
+          ) : (
+            <Grid item width="100%">
+              {isError ? (
+                <Alert severity="error" sx={{ fontSize: 20 }}>
+                  {"response" in isError &&
+                  "status" in isError.response &&
+                  isError.response.status === 404
+                    ? "No groups found"
+                    : isError.message}
+                </Alert>
+              ) : (
+                <Loading />
+              )}
             </Grid>
-          ))}
+          )}
         </Grid>
       </AppAndDraw>
       {createNewGroupModal && (

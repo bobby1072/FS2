@@ -58,4 +58,12 @@ export default abstract class BackendApiServiceProvider {
     );
     return data;
   }
+  public static async GetGroupCount(accessToken: string) {
+    const { data } = await this._httpClient.get<number>("Group/GetGroupCount", {
+      headers: {
+        Authorization: this.FormatAccessToken(accessToken),
+      },
+    });
+    return data;
+  }
 }

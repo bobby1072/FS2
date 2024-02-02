@@ -20,5 +20,6 @@ namespace fsCore.Service.Interfaces
         Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser);
+        Task<int> GetGroupCount();
     }
 }

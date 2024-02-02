@@ -1,6 +1,7 @@
 enum QueryKeys {
   ClientConfig = "client-config",
   GetUser = "get-user",
+  GetGroupCount = "get-group-count",
   GetAllListedGroups = "get-all-listed-groups",
 }
 enum ErrorMessages {}

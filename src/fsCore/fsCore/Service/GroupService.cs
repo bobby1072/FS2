@@ -24,6 +24,10 @@ namespace fsCore.Service
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
         }
+        public async Task<int> GetGroupCount()
+        {
+            return await _repo.GetCount();
+        }
         public async Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count)
         {
             if (count >= 10) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);

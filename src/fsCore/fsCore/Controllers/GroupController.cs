@@ -119,6 +119,13 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetAllListedGroups(startIndex, count));
         }
+        [ProducesDefaultResponseType(typeof(int))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("GetGroupCount")]
+        public async Task<IActionResult> GetGroupCount()
+        {
+            return Ok(await _groupService.GetGroupCount());
+        }
 
     }
 }
