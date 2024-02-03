@@ -1,15 +1,4 @@
-import {
-  Alert,
-  Button,
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
-  Typography,
-} from "@mui/material";
+import { Alert, Button, Divider, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
 import { PageBase } from "../common/PageBase";
 import { useGetAllListedGroups } from "../components/GroupComponents/hooks/GetAllListedGroups";
@@ -32,11 +21,6 @@ const calcMaxPages = (len: number, matchRange: IMatchRange) => {
   const remainder = len % matchRange.groupSeeCount;
   return (len - remainder) / matchRange.groupSeeCount + 1;
 };
-const allowIndex = (indexNum: number, matchRange: IMatchRange): boolean => {
-  const topRange = matchRange.groupSeeCount * matchRange.groupStartIndex;
-  const bottomRange = topRange - matchRange.groupSeeCount;
-  return indexNum <= topRange && indexNum > bottomRange ? true : false;
-};
 
 export const AllGroupDisplayPage: React.FC = () => {
   const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
@@ -52,7 +36,7 @@ export const AllGroupDisplayPage: React.FC = () => {
     isLoading: listedGroupsLoading,
     error: listedGroupsError,
   } = useGetAllListedGroups(
-    groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount - 1,
+    groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount,
     groupSeeCount
   );
   const queryClient = useQueryClient();
@@ -103,32 +87,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                 width="100%"
                 alignItems="center"
               >
-                <Grid item width="10%">
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">
-                      Groups per page
-                    </InputLabel>
-                    <Select
-                      variant="outlined"
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      defaultValue={groupSeeCount}
-                      value={groupSeeCount}
-                      label="Matches per page"
-                      onChange={(val) => {
-                        if (totalGroupCount && listedGroups)
-                          setGroupsIndexing((_) => ({
-                            groupStartIndex: _.groupStartIndex,
-                            groupSeeCount: Number(val.target.value),
-                          }));
-                      }}
-                    >
-                      <MenuItem value={5}>5</MenuItem>
-                      <MenuItem value={10}>10</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item sx={{ marginLeft: 5, marginRight: 1 }}>
+                <Grid item sx={{ marginRight: 1 }}>
                   <Typography variant="subtitle2" fontSize={18}>
                     {`groups ${
                       groupStartIndex === 1
@@ -186,15 +145,11 @@ export const AllGroupDisplayPage: React.FC = () => {
           <Grid item sx={{ mb: 1 }}></Grid>
           {listedGroups && !isLoading && !isError ? (
             <>
-              {listedGroups
-                ?.filter((_, index) =>
-                  allowIndex(index + 1, { groupSeeCount, groupStartIndex })
-                )
-                .map((x) => (
-                  <Grid item width="60%" key={x.id}>
-                    <GroupTab group={x} />
-                  </Grid>
-                ))}
+              {listedGroups?.map((x) => (
+                <Grid item width="60%" key={x.id}>
+                  <GroupTab group={x} />
+                </Grid>
+              ))}
             </>
           ) : (
             <Grid item width="100%">
