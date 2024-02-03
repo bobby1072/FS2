@@ -126,6 +126,18 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetGroupCount());
         }
-
+        [ProducesDefaultResponseType(typeof(GetSelfGroupsResponse))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("GetSelfGroups")]
+        public async Task<IActionResult> GetSelfGroups()
+        {
+            var (groups, memberships) = await _groupService.GetAllGroupsAndMembershipsForUser(_getCurrentUser());
+            var tempObj = new GetSelfGroupsResponse
+            {
+                Groups = groups,
+                Memberships = memberships
+            };
+            return Ok(tempObj);
+        }
     }
 }

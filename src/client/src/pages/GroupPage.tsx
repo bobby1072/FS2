@@ -25,15 +25,11 @@ const calcMaxPages = (len: number, matchRange: IMatchRange) => {
 export const AllGroupDisplayPage: React.FC = () => {
   const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
     useState<IMatchRange>({ groupStartIndex: 1, groupSeeCount: 5 });
-  const {
-    data: totalGroupCount,
-    isLoading: groupCountLoading,
-    error: countError,
-  } = useGetGroupCount();
+  const { data: totalGroupCount } = useGetGroupCount();
   const {
     data: listedGroups,
     refetch: listedGroupsRefetch,
-    isLoading: listedGroupsLoading,
+    isLoading,
     error: listedGroupsError,
   } = useGetAllListedGroups(
     groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount,
@@ -46,8 +42,7 @@ export const AllGroupDisplayPage: React.FC = () => {
     queryClient.removeQueries(Constants.QueryKeys.GetAllListedGroups);
     listedGroupsRefetch();
   }, [groupSeeCount, groupStartIndex, queryClient, listedGroupsRefetch]);
-  const isLoading = groupCountLoading || listedGroupsLoading;
-  const isError = countError || (listedGroupsError as any);
+  const isError = listedGroupsError as any;
   return (
     <PageBase>
       <AppAndDraw>

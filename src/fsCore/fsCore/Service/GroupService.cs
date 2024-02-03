@@ -221,7 +221,7 @@ namespace fsCore.Service
         }
         public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser)
         {
-            var allMembers = _groupMemberRepo.GetMany(currentUser.Email, _groupMemberType.GetProperty("userEmail".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(false, false, true));
+            var allMembers = _groupMemberRepo.GetMany(currentUser.Email, _groupMemberType.GetProperty("userEmail".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(true, false, true));
             var allGroups = _repo.GetMany(currentUser.Email, _groupType.GetProperty("leaderEmail".ToPascalCase())?.Name ?? throw new Exception());
             await Task.WhenAll(allMembers, allGroups);
             var finalGroupArray = allMembers.Result?.Select(x => x.Group).Union(allGroups.Result).ToHashSet();
