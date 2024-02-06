@@ -25,6 +25,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
+import { SnackbarProvider } from "notistack";
 
 interface IMatchRange {
   groupStartIndex: number;
@@ -69,165 +70,167 @@ export const AllGroupDisplayPage: React.FC = () => {
   const isError = (listedGroupsError as any) || (countError as any);
   return (
     <PageBase>
-      <AppAndDraw>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={3}
-        >
-          <Grid item width="100%">
-            <Typography variant="h3" fontSize={50}>
-              All listed groups
-            </Typography>
-          </Grid>
+      <SnackbarProvider>
+        <AppAndDraw>
           <Grid
-            item
-            width="100%"
-            sx={{ display: "flex", justifyContent: "flex-end" }}
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            spacing={3}
           >
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                setCreateNewGroupModal(true);
-              }}
+            <Grid item width="100%">
+              <Typography variant="h3" fontSize={50}>
+                All listed groups
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              width="100%"
+              sx={{ display: "flex", justifyContent: "flex-end" }}
             >
-              Create new group
-            </Button>
-          </Grid>
-          <Grid item width="100%">
-            <Paper>
-              <Grid
-                container
-                direction="row"
-                padding={3}
-                width="100%"
-                alignItems="center"
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setCreateNewGroupModal(true);
+                }}
               >
-                <Grid item width="50%">
-                  <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-disabled-label">
-                      Type of group
-                    </InputLabel>
-                    <Select
-                      fullWidth
-                      labelId="demo-simple-select-disabled-label"
-                      id="demo-simple-select-disabled"
-                      value={groupViewChoice}
-                      label="Type of group"
-                      onChange={(e) => {
-                        setGroupsIndexing({
-                          groupStartIndex: 1,
-                          groupSeeCount: 5,
-                        });
-                        setGroupViewChoice(e.target.value as any);
-                      }}
+                Create new group
+              </Button>
+            </Grid>
+            <Grid item width="100%">
+              <Paper>
+                <Grid
+                  container
+                  direction="row"
+                  padding={3}
+                  width="100%"
+                  alignItems="center"
+                >
+                  <Grid item width="50%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-disabled-label">
+                        Type of group
+                      </InputLabel>
+                      <Select
+                        fullWidth
+                        labelId="demo-simple-select-disabled-label"
+                        id="demo-simple-select-disabled"
+                        value={groupViewChoice}
+                        label="Type of group"
+                        onChange={(e) => {
+                          setGroupsIndexing({
+                            groupStartIndex: 1,
+                            groupSeeCount: 5,
+                          });
+                          setGroupViewChoice(e.target.value as any);
+                        }}
+                      >
+                        <MenuItem value={GroupQueryChoice.AllListed}>
+                          All listed groups
+                        </MenuItem>
+                        <MenuItem value={GroupQueryChoice.SelfLead}>
+                          Self lead groups
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  <Grid item width="50%">
+                    <Grid
+                      container
+                      direction="row"
+                      alignItems="center"
+                      width="100%"
+                      sx={{ justifyContent: "flex-end", display: "flex" }}
                     >
-                      <MenuItem value={GroupQueryChoice.AllListed}>
-                        All listed groups
-                      </MenuItem>
-                      <MenuItem value={GroupQueryChoice.SelfLead}>
-                        Self lead groups
-                      </MenuItem>
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item width="50%">
-                  <Grid
-                    container
-                    direction="row"
-                    alignItems="center"
-                    width="100%"
-                    sx={{ justifyContent: "flex-end", display: "flex" }}
-                  >
-                    <Grid item sx={{ marginRight: 1 }}>
-                      <Typography variant="subtitle2" fontSize={18}>
-                        {`groups ${
-                          groupStartIndex === 1
-                            ? groupStartIndex
-                            : (groupStartIndex - 1) * groupSeeCount
-                        }-${groupStartIndex * groupSeeCount}`}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <div
-                        style={{ cursor: "pointer" }}
-                        onClick={() => {
-                          if (totalGroupCount && listedGroups)
-                            setGroupsIndexing((_) =>
-                              groupStartIndex !== 1
-                                ? {
-                                    groupStartIndex: _.groupStartIndex - 1,
-                                    groupSeeCount: _.groupSeeCount,
-                                  }
-                                : _
-                            );
-                        }}
-                      >
-                        <ArrowBackIcon fontSize="medium" />
-                      </div>
-                    </Grid>
-                    <Grid item>
-                      <div
-                        style={{ cursor: "pointer" }}
-                        aria-label="next-page"
-                        onClick={() => {
-                          if (totalGroupCount && listedGroups)
-                            setGroupsIndexing((_) =>
-                              calcMaxPages(totalGroupCount, {
-                                groupSeeCount,
-                                groupStartIndex,
-                              }) !== groupStartIndex
-                                ? {
-                                    groupStartIndex: _.groupStartIndex + 1,
-                                    groupSeeCount: _.groupSeeCount,
-                                  }
-                                : _
-                            );
-                        }}
-                      >
-                        <ArrowForwardIcon fontSize="medium" />
-                      </div>
+                      <Grid item sx={{ marginRight: 1 }}>
+                        <Typography variant="subtitle2" fontSize={18}>
+                          {`groups ${
+                            groupStartIndex === 1
+                              ? groupStartIndex
+                              : (groupStartIndex - 1) * groupSeeCount
+                          }-${groupStartIndex * groupSeeCount}`}
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          onClick={() => {
+                            if (totalGroupCount && listedGroups)
+                              setGroupsIndexing((_) =>
+                                groupStartIndex !== 1
+                                  ? {
+                                      groupStartIndex: _.groupStartIndex - 1,
+                                      groupSeeCount: _.groupSeeCount,
+                                    }
+                                  : _
+                              );
+                          }}
+                        >
+                          <ArrowBackIcon fontSize="medium" />
+                        </div>
+                      </Grid>
+                      <Grid item>
+                        <div
+                          style={{ cursor: "pointer" }}
+                          aria-label="next-page"
+                          onClick={() => {
+                            if (totalGroupCount && listedGroups)
+                              setGroupsIndexing((_) =>
+                                calcMaxPages(totalGroupCount, {
+                                  groupSeeCount,
+                                  groupStartIndex,
+                                }) !== groupStartIndex
+                                  ? {
+                                      groupStartIndex: _.groupStartIndex + 1,
+                                      groupSeeCount: _.groupSeeCount,
+                                    }
+                                  : _
+                              );
+                          }}
+                        >
+                          <ArrowForwardIcon fontSize="medium" />
+                        </div>
+                      </Grid>
                     </Grid>
                   </Grid>
                 </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
-          <Grid item width="100%">
-            <Divider />
-          </Grid>
-          <Grid item sx={{ mb: 1 }}></Grid>
-          {listedGroups && !isLoading && !isError ? (
-            <>
-              {listedGroups?.map((x) => (
-                <Grid item width="60%" key={x.id}>
-                  <GroupTab group={x} />
-                </Grid>
-              ))}
-            </>
-          ) : (
-            <Grid item width="100%">
-              {isError ? (
-                <Alert severity="error" sx={{ fontSize: 20 }}>
-                  {"response" in isError &&
-                  "status" in isError.response &&
-                  isError.response.status === 404
-                    ? "No groups found"
-                    : isError.message}
-                </Alert>
-              ) : (
-                <Loading />
-              )}
+              </Paper>
             </Grid>
-          )}
-        </Grid>
-      </AppAndDraw>
-      {createNewGroupModal && (
-        <CreateGroupModal closeModal={() => setCreateNewGroupModal(false)} />
-      )}
+            <Grid item width="100%">
+              <Divider />
+            </Grid>
+            <Grid item sx={{ mb: 1 }}></Grid>
+            {listedGroups && !isLoading && !isError ? (
+              <>
+                {listedGroups?.map((x) => (
+                  <Grid item width="60%" key={x.id}>
+                    <GroupTab group={x} />
+                  </Grid>
+                ))}
+              </>
+            ) : (
+              <Grid item width="100%">
+                {isError ? (
+                  <Alert severity="error" sx={{ fontSize: 20 }}>
+                    {"response" in isError &&
+                    "status" in isError.response &&
+                    isError.response.status === 404
+                      ? "No groups found"
+                      : isError.message}
+                  </Alert>
+                ) : (
+                  <Loading />
+                )}
+              </Grid>
+            )}
+          </Grid>
+        </AppAndDraw>
+        {createNewGroupModal && (
+          <CreateGroupModal closeModal={() => setCreateNewGroupModal(false)} />
+        )}
+      </SnackbarProvider>
     </PageBase>
   );
 };

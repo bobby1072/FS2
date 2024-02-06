@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AxiosError } from "axios";
+import { useSnackbar } from "notistack";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
@@ -38,10 +39,12 @@ const mapDefaultValues = (
 export const CreateGroupModalForm: React.FC<{
   group?: GroupModel;
   setIsDirty?: (boolVal: boolean) => void;
-}> = ({ group, setIsDirty }) => {
+  closeModal?: () => void;
+  useSnackBarOnSuccess?: boolean;
+}> = ({ group, setIsDirty, useSnackBarOnSuccess = false, closeModal }) => {
   const {
-    data,
-    mutate,
+    data: savedId,
+    mutate: saveGroupMutation,
     error: mutationError,
     reset: resetMutation,
   } = useSaveGroupMutation();
@@ -55,7 +58,8 @@ export const CreateGroupModalForm: React.FC<{
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
-  const { isListed, isPublic } = watch();
+  const { enqueueSnackbar } = useSnackbar();
+  const { isListed, isPublic, id } = watch();
   const [allErrors, setAllErrors] = useState<
     | AxiosError
     | FieldErrors<{
@@ -68,6 +72,11 @@ export const CreateGroupModalForm: React.FC<{
       }>
   >();
   useEffect(() => {
+    if (savedId && useSnackBarOnSuccess)
+      enqueueSnackbar(`New group id: ${savedId}`, { variant: "success" });
+    if (savedId && closeModal) closeModal();
+  }, [savedId, enqueueSnackbar, id, useSnackBarOnSuccess, closeModal]);
+  useEffect(() => {
     setIsDirty?.(!isDirty);
   }, [isDirty, setIsDirty]);
   useEffect(() => {
@@ -78,7 +87,7 @@ export const CreateGroupModalForm: React.FC<{
   }, [mutationError]);
   const submitHandler = (values: SaveGroupInput) => {
     resetMutation();
-    mutate(values);
+    saveGroupMutation(values);
   };
   return (
     <form onSubmit={handleSubmit(submitHandler)} id="groupSaveForm">
@@ -178,7 +187,7 @@ export const CreateGroupModalForm: React.FC<{
             <Alert severity="error">{allErrors.root.message}</Alert>
           </Grid>
         )}
-        {data && (
+        {savedId && (
           <Grid item width={"100%"}>
             <Alert severity="success">Group saved!</Alert>
           </Grid>
