@@ -19,6 +19,7 @@ export const useSaveGroupMutation = () => {
     if (mutationProps.data) {
       queryClient.refetchQueries(Constants.QueryKeys.GetAllListedGroups);
       queryClient.refetchQueries(Constants.QueryKeys.GetGroupCount);
+      queryClient.refetchQueries(Constants.QueryKeys.GetSelfGroups);
     }
   }, [mutationProps.data, queryClient]);
   return {

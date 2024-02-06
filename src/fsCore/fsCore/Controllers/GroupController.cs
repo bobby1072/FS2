@@ -98,7 +98,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("SavePosition")]
         public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
         {
@@ -106,7 +106,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithPermissions(true)]
         [HttpPost("DeletePosition")]
         public async Task<IActionResult> DeletePosition([FromBody] GroupPosition position)
         {
@@ -126,18 +126,25 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetGroupCount());
         }
-        [ProducesDefaultResponseType(typeof(GetSelfGroupsResponse))]
+        [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [HttpGet("GetSelfGroups")]
-        public async Task<IActionResult> GetSelfGroups()
+        public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
         {
-            var (groups, memberships) = await _groupService.GetAllGroupsAndMembershipsForUser(_getCurrentUser());
-            var tempObj = new GetSelfGroupsResponse
-            {
-                Groups = groups,
-                Memberships = memberships
-            };
-            return Ok(tempObj);
+            return Ok(await _groupService.GetAllSelfLeadGroups(_getCurrentUser(), startIndex, count));
         }
+        // [ProducesDefaultResponseType(typeof(GetSelfGroupsResponse))]
+        // [ProducesResponseType((int)HttpStatusCode.OK)]
+        // [HttpGet("GetSelfGroups")]
+        // public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
+        // {
+        //     var (groups, memberships) = await _groupService.GetAllGroupsAndMembershipsForUserWithPagination(_getCurrentUser(), startIndex, count);
+        //     var tempObj = new GetSelfGroupsResponse
+        //     {
+        //         Groups = groups,
+        //         Memberships = memberships
+        //     };
+        //     return Ok(tempObj);
+        // }
     }
 }

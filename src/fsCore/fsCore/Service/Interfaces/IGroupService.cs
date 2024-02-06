@@ -21,5 +21,7 @@ namespace fsCore.Service.Interfaces
         Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser);
         Task<int> GetGroupCount();
+        Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUserWithPagination(User currentUser, int startIndex, int count);
+        Task<ICollection<Group>> GetAllSelfLeadGroups(User currentUser, int startIndex, int count);
     }
 }

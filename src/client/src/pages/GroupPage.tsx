@@ -1,7 +1,21 @@
-import { Alert, Button, Divider, Grid, Paper, Typography } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+} from "@mui/material";
 import { Loading } from "../common/Loading";
 import { PageBase } from "../common/PageBase";
-import { useGetAllListedGroups } from "../components/GroupComponents/hooks/GetAllListedGroups";
+import {
+  GroupQueryChoice,
+  useGetAllGroupsChoiceGroup,
+} from "../components/GroupComponents/hooks/GetAllListedGroups";
 import { GroupTab } from "../components/GroupComponents/GroupTab";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import { useEffect, useState } from "react";
@@ -25,24 +39,31 @@ const calcMaxPages = (len: number, matchRange: IMatchRange) => {
 export const AllGroupDisplayPage: React.FC = () => {
   const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
     useState<IMatchRange>({ groupStartIndex: 1, groupSeeCount: 5 });
-  const { data: totalGroupCount } = useGetGroupCount();
+  const [groupViewChoice, setGroupViewChoice] = useState<GroupQueryChoice>(
+    GroupQueryChoice.AllListed
+  );
+  const { data: totalGroupCount, error: countError } = useGetGroupCount();
   const {
     data: listedGroups,
     refetch: listedGroupsRefetch,
     isLoading,
     error: listedGroupsError,
-  } = useGetAllListedGroups(
+  } = useGetAllGroupsChoiceGroup(
     groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount,
-    groupSeeCount
+    groupSeeCount,
+    groupViewChoice
   );
   const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] =
     useState<boolean>(false);
   useEffect(() => {
-    queryClient.removeQueries(Constants.QueryKeys.GetAllListedGroups);
+    queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
   }, [groupSeeCount, groupStartIndex, queryClient, listedGroupsRefetch]);
-  const isError = listedGroupsError as any;
+  useEffect(() => {
+    setGroupsIndexing({ groupStartIndex: 1, groupSeeCount: 5 });
+  }, [groupViewChoice, setGroupsIndexing]);
+  const isError = (listedGroupsError as any) || (countError as any);
   return (
     <PageBase>
       <AppAndDraw>
@@ -82,54 +103,88 @@ export const AllGroupDisplayPage: React.FC = () => {
                 width="100%"
                 alignItems="center"
               >
-                <Grid item sx={{ marginRight: 1 }}>
-                  <Typography variant="subtitle2" fontSize={18}>
-                    {`groups ${
-                      groupStartIndex === 1
-                        ? groupStartIndex
-                        : (groupStartIndex - 1) * groupSeeCount
-                    }-${groupStartIndex * groupSeeCount}`}
-                  </Typography>
+                <Grid item width="50%">
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-disabled-label">
+                      Type of group
+                    </InputLabel>
+                    <Select
+                      fullWidth
+                      labelId="demo-simple-select-disabled-label"
+                      id="demo-simple-select-disabled"
+                      value={groupViewChoice}
+                      label="Type of group"
+                      onChange={(e) =>
+                        setGroupViewChoice(e.target.value as any)
+                      }
+                    >
+                      <MenuItem value={GroupQueryChoice.AllListed}>
+                        All listed groups
+                      </MenuItem>
+                      <MenuItem value={GroupQueryChoice.SelfLead}>
+                        Self lead groups
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
-                <Grid item>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      if (totalGroupCount && listedGroups)
-                        setGroupsIndexing((_) =>
-                          groupStartIndex !== 1
-                            ? {
-                                groupStartIndex: _.groupStartIndex - 1,
-                                groupSeeCount: _.groupSeeCount,
-                              }
-                            : _
-                        );
-                    }}
+                <Grid item width="50%">
+                  <Grid
+                    container
+                    direction="row"
+                    alignItems="center"
+                    width="100%"
+                    sx={{ justifyContent: "flex-end", display: "flex" }}
                   >
-                    <ArrowBackIcon fontSize="medium" />
-                  </div>
-                </Grid>
-                <Grid item>
-                  <div
-                    style={{ cursor: "pointer" }}
-                    aria-label="next-page"
-                    onClick={() => {
-                      if (totalGroupCount && listedGroups)
-                        setGroupsIndexing((_) =>
-                          calcMaxPages(totalGroupCount, {
-                            groupSeeCount,
-                            groupStartIndex,
-                          }) !== groupStartIndex
-                            ? {
-                                groupStartIndex: _.groupStartIndex + 1,
-                                groupSeeCount: _.groupSeeCount,
-                              }
-                            : _
-                        );
-                    }}
-                  >
-                    <ArrowForwardIcon fontSize="medium" />
-                  </div>
+                    <Grid item sx={{ marginRight: 1 }}>
+                      <Typography variant="subtitle2" fontSize={18}>
+                        {`groups ${
+                          groupStartIndex === 1
+                            ? groupStartIndex
+                            : (groupStartIndex - 1) * groupSeeCount
+                        }-${groupStartIndex * groupSeeCount}`}
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <div
+                        style={{ cursor: "pointer" }}
+                        onClick={() => {
+                          if (totalGroupCount && listedGroups)
+                            setGroupsIndexing((_) =>
+                              groupStartIndex !== 1
+                                ? {
+                                    groupStartIndex: _.groupStartIndex - 1,
+                                    groupSeeCount: _.groupSeeCount,
+                                  }
+                                : _
+                            );
+                        }}
+                      >
+                        <ArrowBackIcon fontSize="medium" />
+                      </div>
+                    </Grid>
+                    <Grid item>
+                      <div
+                        style={{ cursor: "pointer" }}
+                        aria-label="next-page"
+                        onClick={() => {
+                          if (totalGroupCount && listedGroups)
+                            setGroupsIndexing((_) =>
+                              calcMaxPages(totalGroupCount, {
+                                groupSeeCount,
+                                groupStartIndex,
+                              }) !== groupStartIndex
+                                ? {
+                                    groupStartIndex: _.groupStartIndex + 1,
+                                    groupSeeCount: _.groupSeeCount,
+                                  }
+                                : _
+                            );
+                        }}
+                      >
+                        <ArrowForwardIcon fontSize="medium" />
+                      </div>
+                    </Grid>
+                  </Grid>
                 </Grid>
               </Grid>
             </Paper>

@@ -23,6 +23,21 @@ export default abstract class BackendApiServiceProvider {
     );
     return data;
   }
+  public static async GetSelfGroups(
+    accessToken: string,
+    startIndex: number,
+    count: number
+  ) {
+    const { data } = await this._httpClient.get<GroupModel[]>(
+      `Group/GetSelfGroups?startIndex=${startIndex}&count=${count}`,
+      {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      }
+    );
+    return data;
+  }
   public static async GetAllListedGroups(
     accessToken: string,
     startIndex: number,

@@ -19,3 +19,38 @@ export const useGetAllListedGroups = (startIndex: number, count: number) => {
   );
   return { ...queryResults };
 };
+
+export enum GroupQueryChoice {
+  AllListed,
+  SelfLead,
+}
+export const useGetAllGroupsChoiceGroup = (
+  startIndex: number,
+  count: number,
+  choice: GroupQueryChoice
+) => {
+  const { user } = useAuthentication();
+  const queryResults = useQuery<GroupModel[], Error>(
+    Constants.QueryKeys.GetGroupsWithChoice,
+    () => {
+      if (!user?.access_token) throw new Error("No bearer token found");
+      switch (choice) {
+        case GroupQueryChoice.AllListed:
+          return BackendApiServiceProvider.GetAllListedGroups(
+            user.access_token,
+            startIndex,
+            count
+          );
+        case GroupQueryChoice.SelfLead:
+          return BackendApiServiceProvider.GetSelfGroups(
+            user.access_token,
+            startIndex,
+            count
+          );
+        default:
+          throw new Error("Invalid query");
+      }
+    }
+  );
+  return { ...queryResults };
+};
