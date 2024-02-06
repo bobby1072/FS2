@@ -59,10 +59,13 @@ export const AllGroupDisplayPage: React.FC = () => {
   useEffect(() => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
-  }, [groupSeeCount, groupStartIndex, queryClient, listedGroupsRefetch]);
-  useEffect(() => {
-    setGroupsIndexing({ groupStartIndex: 1, groupSeeCount: 5 });
-  }, [groupViewChoice, setGroupsIndexing]);
+  }, [
+    groupSeeCount,
+    groupStartIndex,
+    queryClient,
+    listedGroupsRefetch,
+    groupViewChoice,
+  ]);
   const isError = (listedGroupsError as any) || (countError as any);
   return (
     <PageBase>
@@ -114,9 +117,13 @@ export const AllGroupDisplayPage: React.FC = () => {
                       id="demo-simple-select-disabled"
                       value={groupViewChoice}
                       label="Type of group"
-                      onChange={(e) =>
-                        setGroupViewChoice(e.target.value as any)
-                      }
+                      onChange={(e) => {
+                        setGroupsIndexing({
+                          groupStartIndex: 1,
+                          groupSeeCount: 5,
+                        });
+                        setGroupViewChoice(e.target.value as any);
+                      }}
                     >
                       <MenuItem value={GroupQueryChoice.AllListed}>
                         All listed groups
