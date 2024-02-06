@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Grid,
   IconButton,
   Paper,
@@ -10,9 +11,15 @@ import { GroupModel } from "../../models/GroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
+import EditIcon from "@mui/icons-material/Edit";
 import { prettyDateWithYear } from "../../utils/DateTime";
-export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
+import { useCurrentUser } from "../../common/UserContext";
+export const GroupTab: React.FC<{
+  group: GroupModel;
+  openModal: () => void;
+}> = ({ group, openModal }) => {
   const [viewId, setViewId] = useState<boolean>(false);
+  const { email: selfEmail } = useCurrentUser();
   return (
     <Paper elevation={2}>
       <Grid
@@ -81,6 +88,15 @@ export const GroupTab: React.FC<{ group: GroupModel }> = ({ group }) => {
             {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
           </Typography>
         </Grid>
+        {selfEmail === group.leaderEmail && (
+          <Grid item width="100%">
+            <Button
+              onClick={openModal}
+              startIcon={<EditIcon />}
+              color="primary"
+            />
+          </Grid>
+        )}
       </Grid>
     </Paper>
   );

@@ -31,8 +31,8 @@ const mapDefaultValues = (
     id: group.id,
     name: group.name,
     description: group?.description,
-    isPublic: group.Public,
-    isListed: group.Listed,
+    isPublic: group.public,
+    isListed: group.listed,
     emblem: group?.emblem?.toString(),
   };
 };
@@ -47,6 +47,7 @@ export const CreateGroupModalForm: React.FC<{
     mutate: saveGroupMutation,
     error: mutationError,
     reset: resetMutation,
+    isLoading: isSaving,
   } = useSaveGroupMutation();
   const {
     handleSubmit,
@@ -59,7 +60,7 @@ export const CreateGroupModalForm: React.FC<{
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
-  const { isListed, isPublic, id } = watch();
+  const { isListed, isPublic, id, name } = watch();
   const [allErrors, setAllErrors] = useState<
     | AxiosError
     | FieldErrors<{
@@ -77,8 +78,11 @@ export const CreateGroupModalForm: React.FC<{
     if (savedId && closeModal) closeModal();
   }, [savedId, enqueueSnackbar, id, useSnackBarOnSuccess, closeModal]);
   useEffect(() => {
-    setIsDirty?.(!isDirty);
-  }, [isDirty, setIsDirty]);
+    setIsDirty?.(isSaving);
+  }, [isSaving, setIsDirty]);
+  useEffect(() => {
+    setIsDirty?.(!isDirty || !name);
+  }, [isDirty, setIsDirty, name]);
   useEffect(() => {
     if (formError) setAllErrors(formError);
   }, [formError]);

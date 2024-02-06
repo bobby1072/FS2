@@ -8,6 +8,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Loading } from "../common/Loading";
@@ -26,6 +27,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
 import { SnackbarProvider } from "notistack";
+import { GroupModel } from "../models/GroupModel";
 
 interface IMatchRange {
   groupStartIndex: number;
@@ -43,6 +45,7 @@ export const AllGroupDisplayPage: React.FC = () => {
   const [groupViewChoice, setGroupViewChoice] = useState<GroupQueryChoice>(
     GroupQueryChoice.AllListed
   );
+  const [groupFilterString, setGroupFilterString] = useState<string>();
   const { data: totalGroupCount, error: countError } = useGetGroupCount();
   const {
     data: listedGroups,
@@ -55,8 +58,9 @@ export const AllGroupDisplayPage: React.FC = () => {
     groupViewChoice
   );
   const queryClient = useQueryClient();
-  const [createNewGroupModal, setCreateNewGroupModal] =
-    useState<boolean>(false);
+  const [createNewGroupModal, setCreateNewGroupModal] = useState<
+    boolean | GroupModel
+  >(false);
   useEffect(() => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
@@ -84,21 +88,6 @@ export const AllGroupDisplayPage: React.FC = () => {
                 All listed groups
               </Typography>
             </Grid>
-            <Grid
-              item
-              width="100%"
-              sx={{ display: "flex", justifyContent: "flex-end" }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setCreateNewGroupModal(true);
-                }}
-              >
-                Create new group
-              </Button>
-            </Grid>
             <Grid item width="100%">
               <Paper>
                 <Grid
@@ -108,7 +97,20 @@ export const AllGroupDisplayPage: React.FC = () => {
                   width="100%"
                   alignItems="center"
                 >
-                  <Grid item width="50%">
+                  <Grid item width="20%" sx={{ padding: 1 }}>
+                    <TextField
+                      label="Search"
+                      fullWidth
+                      onChange={(e) => {
+                        setGroupsIndexing({
+                          groupStartIndex: 1,
+                          groupSeeCount: 5,
+                        });
+                        setGroupFilterString(e.target.value);
+                      }}
+                    />
+                  </Grid>
+                  <Grid item width="30%" sx={{ padding: 1 }}>
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-disabled-label">
                         Type of group
@@ -136,7 +138,22 @@ export const AllGroupDisplayPage: React.FC = () => {
                       </Select>
                     </FormControl>
                   </Grid>
-                  <Grid item width="50%">
+                  <Grid
+                    item
+                    width="35%"
+                    sx={{ display: "flex", justifyContent: "flex-end" }}
+                  >
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => {
+                        setCreateNewGroupModal(true);
+                      }}
+                    >
+                      Create new group
+                    </Button>
+                  </Grid>
+                  <Grid item width="15%">
                     <Grid
                       container
                       direction="row"
@@ -204,11 +221,25 @@ export const AllGroupDisplayPage: React.FC = () => {
             <Grid item sx={{ mb: 1 }}></Grid>
             {listedGroups && !isLoading && !isError ? (
               <>
-                {listedGroups?.map((x) => (
-                  <Grid item width="60%" key={x.id}>
-                    <GroupTab group={x} />
-                  </Grid>
-                ))}
+                {listedGroups
+                  ?.filter((x) =>
+                    groupFilterString
+                      ? x.name
+                          .toLocaleLowerCase()
+                          .includes(groupFilterString.toLowerCase()) ||
+                        groupFilterString === x.id
+                      : true
+                  )
+                  .map((x) => (
+                    <Grid item width="60%" key={x.id}>
+                      <GroupTab
+                        group={x}
+                        openModal={() => {
+                          setCreateNewGroupModal(x);
+                        }}
+                      />
+                    </Grid>
+                  ))}
               </>
             ) : (
               <Grid item width="100%">
@@ -228,7 +259,14 @@ export const AllGroupDisplayPage: React.FC = () => {
           </Grid>
         </AppAndDraw>
         {createNewGroupModal && (
-          <CreateGroupModal closeModal={() => setCreateNewGroupModal(false)} />
+          <CreateGroupModal
+            closeModal={() => {
+              setCreateNewGroupModal(false);
+            }}
+            group={
+              createNewGroupModal === true ? undefined : createNewGroupModal
+            }
+          />
         )}
       </SnackbarProvider>
     </PageBase>
