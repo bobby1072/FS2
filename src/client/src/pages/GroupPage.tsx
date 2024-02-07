@@ -85,7 +85,7 @@ export const AllGroupDisplayPage: React.FC = () => {
           >
             <Grid item width="100%">
               <Typography variant="h3" fontSize={50}>
-                All listed groups
+                All groups
               </Typography>
             </Grid>
             <Grid item width="100%">

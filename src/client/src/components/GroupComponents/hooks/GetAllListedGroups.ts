@@ -3,13 +3,14 @@ import { GroupModel } from "../../../models/GroupModel";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
+import { ApiException } from "../../../common/ApiException";
 
 export const useGetAllListedGroups = (startIndex: number, count: number) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupModel[], Error>(
+  const queryResults = useQuery<GroupModel[], ApiException>(
     Constants.QueryKeys.GetAllListedGroups,
     () => {
-      if (!user?.access_token) throw new Error("No bearer token found");
+      if (!user?.access_token) throw new ApiException("No bearer token found");
       return BackendApiServiceProvider.GetAllListedGroups(
         user.access_token,
         startIndex,
@@ -30,10 +31,10 @@ export const useGetAllGroupsChoiceGroup = (
   choice: GroupQueryChoice
 ) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupModel[], Error>(
+  const queryResults = useQuery<GroupModel[], ApiException>(
     Constants.QueryKeys.GetGroupsWithChoice,
     () => {
-      if (!user?.access_token) throw new Error("No bearer token found");
+      if (!user?.access_token) throw new ApiException("No bearer token found");
       switch (choice) {
         case GroupQueryChoice.AllListed:
           return BackendApiServiceProvider.GetAllListedGroups(
@@ -48,7 +49,7 @@ export const useGetAllGroupsChoiceGroup = (
             count
           );
         default:
-          throw new Error("Invalid query");
+          throw new ApiException("Invalid query");
       }
     }
   );

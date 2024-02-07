@@ -3,6 +3,7 @@ import { ClientConfigResponse } from "../models/ClientConfigResponse";
 import { UserModel } from "../models/UserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
 import { GroupModel } from "../models/GroupModel";
+import { ApiException } from "../common/ApiException";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -21,7 +22,10 @@ export default abstract class BackendApiServiceProvider {
     const { data } = await this._httpClient
       .get<ClientConfigResponse>("ClientConfig")
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }
@@ -40,7 +44,10 @@ export default abstract class BackendApiServiceProvider {
         }
       )
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }
@@ -59,7 +66,10 @@ export default abstract class BackendApiServiceProvider {
         }
       )
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }
@@ -71,7 +81,10 @@ export default abstract class BackendApiServiceProvider {
         },
       })
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }
@@ -83,7 +96,10 @@ export default abstract class BackendApiServiceProvider {
         },
       })
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }
@@ -95,7 +111,10 @@ export default abstract class BackendApiServiceProvider {
         },
       })
       .catch((e) => {
-        throw new Error(e.response.data as string);
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
       });
     return data;
   }

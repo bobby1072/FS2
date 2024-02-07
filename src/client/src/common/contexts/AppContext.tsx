@@ -2,6 +2,7 @@ import { createContext, useContext } from "react";
 import { ClientConfigResponse } from "../../models/ClientConfigResponse";
 import { useClientConfigQuery } from "../queries/ClientConfigQuery";
 import { Loading } from "../Loading";
+import { ApiException } from "../ApiException";
 
 export const AppContext = createContext<ClientConfigResponse | undefined>(
   undefined
@@ -9,7 +10,7 @@ export const AppContext = createContext<ClientConfigResponse | undefined>(
 
 export const useAppContext = () => {
   const value = useContext(AppContext);
-  if (!value) throw new Error("AppContext has not been registered");
+  if (!value) throw new ApiException("AppContext has not been registered");
   return value;
 };
 

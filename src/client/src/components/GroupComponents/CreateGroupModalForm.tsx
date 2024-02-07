@@ -12,8 +12,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AxiosError } from "axios";
 import { useSnackbar } from "notistack";
+import { ApiException } from "../../common/ApiException";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
@@ -66,7 +66,7 @@ export const CreateGroupModalForm: React.FC<{
   const { enqueueSnackbar } = useSnackbar();
   const { isListed, isPublic, id, name } = watch();
   const [allErrors, setAllErrors] = useState<
-    | AxiosError
+    | ApiException
     | FieldErrors<{
         name: string;
         isPublic: boolean;
@@ -185,12 +185,12 @@ export const CreateGroupModalForm: React.FC<{
             }}
           />
         </Grid>
-        {allErrors instanceof AxiosError && (
+        {allErrors instanceof Error && (
           <Grid item width={"100%"}>
             <Alert severity="error">{allErrors.message}</Alert>
           </Grid>
         )}
-        {!(allErrors instanceof AxiosError) && allErrors?.root?.message && (
+        {!(allErrors instanceof ApiException) && allErrors?.root?.message && (
           <Grid item width={"100%"}>
             <Alert severity="error">{allErrors.root.message}</Alert>
           </Grid>
