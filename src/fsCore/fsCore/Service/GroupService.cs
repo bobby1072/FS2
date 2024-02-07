@@ -56,6 +56,7 @@ namespace fsCore.Service
                 { _groupMemberType.GetProperty("userEmail".ToPascalCase())?.Name ?? throw new Exception(), newMember.UserEmail }
             }, new List<string> { _groupType.Name, _userType.Name }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
             if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (foundMember.Validate(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
             if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name) &&
               !currentUser.HasGlobalGroupManagePermissions(foundMember.Group))
             {
@@ -171,6 +172,10 @@ namespace fsCore.Service
             if (group.Id is not null)
             {
                 var foundGroup = await _repo.GetOne(group.Id, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+                if (foundGroup.Validate(group) is false)
+                {
+                    throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                }
                 if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup) && !currentUser.HasGlobalGroupManagePermissions(foundGroup))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -206,6 +211,11 @@ namespace fsCore.Service
             }
             else
             {
+                var foundPosition = await _groupPositionRepo.GetOne(position.Id, _groupPositionType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
+                if (foundPosition.Validate(position) is false)
+                {
+                    throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                }
                 return (await _groupPositionRepo.Update(new List<GroupPosition> { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
 
             }

@@ -1,19 +1,24 @@
 using System.Text.Json.Serialization;
+using Common.Attributes;
 
 namespace Common.Models
 {
     public class GroupCatch : BaseModel
     {
+        [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
+        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
+        [LockedProperty]
         [JsonPropertyName("userEmail")]
         public string UserEmail { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
+        [LockedProperty]
         [JsonPropertyName("species")]
         public string Species { get; set; }
         [JsonPropertyName("weight")]
@@ -22,6 +27,7 @@ namespace Common.Models
         public double Length { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+        [LockedProperty]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("caughtAt")]

@@ -1,15 +1,18 @@
 using System.Text.Json.Serialization;
-
+using Common.Attributes;
 namespace Common.Models
 {
     public class GroupMember : BaseModel
     {
+        [LockedProperty]
         [JsonPropertyName("id")]
         public int? Id { get; set; }
+        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
+        [LockedProperty]
         [JsonPropertyName("userEmail")]
         public string UserEmail { get; set; }
         [JsonPropertyName("user")]

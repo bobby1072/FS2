@@ -1,11 +1,13 @@
 using System.Text.Json.Serialization;
-
+using Common.Attributes;
 namespace Common.Models
 {
     public class GroupPosition : BaseModel
     {
+        [LockedProperty]
         [JsonPropertyName("id")]
         public int? Id { get; set; }
+        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]

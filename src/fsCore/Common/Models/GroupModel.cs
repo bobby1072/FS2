@@ -1,19 +1,22 @@
 using System.Text.Json.Serialization;
-
+using Common.Attributes;
 namespace Common.Models
 {
     public class Group : BaseModel
     {
+        [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+        [LockedProperty]
         [JsonPropertyName("leaderEmail")]
         public string LeaderEmail { get; set; }
         [JsonPropertyName("leader")]
         public User? Leader { get; set; }
+        [LockedProperty]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("public")]
