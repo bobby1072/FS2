@@ -245,11 +245,7 @@ export const AllGroupDisplayPage: React.FC = () => {
               <Grid item width="100%">
                 {isError ? (
                   <Alert severity="error" sx={{ fontSize: 20 }}>
-                    {"response" in isError &&
-                    "status" in isError.response &&
-                    isError.response.status === 404
-                      ? "No groups found"
-                      : isError.message}
+                    {isError.message}
                   </Alert>
                 ) : (
                   <Loading />
