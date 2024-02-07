@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Common.Attributes;
 
 namespace Common.Models
@@ -14,7 +15,7 @@ namespace Common.Models
             var allPropertiesToCheck = checkAgainst.GetType().GetProperties();
             foreach (var property in allPropertiesToCheck)
             {
-                if (property.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this) != property.GetValue(checkAgainst))
+                if (property.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
                 {
                     return false;
                 }

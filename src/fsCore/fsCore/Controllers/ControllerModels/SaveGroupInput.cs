@@ -8,6 +8,8 @@ namespace fsCore.Controllers.ControllerModels
     {
         [JsonPropertyName("id")]
         public string? Id { get; set; }
+        [JsonPropertyName("leaderEmail")]
+        public string? LeaderEmail { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -18,6 +20,8 @@ namespace fsCore.Controllers.ControllerModels
         public bool IsListed { get; set; }
         [JsonPropertyName("emblem")]
         public string? Emblem { get; set; }
+        [JsonPropertyName("createdAt")]
+        public string? CreatedAt { get; set; }
         public Group ToGroup()
         {
             return new Group
@@ -26,6 +30,8 @@ namespace fsCore.Controllers.ControllerModels
                 Name = Name,
                 Description = Description,
                 Public = IsPublic,
+                CreatedAt = CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
+                LeaderEmail = LeaderEmail,
                 Listed = IsListed,
                 Emblem = Emblem is not null ? Convert.FromBase64String(Emblem) : null,
             };

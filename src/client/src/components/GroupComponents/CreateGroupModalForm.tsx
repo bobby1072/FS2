@@ -19,8 +19,10 @@ const formSchema = z.object({
   description: z.string().optional(),
   isPublic: z.boolean(),
   isListed: z.boolean(),
+  leaderEmail: z.string().optional(),
   emblem: z.string().optional(),
   id: z.string().optional(),
+  createdAt: z.string().optional(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (
@@ -32,6 +34,8 @@ const mapDefaultValues = (
     name: group.name,
     description: group?.description,
     isPublic: group.public,
+    leaderEmail: group.leaderEmail,
+    createdAt: group.createdAt,
     isListed: group.listed,
     emblem: group?.emblem?.toString(),
   };

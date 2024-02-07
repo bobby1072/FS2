@@ -34,7 +34,7 @@ namespace Common.Models
     public class UserWithGroupPermissionSet : User
     {
         [JsonPropertyName("permissions")]
-        public PermissionSet Permissions { get; set; } = PermissionSet.CreateSet();
+        public PermissionSet<Group> Permissions { get; set; } = new PermissionSet<Group>();
         public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name) { }
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
         {
@@ -124,7 +124,5 @@ namespace Common.Models
             }
             return this;
         }
-        public bool HasGlobalGroupReadPermissions(Group group) => Permissions.Can(PermissionConstants.Read, group) || Permissions.Can(PermissionConstants.Read, nameof(Group));
-        public bool HasGlobalGroupManagePermissions(Group group) => Permissions.Can(PermissionConstants.Manage, group) || Permissions.Can(PermissionConstants.Manage, nameof(Group));
     }
 }

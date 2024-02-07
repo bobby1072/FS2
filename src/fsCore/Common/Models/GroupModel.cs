@@ -57,5 +57,19 @@ namespace Common.Models
             return this;
         }
         public Group() { }
+        public override bool Equals(object? obj)
+        {
+            if (obj is Group group)
+            {
+                return group.Id == Id
+                && group.Name == Name
+                && group.Description == Description
+                && group.LeaderEmail == LeaderEmail
+                && group.CreatedAt == CreatedAt
+                && group.Public == Public
+                && group.Listed == Listed;
+            }
+            return false;
+        }
     }
 }
