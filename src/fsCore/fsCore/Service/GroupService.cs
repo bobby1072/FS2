@@ -57,7 +57,7 @@ namespace fsCore.Service
             }, new List<string> { _groupType.Name, _userType.Name }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
             if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (foundMember.Validate(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
-            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -67,7 +67,7 @@ namespace fsCore.Service
         public async Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId)
         {
             var foundPositions = await _groupPositionRepo.GetMany(groupId, _groupPositionType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(false, false, true)) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundPositions.FirstOrDefault()!.Group!))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundPositions.FirstOrDefault()!.Group!))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -83,8 +83,8 @@ namespace fsCore.Service
              },
             _produceRelationsList(includePosition, includeUser, includeGroup)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
             var foundGroup = foundMember.Group ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup) &&
-                !currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup) &&
+                !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -96,7 +96,7 @@ namespace fsCore.Service
              targetEmail,
              _groupMemberType.GetProperty("userEmail".ToPascalCase())?.Name ?? throw new Exception(),
              _produceRelationsList(includePosition, includeUser, includeGroup)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.Read, foundMembers.FirstOrDefault()!.Group!, _groupMemberType.Name))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundMembers.FirstOrDefault()!.Group!, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -116,7 +116,7 @@ namespace fsCore.Service
                 throw new ApiException(ErrorConstants.UserAlreadyExists, HttpStatusCode.Conflict);
             }
             else if (!(member.UserEmail == currentUser.Email && foundGroup.Result.Public) &&
-                !currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup.Result, _groupMemberType.Name))
+                !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup.Result, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -134,7 +134,7 @@ namespace fsCore.Service
                 throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             }
             else if (!(targetUsername == currentUser.Email) &&
-                !currentUser.Permissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
+                !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -154,7 +154,7 @@ namespace fsCore.Service
                 throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             }
             else if (
-                !currentUser.Permissions.Can(PermissionConstants.Read, foundGroup!, _groupMemberType.Name))
+                !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup!, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -169,7 +169,7 @@ namespace fsCore.Service
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-                if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup))
+                if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
@@ -185,7 +185,7 @@ namespace fsCore.Service
         public async Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(group, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -194,7 +194,7 @@ namespace fsCore.Service
         public async Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(position.GroupId, _groupPositionType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -216,7 +216,7 @@ namespace fsCore.Service
         public async Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(position.GroupId, _groupPositionType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -253,7 +253,7 @@ namespace fsCore.Service
         public async Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Catches", "Positions", "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!(currentUser.Permissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup))))
+            if (!(currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
