@@ -33,10 +33,10 @@ namespace Persistence.EntityFramework.Entity
         [Column(TypeName = "TEXT")]
         public string? Description { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CaughtAt { get; set; }
         [Column(TypeName = "BYTEA")]
         public byte[]? CatchPhoto { get; set; }
@@ -60,8 +60,8 @@ namespace Persistence.EntityFramework.Entity
                 Weight = groupCatch.Weight,
                 Length = groupCatch.Length,
                 Description = groupCatch.Description,
-                CreatedAt = groupCatch.CreatedAt,
-                CaughtAt = groupCatch.CaughtAt,
+                CreatedAt = DateTime.SpecifyKind(groupCatch.CreatedAt, DateTimeKind.Utc),
+                CaughtAt = DateTime.SpecifyKind(groupCatch.CaughtAt, DateTimeKind.Utc),
                 CatchPhoto = groupCatch.CatchPhoto,
                 GroupId = groupCatch.GroupId,
                 Latitude = groupCatch.Latitude,

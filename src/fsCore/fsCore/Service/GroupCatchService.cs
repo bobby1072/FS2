@@ -24,7 +24,7 @@ namespace fsCore.Service
         {
             var foundCatches = await _repo.GetMany(groupId, typeof(Group).GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<String> { nameof(Group) }) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             var foundGroup = foundCatches.FirstOrDefault()?.Group ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.Permissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && !currentUser.HasGlobalGroupReadPermissions(foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -33,7 +33,7 @@ namespace fsCore.Service
         public async Task<ICollection<GroupCatch>> GetAllCatchesAvailableToUser(UserWithGroupPermissionSet currentUser)
         {
             var (groups, _) = await _groupService.GetAllGroupsAndMembershipsForUser(currentUser);
-            if (!groups.All(x => currentUser.Permissions.Can(PermissionConstants.Read, x, nameof(GroupCatch)) || currentUser.HasGlobalGroupReadPermissions(x)))
+            if (!groups.All(x => currentUser.GroupPermissions.Can(PermissionConstants.Read, x, nameof(GroupCatch))))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -42,11 +42,11 @@ namespace fsCore.Service
         public async Task<GroupCatch> SaveCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _groupService.GetGroup(groupCatch.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (groupCatch.UserEmail == currentUser.Email && !currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup) && !currentUser.HasGlobalGroupReadPermissions(foundGroup))
+            if (groupCatch.UserEmail == currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (groupCatch.UserEmail != currentUser.Email && !currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)) && !currentUser.HasGlobalGroupManagePermissions(foundGroup))
+            if (groupCatch.UserEmail != currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -56,17 +56,17 @@ namespace fsCore.Service
             }
             else
             {
-                return (await _repo.Update(new List<GroupCatch> { groupCatch.ApplyDefaults() }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+                return (await _repo.Update(new List<GroupCatch> { groupCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             }
         }
         public async Task<GroupCatch> DeleteCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _groupService.GetGroup(groupCatch.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (groupCatch.UserEmail == currentUser.Email && !currentUser.Permissions.Can(PermissionConstants.BelongsTo, foundGroup) && !currentUser.HasGlobalGroupReadPermissions(foundGroup))
+            if (groupCatch.UserEmail == currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (groupCatch.UserEmail != currentUser.Email && !currentUser.Permissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)) && !currentUser.HasGlobalGroupManagePermissions(foundGroup))
+            if (groupCatch.UserEmail != currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

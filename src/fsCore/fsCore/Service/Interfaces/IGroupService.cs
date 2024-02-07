@@ -5,6 +5,7 @@ namespace fsCore.Service.Interfaces
     public interface IGroupService
     {
         Task<ICollection<Group>> GetAllListedGroups();
+        Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count);
         Task<Group> GetGroup(Guid groupId);
         Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser);
         Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId);
@@ -14,10 +15,13 @@ namespace fsCore.Service.Interfaces
         Task<GroupMember> UserJoinGroup(GroupMember member, UserWithGroupPermissionSet currentUser);
         Task<GroupMember> UserLeaveGroup(UserWithGroupPermissionSet currentUser, string targetUsername, Guid groupId);
         Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser);
-        Task<Group> DeleteGroup(Group group, UserWithGroupPermissionSet currentUser);
+        Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> DeletePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);
         Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser);
+        Task<int> GetGroupCount();
+        Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUserWithPagination(User currentUser, int startIndex, int count);
+        Task<ICollection<Group>> GetAllSelfLeadGroups(User currentUser, int startIndex, int count);
     }
 }

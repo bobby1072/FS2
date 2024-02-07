@@ -22,7 +22,7 @@ namespace Persistence.EntityFramework.Entity
         [ForeignKey(nameof(LeaderEmail))]
         public UserEntity? Leader { get; set; }
         [Required]
-        [Column(TypeName = "TIMESTAMP")]
+        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }
         [Required]
         [Column(TypeName = "BOOLEAN")]
@@ -46,7 +46,7 @@ namespace Persistence.EntityFramework.Entity
                 Id = group.Id ?? Guid.NewGuid(),
                 Name = group.Name,
                 LeaderEmail = group.LeaderEmail,
-                CreatedAt = group.CreatedAt,
+                CreatedAt = DateTime.SpecifyKind(group.CreatedAt, DateTimeKind.Utc),
                 Public = group.Public,
                 Listed = group.Listed,
                 Emblem = group.Emblem,

@@ -22,7 +22,8 @@ namespace fsCore.Middleware
                 return;
             }
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await httpContext.Response.WriteAsync(string.IsNullOrEmpty(error.Message) ? ErrorConstants.InternalServerError : error.Message);
+            await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
+            return;
         }
         public async Task InvokeAsync(HttpContext httpContext)
         {

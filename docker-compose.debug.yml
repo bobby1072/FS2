@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: src/fsCore/dockerfile
     ports:
-      - 7264:80
+      - 5234:80
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ClientConfig__UserInfoEndpoint: http://oidc:80/connect/userinfo
@@ -16,3 +16,4 @@ services:
     depends_on:
       - "postgres"
       - "oidc"
+      - "oidc-https-proxy"

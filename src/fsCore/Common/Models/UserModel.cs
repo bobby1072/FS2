@@ -24,7 +24,6 @@ namespace Common.Models
         }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
-        [JsonConstructor]
         public User(string email, bool emailVerified, string? name)
         {
             EmailVerified = emailVerified;
@@ -35,7 +34,7 @@ namespace Common.Models
     public class UserWithGroupPermissionSet : User
     {
         [JsonPropertyName("permissions")]
-        public PermissionSet Permissions = PermissionSet.CreateSet();
+        public PermissionSet<Group> GroupPermissions { get; set; } = new PermissionSet<Group>();
         public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name) { }
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
         {
@@ -51,6 +50,8 @@ namespace Common.Models
                 BuildPermissions(member);
             }
         }
+        [JsonConstructor]
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name) : base(email, emailVerified, name) { }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
         {
             foreach (var group in groups)
@@ -64,7 +65,7 @@ namespace Common.Models
         {
             if (group.LeaderEmail == Email)
             {
-                Permissions
+                GroupPermissions
                     .AddCan(PermissionConstants.BelongsTo, group)
                     .AddCan(PermissionConstants.Manage, group)
                     .AddCan(PermissionConstants.Read, group);
@@ -81,37 +82,37 @@ namespace Common.Models
             {
                 throw new Exception();
             }
-            Permissions
+            GroupPermissions
                 .AddCan(PermissionConstants.BelongsTo, member.Group);
             if (member.Group.LeaderEmail == Email)
             {
-                Permissions
+                GroupPermissions
                     .AddCan(PermissionConstants.Manage, member.Group)
                     .AddCan(PermissionConstants.Read, member.Group);
                 return this;
             }
             if (member.Position.CanManageGroup)
             {
-                Permissions
+                GroupPermissions
                     .AddCan(PermissionConstants.Read, member.Group)
                     .AddCan(PermissionConstants.Manage, member.Group);
                 return this;
             }
             if (member.Position.CanManageCatches)
             {
-                Permissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupCatch));
+                GroupPermissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupCatch));
             }
             if (member.Position.CanReadCatches)
             {
-                Permissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupCatch));
+                GroupPermissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupCatch));
             }
             if (member.Position.CanManageMembers)
             {
-                Permissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupMember));
+                GroupPermissions.AddCan(PermissionConstants.Manage, member.Group, nameof(GroupMember));
             }
             if (member.Position.CanReadMembers)
             {
-                Permissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupMember));
+                GroupPermissions.AddCan(PermissionConstants.Read, member.Group, nameof(GroupMember));
             }
             return this;
         }
@@ -123,7 +124,5 @@ namespace Common.Models
             }
             return this;
         }
-        public bool HasGlobalGroupReadPermissions(Group group) => Permissions.Can(PermissionConstants.Read, group) || Permissions.Can(PermissionConstants.Read, nameof(Group));
-        public bool HasGlobalGroupManagePermissions(Group group) => Permissions.Can(PermissionConstants.Manage, group) || Permissions.Can(PermissionConstants.Manage, nameof(Group));
     }
 }

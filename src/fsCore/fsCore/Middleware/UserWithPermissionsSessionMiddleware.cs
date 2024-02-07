@@ -19,10 +19,6 @@ namespace fsCore.Middleware
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 var foundUserWithPermissions = httpContext.Session.GetString("userWithPermissions");
                 var routeData = httpContext.GetRouteData();
-                if (foundUserWithPermissions is not null && JsonSerializer.Deserialize<UserWithGroupPermissionSet>(foundUserWithPermissions) is null)
-                {
-                    throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
-                }
                 if (!foundAttribute.UpdateAfter && foundUserWithPermissions is not null)
                 {
                     await _next(httpContext);

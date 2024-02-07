@@ -13,6 +13,9 @@ namespace Common.Dbinterfaces.Repository
         Task<Group?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<Group?> GetOne(Group group, ICollection<string>? relationships = null);
         Task<ICollection<Group>?> GetMany(Group baseObj, ICollection<string>? relationships = null);
+        Task<ICollection<Group>?> GetMany(int startIndex, int count, string fieldNameToOrderBy, ICollection<string>? relations = null);
+        Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null);
 
+        Task<int> GetCount();
     }
 }

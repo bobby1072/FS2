@@ -1,6 +1,13 @@
 {
     "version": "0.2.0",
     "configurations": [
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/src/client"
+        },
     {
         // Use IntelliSense to find out which attributes exist for C# debugging
         // Use hover for the description of the existing attributes
@@ -17,7 +24,7 @@
         // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
         "serverReadyAction": {
             "action": "openExternally",
-            "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+            "pattern": "\\bNow listening on:\\s+(http?://\\S+)"
         },
         "env": {
             "ASPNETCORE_ENVIRONMENT": "Development"

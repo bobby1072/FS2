@@ -12,9 +12,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { MainAppBar } from "./AppBar";
+import { AuthenticatedRoutes } from "../AutheticatedRoutes";
 
 const drawerWidth = 300;
 
@@ -81,29 +80,24 @@ export const AppAndDraw: React.FC<{ children: React.ReactNode }> = ({
           </DrawerHeader>
           <Divider />
           <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <List>
-            {["All mail", "Trash", "Spam"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            {AuthenticatedRoutes.filter((x) => x.showOnDrawer === true).map(
+              (details) => (
+                <ListItem
+                  key={details.text}
+                  disablePadding
+                  onClick={() => {
+                    window.location.href = details.link;
+                  }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <details.icon />
+                    </ListItemIcon>
+                    <ListItemText primary={details.text} />
+                  </ListItemButton>
+                </ListItem>
+              )
+            )}
           </List>
         </Drawer>
         <Main open={drawOpen}>
