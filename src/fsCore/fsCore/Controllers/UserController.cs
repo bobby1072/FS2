@@ -21,5 +21,14 @@ namespace fsCore.Controllers
         {
             return Ok(_getCurrentUser());
         }
+        [ProducesDefaultResponseType(typeof(User))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("ChangeUsername")]
+        public async Task<IActionResult> ChangeUserName(string newUsername)
+        {
+            var user = _getCurrentUser();
+            user.Username = newUsername;
+            return Ok(await _userService.SaveUser(user));
+        }
     }
 }

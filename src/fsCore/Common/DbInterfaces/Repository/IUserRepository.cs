@@ -4,6 +4,7 @@ namespace Common.Dbinterfaces.Repository
 {
     public interface IUserRepository
     {
+        Task<bool> IsUserNameUnique(User runtimeObj);
         Task<ICollection<User>?> Create(ICollection<User> userToCreate);
         Task<ICollection<User>?> Update(ICollection<User> userToUpdate);
         Task<ICollection<User>?> Delete(ICollection<User> userToDelete);

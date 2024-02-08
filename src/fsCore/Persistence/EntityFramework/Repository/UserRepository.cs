@@ -12,5 +12,11 @@ namespace Persistence.EntityFramework.Repository
         {
             return UserEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<bool> IsUserNameUnique(User runtimeObj)
+        {
+            await using var context = DbContextFactory.CreateDbContext();
+            var foundUsername = await context.User.FirstOrDefaultAsync(x => x.Username == runtimeObj.Username);
+            return foundUsername is null;
+        }
     }
 }

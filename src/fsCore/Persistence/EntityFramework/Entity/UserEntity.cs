@@ -16,9 +16,11 @@ namespace Persistence.EntityFramework.Entity
         [Required]
         [Column(TypeName = "BOOLEAN")]
         public bool EmailVerified { get; set; }
+        [Column(TypeName = "TEXT")]
+        public string? Username { get; set; }
         public override User ToRuntime()
         {
-            return new User(Email, EmailVerified, Name);
+            return new User(Email, EmailVerified, Name, Username);
         }
         public static UserEntity RuntimeToEntity(User user)
         {
@@ -26,7 +28,8 @@ namespace Persistence.EntityFramework.Entity
             {
                 Email = user.Email,
                 EmailVerified = user.EmailVerified,
-                Name = user.Name
+                Name = user.Name,
+                Username = user.Username
             };
         }
     }

@@ -4,6 +4,7 @@ namespace fsCore.Service.Interfaces
 {
     public interface IUserService
     {
+        Task<User> SaveUser(User user);
         Task<User> GetUser(User user);
         Task<User> GetUser(string email);
         Task<User> CreateUser(User user);

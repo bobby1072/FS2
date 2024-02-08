@@ -24,11 +24,18 @@ namespace Common.Models
         }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
-        public User(string email, bool emailVerified, string? name)
+        [JsonPropertyName("username")]
+        public string? Username { get; set; }
+        public User(string email, bool emailVerified, string? name, string? username = null)
         {
             EmailVerified = emailVerified;
             Email = email;
             Name = name;
+            Username = username ?? CalculateDefaultUsername();
+        }
+        public string CalculateDefaultUsername()
+        {
+            return Email.Split('@').FirstOrDefault() ?? Email;
         }
     }
     public class UserWithGroupPermissionSet : User

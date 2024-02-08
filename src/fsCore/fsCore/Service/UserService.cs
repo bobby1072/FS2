@@ -78,13 +78,41 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user);
             return foundUser != null && foundUser.EmailVerified;
         }
+        private async Task<string> _findUniqueUserName(User user)
+        {
+            var isUnique = false;
+            while (!isUnique)
+            {
+                if (user.Username is null)
+                {
+                    user.Username = user.CalculateDefaultUsername();
+                }
+                else if (user.Username == user.CalculateDefaultUsername())
+                {
+                    user.Username = $"{user.Email.Split('@')[0]}{new Random().Next(100000000, 999999999)}";
+                }
+                isUnique = await _repo.IsUserNameUnique(user);
+            }
+            return user.Username!;
+        }
+        public async Task<User> SaveUser(User user)
+        {
+            var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
+            if (foundUser != null)
+            {
+                return (await _repo.Update(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
+            }
+            user.Username = await _findUniqueUserName(user);
+            return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
+        }
         public async Task<User> CheckUserExistsAndCreateIfNot(User user)
         {
-            var foundUser = await _repo.GetOne(user);
+            var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
             if (foundUser != null)
             {
                 return foundUser;
             }
+            user.Username = await _findUniqueUserName(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
         }
     }
