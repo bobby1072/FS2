@@ -87,11 +87,11 @@ namespace fsCore.Service
                 {
                     user.Username = user.CalculateDefaultUsername();
                 }
-                else if (user.Username == user.CalculateDefaultUsername())
+                isUnique = await _repo.IsUserNameUnique(user);
+                if (!isUnique)
                 {
                     user.Username = $"{user.Email.Split('@')[0]}{new Random().Next(100000000, 999999999)}";
                 }
-                isUnique = await _repo.IsUserNameUnique(user);
             }
             return user.Username!;
         }

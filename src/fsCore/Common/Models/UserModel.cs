@@ -28,8 +28,8 @@ namespace Common.Models
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("username")]
-        public string? Username { get; set; }
-        public User(string email, bool emailVerified, string? name, string? username = null)
+        public string Username { get; set; }
+        public User(string email, bool emailVerified, string? name = null, string? username = null)
         {
             EmailVerified = emailVerified;
             Email = email;
@@ -45,15 +45,15 @@ namespace Common.Models
     {
         [JsonPropertyName("permissions")]
         public PermissionSet<Group> GroupPermissions { get; set; } = new PermissionSet<Group>();
-        public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name) { }
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, GroupMember? member = null) : base(email, emailVerified, name)
+        public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name, user.Username) { }
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string userame, GroupMember? member = null) : base(email, emailVerified, name, userame)
         {
             if (member is not null)
             {
                 BuildPermissions(member);
             }
         }
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, ICollection<GroupMember>? member = null) : base(email, emailVerified, name)
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username, ICollection<GroupMember>? member = null) : base(email, emailVerified, name, username)
         {
             if (member is not null)
             {
@@ -61,7 +61,7 @@ namespace Common.Models
             }
         }
         [JsonConstructor]
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name) : base(email, emailVerified, name) { }
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username) : base(email, emailVerified, name, username) { }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
         {
             foreach (var group in groups)

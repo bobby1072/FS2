@@ -11,5 +11,5 @@ CREATE TABLE public.user (
     email TEXT PRIMARY KEY,
     name TEXT,
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-    username TEXT UNIQUE,
+    username TEXT NOT NULL UNIQUE
 );

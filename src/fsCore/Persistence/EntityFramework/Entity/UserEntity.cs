@@ -16,8 +16,9 @@ namespace Persistence.EntityFramework.Entity
         [Required]
         [Column(TypeName = "BOOLEAN")]
         public bool EmailVerified { get; set; }
+        [Required]
         [Column(TypeName = "TEXT")]
-        public string? Username { get; set; }
+        public string Username { get; set; }
         public override User ToRuntime()
         {
             return new User(Email, EmailVerified, Name, Username);
