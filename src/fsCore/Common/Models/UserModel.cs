@@ -2,13 +2,16 @@ using System.Net;
 using System.Text.Json.Serialization;
 using Common.Permissions;
 using Common.Utils;
+using Common.Attributes;
 namespace Common.Models
 {
     public class User : BaseModel
     {
+        [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
         private string _email;
+        [LockedProperty]
         [JsonPropertyName("email")]
         public string Email
         {

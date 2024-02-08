@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Text.Json.Serialization;
 using Common.Attributes;
 
 namespace Common.Models
@@ -21,6 +20,23 @@ namespace Common.Models
                 }
             }
             return true;
+        }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not null)
+            {
+                foreach (var property in this.GetType().GetProperties())
+                {
+                    var foundSelfValue = property.GetValue(this);
+                    var foundObjVal = property.GetValue(obj);
+                    if (foundSelfValue != foundObjVal)
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
         }
     }
 }
