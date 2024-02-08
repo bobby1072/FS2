@@ -34,10 +34,8 @@ interface IMatchRange {
   groupSeeCount: number;
 }
 
-const calcMaxPages = (len: number, matchRange: IMatchRange) => {
-  const remainder = len % matchRange.groupSeeCount;
-  return (len - remainder) / matchRange.groupSeeCount + 1;
-};
+const calcMaxPages = (len: number, matchRange: IMatchRange) =>
+  Math.ceil(len / matchRange.groupSeeCount);
 
 export const AllGroupDisplayPage: React.FC = () => {
   const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
