@@ -15,7 +15,7 @@ export const CreateGroupModal: React.FC<{
   closeModal: () => void;
   group?: GroupModel;
 }> = ({ closeModal, group }) => {
-  const [saveDisbaled, setSaveDisabled] = useState<boolean>(true);
+  const [saveDisabled, setSaveDisabled] = useState<boolean>(true);
   return (
     <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
       <StyledDialogTitle>
@@ -59,7 +59,7 @@ export const CreateGroupModal: React.FC<{
               variant="contained"
               type="submit"
               aria-label="Submit"
-              disabled={saveDisbaled}
+              disabled={saveDisabled}
               form="groupSaveForm"
             >
               Save

@@ -19,6 +19,7 @@ import { SignInCallback } from "./common/authentication/SignInCallback";
 import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
+import { SnackbarProvider } from "notistack";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -99,12 +100,14 @@ if (window.location.pathname === "/oidc-silent-renew") {
     <React.StrictMode>
       <ThemeProvider theme={fsTheme}>
         <QueryClientProvider client={queryClient}>
-          <AppContextProvider>
-            <RouterProvider
-              router={router}
-              fallbackElement={<Loading fullScreen={true} />}
-            />
-          </AppContextProvider>
+          <SnackbarProvider>
+            <AppContextProvider>
+              <RouterProvider
+                router={router}
+                fallbackElement={<Loading fullScreen={true} />}
+              />
+            </AppContextProvider>
+          </SnackbarProvider>
         </QueryClientProvider>
       </ThemeProvider>
     </React.StrictMode>

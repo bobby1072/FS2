@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Grid,
   IconButton,
   Paper,
@@ -90,11 +89,9 @@ export const GroupTab: React.FC<{
         </Grid>
         {selfEmail === group.leaderEmail && (
           <Grid item width="100%">
-            <Button
-              onClick={openModal}
-              startIcon={<EditIcon />}
-              color="primary"
-            />
+            <IconButton onClick={openModal} color="primary">
+              <EditIcon />
+            </IconButton>
           </Grid>
         )}
       </Grid>

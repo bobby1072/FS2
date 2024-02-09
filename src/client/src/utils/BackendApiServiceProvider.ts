@@ -118,4 +118,22 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
+  public static async SaveNewUsername(
+    accessToken: string,
+    newUsername: string
+  ) {
+    const { data } = await this._httpClient
+      .get<UserModel>(`User/ChangeUsername?newUsername=${newUsername}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
 }
