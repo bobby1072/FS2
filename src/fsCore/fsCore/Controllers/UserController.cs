@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [RequiredUser]
+    [RequiredUser(true)]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;

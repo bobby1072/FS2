@@ -14,7 +14,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IUserService userService, IUserInfoClient userInfoClient)
         {
             var endpoint = httpContext.GetEndpoint();
-            if (endpoint?.Metadata.GetMetadata<RequiredUser>() is not null)
+            if (endpoint?.Metadata.GetMetadata<RequiredUser>() is RequiredUser foundAttribute)
             {
                 var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var existingUserSession = httpContext.Session.GetString("user");
@@ -23,13 +23,25 @@ namespace fsCore.Middleware
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
                     httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
+                    await _next(httpContext);
+                    if (foundAttribute.UpdateAfter)
+                    {
+                        var foundUser = await userService.GetUser(userExistence.Email);
+                        httpContext.Session.SetString("user", JsonSerializer.Serialize(foundUser));
+                    }
+                    return;
                 }
-                else if (JsonSerializer.Deserialize<User>(existingUserSession) is null)
+                if (foundAttribute.UpdateAfter)
                 {
-                    throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
+                    var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
+                    var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
+                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
                 }
+                await _next(httpContext);
+                return;
             }
             await _next(httpContext);
+
         }
     }
     internal static class UserSessionMiddlewareExtensions

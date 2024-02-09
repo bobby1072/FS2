@@ -10,6 +10,11 @@ namespace fsCore.Controllers.Attributes
 {
     internal sealed class RequiredUser : AuthorizeAttribute, IAuthorizationFilter
     {
+        public bool UpdateAfter { get; set; }
+        public RequiredUser(bool updateAfter = false)
+        {
+            UpdateAfter = updateAfter;
+        }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 

@@ -78,7 +78,7 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user);
             return foundUser != null && foundUser.EmailVerified;
         }
-        private async Task<string> _findUniqueUserName(User user)
+        public async Task<string> FindUniqueUsername(User user)
         {
             var isUnique = false;
             while (!isUnique)
@@ -112,7 +112,7 @@ namespace fsCore.Service
             {
                 return foundUser;
             }
-            user.Username = await _findUniqueUserName(user);
+            user.Username = await FindUniqueUsername(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
         }
     }

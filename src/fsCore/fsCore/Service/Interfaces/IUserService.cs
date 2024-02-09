@@ -14,6 +14,7 @@ namespace fsCore.Service.Interfaces
         Task<bool> Exists(User user);
         Task<bool> ExistsAndVerified(string email);
         Task<bool> ExistsAndVerified(User user);
+        Task<string> FindUniqueUsername(User user);
         Task<User> CheckUserExistsAndCreateIfNot(User user);
     }
 }
