@@ -136,4 +136,19 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
+  public static async GetFullGroup(groupId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<GroupModel>(`Group/GetGroup?groupId=${groupId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
 }

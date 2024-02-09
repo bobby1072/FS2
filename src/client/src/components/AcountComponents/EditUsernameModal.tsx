@@ -13,9 +13,10 @@ import { useEffect, useState } from "react";
 import { useSaveUsernameMutation } from "./hooks/SaveUsername";
 import { useSnackbar } from "notistack";
 
-export const EditUsernameModal: React.FC<{ closeModal: () => void }> = ({
-  closeModal,
-}) => {
+export const EditUsernameModal: React.FC<{
+  closeModal: () => void;
+  currentUsername: string;
+}> = ({ closeModal, currentUsername }) => {
   const [newUsername, setNewUsername] = useState<string>();
   const { data, isLoading, error, mutate } = useSaveUsernameMutation();
   const { enqueueSnackbar } = useSnackbar();
@@ -78,7 +79,9 @@ export const EditUsernameModal: React.FC<{ closeModal: () => void }> = ({
           >
             <Button
               variant="contained"
-              disabled={isLoading || !newUsername}
+              disabled={
+                isLoading || !newUsername || newUsername === currentUsername
+              }
               onClick={() => {
                 if (newUsername) {
                   mutate({ newUsername: newUsername });

@@ -16,7 +16,8 @@ import { useCurrentUser } from "../../common/UserContext";
 export const GroupTab: React.FC<{
   group: GroupModel;
   openModal: () => void;
-}> = ({ group, openModal }) => {
+  linkToMainGroupPage?: boolean;
+}> = ({ group, openModal, linkToMainGroupPage = true }) => {
   const [viewId, setViewId] = useState<boolean>(false);
   const { email: selfEmail } = useCurrentUser();
   return (
@@ -31,8 +32,8 @@ export const GroupTab: React.FC<{
         spacing={2}
         padding={2}
       >
-        <Grid item width="100%" minHeight={"10vh"}>
-          {group.emblem && (
+        {group.emblem && (
+          <Grid item width="100%" minHeight={"10vh"}>
             <>
               <Box
                 component="img"
@@ -45,8 +46,8 @@ export const GroupTab: React.FC<{
                 alt={`emblem: ${group.id}`}
               />
             </>
-          )}
-        </Grid>
+          </Grid>
+        )}
         <Grid item width="100%">
           {!viewId && (
             <Tooltip title="Show group id">
@@ -88,7 +89,7 @@ export const GroupTab: React.FC<{
           </Typography>
         </Grid>
         {selfEmail === group.leaderEmail && (
-          <Grid item width="100%">
+          <Grid item>
             <IconButton onClick={openModal} color="primary">
               <EditIcon />
             </IconButton>

@@ -5,6 +5,7 @@ enum QueryKeys {
   GetSelfGroups = "get-self-groups",
   GetGroupsWithChoice = "get-groups-with-choice",
   GetAllListedGroups = "get-all-listed-groups",
+  GetFullGroup = "get-full-group",
 }
 enum ErrorMessages {}
 export default abstract class Constants {

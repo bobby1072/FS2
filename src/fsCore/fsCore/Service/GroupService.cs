@@ -31,7 +31,7 @@ namespace fsCore.Service
         public async Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count)
         {
             if (count > 5) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);
-            var allGroups = await _repo.GetMany(startIndex, count, _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
+            var allGroups = await _repo.GetMany(startIndex, count, true, _groupType.GetProperty("listed".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
         public async Task<ICollection<Group>> GetAllListedGroups()
