@@ -42,10 +42,15 @@ const mapDefaultValues = (
 };
 export const CreateGroupModalForm: React.FC<{
   group?: GroupModel;
-  setIsDirty?: (boolVal: boolean) => void;
+  setIsSaveDisabled?: (boolVal: boolean) => void;
   closeModal?: () => void;
   useSnackBarOnSuccess?: boolean;
-}> = ({ group, setIsDirty, useSnackBarOnSuccess = false, closeModal }) => {
+}> = ({
+  group,
+  setIsSaveDisabled,
+  useSnackBarOnSuccess = false,
+  closeModal,
+}) => {
   const {
     data: savedId,
     mutate: saveGroupMutation,
@@ -58,13 +63,13 @@ export const CreateGroupModalForm: React.FC<{
     register,
     watch,
     setValue,
-    formState: { errors: formError, isDirty },
+    formState: { errors: formError, isDirty: isFormDirty },
   } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
-  const { isListed, isPublic, id, name } = watch();
+  const { isListed, isPublic, id, name, emblem } = watch();
   const [allErrors, setAllErrors] = useState<
     | ApiException
     | FieldErrors<{
@@ -76,17 +81,15 @@ export const CreateGroupModalForm: React.FC<{
         id?: string | undefined;
       }>
   >();
+  const isDirty = isFormDirty || group?.emblem !== emblem;
   useEffect(() => {
     if (savedId && useSnackBarOnSuccess)
       enqueueSnackbar(`New group id: ${savedId}`, { variant: "success" });
     if (savedId && closeModal) closeModal();
   }, [savedId, enqueueSnackbar, id, useSnackBarOnSuccess, closeModal]);
   useEffect(() => {
-    setIsDirty?.(isSaving);
-  }, [isSaving, setIsDirty]);
-  useEffect(() => {
-    setIsDirty?.(!isDirty || !name);
-  }, [isDirty, setIsDirty, name]);
+    setIsSaveDisabled?.(!isDirty || !name || isSaving);
+  }, [isDirty, setIsSaveDisabled, name, isSaving, emblem, group?.emblem]);
   useEffect(() => {
     if (formError) setAllErrors(formError);
   }, [formError]);

@@ -28,7 +28,7 @@ export const CreateGroupModal: React.FC<{
           group={group}
           closeModal={closeModal}
           useSnackBarOnSuccess={true}
-          setIsDirty={(boolVal: boolean) => setSaveDisabled(boolVal)}
+          setIsSaveDisabled={(boolVal: boolean) => setSaveDisabled(boolVal)}
         />
       </DialogContent>
       <DialogActions>
