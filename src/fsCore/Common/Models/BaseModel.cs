@@ -38,5 +38,16 @@ namespace Common.Models
             }
             return false;
         }
+        public void RemoveSensitive()
+        {
+            var allProperties = this.GetType().GetProperties();
+            foreach (var property in allProperties)
+            {
+                if (property.GetCustomAttribute<SensitiveProperty>() is not null)
+                {
+                    property.SetValue(this, null);
+                }
+            }
+        }
     }
 }

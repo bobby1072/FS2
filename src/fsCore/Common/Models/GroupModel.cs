@@ -1,5 +1,7 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using Common.Attributes;
+using Common.Utils;
 namespace Common.Models
 {
     public class Group : BaseModel
@@ -7,8 +9,20 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
+        private string _name;
         [JsonPropertyName("name")]
-        public string Name { get; set; }
+        public string Name
+        {
+            get => _name;
+            set
+            {
+                if (string.IsNullOrEmpty(value) || value == " " || value.IsJustNumbers() || value.IsJustSpaces())
+                {
+                    throw new ApiException(ErrorConstants.GroupNameCorrectFormat, HttpStatusCode.UnprocessableEntity);
+                }
+                _name = value;
+            }
+        }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
         [LockedProperty]

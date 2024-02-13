@@ -36,5 +36,17 @@ namespace Common.Utils
                 return false;
             }
         }
+        public static bool IsJustNumbers(this string input)
+        {
+            return input.All(char.IsDigit);
+        }
+        public static bool IsJustLetters(this string input)
+        {
+            return input.All(char.IsLetter);
+        }
+        public static bool IsJustSpaces(this string input)
+        {
+            return input.All(char.IsWhiteSpace);
+        }
     }
 }

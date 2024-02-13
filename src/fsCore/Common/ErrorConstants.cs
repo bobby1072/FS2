@@ -3,6 +3,8 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string UsernameCorrectFormat = "Username invalid";
+        public const string GroupNameCorrectFormat = "Group name invalid";
         public const string NotAllowedToEditThoseFields = "Not allowed to edit those fields";
         public const string TooManyRecordsRequested = "To many records requested";
         public const string CouldntDeleteGroup = "Couldn't delete group";

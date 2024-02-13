@@ -12,23 +12,37 @@ namespace Common.Models
         public bool EmailVerified { get; set; }
         private string _email;
         [LockedProperty]
+        [SensitiveProperty]
         [JsonPropertyName("email")]
         public string Email
         {
             get => _email;
             set
             {
-                if (!value.ToLower().IsValidEmail())
+                var lowerCaseEmail = value.ToLower();
+                if (!lowerCaseEmail.IsValidEmail())
                 {
                     throw new ApiException(ErrorConstants.InvalidEmail, HttpStatusCode.UnprocessableEntity);
                 }
-                _email = value.ToLower();
+                _email = lowerCaseEmail;
             }
         }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("username")]
-        public string Username { get; set; }
+        private string _username;
+        public string Username
+        {
+            get => _username;
+            set
+            {
+                if (string.IsNullOrEmpty(value) || value == " " || value.IsJustNumbers() || value.IsJustSpaces())
+                {
+                    throw new ApiException(ErrorConstants.UsernameCorrectFormat, HttpStatusCode.UnprocessableEntity);
+                }
+                _username = value;
+            }
+        }
         public User(string email, bool emailVerified, string? name = null, string? username = null)
         {
             EmailVerified = emailVerified;
