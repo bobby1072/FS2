@@ -4,7 +4,7 @@ export interface GroupModel {
   id?: string;
   name: string;
   description?: string;
-  leaderEmail: string;
+  leaderUsername: string;
   leader?: UserModel | null;
   createdAt: string;
   public: boolean;

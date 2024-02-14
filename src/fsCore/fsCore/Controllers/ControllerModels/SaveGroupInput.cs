@@ -8,8 +8,8 @@ namespace fsCore.Controllers.ControllerModels
     {
         [JsonPropertyName("id")]
         public string? Id { get; set; }
-        [JsonPropertyName("leaderEmail")]
-        public string? LeaderEmail { get; set; }
+        [JsonPropertyName("leaderUsername")]
+        public string? LeaderUsername { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -31,7 +31,7 @@ namespace fsCore.Controllers.ControllerModels
                 Description = Description,
                 Public = IsPublic,
                 CreatedAt = CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
-                LeaderEmail = LeaderEmail,
+                LeaderUsername = LeaderUsername,
                 Listed = IsListed,
                 Emblem = Emblem is not null ? Convert.FromBase64String(Emblem) : null,
             };

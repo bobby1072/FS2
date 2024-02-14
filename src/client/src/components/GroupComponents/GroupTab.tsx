@@ -19,7 +19,7 @@ export const GroupTab: React.FC<{
   linkToMainGroupPage?: boolean;
 }> = ({ group, openModal, linkToMainGroupPage = true }) => {
   const [viewId, setViewId] = useState<boolean>(false);
-  const { email: selfEmail } = useCurrentUser();
+  const { username: selfUsername } = useCurrentUser();
   return (
     <Paper elevation={2}>
       <Grid
@@ -88,7 +88,7 @@ export const GroupTab: React.FC<{
             {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
           </Typography>
         </Grid>
-        {selfEmail === group.leaderEmail && (
+        {selfUsername === group.leaderUsername && (
           <Grid item>
             <IconButton onClick={openModal} color="primary">
               <EditIcon />

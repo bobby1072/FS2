@@ -18,8 +18,8 @@ namespace Persistence.EntityFramework.Entity
         public string? Description { get; set; }
         [Required]
         [Column(TypeName = "TEXT")]
-        public string LeaderEmail { get; set; }
-        [ForeignKey(nameof(LeaderEmail))]
+        public string LeaderUsername { get; set; }
+        [ForeignKey(nameof(LeaderUsername))]
         public UserEntity? Leader { get; set; }
         [Required]
         [Column(TypeName = "TIMESTAMP with time zone")]
@@ -37,7 +37,7 @@ namespace Persistence.EntityFramework.Entity
         public virtual ICollection<GroupCatchEntity>? Catches { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, LeaderEmail, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList(), Positions?.Select(p => p.ToRuntime()).ToList(), Catches?.Select(c => c.ToRuntime()).ToList());
+            return new Group(Name, LeaderUsername, Emblem, Description, Id, CreatedAt, Public, Listed, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList(), Positions?.Select(p => p.ToRuntime()).ToList(), Catches?.Select(c => c.ToRuntime()).ToList());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {
@@ -45,7 +45,7 @@ namespace Persistence.EntityFramework.Entity
             {
                 Id = group.Id ?? Guid.NewGuid(),
                 Name = group.Name,
-                LeaderEmail = group.LeaderEmail,
+                LeaderUsername = group.LeaderUsername,
                 CreatedAt = DateTime.SpecifyKind(group.CreatedAt, DateTimeKind.Utc),
                 Public = group.Public,
                 Listed = group.Listed,

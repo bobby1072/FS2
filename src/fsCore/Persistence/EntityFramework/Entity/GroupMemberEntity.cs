@@ -18,8 +18,8 @@ namespace Persistence.EntityFramework.Entity
         public GroupEntity? Group { get; set; }
         [Required]
         [Column(TypeName = "TEXT")]
-        public string UserEmail { get; set; }
-        [ForeignKey(nameof(UserEmail))]
+        public string Username { get; set; }
+        [ForeignKey(nameof(Username))]
         public UserEntity? User { get; set; }
         [Required]
         [Column(TypeName = "INTEGER")]
@@ -28,7 +28,7 @@ namespace Persistence.EntityFramework.Entity
         public GroupPositionEntity? Position { get; set; }
         public override GroupMember ToRuntime()
         {
-            return new GroupMember(GroupId, UserEmail, PositionId, Id, User?.ToRuntime(), Group?.ToRuntime(), Position?.ToRuntime());
+            return new GroupMember(GroupId, Username, PositionId, Id, User?.ToRuntime(), Group?.ToRuntime(), Position?.ToRuntime());
         }
         public static GroupMemberEntity RuntimeToEntity(GroupMember groupMember)
         {
@@ -37,7 +37,7 @@ namespace Persistence.EntityFramework.Entity
 
                 Id = groupMember.Id ?? 0,
                 GroupId = groupMember.GroupId,
-                UserEmail = groupMember.UserEmail
+                Username = groupMember.Username
             };
             if (groupMember.Id.HasValue && groupMember.Id > 0)
             {

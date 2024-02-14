@@ -87,7 +87,7 @@ namespace Common.Models
 
         public UserWithGroupPermissionSet BuildPermissions(Group group)
         {
-            if (group.LeaderEmail == Email)
+            if (group.LeaderUsername == Email)
             {
                 GroupPermissions
                     .AddCan(PermissionConstants.BelongsTo, group)
@@ -108,7 +108,7 @@ namespace Common.Models
             }
             GroupPermissions
                 .AddCan(PermissionConstants.BelongsTo, member.Group);
-            if (member.Group.LeaderEmail == Email)
+            if (member.Group.LeaderUsername == Email)
             {
                 GroupPermissions
                     .AddCan(PermissionConstants.Manage, member.Group)

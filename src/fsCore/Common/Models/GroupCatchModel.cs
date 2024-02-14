@@ -14,8 +14,8 @@ namespace Common.Models
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
         [LockedProperty]
-        [JsonPropertyName("userEmail")]
-        public string UserEmail { get; set; }
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [LockedProperty]
@@ -38,10 +38,10 @@ namespace Common.Models
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        public GroupCatch(string userEmail, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
+        public GroupCatch(string username, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
         {
             Id = id;
-            UserEmail = userEmail;
+            Username = username;
             Species = species;
             Weight = weight;
             Length = length;

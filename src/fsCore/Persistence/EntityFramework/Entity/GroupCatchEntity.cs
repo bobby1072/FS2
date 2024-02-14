@@ -18,8 +18,8 @@ namespace Persistence.EntityFramework.Entity
         public GroupEntity? Group { get; set; }
         [Required]
         [Column(TypeName = "TEXT")]
-        public string UserEmail { get; set; }
-        [ForeignKey(nameof(UserEmail))]
+        public string Username { get; set; }
+        [ForeignKey(nameof(Username))]
         public UserEntity? User { get; set; }
         [Required]
         [Column(TypeName = "TEXT")]
@@ -48,14 +48,14 @@ namespace Persistence.EntityFramework.Entity
         public double Longitude { get; set; }
         public override GroupCatch ToRuntime()
         {
-            return new GroupCatch(UserEmail, GroupId, Species, Weight, CaughtAt, Length, Latitude, Longitude, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime());
+            return new GroupCatch(Username, GroupId, Species, Weight, CaughtAt, Length, Latitude, Longitude, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime());
         }
         public static GroupCatchEntity RuntimeToEntity(GroupCatch groupCatch)
         {
             return new GroupCatchEntity
             {
                 Id = groupCatch.Id ?? Guid.NewGuid(),
-                UserEmail = groupCatch.UserEmail,
+                Username = groupCatch.Username,
                 Species = groupCatch.Species,
                 Weight = groupCatch.Weight,
                 Length = groupCatch.Length,

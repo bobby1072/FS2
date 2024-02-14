@@ -9,7 +9,7 @@ namespace fsCore.Service.Interfaces
         Task<Group> GetGroup(Guid groupId);
         Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser);
         Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId);
-        Task<GroupMember> GetMembership(UserWithGroupPermissionSet currentUser, string targetUserEmail, Guid groupId, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
+        Task<GroupMember> GetMembership(UserWithGroupPermissionSet currentUser, string username, Guid groupId, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
         Task<ICollection<GroupMember>> GetAllMemberships(UserWithGroupPermissionSet currentUser, string targetEmail, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
         Task<ICollection<GroupMember>> GetAllMembershipsForGroup(Guid groupId, UserWithGroupPermissionSet currentUser, bool includePosition = false, bool includeUser = false);
         Task<GroupMember> UserJoinGroup(GroupMember member, UserWithGroupPermissionSet currentUser);

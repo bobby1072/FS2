@@ -26,8 +26,8 @@ namespace Common.Models
         [JsonPropertyName("description")]
         public string? Description { get; set; }
         [LockedProperty]
-        [JsonPropertyName("leaderEmail")]
-        public string LeaderEmail { get; set; }
+        [JsonPropertyName("leaderUsername")]
+        public string LeaderUsername { get; set; }
         [JsonPropertyName("leader")]
         public User? Leader { get; set; }
         [LockedProperty]
@@ -45,14 +45,14 @@ namespace Common.Models
         public ICollection<GroupPosition>? Positions { get; set; }
         [JsonPropertyName("catches")]
         public ICollection<GroupCatch>? Catches { get; set; }
-        public Group(string name, string leaderEmail, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members, ICollection<GroupPosition>? positions, ICollection<GroupCatch>? catches)
+        public Group(string name, string leaderUsername, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members, ICollection<GroupPosition>? positions, ICollection<GroupCatch>? catches)
         {
             Positions = positions;
             Id = id;
             Catches = catches;
             Name = name;
             Leader = leader;
-            LeaderEmail = leaderEmail;
+            LeaderUsername = leaderUsername;
             CreatedAt = createdAt ?? DateTime.UtcNow;
             Public = @public ?? false;
             Listed = listed ?? false;
@@ -60,13 +60,13 @@ namespace Common.Models
             Description = description;
             Members = members;
         }
-        public Group ApplyDefaults(string? leaderEmail)
+        public Group ApplyDefaults(string? leaderUsername)
         {
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
-            if (leaderEmail is not null && !string.IsNullOrEmpty(leaderEmail))
+            if (leaderUsername is not null && !string.IsNullOrEmpty(leaderUsername))
             {
-                LeaderEmail = leaderEmail;
+                LeaderUsername = leaderUsername;
             }
             return this;
         }
@@ -78,7 +78,7 @@ namespace Common.Models
                 return group.Id == Id
                 && group.Name == Name
                 && group.Description == Description
-                && group.LeaderEmail == LeaderEmail
+                && group.LeaderUsername == LeaderUsername
                 && group.CreatedAt == CreatedAt
                 && group.Public == Public
                 && group.Listed == Listed;
