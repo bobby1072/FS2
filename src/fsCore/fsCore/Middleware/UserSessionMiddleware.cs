@@ -17,17 +17,17 @@ namespace fsCore.Middleware
             if (endpoint?.Metadata.GetMetadata<RequiredUser>() is RequiredUser foundAttribute)
             {
                 var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                var existingUserSession = httpContext.Session.GetString("user");
+                var existingUserSession = httpContext.Session.GetString(RuntimeConstants.UserSession);
                 if (existingUserSession is null)
                 {
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
+                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
                     await _next(httpContext);
                     if (foundAttribute.UpdateAfter)
                     {
                         var foundUser = await userService.GetUser(userExistence.Email);
-                        httpContext.Session.SetString("user", JsonSerializer.Serialize(foundUser));
+                        httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(foundUser));
                     }
                     return;
                 }
@@ -35,7 +35,7 @@ namespace fsCore.Middleware
                 {
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
+                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
                 }
                 await _next(httpContext);
                 return;

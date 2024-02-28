@@ -20,7 +20,7 @@ namespace fsCore.Controllers.Attributes
 
             if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
-                var user = context.HttpContext.Session.GetString("userWithPermissions");
+                var user = context.HttpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession);
                 if (user is null)
                 {
                     context.Result = new UnauthorizedResult();
