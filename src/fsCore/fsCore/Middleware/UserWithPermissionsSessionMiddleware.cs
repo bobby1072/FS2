@@ -18,7 +18,6 @@ namespace fsCore.Middleware
                 var user = httpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 var foundUserWithPermissions = httpContext.Session.GetString("userWithPermissions");
-                var routeData = httpContext.GetRouteData();
                 if (!foundAttribute.UpdateAfter && foundUserWithPermissions is not null)
                 {
                     await _next(httpContext);
