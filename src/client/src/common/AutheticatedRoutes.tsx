@@ -34,6 +34,6 @@ export const AuthenticatedRoutes: {
     showOnDrawer: false,
     component: () => <AccountPage />,
     icon: () => <AccountCircle />,
-    constantRefreshCurrentUser: false
+    constantRefreshCurrentUser: true
   },
 ];

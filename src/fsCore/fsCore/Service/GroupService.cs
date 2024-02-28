@@ -55,7 +55,7 @@ namespace fsCore.Service
                 { _groupMemberType.GetProperty("username".ToPascalCase())?.Name ?? throw new Exception(), newMember.Username }
             }, new List<string> { _groupType.Name, _userType.Name }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
             if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (foundMember.Validate(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+            if (foundMember.ValidateAgainstOriginal(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -164,7 +164,7 @@ namespace fsCore.Service
             if (group.Id is not null)
             {
                 var foundGroup = await _repo.GetOne(group.Id, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-                if (foundGroup.Validate(group) is false)
+                if (foundGroup.ValidateAgainstOriginal(group) is false)
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
@@ -204,7 +204,7 @@ namespace fsCore.Service
             else
             {
                 var foundPosition = await _groupPositionRepo.GetOne(position.Id, _groupPositionType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
-                if (foundPosition.Validate(position) is false)
+                if (foundPosition.ValidateAgainstOriginal(position) is false)
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
@@ -252,7 +252,7 @@ namespace fsCore.Service
         public async Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Catches", "Positions", "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!(currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))))
+            if (!(currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))) && !foundGroup.Public)
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

@@ -100,7 +100,7 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
             if (foundUser != null)
             {
-                if (!user.Validate(foundUser)) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                if (!user.ValidateAgainstOriginal(foundUser)) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 return (await _repo.Update(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
             }
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);

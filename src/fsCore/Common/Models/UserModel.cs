@@ -1,54 +1,32 @@
-using System.Net;
 using System.Text.Json.Serialization;
 using Common.Permissions;
-using Common.Utils;
 using Common.Attributes;
+using Common.Models.Validators;
+using FluentValidation;
 namespace Common.Models
 {
     public class User : BaseModel
     {
+        [JsonIgnore]
+        private static readonly UserValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
-        private string _email;
         [LockedProperty]
         [SensitiveProperty]
         [JsonPropertyName("email")]
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                var lowerCaseEmail = value.ToLower();
-                if (!lowerCaseEmail.IsValidEmail())
-                {
-                    throw new ApiException(ErrorConstants.InvalidEmail, HttpStatusCode.UnprocessableEntity);
-                }
-                _email = lowerCaseEmail;
-            }
-        }
+        public string Email { get; set; }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("username")]
-        private string _username;
-        public string Username
-        {
-            get => _username;
-            set
-            {
-                if (string.IsNullOrEmpty(value) || value == " " || value.IsJustNumbers() || value.IsJustSpaces())
-                {
-                    throw new ApiException(ErrorConstants.UsernameCorrectFormat, HttpStatusCode.UnprocessableEntity);
-                }
-                _username = value;
-            }
-        }
+        public string Username { get; set; }
         public User(string email, bool emailVerified, string? name = null, string? username = null)
         {
             EmailVerified = emailVerified;
             Email = email;
             Name = name;
             Username = username ?? CalculateDefaultUsername();
+            _validator.ValidateAndThrow(this);
         }
         public string CalculateDefaultUsername()
         {

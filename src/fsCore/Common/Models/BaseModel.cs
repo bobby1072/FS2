@@ -5,9 +5,9 @@ namespace Common.Models
 {
     public abstract class BaseModel
     {
-        public virtual bool Validate<TModel>(TModel checkAgainst) where TModel : BaseModel
+        public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
-            if (this.GetType() != typeof(TModel))
+            if (this is not TModel)
             {
                 return false;
             }
