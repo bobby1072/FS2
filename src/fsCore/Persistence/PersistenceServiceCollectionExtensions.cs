@@ -56,9 +56,6 @@ namespace Persistence
                 )
                 .AddHealthChecks();
 
-            services
-                .AddScoped(sp => sp.GetRequiredService<IDbContextFactory<FsContext>>().CreateDbContextAsync());
-
             return services;
         }
     }

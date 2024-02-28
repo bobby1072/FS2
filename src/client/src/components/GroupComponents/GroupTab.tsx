@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Grid,
   IconButton,
   Paper,
@@ -93,6 +94,18 @@ export const GroupTab: React.FC<{
             <IconButton onClick={openModal} color="primary">
               <EditIcon />
             </IconButton>
+          </Grid>
+        )}
+        {linkToMainGroupPage && (
+          <Grid item>
+            <Button
+              onClick={() => {
+                window.location.href = `/Group/${group.id}`;
+              }}
+              variant="contained"
+            >
+              See more
+            </Button>
           </Grid>
         )}
       </Grid>

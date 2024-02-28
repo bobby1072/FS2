@@ -11,7 +11,7 @@ CREATE TABLE public."group" (
     CONSTRAINT group_leader_username_fk FOREIGN KEY (leader_username) REFERENCES public."user"(username) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_position" (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id SERIAL PRIMARY KEY,
     group_id UUID NOT NULL,
     group_permissions_id INTEGER NOT NULL,
     name TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE public."group_position" (
     CONSTRAINT group_position_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_member" (
-    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    id SERIAL PRIMARY KEY,
     group_id UUID NOT NULL,
     username TEXT NOT NULL,
     position_id INTEGER NOT NULL,

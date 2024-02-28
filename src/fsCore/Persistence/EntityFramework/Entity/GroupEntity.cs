@@ -20,7 +20,7 @@ namespace Persistence.EntityFramework.Entity
         [Column(TypeName = "TEXT")]
         public string LeaderUsername { get; set; }
         [ForeignKey(nameof(LeaderUsername))]
-        public UserEntity? Leader { get; set; }
+        public virtual UserEntity? Leader { get; set; }
         [Required]
         [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }

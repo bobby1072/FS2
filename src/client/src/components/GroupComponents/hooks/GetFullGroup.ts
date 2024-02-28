@@ -12,7 +12,7 @@ export const useGetFullGroup = (groupId?: string) => {
     () => {
       if (!groupId) throw new ApiException("No group id given");
       if (!user?.access_token) throw new ApiException("No bearer token found");
-      return BackendApiServiceProvider.GetFullGroup(user.access_token, groupId);
+      return BackendApiServiceProvider.GetFullGroup(groupId, user.access_token);
     }
   );
   return { ...queryResults };

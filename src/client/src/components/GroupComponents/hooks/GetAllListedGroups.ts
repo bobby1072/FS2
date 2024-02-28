@@ -28,7 +28,8 @@ export enum GroupQueryChoice {
 export const useGetAllGroupsChoiceGroup = (
   startIndex: number,
   count: number,
-  choice: GroupQueryChoice
+  choice: GroupQueryChoice,
+  options?: { retry: (count: number, exception: ApiException) => boolean }
 ) => {
   const { user } = useAuthentication();
   const queryResults = useQuery<GroupModel[], ApiException>(
@@ -51,6 +52,9 @@ export const useGetAllGroupsChoiceGroup = (
         default:
           throw new ApiException("Invalid query");
       }
+    },
+    {
+      ...(options?.retry && { retry: options.retry }),
     }
   );
   return { ...queryResults };
