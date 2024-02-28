@@ -1,28 +1,17 @@
-using System.Net;
 using System.Text.Json.Serialization;
 using Common.Attributes;
-using Common.Utils;
+using Common.Models.Validators;
+using FluentValidation;
 namespace Common.Models
 {
     public class Group : BaseModel
     {
+        private readonly GroupValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
-        private string _name;
         [JsonPropertyName("name")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                if (string.IsNullOrEmpty(value) || value == " " || value.IsJustNumbers() || value.IsJustSpaces())
-                {
-                    throw new ApiException(ErrorConstants.GroupNameCorrectFormat, HttpStatusCode.UnprocessableEntity);
-                }
-                _name = value;
-            }
-        }
+        public string Name { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
         [LockedProperty]
@@ -45,7 +34,7 @@ namespace Common.Models
         public ICollection<GroupPosition>? Positions { get; set; }
         [JsonPropertyName("catches")]
         public ICollection<GroupCatch>? Catches { get; set; }
-        public Group(string name, string leaderUsername, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader, ICollection<GroupMember>? members, ICollection<GroupPosition>? positions, ICollection<GroupCatch>? catches)
+        public Group(string name, string? leaderUsername, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, User? leader = null, ICollection<GroupMember>? members = null, ICollection<GroupPosition>? positions = null, ICollection<GroupCatch>? catches = null)
         {
             Positions = positions;
             Id = id;
@@ -59,6 +48,7 @@ namespace Common.Models
             Emblem = emblem;
             Description = description;
             Members = members;
+            _validator.ValidateAndThrow(this);
         }
         public Group ApplyDefaults(string? leaderUsername)
         {
@@ -70,6 +60,7 @@ namespace Common.Models
             }
             return this;
         }
+        [JsonConstructor]
         public Group() { }
         public override bool Equals(object? obj)
         {

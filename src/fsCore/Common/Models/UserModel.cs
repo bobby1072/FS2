@@ -12,10 +12,21 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
+        private string _email;
         [LockedProperty]
         [SensitiveProperty]
         [JsonPropertyName("email")]
-        public string Email { get; set; }
+        public string Email
+        {
+            get
+            {
+                return _email.ToLower();
+            }
+            set
+            {
+                _email = value;
+            }
+        }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("username")]
