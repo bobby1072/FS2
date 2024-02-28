@@ -20,6 +20,7 @@ import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
+import { UserContextProvider, UserContextProviderWithConstantRefresh } from "./common/UserContext";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -65,10 +66,20 @@ const AppRoutes: RouteObject[] = [
   },
   ...AuthenticatedRoutes.map((option) => ({
     path: option.link,
-    element: (
+    element: option.constantRefreshCurrentUser ? (
+      <Wrapper>
+      <AuthenticatedRoute>
+        <UserContextProviderWithConstantRefresh>
+        <option.component />
+        </UserContextProviderWithConstantRefresh>
+      </AuthenticatedRoute>
+    </Wrapper>
+    ): (
       <Wrapper>
         <AuthenticatedRoute>
+          <UserContextProvider>
           <option.component />
+          </UserContextProvider>
         </AuthenticatedRoute>
       </Wrapper>
     ),

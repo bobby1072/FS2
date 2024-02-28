@@ -38,7 +38,7 @@ namespace Common.Models
             }
             return false;
         }
-        public void RemoveSensitive()
+        public virtual void RemoveSensitive()
         {
             var allProperties = this.GetType().GetProperties();
             foreach (var property in allProperties)

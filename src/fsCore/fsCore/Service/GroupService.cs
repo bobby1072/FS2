@@ -256,6 +256,10 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
+            if (currentUser.Username != foundGroup.LeaderUsername)
+            {
+                foundGroup.Leader?.RemoveSensitive();
+            }
             return foundGroup;
         }
     }

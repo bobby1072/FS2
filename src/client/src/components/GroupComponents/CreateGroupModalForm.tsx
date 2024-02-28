@@ -16,13 +16,13 @@ import { useSnackbar } from "notistack";
 import { ApiException } from "../../common/ApiException";
 const formSchema = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   isPublic: z.boolean(),
   isListed: z.boolean(),
-  leaderUsername: z.string().optional(),
-  emblem: z.string().optional(),
-  id: z.string().optional(),
-  createdAt: z.string().optional(),
+  leaderUsername: z.string().optional().nullable(),
+  emblem: z.string().optional().nullable(),
+  id: z.string().optional().nullable(),
+  createdAt: z.string().optional().nullable(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (

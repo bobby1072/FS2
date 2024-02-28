@@ -1,6 +1,7 @@
 enum QueryKeys {
   ClientConfig = "client-config",
   GetUser = "get-user",
+  GetUserConstantRefresh = "get-user-constant-refresh",
   GetGroupCount = "get-group-count",
   GetSelfGroups = "get-self-groups",
   GetGroupsWithChoice = "get-groups-with-choice",

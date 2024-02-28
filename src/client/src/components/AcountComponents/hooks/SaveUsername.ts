@@ -5,11 +5,9 @@ import { useAuthentication } from "../../../common/contexts/AuthenticationContex
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useEffect } from "react";
 import Constants from "../../../common/Constants";
-import { useCurrentUser } from "../../../common/UserContext";
 
 export const useSaveUsernameMutation = () => {
   const { user } = useAuthentication();
-  const {} = useCurrentUser();
   if (!user) {
     throw new Error("User not found");
   }
@@ -23,7 +21,7 @@ export const useSaveUsernameMutation = () => {
   );
   useEffect(() => {
     if (mutationResult.data) {
-      queryClient.refetchQueries(Constants.QueryKeys.GetUser);
+      queryClient.refetchQueries(Constants.QueryKeys.GetUserConstantRefresh);
     }
   }, [mutationResult.data, queryClient]);
   return { ...mutationResult };

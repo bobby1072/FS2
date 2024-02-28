@@ -149,7 +149,7 @@ export const AuthenticationContextProvider: React.FC<Props> = ({
         },
       }}
     >
-      <UserContextProvider>{children}</UserContextProvider>
+      {children}
     </AuthenticationContext.Provider>
   );
 };
