@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string BadRequest = "Bad request";
         public const string InvalidGroupDescription = "Invalid group description";
         public const string UsernameCorrectFormat = "Username invalid";
         public const string GroupNameCorrectFormat = "Group name invalid";

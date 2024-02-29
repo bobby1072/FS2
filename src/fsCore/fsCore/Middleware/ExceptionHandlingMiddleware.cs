@@ -1,5 +1,6 @@
 using System.Net;
 using Common;
+using FluentValidation;
 
 namespace fsCore.Middleware
 {
@@ -10,7 +11,7 @@ namespace fsCore.Middleware
         {
             _logger = logger;
         }
-        protected async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
+        private async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
         {
             _logger.LogError(error, error.Message);
             httpContext.Response.Clear();
@@ -19,11 +20,18 @@ namespace fsCore.Middleware
             {
                 httpContext.Response.StatusCode = (int)apiException.StatusCode;
                 await httpContext.Response.WriteAsync(apiException.Message);
-                return;
             }
-            httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
-            return;
+            else if (error is ValidationException validationException)
+            {
+                var mainError = validationException.Errors.FirstOrDefault();
+                httpContext.Response.StatusCode = mainError?.ErrorCode is not null && mainError.ErrorCode.All(char.IsNumber) ? int.Parse(mainError.ErrorCode) : (int)HttpStatusCode.BadRequest;
+                await httpContext.Response.WriteAsync(mainError?.ErrorMessage ?? ErrorConstants.BadRequest);
+            }
+            else
+            {
+                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
+            }
         }
         public async Task InvokeAsync(HttpContext httpContext)
         {
