@@ -3,12 +3,12 @@ CREATE TABLE public."group" (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     description TEXT,
-    leader_username TEXT NOT NULL,
+    leader_id UUID NOT NULL,
     created_at TIMESTAMP with time zone NOT NULL DEFAULT NOW(),
     public BOOLEAN NOT NULL DEFAULT FALSE,
     listed BOOLEAN NOT NULL DEFAULT FALSE,
     emblem BYTEA,
-    CONSTRAINT group_leader_username_fk FOREIGN KEY (leader_username) REFERENCES public."user"(username) ON UPDATE CASCADE
+    CONSTRAINT group_leader_id_fk FOREIGN KEY (leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_position" (
     id SERIAL PRIMARY KEY,
@@ -26,18 +26,18 @@ CREATE TABLE public."group_position" (
 CREATE TABLE public."group_member" (
     id SERIAL PRIMARY KEY,
     group_id UUID NOT NULL,
-    username TEXT NOT NULL,
+    user_id UUID NOT NULL,
     position_id INTEGER NOT NULL,
-    CONSTRAINT group_member_unique UNIQUE (group_id, username),
+    CONSTRAINT group_member_unique UNIQUE (group_id, user_id),
     CONSTRAINT group_member_position_id_fk FOREIGN KEY (position_id) REFERENCES public."group_position"(id) ON UPDATE CASCADE,
     CONSTRAINT group_member_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,
-    CONSTRAINT group_member_member_email_fk FOREIGN KEY (username) REFERENCES public."user"(username) ON UPDATE CASCADE
+    CONSTRAINT group_member_member_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE
 );
 
 CREATE TABLE public."group_catch" (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     group_id UUID NOT NULL,
-    username TEXT NOT NULL,
+    user_id UUID NOT NULL,
     species TEXT NOT NULL,
     weight DECIMAL,
     length DECIMAL,
@@ -48,5 +48,5 @@ CREATE TABLE public."group_catch" (
     latitude DECIMAL NOT NULL,
     longitude DECIMAL NOT NULL,
     CONSTRAINT catches_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,
-    CONSTRAINT catches_username_fk FOREIGN KEY (username) REFERENCES public."user"(username) ON UPDATE CASCADE
+    CONSTRAINT catches_username_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE
 );

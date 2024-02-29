@@ -9,6 +9,9 @@ namespace Persistence.EntityFramework.Entity
     {
         [Key]
         [Required]
+        [Column(TypeName = "UUID")]
+        public Guid Id { get; set; }
+        [Required]
         [Column(TypeName = "TEXT")]
         public string Email { get; set; }
         [Column(TypeName = "TEXT")]
@@ -21,7 +24,7 @@ namespace Persistence.EntityFramework.Entity
         public string Username { get; set; }
         public override User ToRuntime()
         {
-            return new User(Email, EmailVerified, Name, Username);
+            return new User(Email, EmailVerified, Name, Username, Id);
         }
         public static UserEntity RuntimeToEntity(User user)
         {
@@ -30,7 +33,8 @@ namespace Persistence.EntityFramework.Entity
                 Email = user.Email,
                 EmailVerified = user.EmailVerified,
                 Name = user.Name,
-                Username = user.Username
+                Username = user.Username,
+                Id = user.Id ?? Guid.NewGuid()
             };
         }
     }

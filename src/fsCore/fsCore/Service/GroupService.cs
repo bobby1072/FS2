@@ -52,7 +52,7 @@ namespace fsCore.Service
             var foundMember = await _groupMemberRepo.GetOne(new Dictionary<string, object>
             {
                 { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), newMember.GroupId },
-                { _groupMemberType.GetProperty("username".ToPascalCase())?.Name ?? throw new Exception(), newMember.Username }
+                { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), newMember.UserId }
             }, new List<string> { _groupType.Name, _userType.Name }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
             if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (foundMember.ValidateAgainstOriginal(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
@@ -107,14 +107,14 @@ namespace fsCore.Service
             var foundMember = _groupMemberRepo.GetOne(new Dictionary<string, object>
             {
                 { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), member.GroupId },
-                { _groupMemberType.GetProperty("username".ToPascalCase())?.Name ?? throw new Exception(), member.Username }
+                { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), member.UserId }
             });
             await Task.WhenAll(foundGroup, foundMember);
             if (foundMember.Result is not null)
             {
                 throw new ApiException(ErrorConstants.UserAlreadyExists, HttpStatusCode.Conflict);
             }
-            else if (!(member.Username == currentUser.Username && foundGroup.Result.Public) &&
+            else if (!(member.UserId == currentUser.Id && foundGroup.Result.Public) &&
                 !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup.Result, _groupMemberType.Name))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -176,7 +176,7 @@ namespace fsCore.Service
             }
             else
             {
-                var newGroup = (await _repo.Create(new List<Group> { group.ApplyDefaults(currentUser.Username) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                var newGroup = (await _repo.Create(new List<Group> { group.ApplyDefaults(currentUser.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
                 return newGroup;
             }
 
@@ -256,7 +256,7 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (currentUser.Username != foundGroup.LeaderUsername)
+            if (currentUser.Id != foundGroup.LeaderId)
             {
                 foundGroup.Leader?.RemoveSensitive();
             }

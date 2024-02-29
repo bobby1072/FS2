@@ -17,7 +17,7 @@ namespace Persistence.EntityFramework
             modelBuilder.Entity<GroupEntity>()
                 .HasOne(g => g.Leader)
                 .WithMany()
-                .HasForeignKey(g => g.LeaderUsername);
+                .HasForeignKey(g => g.LeaderId);
             modelBuilder.Entity<GroupEntity>()
                 .HasMany(g => g.Members)
                 .WithOne(gm => gm.Group)

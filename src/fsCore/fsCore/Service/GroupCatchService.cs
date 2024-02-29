@@ -17,7 +17,7 @@ namespace fsCore.Service
         }
         public async Task<ICollection<GroupCatch>> GetAllSelfCatches(User currentUser)
         {
-            var foundCatches = await _repo.GetMany(currentUser.Email, typeof(User).GetProperty("email".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            var foundCatches = await _repo.GetMany(currentUser.Id, typeof(GroupCatch).GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             return foundCatches;
         }
         public async Task<ICollection<GroupCatch>> GetAllGroupCatches(UserWithGroupPermissionSet currentUser, Guid groupId)
@@ -42,11 +42,11 @@ namespace fsCore.Service
         public async Task<GroupCatch> SaveCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _groupService.GetGroup(groupCatch.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (groupCatch.Username == currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
+            if (groupCatch.UserId == currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (groupCatch.Username != currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
+            if (groupCatch.UserId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -62,11 +62,11 @@ namespace fsCore.Service
         public async Task<GroupCatch> DeleteCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _groupService.GetGroup(groupCatch.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (groupCatch.Username == currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
+            if (groupCatch.UserId == currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (groupCatch.Username != currentUser.Email && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
+            if (groupCatch.UserId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

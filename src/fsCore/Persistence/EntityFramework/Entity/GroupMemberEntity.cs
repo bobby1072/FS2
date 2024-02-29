@@ -9,7 +9,6 @@ namespace Persistence.EntityFramework.Entity
     {
         [Key]
         [Column(TypeName = "INTEGER")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
         [Column(TypeName = "UUID")]
@@ -17,9 +16,9 @@ namespace Persistence.EntityFramework.Entity
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
         [Required]
-        [Column(TypeName = "TEXT")]
-        public string Username { get; set; }
-        [ForeignKey(nameof(Username))]
+        [Column(TypeName = "UUID")]
+        public Guid UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
         [Required]
         [Column(TypeName = "INTEGER")]
@@ -28,7 +27,7 @@ namespace Persistence.EntityFramework.Entity
         public GroupPositionEntity? Position { get; set; }
         public override GroupMember ToRuntime()
         {
-            return new GroupMember(GroupId, Username, PositionId, Id, User?.ToRuntime(), Group?.ToRuntime(), Position?.ToRuntime());
+            return new GroupMember(GroupId, PositionId, UserId, Id, User?.ToRuntime(), Group?.ToRuntime(), Position?.ToRuntime());
         }
         public static GroupMemberEntity RuntimeToEntity(GroupMember groupMember)
         {
@@ -37,7 +36,7 @@ namespace Persistence.EntityFramework.Entity
 
                 Id = groupMember.Id ?? 0,
                 GroupId = groupMember.GroupId,
-                Username = groupMember.Username
+                UserId = groupMember.UserId
             };
             if (groupMember.Id.HasValue && groupMember.Id > 0)
             {
