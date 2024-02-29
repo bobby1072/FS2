@@ -7,7 +7,6 @@ namespace Common.Models
 {
     public class User : BaseModel
     {
-        [JsonIgnore]
         private static readonly UserValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("emailVerified")]
@@ -18,10 +17,7 @@ namespace Common.Models
         [JsonPropertyName("email")]
         public string Email
         {
-            get
-            {
-                return _email.ToLower();
-            }
+            get => _email?.ToLower();
             set
             {
                 _email = value;

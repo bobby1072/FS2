@@ -4,6 +4,7 @@ import BackendApiServiceProvider from "../../utils/BackendApiServiceProvider";
 import { UserModel } from "../../models/UserModel";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 import { ApiException } from "../ApiException";
+import { useEffect } from "react";
 
 export const useGetUserQuery = () => {
   const { user } = useAuthentication();
@@ -23,6 +24,7 @@ export const useGetUserQuery = () => {
 
 export const useGetUserQueryConstantRefresh = () => {
   const { user } = useAuthentication();
+  const queryClient = useQueryClient();
   const queryResults = useQuery<UserModel, ApiException>(
     Constants.QueryKeys.GetUserConstantRefresh,
     () => {
@@ -30,5 +32,10 @@ export const useGetUserQueryConstantRefresh = () => {
       return BackendApiServiceProvider.GetUser(user.access_token);
     }
   );
+  useEffect(() => {
+    if(queryResults.data) {
+      queryClient.setQueryData(Constants.QueryKeys.GetUser, queryResults.data);
+    }
+  }, [queryResults.data]);
   return { ...queryResults };
 };

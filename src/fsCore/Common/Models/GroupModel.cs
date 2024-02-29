@@ -6,7 +6,7 @@ namespace Common.Models
 {
     public class Group : BaseModel
     {
-        private readonly GroupValidator _validator = new();
+        private static readonly GroupValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }

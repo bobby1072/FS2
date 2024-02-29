@@ -5,7 +5,7 @@ using Common.Authentication;
 using Common.Models;
 using Microsoft.Extensions.Options;
 
-namespace fsCore.Contexts
+namespace fsCore.Service
 {
     public class UserInfoClient : IUserInfoClient
     {
