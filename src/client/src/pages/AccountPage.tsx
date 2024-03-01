@@ -74,7 +74,7 @@ export const AccountPage: React.FC = () => {
       {editUsernameModal && (
         <EditUsernameModal
           closeModal={() => setEditUsernameModal(false)}
-          currentUsername={username}
+          currentUsername={username!}
         />
       )}
     </PageBase>

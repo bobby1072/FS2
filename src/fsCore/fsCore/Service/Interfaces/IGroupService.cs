@@ -13,7 +13,7 @@ namespace fsCore.Service.Interfaces
         Task<ICollection<GroupMember>> GetAllMemberships(UserWithGroupPermissionSet currentUser, string targetEmail, bool includePosition = false, bool includeUser = false, bool includeGroup = false);
         Task<ICollection<GroupMember>> GetAllMembershipsForGroup(Guid groupId, UserWithGroupPermissionSet currentUser, bool includePosition = false, bool includeUser = false);
         Task<GroupMember> UserJoinGroup(GroupMember member, UserWithGroupPermissionSet currentUser);
-        Task<GroupMember> UserLeaveGroup(UserWithGroupPermissionSet currentUser, string targetUsername, Guid groupId);
+        Task<GroupMember> UserLeaveGroup(UserWithGroupPermissionSet currentUser, Guid targetId, Guid groupId);
         Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser);
         Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);

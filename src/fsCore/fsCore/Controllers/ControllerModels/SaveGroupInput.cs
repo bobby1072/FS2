@@ -7,8 +7,8 @@ namespace fsCore.Controllers.ControllerModels
     {
         [JsonPropertyName("id")]
         public string? Id { get; set; }
-        [JsonPropertyName("leaderUsername")]
-        public string? LeaderUsername { get; set; }
+        [JsonPropertyName("leaderId")]
+        public Guid LeaderId { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -25,13 +25,13 @@ namespace fsCore.Controllers.ControllerModels
         {
             return new Group(
                 Name,
-                LeaderUsername,
                 Emblem is not null ? Convert.FromBase64String(Emblem) : null,
                 Description,
                 Id is not null ? Guid.Parse(Id) : null,
                 CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
                 IsPublic,
-                IsListed
+                IsListed,
+                LeaderId
             );
         }
     }

@@ -5,8 +5,9 @@ export interface GroupMemberModel {
     id?: number;
     groupId: string;
     group?: GroupModel | null;
-    username: string;
+    userId: string;
     user?: {
+        id: string;
         email?: string | null;
         username: string;
         emailVerified: boolean;

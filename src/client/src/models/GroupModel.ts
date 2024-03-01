@@ -5,8 +5,9 @@ export interface GroupModel {
   id?: string;
   name: string;
   description?: string | null;
-  leaderUsername: string;
+  leaderId: string;
   leader?:  {
+    id: string;
     email?: string | null;
     username: string;
     emailVerified: boolean;

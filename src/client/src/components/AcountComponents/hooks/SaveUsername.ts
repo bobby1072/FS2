@@ -21,7 +21,7 @@ export const useSaveUsernameMutation = () => {
   );
   useEffect(() => {
     if (mutationResult.data) {
-      queryClient.refetchQueries(Constants.QueryKeys.GetUserConstantRefresh);
+      queryClient.refetchQueries(Constants.QueryKeys.GetUser);
     }
   }, [mutationResult.data, queryClient]);
   return { ...mutationResult };

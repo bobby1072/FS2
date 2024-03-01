@@ -10,7 +10,6 @@ export const AuthenticatedRoutes: {
   icon: () => JSX.Element;
   component: () => JSX.Element;
   showOnDrawer: boolean;
-  constantRefreshCurrentUser: boolean;
 }[] = [
   {
     text: "Individual group page",
@@ -18,7 +17,6 @@ export const AuthenticatedRoutes: {
     showOnDrawer: false,
     icon: () => <></>,
     component: () => <IndividualGroupPage />,
-    constantRefreshCurrentUser: false
   },
   {
     text: "Groups page",
@@ -26,7 +24,6 @@ export const AuthenticatedRoutes: {
     showOnDrawer: true,
     icon: () => <GroupsIcon />,
     component: () => <AllGroupDisplayPage />,
-    constantRefreshCurrentUser: false
   },
   {
     text: "Account page",
@@ -34,6 +31,5 @@ export const AuthenticatedRoutes: {
     showOnDrawer: false,
     component: () => <AccountPage />,
     icon: () => <AccountCircle />,
-    constantRefreshCurrentUser: true
   },
 ];

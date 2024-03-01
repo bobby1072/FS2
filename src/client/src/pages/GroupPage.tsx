@@ -70,7 +70,6 @@ export const AllGroupDisplayPage: React.FC = () => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
   }, [
-    groupSeeCount,
     groupStartIndex,
     queryClient,
     listedGroupsRefetch,
@@ -239,7 +238,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                     <GroupTab
                       group={x}
                       linkToMainGroupPage={
-                        x.public || x.leaderUsername === username
+                        x.public || x.leaderId === username
                       }
                       openModal={() => {
                         setCreateNewGroupModal(x);

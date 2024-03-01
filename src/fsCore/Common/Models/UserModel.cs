@@ -9,6 +9,7 @@ namespace Common.Models
     {
         private static readonly UserValidator _validator = new();
         [JsonPropertyName("id")]
+        [LockedProperty]
         public Guid? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("emailVerified")]

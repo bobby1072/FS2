@@ -75,7 +75,7 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpGet("LeaveGroup")]
-        public async Task<IActionResult> LeaveGroup(string targetUser, Guid groupId)
+        public async Task<IActionResult> LeaveGroup(Guid targetUser, Guid groupId)
         {
             return Ok(await _groupService.UserLeaveGroup(_getCurrentUserWithPermissions(), targetUser, groupId));
         }

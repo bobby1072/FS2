@@ -11,7 +11,7 @@ namespace Persistence.EntityFramework
             modelBuilder.Entity<WorldFishEntity>()
                 .HasKey(x => x.Taxocode);
             modelBuilder.Entity<UserEntity>()
-                .HasKey(x => x.Username);
+                .HasKey(x => x.Id);
             modelBuilder.Entity<GroupEntity>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<GroupEntity>()
