@@ -185,7 +185,7 @@ namespace Persistence.EntityFramework.Repository
             set.RemoveRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime());
-            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            return entObj;
 
 
         }

@@ -91,10 +91,10 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
-        [HttpPost("DeleteGroup")]
-        public async Task<IActionResult> DeleteGroup([FromBody] Guid group)
+        [HttpGet("DeleteGroup")]
+        public async Task<IActionResult> DeleteGroup(Guid groupId)
         {
-            return Ok((await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.DeleteGroup(groupId, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

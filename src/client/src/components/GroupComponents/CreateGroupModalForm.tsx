@@ -89,7 +89,7 @@ export const CreateGroupModalForm: React.FC<{
   }, [savedId, enqueueSnackbar, id, useSnackBarOnSuccess, closeModal]);
   useEffect(() => {
     setIsSaveDisabled?.(!isDirty || !name || isSaving);
-  }, [isDirty, setIsSaveDisabled, name, isSaving, emblem, group?.emblem]);
+  }, [isDirty, setIsSaveDisabled, name, isSaving]);
   useEffect(() => {
     if (formError) setAllErrors(formError);
   }, [formError]);

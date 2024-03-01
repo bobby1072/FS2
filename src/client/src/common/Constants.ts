@@ -5,6 +5,7 @@ enum QueryKeys {
   GetGroupCount = "get-group-count",
   GetSelfGroups = "get-self-groups",
   GetGroupsWithChoice = "get-groups-with-choice",
+  DeleteGroup = "delete-group",
   GetAllListedGroups = "get-all-listed-groups",
   GetFullGroup = "get-full-group",
 }

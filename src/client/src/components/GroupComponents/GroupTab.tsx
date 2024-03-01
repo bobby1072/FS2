@@ -35,18 +35,16 @@ export const GroupTab: React.FC<{
       >
         {group.emblem && (
           <Grid item width="100%" minHeight={"10vh"}>
-            <>
-              <Box
-                component="img"
-                sx={{
-                  border: "0.1px solid #999999",
-                  maxHeight: "50vh",
-                  width: "80%",
-                }}
-                src={`data:image/jpeg;base64,${group.emblem}`}
-                alt={`emblem: ${group.id}`}
-              />
-            </>
+            <Box
+              component="img"
+              sx={{
+                border: "0.1px solid #999999",
+                maxHeight: "50vh",
+                width: "80%",
+              }}
+              src={`data:image/jpeg;base64,${group.emblem}`}
+              alt={`emblem: ${group.id}`}
+            />
           </Grid>
         )}
         <Grid item width="100%">

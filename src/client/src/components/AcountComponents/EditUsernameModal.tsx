@@ -50,7 +50,11 @@ export const EditUsernameModal: React.FC<{
               fullWidth
             />
           </Grid>
-          {error && <Alert severity="error">{error.message}</Alert>}
+          {error && 
+          <Grid item>
+            <Alert severity="error">{error.message}</Alert>
+          </Grid>
+          }
         </Grid>
       </DialogContent>
       <DialogActions>

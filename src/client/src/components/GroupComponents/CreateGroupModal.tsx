@@ -9,13 +9,27 @@ import {
 import { StyledDialogTitle } from "../../common/StyledDialogTitle";
 import { CreateGroupModalForm } from "./CreateGroupModalForm";
 import { GroupModel } from "../../models/GroupModel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useDeleteGroupMutation } from "./hooks/DeleteGroupMutation";
+import { useSnackbar } from "notistack";
 
 export const CreateGroupModal: React.FC<{
   closeModal: () => void;
   group?: GroupModel;
 }> = ({ closeModal, group }) => {
   const [saveDisabled, setSaveDisabled] = useState<boolean>(true);
+  const { enqueueSnackbar } = useSnackbar();
+  const {
+    data: deletedGroupId,
+    mutate: deleteGroup,
+    isLoading,
+  } = useDeleteGroupMutation();
+  useEffect(() => {
+    if (deletedGroupId) {
+      enqueueSnackbar("Group deleted", { variant: "error" });
+      closeModal();
+    }
+  }, [deletedGroupId, closeModal, enqueueSnackbar]);
   return (
     <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
       <StyledDialogTitle>
@@ -46,9 +60,25 @@ export const CreateGroupModal: React.FC<{
             width="40%"
             sx={{ display: "flex", justifyContent: "flex-start" }}
           >
-            <Button variant="outlined" onClick={closeModal}>
-              Cancel
-            </Button>
+            <Grid container direction="row" spacing={1}>
+              <Grid item>
+                <Button variant="outlined" onClick={closeModal}>
+                  Cancel
+                </Button>
+              </Grid>
+              {group && (
+                <Grid item>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={() => deleteGroup({ groupId: group.id! })}
+                    disabled={isLoading}
+                  >
+                    Delete
+                  </Button>
+                </Grid>
+              )}
+            </Grid>
           </Grid>
           <Grid
             item
