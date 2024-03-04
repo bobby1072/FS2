@@ -249,9 +249,9 @@ namespace fsCore.Service
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return foundGroup;
         }
-        public async Task<Group> GetFullGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
+        public async Task<Group> GetGroupAndMembers(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Catches", "Positions", "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (!(currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))) && !foundGroup.Public)
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -260,6 +260,19 @@ namespace fsCore.Service
             {
                 foundGroup.Leader?.RemoveSensitive();
             }
+            var cleanMembersList = new List<GroupMember>();
+            if (foundGroup.Members is not null)
+            {
+                foreach (var member in foundGroup.Members)
+                {
+                    if (currentUser.Id != member.UserId)
+                    {
+                        member.User?.RemoveSensitive();
+                    }
+                    cleanMembersList.Add(member);
+                }
+            }
+            foundGroup.Members = cleanMembersList;
             return foundGroup;
         }
     }

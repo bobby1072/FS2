@@ -9,7 +9,11 @@ export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data } = useGetFullGroup(groupId);
   if (!data) return <Loading fullScreen />;
-  const { name: groupName, emblem: groupEmblem } = data;
+  const {
+    name: groupName,
+    emblem: groupEmblem,
+    description: groupDescription,
+  } = data;
   return (
     <PageBase>
       <AppAndDraw>
@@ -24,6 +28,7 @@ export const IndividualGroupPage: React.FC = () => {
             <Paper elevation={2}>
               <Grid
                 container
+                direction={"column"}
                 justifyContent="center"
                 alignItems="center"
                 padding={4}
@@ -41,6 +46,7 @@ export const IndividualGroupPage: React.FC = () => {
                       sx={{
                         border: "0.1px solid #999999",
                         maxHeight: "80vh",
+                        width: "100%",
                       }}
                       src={`data:image/jpeg;base64,${groupEmblem}`}
                       alt={`emblem: ${groupId}`}
@@ -51,12 +57,24 @@ export const IndividualGroupPage: React.FC = () => {
                   <Typography
                     variant="subtitle2"
                     textAlign="center"
-                    fontSize={19}
+                    fontSize={17}
                   >
                     <strong>Id: </strong>
                     {groupId}
                   </Typography>
                 </Grid>
+                {groupDescription && (
+                  <Grid item>
+                    <Typography
+                      variant="subtitle2"
+                      textAlign="center"
+                      fontSize={20}
+                    >
+                      <strong>Description: </strong>
+                      {groupDescription}
+                    </Typography>
+                  </Grid>
+                )}
               </Grid>
             </Paper>
           </Grid>

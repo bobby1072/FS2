@@ -7,7 +7,7 @@ import { useAuthentication } from "../../../common/contexts/AuthenticationContex
 
 export const useGetFullGroup = (groupId?: string) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupModel, ApiException>(
+  const queryResults = useQuery<Omit<GroupModel, "positions">, ApiException>(
     Constants.QueryKeys.GetFullGroup,
     () => {
       if (!groupId) throw new ApiException("No group id given");

@@ -7,17 +7,17 @@ import { ApiException } from "../../../common/ApiException";
 
 export const useGetAllListedGroups = (startIndex: number, count: number) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupModel[], ApiException>(
-    Constants.QueryKeys.GetAllListedGroups,
-    () => {
-      if (!user?.access_token) throw new ApiException("No bearer token found");
-      return BackendApiServiceProvider.GetAllListedGroups(
-        user.access_token,
-        startIndex,
-        count
-      );
-    }
-  );
+  const queryResults = useQuery<
+    Omit<GroupModel, "positions" | "members" | "leader">[],
+    ApiException
+  >(Constants.QueryKeys.GetAllListedGroups, () => {
+    if (!user?.access_token) throw new ApiException("No bearer token found");
+    return BackendApiServiceProvider.GetAllListedGroups(
+      user.access_token,
+      startIndex,
+      count
+    );
+  });
   return { ...queryResults };
 };
 
@@ -32,7 +32,10 @@ export const useGetAllGroupsChoiceGroup = (
   options?: { retry: (count: number, exception: ApiException) => boolean }
 ) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupModel[], ApiException>(
+  const queryResults = useQuery<
+    Omit<GroupModel, "positions" | "members" | "leader">[],
+    ApiException
+  >(
     Constants.QueryKeys.GetGroupsWithChoice,
     () => {
       if (!user?.access_token) throw new ApiException("No bearer token found");

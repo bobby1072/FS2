@@ -27,5 +27,19 @@ namespace Persistence.EntityFramework.Repository
             ).Select(x => x.ToRuntime());
             return runtimeArray?.Count() > 0 ? runtimeArray.ToList() : null;
         }
+        public async Task<Group?> GetFullGroupWithAllRelations(Guid groupId)
+        {
+            using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundGroup = await dbContext.Group
+                .Include(x => x.Members)
+                .ThenInclude(gm => gm.User)
+                .Include(x => x.Catches)
+                .Include(x => x.Positions)
+                .Include(x => x.Leader)
+                .Where(x => x.Id == groupId)
+                .FirstOrDefaultAsync();
+            return foundGroup?.ToRuntime();
+        }
     }
+
 }

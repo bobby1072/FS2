@@ -8,12 +8,6 @@ namespace Persistence.EntityFramework
         public FsContext(DbContextOptions options) : base(options) { }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<WorldFishEntity>()
-                .HasKey(x => x.Taxocode);
-            modelBuilder.Entity<UserEntity>()
-                .HasKey(x => x.Id);
-            modelBuilder.Entity<GroupEntity>()
-                .HasKey(x => x.Id);
             modelBuilder.Entity<GroupEntity>()
                 .HasOne(g => g.Leader)
                 .WithMany()
@@ -30,6 +24,10 @@ namespace Persistence.EntityFramework
                 .HasMany(g => g.Catches)
                 .WithOne(gc => gc.Group)
                 .HasForeignKey(gc => gc.GroupId);
+            modelBuilder.Entity<GroupMemberEntity>()
+                .HasOne(gm => gm.User)
+                .WithMany()
+                .HasForeignKey(gm => gm.UserId);
         }
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
         public virtual DbSet<UserEntity> User { get; set; }
