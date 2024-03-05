@@ -4,6 +4,7 @@ import { UserModel } from "../models/UserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
 import { GroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
+import { GroupPositionModel } from "../models/GroupPositionModel";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -136,9 +137,9 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
-  public static async GetFullGroup(groupId: string, accessToken: string) {
+  public static async GetGroupAndMembers(groupId: string, accessToken: string) {
     const { data } = await this._httpClient
-      .get<GroupModel>(`Group/GetGroup?groupId=${groupId}`, {
+      .get<GroupModel>(`Group/GetGroupWithMembers?groupId=${groupId}`, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -158,6 +159,27 @@ export default abstract class BackendApiServiceProvider {
           Authorization: this.FormatAccessToken(accessToken),
         },
       })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async GetAllPositionsForGroup(
+    groupId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<GroupPositionModel[]>(
+        `Group/GetAllPositionsForGroup?groupId=${groupId}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,

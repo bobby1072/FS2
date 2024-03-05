@@ -18,7 +18,7 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions]
-        [HttpGet("GetGroup")]
+        [HttpGet("GetGroupWithMembers")]
         public async Task<IActionResult> GetGroupWithMembers(Guid groupId)
         {
             return Ok(await _groupService.GetGroupAndMembers(groupId, _getCurrentUserWithPermissions()));

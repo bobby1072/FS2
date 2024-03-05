@@ -4,16 +4,21 @@ import { PageBase } from "../common/PageBase";
 import { useGetFullGroup } from "../components/GroupComponents/hooks/GetFullGroup";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
+import { useGetAllPositionsForGroup } from "../components/GroupComponents/hooks/GetAllPositionsForGroup";
+import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
-  const { data } = useGetFullGroup(groupId);
-  if (!data) return <Loading fullScreen />;
+  const { data: mainGroup } = useGetFullGroup(groupId);
+  const { data: allPositions } = useGetAllPositionsForGroup(groupId);
+  if (!mainGroup) return <Loading fullScreen />;
   const {
     name: groupName,
     emblem: groupEmblem,
     description: groupDescription,
-  } = data;
+    leader: groupLeader,
+    members: groupMembers,
+  } = mainGroup;
   return (
     <PageBase>
       <AppAndDraw>
@@ -35,7 +40,12 @@ export const IndividualGroupPage: React.FC = () => {
                 spacing={2}
               >
                 <Grid item width="100%">
-                  <Typography variant="h3" textAlign="center" fontSize={50}>
+                  <Typography
+                    variant="h3"
+                    textAlign="center"
+                    fontSize={50}
+                    overflow="auto"
+                  >
                     {groupName}
                   </Typography>
                 </Grid>
@@ -77,6 +87,13 @@ export const IndividualGroupPage: React.FC = () => {
                 )}
               </Grid>
             </Paper>
+          </Grid>
+          <Grid item width="60%">
+            <GroupMembersDataTable
+              leader={(groupLeader as any) ?? undefined}
+              members={groupMembers ?? undefined}
+              positions={allPositions}
+            />
           </Grid>
         </Grid>
       </AppAndDraw>

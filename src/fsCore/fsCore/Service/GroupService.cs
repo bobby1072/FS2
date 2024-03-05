@@ -66,6 +66,7 @@ namespace fsCore.Service
         public async Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId)
         {
             var foundPositions = await _groupPositionRepo.GetMany(groupId, _groupPositionType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(false, false, true)) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
+            if (foundPositions is null || foundPositions.Count == 0) return Array.Empty<GroupPosition>();
             if (!currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundPositions.FirstOrDefault()!.Group!))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);

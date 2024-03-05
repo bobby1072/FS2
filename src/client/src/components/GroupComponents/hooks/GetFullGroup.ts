@@ -8,11 +8,14 @@ import { useAuthentication } from "../../../common/contexts/AuthenticationContex
 export const useGetFullGroup = (groupId?: string) => {
   const { user } = useAuthentication();
   const queryResults = useQuery<Omit<GroupModel, "positions">, ApiException>(
-    Constants.QueryKeys.GetFullGroup,
+    Constants.QueryKeys.GetGroupAndMembers,
     () => {
       if (!groupId) throw new ApiException("No group id given");
       if (!user?.access_token) throw new ApiException("No bearer token found");
-      return BackendApiServiceProvider.GetFullGroup(groupId, user.access_token);
+      return BackendApiServiceProvider.GetGroupAndMembers(
+        groupId,
+        user.access_token
+      );
     }
   );
   return { ...queryResults };
