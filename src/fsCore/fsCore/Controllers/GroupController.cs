@@ -63,13 +63,13 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetAllMembershipsForGroup(groupId, _getCurrentUserWithPermissions()));
         }
-        [ProducesDefaultResponseType(typeof(GroupMember))]
+        [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("JoinGroup")]
         public async Task<IActionResult> JoinGroup([FromBody] GroupMember groupMember)
         {
-            return Ok(await _groupService.UserJoinGroup(groupMember, _getCurrentUserWithPermissions()));
+            return Ok((await _groupService.UserJoinGroup(groupMember, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupMember))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -96,13 +96,13 @@ namespace fsCore.Controllers
         {
             return Ok((await _groupService.DeleteGroup(groupId, _getCurrentUserWithPermissions())).Id);
         }
-        [ProducesDefaultResponseType(typeof(GroupPosition))]
+        [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SavePosition")]
         public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
         {
-            return Ok(await _groupService.SavePosition(position, _getCurrentUserWithPermissions()));
+            return Ok((await _groupService.SavePosition(position, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

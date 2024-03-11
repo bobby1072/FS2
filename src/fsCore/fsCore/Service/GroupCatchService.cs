@@ -37,7 +37,7 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return await _repo.GetMany(groups.Select(x => x.Id).ToList(), typeof(GroupCatch).GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new List<String> { nameof(Group) }) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            return await _repo.GetMany(groups.Select(x => x.Id).ToArray(), typeof(GroupCatch).GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new List<String> { nameof(Group) }) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
         }
         public async Task<GroupCatch> SaveCatch(GroupCatch groupCatch, UserWithGroupPermissionSet currentUser)
         {

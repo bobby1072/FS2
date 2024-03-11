@@ -25,9 +25,7 @@ const formSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
-const mapDefaultValues = (
-  group?: GroupModel
-): Partial<SaveGroupInput> | undefined => {
+const mapDefaultValues = (group?: GroupModel): Partial<SaveGroupInput> => {
   if (!group) return { isListed: true, isPublic: true };
   return {
     id: group.id,
@@ -138,6 +136,7 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isPublic}
+                  defaultChecked={isPublic}
                   {...register("isPublic", { required: false })}
                 />
               }
@@ -155,6 +154,7 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isListed}
+                  defaultChecked={isListed}
                   {...register("isListed", { required: false })}
                 />
               }

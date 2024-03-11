@@ -2,11 +2,14 @@ import MUIDataTable, {
   MUIDataTableColumnDef,
   MUIDataTableOptions,
 } from "mui-datatables";
+import { Add as AddIcon } from "@mui/icons-material";
 import { GroupMemberModel } from "../../models/GroupMemberModel";
 import { GroupPositionModel } from "../../models/GroupPositionModel";
 import { UserModel } from "../../models/UserModel";
 import Avatar from "react-avatar";
-import { Grid } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
+import { useState } from "react";
+import { AddMemberModal } from "./AddMemberModal";
 
 interface GroupMemberRowItem {
   username: string;
@@ -68,14 +71,13 @@ export const GroupMembersDataTable: React.FC<{
     positions ?? [],
     leader
   );
+  const [addMemberModalOpen, setAddMemberModalOpen] = useState<boolean>(false);
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "potentialAvatar",
       label: "name",
       options: {
         sort: false,
-        sortDirection: "asc",
-        sortDescFirst: true,
         customBodyRender: (value: GroupMemberRowItem["potentialAvatar"]) => {
           return (
             <Grid container spacing={1} alignItems="center">
@@ -125,6 +127,15 @@ export const GroupMembersDataTable: React.FC<{
     resizableColumns: false,
     rowsPerPage: 15,
     download: false,
+    customToolbar: () => (
+      <>
+        <Tooltip title={"Add member"}>
+          <IconButton size="large" onClick={() => setAddMemberModalOpen(true)}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+      </>
+    ),
     print: false,
     viewColumns: false,
     searchPlaceholder: "Search",
@@ -138,11 +149,14 @@ export const GroupMembersDataTable: React.FC<{
     },
   };
   return (
-    <MUIDataTable
-      title=""
-      data={rowItems}
-      columns={columns}
-      options={options}
-    />
+    <>
+      <MUIDataTable
+        title="Group members"
+        data={rowItems}
+        columns={columns}
+        options={options}
+      />
+      {addMemberModalOpen && <AddMemberModal />}
+    </>
   );
 };

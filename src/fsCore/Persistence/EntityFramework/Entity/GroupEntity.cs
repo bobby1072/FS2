@@ -37,7 +37,7 @@ namespace Persistence.EntityFramework.Entity
         public virtual ICollection<GroupCatchEntity>? Catches { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, LeaderId, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToList(), Positions?.Select(p => p.ToRuntime()).ToList(), Catches?.Select(c => c.ToRuntime()).ToList());
+            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, LeaderId, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToArray(), Positions?.Select(p => p.ToRuntime()).ToArray(), Catches?.Select(c => c.ToRuntime()).ToArray());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {

@@ -25,7 +25,7 @@ namespace Persistence.EntityFramework.Repository
                 .Take(count)
                 .ToArrayAsync()
             ).Select(x => x.ToRuntime());
-            return runtimeArray?.Count() > 0 ? runtimeArray.ToList() : null;
+            return runtimeArray?.Count() > 0 ? runtimeArray.ToArray() : null;
         }
         public async Task<Group?> GetFullGroupWithAllRelations(Guid groupId)
         {

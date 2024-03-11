@@ -6,6 +6,7 @@ import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
 import { useGetAllPositionsForGroup } from "../components/GroupComponents/hooks/GetAllPositionsForGroup";
 import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
+import { GroupPositionDataTable } from "../components/GroupComponents/GroupPositionDataTable";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -22,14 +23,8 @@ export const IndividualGroupPage: React.FC = () => {
   return (
     <PageBase>
       <AppAndDraw>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          spacing={2}
-        >
-          <Grid item width="60%">
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Grid item width="80%">
             <Paper elevation={2}>
               <Grid
                 container
@@ -88,11 +83,17 @@ export const IndividualGroupPage: React.FC = () => {
               </Grid>
             </Paper>
           </Grid>
-          <Grid item width="60%">
+          <Grid item width="50%">
             <GroupMembersDataTable
               leader={(groupLeader as any) ?? undefined}
               members={groupMembers ?? undefined}
               positions={allPositions}
+            />
+          </Grid>
+          <Grid item width="50%">
+            <GroupPositionDataTable
+              positions={allPositions ?? []}
+              groupId={mainGroup.id!}
             />
           </Grid>
         </Grid>

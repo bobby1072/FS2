@@ -34,7 +34,7 @@ namespace Persistence.EntityFramework.Repository
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundAllQuerySet = dbContext.Set<TEnt>();
             var runtimeObj = await _addRelationsToQuery(foundAllQuerySet.AsQueryable(), relationships).ToArrayAsync();
-            return runtimeObj?.Select(x => x.ToRuntime()).OfType<TBase>().ToList();
+            return runtimeObj?.Select(x => x.ToRuntime()).OfType<TBase>().ToArray();
         }
         public virtual async Task<TBase?> GetOne(TBase baseUser, ICollection<string>? relationships = null)
         {
@@ -92,7 +92,7 @@ namespace Persistence.EntityFramework.Repository
                 var set = dbContext.Set<TEnt>();
                 var foundOne = await _addWhereClauses(_addRelationsToQuery(set, relationships), neededKeyValPairs).ToArrayAsync();
                 var runtimeArray = foundOne?.Select(x => x.ToRuntime());
-                return runtimeArray?.OfType<TBase>().ToList();
+                return runtimeArray?.OfType<TBase>().ToArray();
             }
             else
             {
@@ -132,7 +132,7 @@ namespace Persistence.EntityFramework.Repository
                 var set = dbContext.Set<TEnt>();
                 var foundMany = await _addRelationsToQuery(set, relationships).Where(x => EF.Property<TField>(x, fieldName.ToPascalCase()).Equals(field)).ToArrayAsync();
                 var runtimeArray = foundMany?.Select(x => x.ToRuntime());
-                return runtimeArray?.OfType<TBase>().ToList();
+                return runtimeArray?.OfType<TBase>().ToArray();
             }
             else
             {
@@ -145,7 +145,7 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             var foundMany = await _addRelationsToQuery(set, relationships).Where(x => x.ToRuntime().Equals(baseObj)).ToArrayAsync();
             var runtimeArray = foundMany?.Select(x => x.ToRuntime());
-            return runtimeArray?.OfType<TBase>().ToList();
+            return runtimeArray?.OfType<TBase>().ToArray();
         }
         public virtual async Task<ICollection<TBase>?> _getSomeLike<TField>(TField field, string fieldName, ICollection<string>? relationships = null)
         {
@@ -161,7 +161,7 @@ namespace Persistence.EntityFramework.Repository
                     .Where(likePredicate)
                     .ToListAsync();
                 var runtimeObj = similarItems?.Select(x => x.ToRuntime());
-                return runtimeObj?.OfType<TBase>().ToList();
+                return runtimeObj?.OfType<TBase>().ToArray();
             }
             else
             {
@@ -175,7 +175,7 @@ namespace Persistence.EntityFramework.Repository
             await set.AddRangeAsync(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime());
-            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToArray() : null;
 
         }
         public virtual async Task<ICollection<TBase>?> Delete(ICollection<TBase> entObj)
@@ -196,7 +196,7 @@ namespace Persistence.EntityFramework.Repository
             set.UpdateRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime());
-            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToList() : null;
+            return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToArray() : null;
 
         }
         public virtual async Task<ICollection<TBase>?> GetMany(int startIndex, int count, string fieldNameToOrderBy, ICollection<string>? relations = null)
@@ -208,7 +208,7 @@ namespace Persistence.EntityFramework.Repository
                 .Skip(startIndex)
                 .Take(count)
             .ToArrayAsync()).Select(x => x.ToRuntime());
-            return runtimeArray?.Count() > 0 ? runtimeArray?.OfType<TBase>().ToList() : null;
+            return runtimeArray?.Count() > 0 ? runtimeArray?.OfType<TBase>().ToArray() : null;
         }
     }
 }

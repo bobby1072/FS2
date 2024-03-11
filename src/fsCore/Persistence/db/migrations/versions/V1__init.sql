@@ -29,7 +29,6 @@ CREATE TABLE public."group" (
 CREATE TABLE public."group_position" (
     id SERIAL PRIMARY KEY,
     group_id UUID NOT NULL,
-    group_permissions_id INTEGER NOT NULL,
     name TEXT NOT NULL,
     can_manage_group BOOLEAN NOT NULL DEFAULT FALSE,
     can_read_catches BOOLEAN NOT NULL DEFAULT TRUE,

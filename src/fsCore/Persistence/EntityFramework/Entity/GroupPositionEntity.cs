@@ -43,7 +43,12 @@ namespace Persistence.EntityFramework.Entity
             var ent = new GroupPositionEntity
             {
                 GroupId = position.GroupId,
-                Name = position.Name
+                Name = position.Name,
+                CanManageCatches = position.CanManageCatches,
+                CanManageGroup = position.CanManageGroup,
+                CanManageMembers = position.CanManageMembers,
+                CanReadCatches = position.CanReadCatches,
+                CanReadMembers = position.CanReadMembers
             };
             if (position.Id.HasValue && position.Id.Value > 0)
             {

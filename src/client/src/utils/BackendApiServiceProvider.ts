@@ -5,6 +5,7 @@ import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalFo
 import { GroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
 import { GroupPositionModel } from "../models/GroupPositionModel";
+import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -180,6 +181,24 @@ export default abstract class BackendApiServiceProvider {
           },
         }
       )
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async SaveGroupPosition(
+    position: SaveGroupPositionInput,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .post<number>("Group/SavePosition", position, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,

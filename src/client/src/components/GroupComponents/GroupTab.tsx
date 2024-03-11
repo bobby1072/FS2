@@ -7,6 +7,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { GroupModel } from "../../models/GroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -33,6 +35,17 @@ export const GroupTab: React.FC<{
         spacing={2}
         padding={2}
       >
+        <Grid item width={"100%"} justifyContent="flex-end" display="flex">
+          {group.public ? (
+            <Tooltip title={"public"}>
+              <LockOpenIcon />
+            </Tooltip>
+          ) : (
+            <Tooltip title="private">
+              <LockIcon />
+            </Tooltip>
+          )}
+        </Grid>
         {group.emblem && (
           <Grid item width="100%" minHeight={"10vh"}>
             <Box
