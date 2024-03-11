@@ -8,29 +8,15 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupEntity : BaseEntity<Group>
     {
         [Key]
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid Id { get; set; }
-        [Required]
-        [Column(TypeName = "TEXT")]
         public string Name { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? Description { get; set; }
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid LeaderId { get; set; }
         [ForeignKey(nameof(LeaderId))]
         public virtual UserEntity? Leader { get; set; }
-        [Required]
-        [Column(TypeName = "TIMESTAMP with time zone")]
         public DateTime CreatedAt { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool Public { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool Listed { get; set; }
-        [Column(TypeName = "BYTEA")]
         public byte[]? Emblem { get; set; }
         public virtual ICollection<GroupMemberEntity>? Members { get; set; }
         public virtual ICollection<GroupPositionEntity>? Positions { get; set; }

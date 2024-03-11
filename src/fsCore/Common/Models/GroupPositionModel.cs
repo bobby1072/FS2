@@ -10,8 +10,6 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
-        [JsonPropertyName("group")]
-        public Group? Group { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("canManageGroup")]
@@ -32,12 +30,10 @@ namespace Common.Models
             bool canReadCatches = true,
             bool canManageCatches = false,
             bool canReadMembers = true,
-            bool canManageMembers = true,
-            Group? group = null)
+            bool canManageMembers = true)
         {
             Id = id;
             GroupId = groupId;
-            Group = group;
             Name = name;
             CanManageGroup = canManageGroup;
             CanReadCatches = canReadCatches;

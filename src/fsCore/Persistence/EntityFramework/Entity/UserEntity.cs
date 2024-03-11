@@ -8,19 +8,10 @@ namespace Persistence.EntityFramework.Entity
     internal class UserEntity : BaseEntity<User>
     {
         [Key]
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid Id { get; set; }
-        [Required]
-        [Column(TypeName = "TEXT")]
         public string Email { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? Name { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool EmailVerified { get; set; }
-        [Required]
-        [Column(TypeName = "TEXT")]
         public string Username { get; set; }
         public override User ToRuntime()
         {

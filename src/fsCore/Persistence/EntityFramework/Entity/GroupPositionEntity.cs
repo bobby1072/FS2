@@ -8,35 +8,19 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
-        [Column(TypeName = "INTEGER")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
-        [Required]
-        [Column(TypeName = "TEXT")]
         public string Name { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool CanManageGroup { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool CanReadCatches { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool CanManageCatches { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool CanReadMembers { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool CanManageMembers { get; set; }
         public override GroupPosition ToRuntime()
         {
-            return new GroupPosition(GroupId, Name, Id, CanManageGroup, CanReadCatches, CanManageCatches, CanReadMembers, CanManageMembers, Group?.ToRuntime());
+            return new GroupPosition(GroupId, Name, Id, CanManageGroup, CanReadCatches, CanManageCatches, CanReadMembers, CanManageMembers);
         }
         public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {

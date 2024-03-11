@@ -10,6 +10,7 @@ namespace Common.Dbinterfaces.Repository
         Task<ICollection<GroupPosition>?> GetAll(params string[] relationships);
         Task<GroupPosition?> GetOne(IDictionary<string, object> fieldAndName, ICollection<string>? relationships = null);
         Task<ICollection<GroupPosition>?> GetMany<T>(T field, string fieldName, ICollection<string>? relationships = null);
+        Task<ICollection<GroupPosition>?> GetAllPositionsForGroup(Guid groupId);
         Task<GroupPosition?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<GroupPosition?> GetOne(GroupPosition groupPosition, ICollection<string>? relationships = null);
         Task<ICollection<GroupPosition>?> GetMany(GroupPosition baseObj, ICollection<string>? relationships = null);

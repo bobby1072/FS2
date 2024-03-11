@@ -8,20 +8,13 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupMemberEntity : BaseEntity<GroupMember>
     {
         [Key]
-        [Column(TypeName = "INTEGER")]
         public int Id { get; set; }
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
-        [Required]
-        [Column(TypeName = "UUID")]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
-        [Required]
-        [Column(TypeName = "INTEGER")]
         public int PositionId { get; set; }
         [ForeignKey(nameof(PositionId))]
         public GroupPositionEntity? Position { get; set; }
