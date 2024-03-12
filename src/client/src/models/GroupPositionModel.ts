@@ -1,5 +1,3 @@
-import { GroupModel } from "./GroupModel";
-
 export interface GroupPositionModel {
   id?: number;
   groupId: string;

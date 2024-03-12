@@ -27,18 +27,14 @@ namespace Persistence.EntityFramework.Repository
             ).Select(x => x.ToRuntime());
             return runtimeArray?.Count() > 0 ? runtimeArray.ToArray() : null;
         }
-        public async Task<Group?> GetFullGroupWithAllRelations(Guid groupId)
+        public async Task<ICollection<Group>?> ManyGroupWithoutEmblem(Guid leaderId, ICollection<string>? relations = null)
         {
             using var dbContext = await DbContextFactory.CreateDbContextAsync();
-            var foundGroup = await dbContext.Group
-                .Include(x => x.Members)
-                .ThenInclude(gm => gm.User)
-                .Include(x => x.Catches)
-                .Include(x => x.Positions)
-                .Include(x => x.Leader)
-                .Where(x => x.Id == groupId)
-                .FirstOrDefaultAsync();
-            return foundGroup?.ToRuntime();
+            var foundents = await _addRelationsToQuery(dbContext.Group, relations)
+                .Where(x => x.LeaderId == leaderId)
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
+                .ToArrayAsync();
+            return foundents?.Length > 0 ? foundents.Select(x => new Group(x.Name, null, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader?.ToRuntime(), null, x.Positions?.Select(p => p.ToRuntime()).ToArray())).ToArray() : Array.Empty<Group>();
         }
         public async Task<Group?> GetGroupWithoutEmblem(Guid groupId, ICollection<string>? relations = null)
         {

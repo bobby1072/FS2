@@ -124,9 +124,11 @@ export const GroupPositionDataTable: React.FC<{
   ];
   const options: MUIDataTableOptions = {
     elevation: 2,
+
     filter: false,
     selectableRows: "none",
     responsive: "vertical",
+    tableBodyHeight: "50vh",
     resizableColumns: false,
     rowsPerPage: 15,
     download: false,

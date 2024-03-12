@@ -106,11 +106,13 @@ namespace fsCore.Service
         }
         public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser)
         {
-            var allMembers = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Group", "Position" });
-            var allGroups = _repo.GetMany(currentUser.Id, _groupType.GetProperty("LeaderId".ToPascalCase())?.Name ?? throw new Exception());
-            await Task.WhenAll(allMembers, allGroups);
-            var finalGroupArray = allMembers.Result?.Select(x => x.Group).Union(allGroups.Result).ToHashSet();
-            return (finalGroupArray ?? new HashSet<Group>(), allMembers.Result ?? new List<GroupMember>());
+            var allMembersTask = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Group", "Position" });
+            var allGroupsTask = _repo.ManyGroupWithoutEmblem(currentUser.Id ?? throw new Exception());
+            await Task.WhenAll(allMembersTask, allGroupsTask);
+            var allMembers = (await allMembersTask) ?? Array.Empty<GroupMember>();
+            var allGroups = (await allGroupsTask) ?? Array.Empty<Group>();
+            var finalGroupArray = allMembers.Select(x => x.Group).Union(allGroups).ToHashSet();
+            return (finalGroupArray ?? new HashSet<Group>(), allMembers ?? new List<GroupMember>());
         }
         public async Task<ICollection<Group>> GetAllSelfLeadGroups(User currentUser, int startIndex, int count)
         {
@@ -138,18 +140,16 @@ namespace fsCore.Service
         }
         public async Task<ICollection<GroupMember>> GetGroupMembers(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = _repo.GetGroupWithoutEmblem(groupId);
-            var foundMembers = _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
-            await Task.WhenAll(foundGroup, foundMembers);
-            if (foundGroup.Result is null)
-            {
-                throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            }
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup.Result, nameof(GroupMember)))
+            var foundGroupTask = _repo.GetGroupWithoutEmblem(groupId);
+            var foundMembersTask = _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
+            await Task.WhenAll(foundGroupTask, foundMembersTask);
+            var foundGroup = await foundGroupTask ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var foundMembers = await foundMembersTask;
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupMember)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            var finalMembersList = foundMembers.Result ?? Array.Empty<GroupMember>();
+            var finalMembersList = foundMembers ?? Array.Empty<GroupMember>();
             foreach (var member in finalMembersList)
             {
                 if (member.User?.Email != currentUser.Email)

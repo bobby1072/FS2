@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using Common.Attributes;
+using Common.Models.Validators;
+using FluentValidation;
 namespace Common.Models
 {
     public class GroupPosition : BaseModel
@@ -22,6 +24,7 @@ namespace Common.Models
         public bool CanReadMembers { get; set; }
         [JsonPropertyName("canManageMembers")]
         public bool CanManageMembers { get; set; }
+        private static GroupPositionValidator _validator = new();
         public GroupPosition(
             Guid groupId,
             string name,
@@ -40,6 +43,8 @@ namespace Common.Models
             CanManageCatches = canManageCatches;
             CanReadMembers = canReadMembers;
             CanManageMembers = canManageMembers;
+            _validator.ValidateAndThrow(this);
+
         }
         public GroupPosition ApplyDefaults()
         {

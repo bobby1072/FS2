@@ -1,5 +1,6 @@
 using System.Net;
 using Common;
+using Common.Dbinterfaces.ErrorHandlers;
 using FluentValidation;
 
 namespace fsCore.Middleware
@@ -7,8 +8,10 @@ namespace fsCore.Middleware
     internal class ExceptionHandlingMiddleware : BaseMiddleware
     {
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger) : base(next)
+        private readonly INpgExceptionHandler _postgresExceptionHandler;
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, INpgExceptionHandler postgresExceptionHandler) : base(next)
         {
+            _postgresExceptionHandler = postgresExceptionHandler;
             _logger = logger;
         }
         private async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
@@ -29,8 +32,16 @@ namespace fsCore.Middleware
             }
             else
             {
-                httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
+                var foundPostgresExceptionResults = await _postgresExceptionHandler.HandleException(error);
+                if (foundPostgresExceptionResults is null)
+                {
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                    await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
+                    return;
+                }
+                var (statusCode, message) = foundPostgresExceptionResults.Value;
+                httpContext.Response.StatusCode = statusCode;
+                await httpContext.Response.WriteAsync(message);
             }
         }
         public async Task InvokeAsync(HttpContext httpContext)

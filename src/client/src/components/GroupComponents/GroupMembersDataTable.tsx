@@ -123,6 +123,7 @@ export const GroupMembersDataTable: React.FC<{
     elevation: 2,
     filter: false,
     selectableRows: "none",
+    tableBodyHeight: "50vh",
     responsive: "vertical",
     resizableColumns: false,
     rowsPerPage: 15,
