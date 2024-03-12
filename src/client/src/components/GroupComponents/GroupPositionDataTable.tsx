@@ -3,7 +3,7 @@ import MUIDataTable, {
   MUIDataTableOptions,
 } from "mui-datatables";
 import { GroupPositionModel } from "../../models/GroupPositionModel";
-import { IconButton, Tooltip } from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useState } from "react";
 import { GroupPositionModal } from "./GroupPositionModal";
@@ -49,6 +49,13 @@ export const GroupPositionDataTable: React.FC<{
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value) => {
+          return value ? (
+            <Typography textAlign="center">Yes</Typography>
+          ) : (
+            <Typography textAlign="center">No</Typography>
+          );
+        },
       },
     },
     {
@@ -57,6 +64,13 @@ export const GroupPositionDataTable: React.FC<{
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value) => {
+          return value ? (
+            <Typography textAlign="center">Yes</Typography>
+          ) : (
+            <Typography textAlign="center">No</Typography>
+          );
+        },
       },
     },
     {
@@ -65,6 +79,46 @@ export const GroupPositionDataTable: React.FC<{
       options: {
         filter: true,
         sort: true,
+        customBodyRender: (value) => {
+          return value ? (
+            <Typography textAlign="center">Yes</Typography>
+          ) : (
+            <Typography textAlign="center">No</Typography>
+          );
+        },
+      },
+    },
+
+    {
+      name: "canReadMembers",
+      label: "Can read members",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+        customBodyRender: (value) => {
+          return value ? (
+            <Typography textAlign="center">Yes</Typography>
+          ) : (
+            <Typography textAlign="center">No</Typography>
+          );
+        },
+      },
+    },
+    {
+      name: "canReadCatches",
+      label: "Can read catches",
+      options: {
+        filter: true,
+        sort: true,
+        display: false,
+        customBodyRender: (value) => {
+          return value ? (
+            <Typography textAlign="center">Yes</Typography>
+          ) : (
+            <Typography textAlign="center">No</Typography>
+          );
+        },
       },
     },
   ];
@@ -78,7 +132,7 @@ export const GroupPositionDataTable: React.FC<{
     download: false,
     customToolbar: () => (
       <>
-        <Tooltip title={"Add member"}>
+        <Tooltip title={"Add position"}>
           <IconButton
             size="large"
             onClick={() => setAddPositionModalOpen(true)}
@@ -89,7 +143,7 @@ export const GroupPositionDataTable: React.FC<{
       </>
     ),
     print: false,
-    viewColumns: false,
+    viewColumns: true,
     searchPlaceholder: "Search",
     customSearch: (searchQuery, row) => {
       return row.some((col) => {

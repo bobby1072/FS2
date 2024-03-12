@@ -1,4 +1,3 @@
-import { GroupMemberModel } from "./GroupMemberModel";
 import { GroupPositionModel } from "./GroupPositionModel";
 
 export interface GroupModel {
@@ -6,7 +5,7 @@ export interface GroupModel {
   name: string;
   description?: string | null;
   leaderId: string;
-  leader?:  {
+  leader?: {
     id: string;
     email?: string | null;
     username: string;
@@ -17,6 +16,5 @@ export interface GroupModel {
   public: boolean;
   listed: boolean;
   emblem?: string | null;
-  members?: GroupMemberModel[] | null;
   positions?: GroupPositionModel[] | null;
 }

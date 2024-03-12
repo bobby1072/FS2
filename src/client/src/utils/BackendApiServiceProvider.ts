@@ -4,7 +4,6 @@ import { UserModel } from "../models/UserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
 import { GroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
-import { GroupPositionModel } from "../models/GroupPositionModel";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
 import { GroupMemberModel } from "../models/GroupMemberModel";
 
@@ -164,27 +163,6 @@ export default abstract class BackendApiServiceProvider {
           Authorization: this.FormatAccessToken(accessToken),
         },
       })
-      .catch((e) => {
-        throw new ApiException(
-          e.response.data as string,
-          Number(e.response.status)
-        );
-      });
-    return data;
-  }
-  public static async GetAllPositionsForGroup(
-    groupId: string,
-    accessToken: string
-  ) {
-    const { data } = await this._httpClient
-      .get<GroupPositionModel[]>(
-        `Group/GetAllPositionsForGroup?groupId=${groupId}`,
-        {
-          headers: {
-            Authorization: this.FormatAccessToken(accessToken),
-          },
-        }
-      )
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,

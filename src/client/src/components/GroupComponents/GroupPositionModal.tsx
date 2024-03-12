@@ -196,7 +196,7 @@ export const GroupPositionModal: React.FC<{
                     defaultChecked={canReadCatches}
                   />
                 }
-                label="can read members"
+                label="can read catches"
               />
             </Grid>
           </Grid>
