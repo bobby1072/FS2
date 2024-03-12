@@ -33,11 +33,6 @@ namespace fsCore.Service
             var allGroups = await _repo.GetMany(startIndex, count, true, _groupType.GetProperty("listed".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
-        public async Task<ICollection<Group>> GetAllListedGroups()
-        {
-            var allGroups = await _repo.GetMany(true, _groupType.GetProperty("listed".ToPascalCase())?.Name ?? throw new Exception());
-            return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-        }
         private ICollection<string>? _produceRelationsList(bool includePosition = false, bool includeUser = false, bool includeGroup = false)
         {
             return _produceRelationsList(new Dictionary<string, bool>
@@ -46,119 +41,6 @@ namespace fsCore.Service
                 { _userType.Name, includeUser },
                 { _groupType.Name, includeGroup }
             });
-        }
-        public async Task<GroupMember> UserChangePositionInGroup(GroupMember newMember, UserWithGroupPermissionSet currentUser)
-        {
-            var foundMember = await _groupMemberRepo.GetOne(new Dictionary<string, object>
-            {
-                { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), newMember.GroupId },
-                { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), newMember.UserId }
-            }, new List<string> { _groupType.Name, _userType.Name }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (foundMember.Group is null) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (foundMember.ValidateAgainstOriginal(newMember) is false) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return (await _groupMemberRepo.Update(new List<GroupMember> { newMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-
-        }
-        public async Task<ICollection<GroupPosition>> GetAllPositionsForGroup(UserWithGroupPermissionSet currentUser, Guid groupId)
-        {
-            var foundPositions = await _groupPositionRepo.GetAllPositionsForGroup(groupId) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
-            if (foundPositions is null || foundPositions.Count == 0) return Array.Empty<GroupPosition>();
-            // if (!currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundPositions.FirstOrDefault()!.Group!))
-            // {
-            //     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            // }
-            return foundPositions;
-        }
-        public async Task<GroupMember> GetMembership(UserWithGroupPermissionSet currentUser, string target, Guid groupId, bool includePosition = false, bool includeUser = false, bool includeGroup = false)
-        {
-            var foundMember = await _groupMemberRepo.GetOne(
-             new Dictionary<string, object>
-             {
-                 { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), groupId },
-                 { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), currentUser.Id }
-             },
-            _produceRelationsList(includePosition, includeUser, includeGroup)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            var foundGroup = foundMember.Group ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup) &&
-                !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return foundMember;
-        }
-        public async Task<ICollection<GroupMember>> GetAllMemberships(UserWithGroupPermissionSet currentUser, string targetEmail, bool includePosition = false, bool includeUser = false, bool includeGroup = false)
-        {
-            var foundMembers = await _groupMemberRepo.GetMany(
-             targetEmail,
-             _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(),
-             _produceRelationsList(includePosition, includeUser, includeGroup)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundMembers.FirstOrDefault()!.Group!, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return foundMembers;
-        }
-        public async Task<GroupMember> UserJoinGroup(GroupMember member, UserWithGroupPermissionSet currentUser)
-        {
-            var foundGroup = _repo.GetOne(member.GroupId, _groupMemberType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            var foundMember = _groupMemberRepo.GetOne(new Dictionary<string, object>
-            {
-                { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), member.GroupId },
-                { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), member.UserId }
-            });
-            await Task.WhenAll(foundGroup, foundMember);
-            if (foundMember.Result is not null)
-            {
-                throw new ApiException(ErrorConstants.UserAlreadyExists, HttpStatusCode.Conflict);
-            }
-            else if (!(member.UserId == currentUser.Id && foundGroup.Result.Public) &&
-                !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup.Result, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return (await _groupMemberRepo.Create(new List<GroupMember> { member }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntCreateGroupMember, HttpStatusCode.InternalServerError);
-        }
-        public async Task<GroupMember> UserLeaveGroup(UserWithGroupPermissionSet currentUser, Guid targetId, Guid groupId)
-        {
-            var foundMember = await _groupMemberRepo.GetOne(new Dictionary<string, object>
-            {
-                { _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), groupId },
-                { _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), targetId }
-            }, _produceRelationsList(false, false, true)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (foundMember.Group is null)
-            {
-                throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            }
-            else if (!(targetId == currentUser.Id) &&
-                !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMember.Group, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return (await _groupMemberRepo.Delete(new List<GroupMember> { foundMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntCreateGroupMember, HttpStatusCode.InternalServerError);
-
-        }
-        public async Task<ICollection<GroupMember>> GetAllMembershipsForGroup(Guid groupId, UserWithGroupPermissionSet currentUser, bool includePosition = false, bool includeUser = false)
-        {
-            var foundGroupMembers = await _groupMemberRepo.GetMany(
-                groupId,
-                _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(),
-                _produceRelationsList(includePosition, includeUser, true)) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound
-            );
-            var foundGroup = foundGroupMembers.FirstOrDefault(x => x.Group is not null)?.Group;
-            if (foundGroup is null)
-            {
-                throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            }
-            else if (
-                !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup!, _groupMemberType.Name))
-            {
-                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-            }
-            return foundGroupMembers;
         }
         public async Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser)
         {
@@ -224,17 +106,8 @@ namespace fsCore.Service
         }
         public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser)
         {
-            var allMembers = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(true, false, true));
+            var allMembers = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Group", "Position" });
             var allGroups = _repo.GetMany(currentUser.Id, _groupType.GetProperty("LeaderId".ToPascalCase())?.Name ?? throw new Exception());
-            await Task.WhenAll(allMembers, allGroups);
-            var finalGroupArray = allMembers.Result?.Select(x => x.Group).Union(allGroups.Result).ToHashSet();
-            return (finalGroupArray ?? new HashSet<Group>(), allMembers.Result ?? new List<GroupMember>());
-        }
-        public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUserWithPagination(User currentUser, int startIndex, int count)
-        {
-            if (count > 5) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);
-            var allGroups = _repo.GetMany(startIndex, count, currentUser.Id, _groupType.GetProperty("LeaderId".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
-            var allMembers = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), _produceRelationsList(true, false, false));
             await Task.WhenAll(allMembers, allGroups);
             var finalGroupArray = allMembers.Result?.Select(x => x.Group).Union(allGroups.Result).ToHashSet();
             return (finalGroupArray ?? new HashSet<Group>(), allMembers.Result ?? new List<GroupMember>());
@@ -247,13 +120,13 @@ namespace fsCore.Service
         }
         public async Task<Group> GetGroup(Guid groupId)
         {
-            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var foundGroup = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return foundGroup;
         }
-        public async Task<Group> GetGroupAndMembers(Guid groupId, UserWithGroupPermissionSet currentUser)
+        public async Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception(), new List<string> { "Members", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!(currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || (currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, _groupMemberType.Name) && currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupCatch)) && currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))) && !foundGroup.Public)
+            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Positions", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (foundGroup.Public is false && (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -261,20 +134,30 @@ namespace fsCore.Service
             {
                 foundGroup.Leader?.RemoveSensitive();
             }
-            var cleanMembersList = new List<GroupMember>();
-            if (foundGroup.Members is not null)
+            return foundGroup;
+        }
+        public async Task<ICollection<GroupMember>> GetGroupMembers(Guid groupId, UserWithGroupPermissionSet currentUser)
+        {
+            var foundGroup = _repo.GetGroupWithoutEmblem(groupId);
+            var foundMembers = _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
+            await Task.WhenAll(foundGroup, foundMembers);
+            if (foundGroup.Result is null)
             {
-                foreach (var member in foundGroup.Members)
+                throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            }
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup.Result, nameof(GroupMember)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            var finalMembersList = foundMembers.Result ?? Array.Empty<GroupMember>();
+            foreach (var member in finalMembersList)
+            {
+                if (member.User?.Email != currentUser.Email)
                 {
-                    if (currentUser.Id != member.UserId)
-                    {
-                        member.User?.RemoveSensitive();
-                    }
-                    cleanMembersList.Add(member);
+                    member.User?.RemoveSensitive();
                 }
             }
-            foundGroup.Members = cleanMembersList;
-            return foundGroup;
+            return finalMembersList;
         }
     }
 }

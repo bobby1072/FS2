@@ -1,24 +1,26 @@
 import { useParams } from "react-router-dom";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import { PageBase } from "../common/PageBase";
-import { useGetFullGroup } from "../components/GroupComponents/hooks/GetFullGroup";
+import {
+  useGetAllMembers,
+  useGetFullGroup,
+} from "../components/GroupComponents/hooks/GetFullGroup";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
-import { useGetAllPositionsForGroup } from "../components/GroupComponents/hooks/GetAllPositionsForGroup";
 import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
 import { GroupPositionDataTable } from "../components/GroupComponents/GroupPositionDataTable";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup } = useGetFullGroup(groupId);
-  const { data: allPositions } = useGetAllPositionsForGroup(groupId);
+  const { data: groupMembers } = useGetAllMembers(groupId);
   if (!mainGroup) return <Loading fullScreen />;
   const {
     name: groupName,
     emblem: groupEmblem,
     description: groupDescription,
     leader: groupLeader,
-    members: groupMembers,
+    positions: allPositions,
   } = mainGroup;
   return (
     <PageBase>
@@ -87,7 +89,7 @@ export const IndividualGroupPage: React.FC = () => {
             <GroupMembersDataTable
               leader={(groupLeader as any) ?? undefined}
               members={groupMembers ?? undefined}
-              positions={allPositions}
+              positions={allPositions ?? []}
             />
           </Grid>
           <Grid item width="50%">

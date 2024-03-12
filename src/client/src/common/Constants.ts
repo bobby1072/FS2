@@ -7,8 +7,9 @@ enum QueryKeys {
   GetGroupsWithChoice = "get-groups-with-choice",
   DeleteGroup = "delete-group",
   GetAllListedGroups = "get-all-listed-groups",
-  GetGroupAndMembers = "get-group-and-members",
+  GetGroupAndPositions = "get-group-and-positions",
   GetAllPositionsForGroup = "get-all-positions-for-group",
+  GetAllMembersForGroup = "get-all-members-for-group",
 }
 enum ErrorMessages {}
 export default abstract class Constants {

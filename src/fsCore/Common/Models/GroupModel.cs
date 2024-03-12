@@ -27,17 +27,12 @@ namespace Common.Models
         public bool Listed { get; set; }
         [JsonPropertyName("emblem")]
         public byte[]? Emblem { get; set; }
-        [JsonPropertyName("members")]
-        public ICollection<GroupMember>? Members { get; set; }
         [JsonPropertyName("positions")]
         public ICollection<GroupPosition>? Positions { get; set; }
-        [JsonPropertyName("catches")]
-        public ICollection<GroupCatch>? Catches { get; set; }
-        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, Guid leaderId, User? leader = null, ICollection<GroupMember>? members = null, ICollection<GroupPosition>? positions = null, ICollection<GroupCatch>? catches = null)
+        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, Guid leaderId, User? leader = null, ICollection<GroupMember>? members = null, ICollection<GroupPosition>? positions = null)
         {
             Positions = positions;
             Id = id;
-            Catches = catches;
             Name = name;
             Leader = leader;
             LeaderId = leaderId;
@@ -46,7 +41,6 @@ namespace Common.Models
             Listed = listed ?? false;
             Emblem = emblem;
             Description = description;
-            Members = members;
             _validator.ValidateAndThrow(this);
         }
         public Group ApplyDefaults(Guid? leaderId)

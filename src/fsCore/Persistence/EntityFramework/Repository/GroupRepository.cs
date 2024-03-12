@@ -40,6 +40,15 @@ namespace Persistence.EntityFramework.Repository
                 .FirstOrDefaultAsync();
             return foundGroup?.ToRuntime();
         }
+        public async Task<Group?> GetGroupWithoutEmblem(Guid groupId, ICollection<string>? relations = null)
+        {
+            using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var group = await _addRelationsToQuery(dbContext.Group, relations)
+                .Where(x => x.Id == groupId)
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
+                .FirstOrDefaultAsync();
+            return group is null ? null : new Group(group.Name, null, group.Description, group.Id, group.CreatedAt, group.Public, group.Listed, group.LeaderId, group.Leader?.ToRuntime(), null, group.Positions?.Select(p => p.ToRuntime()).ToArray());
+        }
     }
 
 }

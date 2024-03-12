@@ -19,7 +19,7 @@ export const useSavePositionMutation = () => {
   >((gp) => BackendApiServiceProvider.SaveGroupPosition(gp, user.access_token));
   useEffect(() => {
     if (mutationResults.data) {
-      queryClient.refetchQueries(Constants.QueryKeys.GetAllPositionsForGroup);
+      queryClient.refetchQueries(Constants.QueryKeys.GetGroupAndPositions);
     }
   }, [mutationResults.data, queryClient]);
   return { ...mutationResults };
