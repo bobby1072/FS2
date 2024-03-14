@@ -159,5 +159,26 @@ namespace fsCore.Service
             }
             return finalMembersList;
         }
+        public async Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser)
+        {
+            var foundGroup = await _repo.GetGroupWithoutEmblem(groupMember.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupMember)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            if (groupMember.Id is null)
+            {
+                return (await _groupMemberRepo.Create(new GroupMember[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+            }
+            else
+            {
+                var foundMember = await _groupMemberRepo.GetOne(groupMember.Id, _groupMemberType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
+                if (foundMember.ValidateAgainstOriginal(groupMember) is false)
+                {
+                    throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                }
+                return (await _groupMemberRepo.Update(new GroupMember[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

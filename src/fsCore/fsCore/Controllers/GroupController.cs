@@ -66,6 +66,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllListedGroups")]
         public async Task<IActionResult> ListedGroupsWithIndex(int startIndex, int count)
         {
@@ -73,6 +74,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetGroupCount")]
         public async Task<IActionResult> GetGroupCount()
         {
@@ -80,10 +82,19 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetSelfGroups")]
         public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
         {
             return Ok(await _groupService.GetAllSelfLeadGroups(_getCurrentUser(), startIndex, count));
+        }
+        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpPost("SaveGroupMember")]
+        public async Task<IActionResult> SaveGroupMember([FromBody] GroupMember groupMember)
+        {
+            return Ok((await _groupService.SaveGroupMember(groupMember, _getCurrentUserWithPermissions())).Id);
         }
     }
 }

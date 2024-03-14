@@ -55,6 +55,7 @@ namespace Common.Models
         {
             foreach (var group in groups)
             {
+                group.Emblem = null;
                 BuildPermissions(group);
             }
             return this;
@@ -77,6 +78,7 @@ namespace Common.Models
             {
                 throw new Exception();
             }
+            member.Group.Emblem = null;
             if (member.Position is null)
             {
                 throw new Exception();
