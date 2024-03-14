@@ -16,33 +16,38 @@ namespace fsCore.Middleware
         }
         private async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
         {
-            _logger.LogError(error, error.Message);
-            httpContext.Response.Clear();
-            httpContext.Response.ContentType = "text/plain";
-            if (error is ApiException apiException)
+            try
             {
-                httpContext.Response.StatusCode = (int)apiException.StatusCode;
-                await httpContext.Response.WriteAsync(apiException.Message);
-            }
-            else if (error is ValidationException validationException)
-            {
-                var mainError = validationException.Errors.FirstOrDefault();
-                httpContext.Response.StatusCode = mainError?.ErrorCode is not null && mainError.ErrorCode.All(char.IsNumber) ? int.Parse(mainError.ErrorCode) : (int)HttpStatusCode.BadRequest;
-                await httpContext.Response.WriteAsync(mainError?.ErrorMessage ?? ErrorConstants.BadRequest);
-            }
-            else
-            {
-                var foundPostgresExceptionResults = await _postgresExceptionHandler.HandleException(error);
-                if (foundPostgresExceptionResults is null)
+
+                _logger.LogError(error, error.Message);
+                httpContext.Response.Clear();
+                httpContext.Response.ContentType = "text/plain";
+                if (error is ApiException apiException)
                 {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                    await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
-                    return;
+                    httpContext.Response.StatusCode = (int)apiException.StatusCode;
+                    await httpContext.Response.WriteAsync(apiException.Message);
                 }
-                var (statusCode, message) = foundPostgresExceptionResults.Value;
-                httpContext.Response.StatusCode = statusCode;
-                await httpContext.Response.WriteAsync(message);
+                else if (error is ValidationException validationException)
+                {
+                    var mainError = validationException.Errors.FirstOrDefault();
+                    httpContext.Response.StatusCode = mainError?.ErrorCode is not null && mainError.ErrorCode.All(char.IsNumber) ? int.Parse(mainError.ErrorCode) : (int)HttpStatusCode.BadRequest;
+                    await httpContext.Response.WriteAsync(mainError?.ErrorMessage ?? ErrorConstants.BadRequest);
+                }
+                else
+                {
+                    var foundPostgresExceptionResults = await _postgresExceptionHandler.HandleException(error);
+                    if (foundPostgresExceptionResults is null)
+                    {
+                        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
+                        return;
+                    }
+                    var (statusCode, message) = foundPostgresExceptionResults.Value;
+                    httpContext.Response.StatusCode = statusCode;
+                    await httpContext.Response.WriteAsync(message);
+                }
             }
+            catch (Exception _) { }
         }
         public async Task InvokeAsync(HttpContext httpContext)
         {

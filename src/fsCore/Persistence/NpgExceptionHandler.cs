@@ -1,7 +1,6 @@
+using System.Net;
 using Common.Dbinterfaces.ErrorHandlers;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace Persistence
 {
@@ -12,7 +11,10 @@ namespace Persistence
         {
             if (exception is DbUpdateException npgException)
             {
-                return (400, "hdrhgfdr");
+                if (npgException.InnerException is Npgsql.PostgresException postgresException)
+                {
+                    if (postgresException.SqlState == DbConstants.ErrorCodesAndMessages.UniqueViolation) return ((int)HttpStatusCode.UnprocessableEntity, DbConstants.ErrorCodesAndMessages.UniqueViolationMessage);
+                }
             }
             return null;
         }
