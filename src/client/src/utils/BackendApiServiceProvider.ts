@@ -6,6 +6,7 @@ import { GroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
 import { GroupMemberModel } from "../models/GroupMemberModel";
+import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -192,6 +193,24 @@ export default abstract class BackendApiServiceProvider {
   public static async GetGroupMembers(groupId: string, accessToken: string) {
     const { data } = await this._httpClient
       .get<GroupMemberModel[]>(`Group/GetGroupMembers?groupId=${groupId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async SaveGroupMember(
+    groupMember: SaveGroupMemberInput,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .post<string>("Group/SaveMember", groupMember, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },

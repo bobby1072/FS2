@@ -90,6 +90,7 @@ export const IndividualGroupPage: React.FC = () => {
               leader={(groupLeader as any) ?? undefined}
               members={groupMembers ?? undefined}
               positions={allPositions ?? []}
+              groupId={mainGroup.id!}
             />
           </Grid>
           <Grid item width="50%">
