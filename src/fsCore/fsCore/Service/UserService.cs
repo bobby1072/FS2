@@ -15,6 +15,11 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user);
             return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
         }
+        public async Task<User> GetUser(Guid id)
+        {
+            var foundUser = await _repo.GetOne(id, typeof(User).GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception());
+            return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
+        }
         public async Task<User> GetUser(string email)
         {
             var userProperties = typeof(User).GetProperties();
@@ -108,7 +113,7 @@ namespace fsCore.Service
         public async Task<User> CheckUserExistsAndCreateIfNot(User user)
         {
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
-            if (foundUser != null)
+            if (foundUser is not null)
             {
                 return foundUser;
             }

@@ -15,7 +15,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(User))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUser]
+        [RequiredUser(true)]
         [HttpGet("Self")]
         public async Task<IActionResult> GetSelf()
         {

@@ -18,28 +18,13 @@ namespace fsCore.Middleware
                 var user = httpContext.Session.GetString(RuntimeConstants.UserSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 var foundUserWithPermissions = httpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession);
-                if (!foundAttribute.UpdateAfter && foundUserWithPermissions is not null)
-                {
-                    await _next(httpContext);
-                    return;
-                }
-                else if (foundUserWithPermissions is null)
+                if (foundAttribute.UpdateAlways || foundUserWithPermissions is null)
                 {
                     var (groups, members) = await groupService.GetAllGroupsAndMembershipsForUser(parsedUser);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
                     newUserWithPermissions.BuildPermissions(groups);
                     newUserWithPermissions.BuildPermissions(members);
                     httpContext.Session.SetString(RuntimeConstants.UserWithPermissionsSession, JsonSerializer.Serialize(newUserWithPermissions));
-                }
-                if (foundAttribute.UpdateAfter)
-                {
-                    await _next(httpContext);
-                    var (groups, members) = await groupService.GetAllGroupsAndMembershipsForUser(parsedUser);
-                    var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
-                    newUserWithPermissions.BuildPermissions(groups);
-                    newUserWithPermissions.BuildPermissions(members);
-                    httpContext.Session.SetString(RuntimeConstants.UserWithPermissionsSession, JsonSerializer.Serialize(newUserWithPermissions));
-                    return;
                 }
             }
             await _next(httpContext);

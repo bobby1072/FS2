@@ -23,22 +23,12 @@ namespace fsCore.Middleware
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
                     httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
-                    await _next(httpContext);
-                    if (foundAttribute.UpdateAfter)
-                    {
-                        var foundUser = await userService.GetUser(userExistence.Email);
-                        httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(foundUser));
-                    }
-                    return;
                 }
-                if (foundAttribute.UpdateAfter)
+                else if (existingUserSession is not null && foundAttribute.UpdateAlways)
                 {
-                    var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
-                    var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
+                    var userFound = await userService.GetUser(JsonSerializer.Deserialize<User>(existingUserSession)?.Id ?? throw new Exception());
+                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userFound));
                 }
-                await _next(httpContext);
-                return;
             }
             await _next(httpContext);
 
