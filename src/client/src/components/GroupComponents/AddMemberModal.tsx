@@ -23,10 +23,10 @@ import { PositionSearchBar } from "./PositionSearchBar";
 import { ApiException } from "../../common/ApiException";
 
 const formSchema = z.object({
-  id: z.number().optional(),
+  id: z.string().optional(),
   groupId: z.string(),
   userId: z.string(),
-  positionId: z.number(),
+  positionId: z.string(),
 });
 
 export type SaveGroupMemberInput = z.infer<typeof formSchema>;

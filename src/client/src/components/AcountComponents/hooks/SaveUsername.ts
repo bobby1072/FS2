@@ -13,7 +13,7 @@ export const useSaveUsernameMutation = () => {
   }
   const queryClient = useQueryClient();
   const mutationResult = useMutation<
-    UserModel,
+    string,
     ApiException,
     { newUsername: string }
   >((x) =>

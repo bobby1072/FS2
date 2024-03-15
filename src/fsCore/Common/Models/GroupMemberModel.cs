@@ -4,9 +4,11 @@ namespace Common.Models
 {
     public class GroupMember : BaseModel
     {
+        [JsonConstructor]
+        public GroupMember() { }
         [LockedProperty]
         [JsonPropertyName("id")]
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
@@ -17,10 +19,10 @@ namespace Common.Models
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [JsonPropertyName("positionId")]
-        public int PositionId { get; set; }
+        public Guid PositionId { get; set; }
         [JsonPropertyName("position")]
         public GroupPosition? Position { get; set; }
-        public GroupMember(Guid groupId, int positionId, Guid userId, int? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
+        public GroupMember(Guid groupId, Guid positionId, Guid userId, Guid? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
         {
             Id = id;
             PositionId = positionId;

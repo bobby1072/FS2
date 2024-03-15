@@ -48,7 +48,7 @@ namespace fsCore.Controllers
         {
             return Ok((await _groupService.DeleteGroup(groupId, _getCurrentUserWithPermissions())).Id);
         }
-        [ProducesDefaultResponseType(typeof(int))]
+        [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SavePosition")]

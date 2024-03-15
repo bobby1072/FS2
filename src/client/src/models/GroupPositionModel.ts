@@ -1,5 +1,5 @@
 export interface GroupPositionModel {
-  id?: number;
+  id?: string;
   groupId: string;
   name: string;
   canManageGroup: boolean;

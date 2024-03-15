@@ -8,7 +8,7 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
@@ -26,6 +26,7 @@ namespace Persistence.EntityFramework.Entity
         {
             var ent = new GroupPositionEntity
             {
+                Id = position.Id ?? Guid.NewGuid(),
                 GroupId = position.GroupId,
                 Name = position.Name,
                 CanManageCatches = position.CanManageCatches,
@@ -34,10 +35,6 @@ namespace Persistence.EntityFramework.Entity
                 CanReadCatches = position.CanReadCatches,
                 CanReadMembers = position.CanReadMembers
             };
-            if (position.Id.HasValue && position.Id.Value > 0)
-            {
-                ent.Id = position.Id.Value;
-            }
             return ent;
         }
     }

@@ -8,14 +8,14 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupMemberEntity : BaseEntity<GroupMember>
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
-        public int PositionId { get; set; }
+        public Guid PositionId { get; set; }
         [ForeignKey(nameof(PositionId))]
         public GroupPositionEntity? Position { get; set; }
         public override GroupMember ToRuntime()
@@ -26,15 +26,11 @@ namespace Persistence.EntityFramework.Entity
         {
             var ent = new GroupMemberEntity
             {
-
-                Id = groupMember.Id ?? 0,
+                Id = groupMember.Id ?? Guid.NewGuid(),
                 GroupId = groupMember.GroupId,
+                PositionId = groupMember.PositionId,
                 UserId = groupMember.UserId
             };
-            if (groupMember.Id.HasValue && groupMember.Id > 0)
-            {
-                ent.PositionId = groupMember.PositionId;
-            }
             return ent;
         }
     }

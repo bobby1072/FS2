@@ -27,7 +27,7 @@ CREATE TABLE public."group" (
     CONSTRAINT group_leader_id_fk FOREIGN KEY (leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_position" (
-    id SERIAL PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     group_id UUID NOT NULL,
     name TEXT NOT NULL,
     can_manage_group BOOLEAN NOT NULL DEFAULT FALSE,
@@ -39,10 +39,10 @@ CREATE TABLE public."group_position" (
     CONSTRAINT group_position_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE
 );
 CREATE TABLE public."group_member" (
-    id SERIAL PRIMARY KEY,
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     group_id UUID NOT NULL,
     user_id UUID NOT NULL,
-    position_id INTEGER NOT NULL,
+    position_id UUID NOT NULL,
     CONSTRAINT group_member_unique UNIQUE (group_id, user_id),
     CONSTRAINT group_member_position_id_fk FOREIGN KEY (position_id) REFERENCES public."group_position"(id) ON UPDATE CASCADE,
     CONSTRAINT group_member_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE,

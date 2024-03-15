@@ -29,7 +29,7 @@ namespace fsCore.Controllers
         {
             var user = _getCurrentUser();
             user.Username = newUsername;
-            return Ok(await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id)));
+            return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id))).Id);
         }
         [ProducesDefaultResponseType(typeof(UserWithoutEmail[]))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

@@ -41,7 +41,7 @@ const mapBaseDataToRowItems = (
       },
     });
   }
-  for (let i = 0; i > members.length; i++) {
+  for (let i = 0; i < members.length; i++) {
     const localMember = members[i];
     const position = positions.find((p) => p.id === localMember.positionId);
     const initials = localMember.user?.name

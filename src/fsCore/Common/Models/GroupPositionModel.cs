@@ -8,7 +8,7 @@ namespace Common.Models
     {
         [LockedProperty]
         [JsonPropertyName("id")]
-        public int? Id { get; set; }
+        public Guid? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
@@ -28,7 +28,7 @@ namespace Common.Models
         public GroupPosition(
             Guid groupId,
             string name,
-            int? id = null,
+            Guid? id = null,
             bool canManageGroup = false,
             bool canReadCatches = true,
             bool canManageCatches = false,

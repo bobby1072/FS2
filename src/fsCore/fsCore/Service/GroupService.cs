@@ -33,15 +33,6 @@ namespace fsCore.Service
             var allGroups = await _repo.GetMany(startIndex, count, true, _groupType.GetProperty("listed".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
-        private ICollection<string>? _produceRelationsList(bool includePosition = false, bool includeUser = false, bool includeGroup = false)
-        {
-            return _produceRelationsList(new Dictionary<string, bool>
-            {
-                { _groupPositionType.Name, includePosition },
-                { _userType.Name, includeUser },
-                { _groupType.Name, includeGroup }
-            });
-        }
         public async Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser)
         {
             if (group.Id is not null)

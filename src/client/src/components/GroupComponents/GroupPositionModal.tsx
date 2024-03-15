@@ -21,7 +21,7 @@ import { ApiException } from "../../common/ApiException";
 import { useSnackbar } from "notistack";
 
 const formSchema = z.object({
-  id: z.number().optional().nullable(),
+  id: z.string().optional().nullable(),
   groupId: z.string(),
   name: z.string(),
   canManageGroup: z.boolean(),

@@ -1,34 +1,8 @@
 import React from "react";
 import { GroupPositionModel } from "../../models/GroupPositionModel";
-import {
-  Autocomplete,
-  Chip,
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Autocomplete, IconButton, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
-const RenderPosition: React.FC<{ option: GroupPositionModel }> = ({
-  option,
-}) => {
-  return (
-    <Grid container alignItems="center" spacing={1.5}>
-      <Grid item width="100%">
-        <Typography>{option.name}</Typography>
-      </Grid>
-      {Object.entries(option)
-        .filter(([key, val]) => val === true)
-        .map(([key, val]) => {
-          return (
-            <Grid item key={`${option.id} - ${key}`}>
-              <Chip key={key} label={key} color={"primary"} />
-            </Grid>
-          );
-        })}
-    </Grid>
-  );
-};
+
 export const PositionSearchBar: React.FC<{
   positions: GroupPositionModel[];
   position?: GroupPositionModel;
@@ -62,7 +36,6 @@ export const PositionSearchBar: React.FC<{
       onChange={(_, option) => {
         onChange(option ?? undefined);
       }}
-      renderOption={(_, option) => <RenderPosition option={option} />}
       noOptionsText={
         positions.length > 0 ? "No results" : "No positions to pick from"
       }

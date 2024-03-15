@@ -126,7 +126,7 @@ export default abstract class BackendApiServiceProvider {
     newUsername: string
   ) {
     const { data } = await this._httpClient
-      .get<UserModel>(`User/ChangeUsername?newUsername=${newUsername}`, {
+      .get<string>(`User/ChangeUsername?newUsername=${newUsername}`, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -177,7 +177,7 @@ export default abstract class BackendApiServiceProvider {
     accessToken: string
   ) {
     const { data } = await this._httpClient
-      .post<number>("Group/SavePosition", position, {
+      .post<string>("Group/SavePosition", position, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -210,7 +210,7 @@ export default abstract class BackendApiServiceProvider {
     accessToken: string
   ) {
     const { data } = await this._httpClient
-      .post<string>("Group/SaveMember", groupMember, {
+      .post<string>("Group/SaveGroupMember", groupMember, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
