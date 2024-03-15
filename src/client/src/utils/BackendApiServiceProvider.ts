@@ -225,11 +225,14 @@ export default abstract class BackendApiServiceProvider {
   }
   public static async SearchUsers(searchTerm: string, accessToken: string) {
     const { data } = await this._httpClient
-      .get<Omit<UserModel, "email">[]>(`User/Search?searchTerm=${searchTerm}`, {
-        headers: {
-          Authorization: this.FormatAccessToken(accessToken),
-        },
-      })
+      .get<Omit<UserModel, "email">[]>(
+        `User/SearchUsers?searchTerm=${searchTerm}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,

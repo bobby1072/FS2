@@ -130,7 +130,7 @@ export const AddMemberModal: React.FC<{
                       <UsersSearch
                         onChange={(person) => {
                           setChosenUser(person);
-                          onChange(person!.id);
+                          onChange(person?.id ?? "");
                         }}
                         filter={(val) => !existingMemberIds.includes(val.id!)}
                         value={chosenUser}

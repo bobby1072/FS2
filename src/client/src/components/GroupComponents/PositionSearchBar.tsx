@@ -9,22 +9,22 @@ import {
   Typography,
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-const RenderPosition: React.FC<{ option: GroupPositionModel }> = ({
-  option,
-}) => {
-  return (
-    <Grid container alignItems="center" spacing={1.5}>
-      <Grid item width="100%">
-        <Typography>{option.name}</Typography>
-      </Grid>
-      {Object.entries(option)
-        .filter(([key, val]) => val === true)
-        .map(([key, val]) => {
-          return <Chip key={key} label={key} color={"primary"} />;
-        })}
-    </Grid>
-  );
-};
+// const RenderPosition: React.FC<{ option: GroupPositionModel }> = ({
+//   option,
+// }) => {
+//   return (
+//     <Grid container alignItems="center" spacing={1.5}>
+//       <Grid item width="100%">
+//         <Typography>{option.name}</Typography>
+//       </Grid>
+//       {Object.entries(option)
+//         .filter(([key, val]) => val === true)
+//         .map(([key, val]) => {
+//           return <Chip key={key} label={key} color={"primary"} />;
+//         })}
+//     </Grid>
+//   );
+// };
 export const PositionSearchBar: React.FC<{
   positions: GroupPositionModel[];
   position?: GroupPositionModel;
@@ -36,7 +36,7 @@ export const PositionSearchBar: React.FC<{
         label="Position"
         variant="outlined"
         disabled
-        value={<RenderPosition option={position} />}
+        value={position.name}
         InputProps={{
           endAdornment: (
             <IconButton
@@ -55,9 +55,6 @@ export const PositionSearchBar: React.FC<{
   }
   return (
     <Autocomplete
-      renderOption={(_, option) => {
-        return <RenderPosition option={option} />;
-      }}
       onChange={(_, option) => {
         onChange(option ?? undefined);
       }}
