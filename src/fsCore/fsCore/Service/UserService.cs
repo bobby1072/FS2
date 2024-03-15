@@ -115,5 +115,10 @@ namespace fsCore.Service
             user.Username = await FindUniqueUsername(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
         }
+        public async Task<ICollection<UserWithoutEmail>> SearchUsers(string searchTerm)
+        {
+            var foundUsers = await _repo.FindManyLikeWithSensitiveRemoved(searchTerm);
+            return foundUsers;
+        }
     }
 }

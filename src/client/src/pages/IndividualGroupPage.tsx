@@ -88,7 +88,7 @@ export const IndividualGroupPage: React.FC = () => {
           <Grid item width="50%">
             <GroupMembersDataTable
               leader={(groupLeader as any) ?? undefined}
-              members={groupMembers ?? undefined}
+              members={groupMembers ?? []}
               positions={allPositions ?? []}
               groupId={mainGroup.id!}
             />

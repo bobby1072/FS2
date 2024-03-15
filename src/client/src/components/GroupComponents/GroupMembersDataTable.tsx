@@ -62,8 +62,8 @@ const mapBaseDataToRowItems = (
 };
 
 export const GroupMembersDataTable: React.FC<{
-  members?: GroupMemberModel[];
-  leader?: UserModel;
+  members: GroupMemberModel[];
+  leader: UserModel;
   groupId: string;
   positions: GroupPositionModel[];
 }> = ({ leader, members, positions, groupId }) => {
@@ -158,7 +158,14 @@ export const GroupMembersDataTable: React.FC<{
         columns={columns}
         options={options}
       />
-      {addMemberModalOpen && <AddMemberModal positions={positions} groupId={groupId} />}
+      {addMemberModalOpen && (
+        <AddMemberModal
+          closeModal={() => setAddMemberModalOpen(false)}
+          positions={positions}
+          groupId={groupId}
+          existingMemberIds={[...members!.map((x) => x.userId), leader!.id!]}
+        />
+      )}
     </>
   );
 };

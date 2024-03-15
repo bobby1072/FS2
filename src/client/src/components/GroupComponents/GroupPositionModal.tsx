@@ -199,18 +199,19 @@ export const GroupPositionModal: React.FC<{
                 label="can read catches"
               />
             </Grid>
+            {allErrors instanceof Error && (
+              <Grid item width={"100%"}>
+                <Alert severity="error">{allErrors.message}</Alert>
+              </Grid>
+            )}
+            {!(allErrors instanceof ApiException) &&
+              allErrors?.root?.message && (
+                <Grid item width={"100%"}>
+                  <Alert severity="error">{allErrors.root.message}</Alert>
+                </Grid>
+              )}
           </Grid>
         </form>
-        {allErrors instanceof Error && (
-          <Grid item width={"100%"}>
-            <Alert severity="error">{allErrors.message}</Alert>
-          </Grid>
-        )}
-        {!(allErrors instanceof ApiException) && allErrors?.root?.message && (
-          <Grid item width={"100%"}>
-            <Alert severity="error">{allErrors.root.message}</Alert>
-          </Grid>
-        )}
       </DialogContent>
       <DialogActions>
         <Grid

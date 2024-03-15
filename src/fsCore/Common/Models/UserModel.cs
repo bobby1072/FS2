@@ -5,15 +5,22 @@ using Common.Models.Validators;
 using FluentValidation;
 namespace Common.Models
 {
-    public class User : BaseModel
+    public class UserWithoutEmail : BaseModel
     {
-        private static readonly UserValidator _validator = new();
+        protected static readonly UserValidator _validator = new();
         [JsonPropertyName("id")]
         [LockedProperty]
         public Guid? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
+    }
+    public class User : UserWithoutEmail
+    {
         private string _email;
         [LockedProperty]
         [SensitiveProperty]
@@ -26,10 +33,6 @@ namespace Common.Models
                 _email = value;
             }
         }
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
         public User(string email, bool emailVerified, string? name = null, string? username = null, Guid? id = null)
         {
             Id = id;

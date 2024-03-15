@@ -1,13 +1,20 @@
 import React, { ReactNode, createContext, useContext } from "react";
 import { UserModel } from "../models/UserModel";
-import { useGetUserQuery } from "./queries/GetUserQuery";
+import { useGetUserQuery } from "./hooks/GetUserQuery";
 import { Loading } from "./Loading";
 
 export const UserContext = createContext<UserModel | undefined>(undefined);
 
 export const useCurrentUser = () => {
   const value = useContext(UserContext);
-  if (!value) return {username: undefined, id: undefined, email: undefined, emailVerified: false, name: undefined};
+  if (!value)
+    return {
+      username: undefined,
+      id: undefined,
+      email: undefined,
+      emailVerified: false,
+      name: undefined,
+    };
   return value;
 };
 
