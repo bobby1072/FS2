@@ -46,11 +46,11 @@ namespace fsCore.Service
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
-                return (await _repo.Update(new List<Group> { group }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                return (await _repo.Update(new[] { group }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
             }
             else
             {
-                var newGroup = (await _repo.Create(new List<Group> { group.ApplyDefaults(currentUser.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                var newGroup = (await _repo.Create(new[] { group.ApplyDefaults(currentUser.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
                 return newGroup;
             }
 
@@ -62,7 +62,7 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _repo.Delete(new List<Group> { foundGroup }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
+            return (await _repo.Delete(new[] { foundGroup }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
         }
         public async Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {
@@ -73,7 +73,7 @@ namespace fsCore.Service
             }
             if (position.Id is null)
             {
-                return (await _groupPositionRepo.Create(new List<GroupPosition> { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                return (await _groupPositionRepo.Create(new[] { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
             }
             else
             {
@@ -82,7 +82,7 @@ namespace fsCore.Service
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-                return (await _groupPositionRepo.Update(new List<GroupPosition> { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                return (await _groupPositionRepo.Update(new[] { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
 
             }
         }
@@ -93,7 +93,7 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _groupPositionRepo.Delete(new List<GroupPosition> { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
+            return (await _groupPositionRepo.Delete(new[] { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
         }
         public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser)
         {
@@ -159,7 +159,7 @@ namespace fsCore.Service
             }
             if (groupMember.Id is null)
             {
-                return (await _groupMemberRepo.Create(new GroupMember[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                return (await _groupMemberRepo.Create(new[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
             }
             else
             {
@@ -168,8 +168,17 @@ namespace fsCore.Service
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-                return (await _groupMemberRepo.Update(new GroupMember[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
+                return (await _groupMemberRepo.Update(new[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
             }
+        }
+        public async Task<GroupMember> DeleteGroupMember(Guid groupMemberId, UserWithGroupPermissionSet currentUser)
+        {
+            var foundGroupMember = await _groupMemberRepo.GetOne(groupMemberId, "id".ToPascalCase(), new string[] { "Group" }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
+            if (groupMemberId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroupMember.Group!, nameof(GroupMember)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return (await _groupMemberRepo.Delete(new[] { foundGroupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
         }
     }
 }

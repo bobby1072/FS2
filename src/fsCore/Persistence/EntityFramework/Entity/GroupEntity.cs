@@ -18,12 +18,11 @@ namespace Persistence.EntityFramework.Entity
         public bool Public { get; set; }
         public bool Listed { get; set; }
         public byte[]? Emblem { get; set; }
-        public virtual ICollection<GroupMemberEntity>? Members { get; set; }
         public virtual ICollection<GroupPositionEntity>? Positions { get; set; }
         public virtual ICollection<GroupCatchEntity>? Catches { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, LeaderId, Leader?.ToRuntime(), Members?.Select(m => m.ToRuntime()).ToArray(), Positions?.Select(p => p.ToRuntime()).ToArray());
+            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, LeaderId, Leader?.ToRuntime(), Positions?.Select(p => p.ToRuntime()).ToArray());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {

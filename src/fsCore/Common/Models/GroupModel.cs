@@ -29,7 +29,7 @@ namespace Common.Models
         public byte[]? Emblem { get; set; }
         [JsonPropertyName("positions")]
         public ICollection<GroupPosition>? Positions { get; set; }
-        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, Guid leaderId, User? leader = null, ICollection<GroupMember>? members = null, ICollection<GroupPosition>? positions = null)
+        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, Guid leaderId, User? leader = null, ICollection<GroupPosition>? positions = null)
         {
             Positions = positions;
             Id = id;

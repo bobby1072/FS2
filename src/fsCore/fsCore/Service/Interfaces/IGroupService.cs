@@ -4,6 +4,7 @@ namespace fsCore.Service.Interfaces
 {
     public interface IGroupService
     {
+        Task<GroupMember> DeleteGroupMember(Guid groupMemberId, UserWithGroupPermissionSet currentUser);
         Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser);
         Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count);

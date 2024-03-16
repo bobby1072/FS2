@@ -96,5 +96,13 @@ namespace fsCore.Controllers
         {
             return Ok((await _groupService.SaveGroupMember(groupMember, _getCurrentUserWithPermissions())).Id);
         }
+        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpGet("DeleteGroupMember")]
+        public async Task<IActionResult> DeleteGroupMember(Guid groupMemberId)
+        {
+            return Ok((await _groupService.DeleteGroupMember(groupMemberId, _getCurrentUserWithPermissions())).Id);
+        }
     }
 }

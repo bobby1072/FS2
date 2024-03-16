@@ -200,7 +200,7 @@ export const AddMemberModal: React.FC<{
           <Grid
             item
             width="40%"
-            sx={{ display: "flex", justifyContent: "flex-start" }}
+            sx={{ display: "flex", justifyContent: "flex-end" }}
           >
             <Button
               form="addGroupMemberForm"

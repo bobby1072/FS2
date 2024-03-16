@@ -7,12 +7,16 @@ import { GroupMemberModel } from "../../models/GroupMemberModel";
 import { GroupPositionModel } from "../../models/GroupPositionModel";
 import { UserModel } from "../../models/UserModel";
 import Avatar from "react-avatar";
-import { Grid, IconButton, Tooltip } from "@mui/material";
-import { useState } from "react";
+import { Button, Grid, IconButton, Tooltip } from "@mui/material";
+import { useEffect, useState } from "react";
 import { AddMemberModal } from "./AddMemberModal";
+import { useDeleteGroupMember } from "./hooks/DeleteGroupMember";
+import { YesOrNoModal } from "../../common/YesOrNoModal";
+import { useSnackbar } from "notistack";
 
 interface GroupMemberRowItem {
   username: string;
+  id: string;
   name?: string;
   position?: string;
   potentialAvatar: {
@@ -30,6 +34,7 @@ const mapBaseDataToRowItems = (
   if (leader) {
     rowItems.push({
       name: leader.name ?? "",
+      id: leader.id ?? "",
       username: leader.username ?? undefined,
       position: "Leader",
       potentialAvatar: {
@@ -52,6 +57,7 @@ const mapBaseDataToRowItems = (
       name: localMember.user?.name ?? "",
       username: localMember.user?.username ?? "",
       position: position?.name,
+      id: localMember.id ?? "",
       potentialAvatar: {
         initials: initials,
         email: localMember.user?.email ?? undefined,
@@ -72,6 +78,20 @@ export const GroupMembersDataTable: React.FC<{
     positions ?? [],
     leader
   );
+  const [memberToDeleteId, setMemberToDeleteId] = useState<string>();
+  const {
+    mutate: deleteMember,
+    isLoading: deletingMember,
+    reset,
+    data: deletedMember,
+  } = useDeleteGroupMember();
+  const { enqueueSnackbar } = useSnackbar();
+  useEffect(() => {
+    if (deletedMember) {
+      setMemberToDeleteId(undefined);
+      enqueueSnackbar("Member deleted", { variant: "error" });
+    }
+  }, [deletedMember, enqueueSnackbar, setMemberToDeleteId]);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<boolean>(false);
   const columns: MUIDataTableColumnDef[] = [
     {
@@ -119,6 +139,25 @@ export const GroupMembersDataTable: React.FC<{
         sort: false,
       },
     },
+    {
+      name: "id",
+      label: " ",
+      options: {
+        customBodyRender: (id) => {
+          return id === leader.id ? null : (
+            <Button
+              variant="contained"
+              onClick={() => {
+                setMemberToDeleteId(id);
+              }}
+            >
+              Delete
+            </Button>
+          );
+        },
+        viewColumns: false,
+      },
+    },
   ];
   const options: MUIDataTableOptions = {
     elevation: 2,
@@ -150,6 +189,9 @@ export const GroupMembersDataTable: React.FC<{
       });
     },
   };
+  const memberToDeleteFull = members.find(
+    (x) => x.id === memberToDeleteId
+  )?.user;
   return (
     <>
       <MUIDataTable
@@ -164,6 +206,27 @@ export const GroupMembersDataTable: React.FC<{
           positions={positions}
           groupId={groupId}
           existingMemberIds={[...members!.map((x) => x.userId), leader!.id!]}
+        />
+      )}
+      {memberToDeleteId && (
+        <YesOrNoModal
+          closeModal={() => setMemberToDeleteId(undefined)}
+          question={
+            <>
+              Are you sure you want to remove{" "}
+              {memberToDeleteFull?.username ? (
+                <strong>{memberToDeleteFull.username}</strong>
+              ) : (
+                "this person"
+              )}{" "}
+              from the group?
+            </>
+          }
+          yesAction={() => {
+            reset();
+            deleteMember({ groupMemberId: memberToDeleteId });
+          }}
+          saveDisabled={deletingMember}
         />
       )}
     </>

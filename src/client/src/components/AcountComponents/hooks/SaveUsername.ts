@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from "react-query";
-import { UserModel } from "../../../models/UserModel";
 import { ApiException } from "../../../common/ApiException";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";

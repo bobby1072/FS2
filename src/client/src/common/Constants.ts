@@ -11,8 +11,6 @@ enum QueryKeys {
   GetAllPositionsForGroup = "get-all-positions-for-group",
   GetAllMembersForGroup = "get-all-members-for-group",
 }
-enum ErrorMessages {}
 export default abstract class Constants {
   public static readonly QueryKeys: typeof QueryKeys = QueryKeys;
-  public static readonly ErrorMessages: typeof ErrorMessages = ErrorMessages;
 }

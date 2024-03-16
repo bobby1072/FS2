@@ -241,4 +241,22 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
+  public static async DeleteGroupMember(
+    groupMemberId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<string>(`Group/DeleteGroupMember?groupMemberId=${groupMemberId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
 }

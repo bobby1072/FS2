@@ -186,8 +186,6 @@ namespace Persistence.EntityFramework.Repository
             await dbContext.SaveChangesAsync();
             var runtimeObjs = set.Local.Select(x => x.ToRuntime());
             return entObj;
-
-
         }
         public virtual async Task<ICollection<TBase>?> Update(ICollection<TBase> entObj)
         {
