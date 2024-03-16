@@ -84,6 +84,7 @@ export const GroupMembersDataTable: React.FC<{
     isLoading: deletingMember,
     reset,
     data: deletedMember,
+    error: deleteMemberError,
   } = useDeleteGroupMember();
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
@@ -222,6 +223,7 @@ export const GroupMembersDataTable: React.FC<{
               from the group?
             </>
           }
+          allErrors={deleteMemberError ?? undefined}
           yesAction={() => {
             reset();
             deleteMember({ groupMemberId: memberToDeleteId });

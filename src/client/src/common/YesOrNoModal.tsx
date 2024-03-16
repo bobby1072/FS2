@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -8,6 +9,8 @@ import {
 } from "@mui/material";
 import { StyledDialogTitle } from "./StyledDialogTitle";
 import { useSnackbar } from "notistack";
+import { FieldErrors } from "react-hook-form";
+import { ApiException } from "./ApiException";
 
 export const YesOrNoModal: React.FC<{
   yesAction: () => void;
@@ -16,12 +19,14 @@ export const YesOrNoModal: React.FC<{
   question: string | React.ReactNode;
   noAction?: () => void;
   title?: string;
+  allErrors?: ApiException | FieldErrors;
   notification?: {
     notificationMessage: string;
     variant: "success" | "error" | "warning" | "info";
   };
 }> = ({
   closeModal,
+  allErrors,
   saveDisabled = false,
   question: message,
   yesAction,
@@ -49,6 +54,16 @@ export const YesOrNoModal: React.FC<{
               {message}
             </Typography>
           </Grid>
+          {allErrors instanceof Error && (
+            <Grid item width={"100%"}>
+              <Alert severity="error">{allErrors.message}</Alert>
+            </Grid>
+          )}
+          {!(allErrors instanceof ApiException) && allErrors?.root?.message && (
+            <Grid item width={"100%"}>
+              <Alert severity="error">{allErrors.root.message}</Alert>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions>
