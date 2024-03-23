@@ -59,10 +59,10 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
-        [HttpPost("DeletePosition")]
-        public async Task<IActionResult> DeletePosition([FromBody] GroupPosition position)
+        [HttpGet("DeletePosition")]
+        public async Task<IActionResult> DeletePosition(Guid groupId, Guid positionId)
         {
-            return Ok(await _groupService.DeletePosition(position, _getCurrentUserWithPermissions()));
+            return Ok(await _groupService.DeletePosition(positionId, groupId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

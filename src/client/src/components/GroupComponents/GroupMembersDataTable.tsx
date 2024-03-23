@@ -7,12 +7,14 @@ import { GroupMemberModel } from "../../models/GroupMemberModel";
 import { GroupPositionModel } from "../../models/GroupPositionModel";
 import { UserModel } from "../../models/UserModel";
 import Avatar from "react-avatar";
-import { Button, Grid, IconButton, Tooltip } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { AddMemberModal } from "./AddMemberModal";
 import { useDeleteGroupMember } from "./hooks/DeleteGroupMember";
 import { YesOrNoModal } from "../../common/YesOrNoModal";
 import { useSnackbar } from "notistack";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface GroupMemberRowItem {
   username: string;
@@ -93,11 +95,13 @@ export const GroupMembersDataTable: React.FC<{
       enqueueSnackbar("Member deleted", { variant: "error" });
     }
   }, [deletedMember, enqueueSnackbar, setMemberToDeleteId]);
-  const [addMemberModalOpen, setAddMemberModalOpen] = useState<boolean>(false);
+  const [addMemberModalOpen, setAddMemberModalOpen] = useState<
+    boolean | GroupMemberModel
+  >(false);
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "potentialAvatar",
-      label: "name",
+      label: " ",
       options: {
         sort: false,
         customBodyRender: (value: GroupMemberRowItem["potentialAvatar"]) => {
@@ -146,14 +150,35 @@ export const GroupMembersDataTable: React.FC<{
       options: {
         customBodyRender: (id) => {
           return id === leader.id ? null : (
-            <Button
-              variant="contained"
-              onClick={() => {
-                setMemberToDeleteId(id);
-              }}
+            <Grid
+              container
+              justifyContent="center"
+              alignItems={"center"}
+              direction="row"
             >
-              Delete
-            </Button>
+              <Grid item>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setAddMemberModalOpen(
+                      members.find((x) => x.id === id) ?? false
+                    );
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Grid>
+              <Grid item>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    setMemberToDeleteId(id);
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Grid>
+            </Grid>
           );
         },
         viewColumns: false,
@@ -201,10 +226,19 @@ export const GroupMembersDataTable: React.FC<{
         columns={columns}
         options={options}
       />
-      {addMemberModalOpen && (
+      {addMemberModalOpen === true && (
         <AddMemberModal
           closeModal={() => setAddMemberModalOpen(false)}
           positions={positions}
+          groupId={groupId}
+          existingMemberIds={[...members!.map((x) => x.userId), leader!.id!]}
+        />
+      )}
+      {addMemberModalOpen && addMemberModalOpen !== true && (
+        <AddMemberModal
+          closeModal={() => setAddMemberModalOpen(false)}
+          positions={positions}
+          defaultValue={addMemberModalOpen}
           groupId={groupId}
           existingMemberIds={[...members!.map((x) => x.userId), leader!.id!]}
         />

@@ -259,4 +259,26 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
+  public static async DeletePosition(
+    positionId: string,
+    groupId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<string>(
+        `Group/DeletePosition?groupId=${groupId}&positionId=${positionId}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
 }

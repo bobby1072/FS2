@@ -79,7 +79,7 @@ export const AddMemberModal: React.FC<{
   >();
   const [chosenPosition, setChosenPosition] = useState<
     GroupPositionModel | undefined
-  >(defaultValue?.position ?? undefined);
+  >(positions.find((x) => x.id === defaultValue?.positionId) ?? undefined);
   const [chosenUser, setChosenUser] = useState<
     Omit<UserModel, "email"> | undefined
   >(defaultValue?.user as any);
