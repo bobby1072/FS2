@@ -8,6 +8,7 @@ using Persistence.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Common.Dbinterfaces.Repository;
 using Persistence.EntityFramework.Repository;
+using Common.Dbinterfaces.ErrorHandlers;
 
 namespace Persistence
 {
@@ -27,6 +28,7 @@ namespace Persistence
                 .AddSingleton<IMigrator, DatabaseMigrations>(sp => new DatabaseMigrations(sp.GetRequiredService<ILoggerFactory>().CreateLogger<DatabaseMigrations>(), connectionString, migrationStartVersion));
 
             services
+                .AddSingleton<INpgExceptionHandler, NpgExceptionHandler>()
                 .AddSingleton<IWorldFishRepository, WorldFishRepository>()
                 .AddSingleton<IUserRepository, UserRepository>()
                 .AddSingleton<IGroupRepository, GroupRepository>()
@@ -55,9 +57,6 @@ namespace Persistence
                         )
                 )
                 .AddHealthChecks();
-
-            services
-                .AddScoped(sp => sp.GetRequiredService<IDbContextFactory<FsContext>>().CreateDbContextAsync());
 
             return services;
         }

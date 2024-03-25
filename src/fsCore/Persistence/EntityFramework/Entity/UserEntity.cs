@@ -8,20 +8,14 @@ namespace Persistence.EntityFramework.Entity
     internal class UserEntity : BaseEntity<User>
     {
         [Key]
-        [Required]
-        [Column(TypeName = "TEXT")]
+        public Guid Id { get; set; }
         public string Email { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? Name { get; set; }
-        [Required]
-        [Column(TypeName = "BOOLEAN")]
         public bool EmailVerified { get; set; }
-        [Required]
-        [Column(TypeName = "TEXT")]
         public string Username { get; set; }
         public override User ToRuntime()
         {
-            return new User(Email, EmailVerified, Name, Username);
+            return new User(Email, EmailVerified, Name, Username, Id);
         }
         public static UserEntity RuntimeToEntity(User user)
         {
@@ -30,7 +24,8 @@ namespace Persistence.EntityFramework.Entity
                 Email = user.Email,
                 EmailVerified = user.EmailVerified,
                 Name = user.Name,
-                Username = user.Username
+                Username = user.Username,
+                Id = user.Id ?? Guid.NewGuid()
             };
         }
     }

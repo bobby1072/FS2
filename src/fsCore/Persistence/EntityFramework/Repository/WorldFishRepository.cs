@@ -20,7 +20,7 @@ namespace Persistence.EntityFramework.Repository
                             (fish.ScientificName != null && x.ScientificName != null && x.ScientificName.ToLower().Contains(fish.ScientificName.ToLower())) ||
                             (fish.EnglishName != null && x.EnglishName != null && x.EnglishName.ToLower().Contains(fish.EnglishName.ToLower())))
                 .ToListAsync();
-            return foundEnts?.Select(x => x.ToRuntime()).ToList();
+            return foundEnts?.Select(x => x.ToRuntime()).ToArray();
         }
         public async Task<ICollection<WorldFish>?> FindSomeLike(string anyFish)
         {
@@ -30,7 +30,7 @@ namespace Persistence.EntityFramework.Repository
                             (x.ScientificName != null && x.ScientificName.ToLower().Contains(anyFish.ToLower())) ||
                             (x.EnglishName != null && x.EnglishName.ToLower().Contains(anyFish.ToLower())))
                 .ToListAsync();
-            return foundEnts?.Select(x => x.ToRuntime()).ToList();
+            return foundEnts?.Select(x => x.ToRuntime()).ToArray();
         }
     }
 }

@@ -24,13 +24,13 @@ namespace fsCore.Controllers
         }
         protected User _getCurrentUser()
         {
-            var user = HttpContext.Session.GetString("user") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+            var user = HttpContext.Session.GetString(RuntimeConstants.UserSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
             return parsedUser;
         }
         protected UserWithGroupPermissionSet _getCurrentUserWithPermissions()
         {
-            var user = HttpContext.Session.GetString("userWithPermissions") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+            var user = HttpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var parsedUser = JsonSerializer.Deserialize<UserWithGroupPermissionSet>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
             return parsedUser;
 

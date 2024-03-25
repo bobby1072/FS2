@@ -15,6 +15,11 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user);
             return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
         }
+        public async Task<User> GetUser(Guid id)
+        {
+            var foundUser = await _repo.GetOne(id, typeof(User).GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception());
+            return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
+        }
         public async Task<User> GetUser(string email)
         {
             var userProperties = typeof(User).GetProperties();
@@ -100,7 +105,7 @@ namespace fsCore.Service
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
             if (foundUser != null)
             {
-                if (!user.Validate(foundUser)) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                if (!user.ValidateAgainstOriginal(foundUser)) throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 return (await _repo.Update(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
             }
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
@@ -108,12 +113,17 @@ namespace fsCore.Service
         public async Task<User> CheckUserExistsAndCreateIfNot(User user)
         {
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
-            if (foundUser != null)
+            if (foundUser is not null)
             {
                 return foundUser;
             }
             user.Username = await FindUniqueUsername(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
+        }
+        public async Task<ICollection<UserWithoutEmail>> SearchUsers(string searchTerm)
+        {
+            var foundUsers = await _repo.FindManyLikeWithSensitiveRemoved(searchTerm);
+            return foundUsers;
         }
     }
 }

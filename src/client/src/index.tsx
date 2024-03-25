@@ -20,6 +20,7 @@ import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
+import { UserContextProvider } from "./common/UserContext";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -68,7 +69,9 @@ const AppRoutes: RouteObject[] = [
     element: (
       <Wrapper>
         <AuthenticatedRoute>
-          <option.component />
+          <UserContextProvider>
+            <option.component />
+          </UserContextProvider>
         </AuthenticatedRoute>
       </Wrapper>
     ),

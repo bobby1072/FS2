@@ -14,5 +14,5 @@ export const useGetUserQuery = () => {
       return BackendApiServiceProvider.GetUser(user.access_token);
     }
   );
-  return { ...queryResults };
-};
+  return {...queryResults};
+}

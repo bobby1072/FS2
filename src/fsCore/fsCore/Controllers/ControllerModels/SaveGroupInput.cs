@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.Json.Serialization;
 using Common.Models;
 
@@ -8,8 +7,8 @@ namespace fsCore.Controllers.ControllerModels
     {
         [JsonPropertyName("id")]
         public string? Id { get; set; }
-        [JsonPropertyName("leaderEmail")]
-        public string? LeaderEmail { get; set; }
+        [JsonPropertyName("leaderId")]
+        public Guid LeaderId { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -24,17 +23,16 @@ namespace fsCore.Controllers.ControllerModels
         public string? CreatedAt { get; set; }
         public Group ToGroup()
         {
-            return new Group
-            {
-                Id = Id is not null ? Guid.Parse(Id) : null,
-                Name = Name,
-                Description = Description,
-                Public = IsPublic,
-                CreatedAt = CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
-                LeaderEmail = LeaderEmail,
-                Listed = IsListed,
-                Emblem = Emblem is not null ? Convert.FromBase64String(Emblem) : null,
-            };
+            return new Group(
+                Name,
+                Emblem is not null ? Convert.FromBase64String(Emblem) : null,
+                Description,
+                Id is not null ? Guid.Parse(Id) : null,
+                CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
+                IsPublic,
+                IsListed,
+                LeaderId
+            );
         }
     }
 }

@@ -5,9 +5,9 @@ namespace Common.Models
 {
     public abstract class BaseModel
     {
-        public virtual bool Validate<TModel>(TModel checkAgainst) where TModel : BaseModel
+        public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
-            if (this.GetType() != typeof(TModel))
+            if (this is not TModel)
             {
                 return false;
             }
@@ -37,6 +37,17 @@ namespace Common.Models
                 return true;
             }
             return false;
+        }
+        public virtual void RemoveSensitive()
+        {
+            var allProperties = this.GetType().GetProperties();
+            foreach (var property in allProperties)
+            {
+                if (property.GetCustomAttribute<SensitiveProperty>() is not null)
+                {
+                    property.SetValue(this, null);
+                }
+            }
         }
     }
 }

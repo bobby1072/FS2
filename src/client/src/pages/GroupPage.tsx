@@ -27,6 +27,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
 import { GroupModel } from "../models/GroupModel";
+import { useCurrentUser } from "../common/UserContext";
 
 interface IMatchRange {
   groupStartIndex: number;
@@ -42,6 +43,7 @@ export const AllGroupDisplayPage: React.FC = () => {
   const [groupViewChoice, setGroupViewChoice] = useState<GroupQueryChoice>(
     GroupQueryChoice.AllListed
   );
+  const { username } = useCurrentUser();
   const [groupFilterString, setGroupFilterString] = useState<string>();
   const { data: totalGroupCount, error: countError } = useGetGroupCount();
   const {
@@ -52,7 +54,13 @@ export const AllGroupDisplayPage: React.FC = () => {
   } = useGetAllGroupsChoiceGroup(
     groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount,
     groupSeeCount,
-    groupViewChoice
+    groupViewChoice,
+    {
+      retry: (index, err) => {
+        if (err.status === 404) return false;
+        return index < 3;
+      },
+    }
   );
   const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] = useState<
@@ -62,7 +70,6 @@ export const AllGroupDisplayPage: React.FC = () => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
   }, [
-    groupSeeCount,
     groupStartIndex,
     queryClient,
     listedGroupsRefetch,
@@ -230,6 +237,9 @@ export const AllGroupDisplayPage: React.FC = () => {
                   <Grid item width="60%" key={x.id}>
                     <GroupTab
                       group={x}
+                      linkToMainGroupPage={
+                        x.public || x.leaderId === username
+                      }
                       openModal={() => {
                         setCreateNewGroupModal(x);
                       }}

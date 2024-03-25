@@ -10,17 +10,17 @@ namespace fsCore.Controllers.Attributes
 {
     internal sealed class RequiredUser : AuthorizeAttribute, IAuthorizationFilter
     {
-        public bool UpdateAfter { get; set; }
+        public bool UpdateAlways { get; set; }
         public RequiredUser(bool updateAfter = false)
         {
-            UpdateAfter = updateAfter;
+            UpdateAlways = updateAfter;
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
 
             if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
-                var user = context.HttpContext.Session.GetString("user");
+                var user = context.HttpContext.Session.GetString(RuntimeConstants.UserSession);
                 if (user is null)
                 {
                     context.Result = new UnauthorizedResult();

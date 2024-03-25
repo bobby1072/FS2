@@ -4,6 +4,9 @@ import { UserModel } from "../models/UserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
 import { GroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
+import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
+import { GroupMemberModel } from "../models/GroupMemberModel";
+import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -123,11 +126,153 @@ export default abstract class BackendApiServiceProvider {
     newUsername: string
   ) {
     const { data } = await this._httpClient
-      .get<UserModel>(`User/ChangeUsername?newUsername=${newUsername}`, {
+      .get<string>(`User/ChangeUsername?newUsername=${newUsername}`, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
       })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async GetGroupAndPositions(
+    groupId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<GroupModel>(`Group/GetGroupWithPositions?groupId=${groupId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async DeleteGroup(groupId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get(`Group/DeleteGroup?groupId=${groupId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async SaveGroupPosition(
+    position: SaveGroupPositionInput,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .post<string>("Group/SavePosition", position, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async GetGroupMembers(groupId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<GroupMemberModel[]>(`Group/GetGroupMembers?groupId=${groupId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async SaveGroupMember(
+    groupMember: SaveGroupMemberInput,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .post<string>("Group/SaveGroupMember", groupMember, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async SearchUsers(searchTerm: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<Omit<UserModel, "email">[]>(
+        `User/SearchUsers?searchTerm=${searchTerm}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async DeleteGroupMember(
+    groupMemberId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<string>(`Group/DeleteGroupMember?groupMemberId=${groupMemberId}`, {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async DeletePosition(
+    positionId: string,
+    groupId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<string>(
+        `Group/DeletePosition?groupId=${groupId}&positionId=${positionId}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,

@@ -1,14 +1,20 @@
 import React, { ReactNode, createContext, useContext } from "react";
 import { UserModel } from "../models/UserModel";
-import { useGetUserQuery } from "./queries/GetUserQuery";
+import { useGetUserQuery } from "./hooks/GetUserQuery";
 import { Loading } from "./Loading";
-import { ApiException } from "./ApiException";
 
 export const UserContext = createContext<UserModel | undefined>(undefined);
 
 export const useCurrentUser = () => {
   const value = useContext(UserContext);
-  if (!value) throw new ApiException("UserContext has not been registered");
+  if (!value)
+    return {
+      username: undefined,
+      id: undefined,
+      email: undefined,
+      emailVerified: false,
+      name: undefined,
+    };
   return value;
 };
 

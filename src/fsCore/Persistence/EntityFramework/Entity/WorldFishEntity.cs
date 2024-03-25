@@ -7,18 +7,11 @@ namespace Persistence.EntityFramework.Entity
     internal class WorldFishEntity : BaseEntity<WorldFish>
     {
         [Key]
-        [Column(TypeName = "TEXT")]
-        [Required]
         public string Taxocode { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? ScientificName { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? Isscaap { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? A3_code { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? EnglishName { get; set; }
-        [Column(TypeName = "TEXT")]
         public string? Nickname { get; set; }
         public static WorldFishEntity RuntimeToEntity(WorldFish originalObj)
         {

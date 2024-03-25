@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
 {
-    [RequiredUser(true)]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -16,6 +15,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(User))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser(true)]
         [HttpGet("Self")]
         public async Task<IActionResult> GetSelf()
         {
@@ -23,12 +23,21 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(User))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser(true)]
         [HttpGet("ChangeUsername")]
         public async Task<IActionResult> ChangeUserName(string newUsername)
         {
             var user = _getCurrentUser();
             user.Username = newUsername;
-            return Ok(await _userService.SaveUser(user));
+            return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id))).Id);
+        }
+        [ProducesDefaultResponseType(typeof(UserWithoutEmail[]))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser]
+        [HttpGet("SearchUsers")]
+        public async Task<IActionResult> SearchUsers(string searchTerm)
+        {
+            return Ok(await _userService.SearchUsers(searchTerm));
         }
     }
 }

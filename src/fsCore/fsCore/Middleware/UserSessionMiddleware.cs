@@ -2,7 +2,7 @@ using System.Net;
 using System.Text.Json;
 using Common;
 using Common.Models;
-using fsCore.Contexts;
+using fsCore.Service;
 using fsCore.Controllers.Attributes;
 using fsCore.Service.Interfaces;
 
@@ -17,28 +17,18 @@ namespace fsCore.Middleware
             if (endpoint?.Metadata.GetMetadata<RequiredUser>() is RequiredUser foundAttribute)
             {
                 var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                var existingUserSession = httpContext.Session.GetString("user");
+                var existingUserSession = httpContext.Session.GetString(RuntimeConstants.UserSession);
                 if (existingUserSession is null)
                 {
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
-                    await _next(httpContext);
-                    if (foundAttribute.UpdateAfter)
-                    {
-                        var foundUser = await userService.GetUser(userExistence.Email);
-                        httpContext.Session.SetString("user", JsonSerializer.Serialize(foundUser));
-                    }
-                    return;
+                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
                 }
-                if (foundAttribute.UpdateAfter)
+                else if (existingUserSession is not null && foundAttribute.UpdateAlways)
                 {
-                    var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
-                    var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString("user", JsonSerializer.Serialize(userExistence));
+                    var userFound = await userService.GetUser(JsonSerializer.Deserialize<User>(existingUserSession)?.Id ?? throw new Exception());
+                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userFound));
                 }
-                await _next(httpContext);
-                return;
             }
             await _next(httpContext);
 

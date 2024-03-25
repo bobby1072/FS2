@@ -13,9 +13,11 @@ namespace Common.Models
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
+        [JsonPropertyName("userId")]
+        public Guid UserId { get; set; }
         [LockedProperty]
-        [JsonPropertyName("userEmail")]
-        public string UserEmail { get; set; }
+        [JsonPropertyName("username")]
+        public string Username { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [LockedProperty]
@@ -38,10 +40,12 @@ namespace Common.Models
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        public GroupCatch(string userEmail, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
+        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
         {
             Id = id;
-            UserEmail = userEmail;
+            Latitude = latitude;
+            Longitude = longitude;
+            UserId = userId;
             Species = species;
             Weight = weight;
             Length = length;
@@ -53,10 +57,14 @@ namespace Common.Models
             Group = group;
             User = user;
         }
-        public GroupCatch ApplyDefaults()
+        public GroupCatch ApplyDefaults(Guid? userId = null)
         {
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
+            if (userId is Guid notNullUserId)
+            {
+                UserId = notNullUserId;
+            }
             return this;
         }
     }

@@ -18,66 +18,18 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions]
-        [HttpGet("GetGroup")]
-        public async Task<IActionResult> GetFullGroup(Guid groupId)
+        [HttpGet("GetGroupWithPositions")]
+        public async Task<IActionResult> GetGroupWithPositions(Guid groupId)
         {
-            return Ok(await _groupService.GetFullGroup(groupId, _getCurrentUserWithPermissions()));
-        }
-        [ProducesDefaultResponseType(typeof(GroupMember))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
-        [HttpPost("ChangePosition")]
-        public async Task<IActionResult> ChangePosition([FromBody] GroupMember groupMember)
-        {
-            return Ok(await _groupService.UserChangePositionInGroup(groupMember, _getCurrentUserWithPermissions()));
-        }
-        [ProducesDefaultResponseType(typeof(ICollection<GroupPosition>))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpGet("GetAllPositionsForGroup")]
-        public async Task<IActionResult> GetAllPositionsForGroup(Guid groupId)
-        {
-            return Ok(await _groupService.GetAllPositionsForGroup(_getCurrentUserWithPermissions(), groupId));
-        }
-        [ProducesDefaultResponseType(typeof(GroupMember))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpGet("GetMemberships")]
-        public async Task<IActionResult> GetMembership(string targetUser, Guid groupId)
-        {
-            return Ok(await _groupService.GetMembership(_getCurrentUserWithPermissions(), targetUser, groupId));
+            return Ok(await _groupService.GetGroupWithPositions(groupId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions]
-        [HttpGet("GetAllMembershipsForUser")]
-        public async Task<IActionResult> GetAllMemberships(string targetEmail)
+        [HttpGet("GetGroupMembers")]
+        public async Task<IActionResult> GetGroupMembers(Guid groupId)
         {
-            return Ok(await _groupService.GetAllMemberships(_getCurrentUserWithPermissions(), targetEmail));
-        }
-        [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpGet("GetAllMembershipsForGroup")]
-        public async Task<IActionResult> GetAllMembershipsForGroup(Guid groupId)
-        {
-            return Ok(await _groupService.GetAllMembershipsForGroup(groupId, _getCurrentUserWithPermissions()));
-        }
-        [ProducesDefaultResponseType(typeof(GroupMember))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
-        [HttpPost("JoinGroup")]
-        public async Task<IActionResult> JoinGroup([FromBody] GroupMember groupMember)
-        {
-            return Ok(await _groupService.UserJoinGroup(groupMember, _getCurrentUserWithPermissions()));
-        }
-        [ProducesDefaultResponseType(typeof(GroupMember))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
-        [HttpGet("LeaveGroup")]
-        public async Task<IActionResult> LeaveGroup(string targetUser, Guid groupId)
-        {
-            return Ok(await _groupService.UserLeaveGroup(_getCurrentUserWithPermissions(), targetUser, groupId));
+            return Ok(await _groupService.GetGroupMembers(groupId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -91,29 +43,30 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
-        [HttpPost("DeleteGroup")]
-        public async Task<IActionResult> DeleteGroup([FromBody] Guid group)
+        [HttpGet("DeleteGroup")]
+        public async Task<IActionResult> DeleteGroup(Guid groupId)
         {
-            return Ok((await _groupService.DeleteGroup(group, _getCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.DeleteGroup(groupId, _getCurrentUserWithPermissions())).Id);
         }
-        [ProducesDefaultResponseType(typeof(GroupPosition))]
+        [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SavePosition")]
         public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
         {
-            return Ok(await _groupService.SavePosition(position, _getCurrentUserWithPermissions()));
+            return Ok((await _groupService.SavePosition(position, _getCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
-        [HttpPost("DeletePosition")]
-        public async Task<IActionResult> DeletePosition([FromBody] GroupPosition position)
+        [HttpGet("DeletePosition")]
+        public async Task<IActionResult> DeletePosition(Guid groupId, Guid positionId)
         {
-            return Ok(await _groupService.DeletePosition(position, _getCurrentUserWithPermissions()));
+            return Ok(await _groupService.DeletePosition(positionId, groupId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetAllListedGroups")]
         public async Task<IActionResult> ListedGroupsWithIndex(int startIndex, int count)
         {
@@ -121,6 +74,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetGroupCount")]
         public async Task<IActionResult> GetGroupCount()
         {
@@ -128,23 +82,27 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
         [HttpGet("GetSelfGroups")]
         public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
         {
             return Ok(await _groupService.GetAllSelfLeadGroups(_getCurrentUser(), startIndex, count));
         }
-        // [ProducesDefaultResponseType(typeof(GetSelfGroupsResponse))]
-        // [ProducesResponseType((int)HttpStatusCode.OK)]
-        // [HttpGet("GetSelfGroups")]
-        // public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
-        // {
-        //     var (groups, memberships) = await _groupService.GetAllGroupsAndMembershipsForUserWithPagination(_getCurrentUser(), startIndex, count);
-        //     var tempObj = new GetSelfGroupsResponse
-        //     {
-        //         Groups = groups,
-        //         Memberships = memberships
-        //     };
-        //     return Ok(tempObj);
-        // }
+        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpPost("SaveGroupMember")]
+        public async Task<IActionResult> SaveGroupMember([FromBody] GroupMember groupMember)
+        {
+            return Ok((await _groupService.SaveGroupMember(groupMember, _getCurrentUserWithPermissions())).Id);
+        }
+        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpGet("DeleteGroupMember")]
+        public async Task<IActionResult> DeleteGroupMember(Guid groupMemberId)
+        {
+            return Ok((await _groupService.DeleteGroupMember(groupMemberId, _getCurrentUserWithPermissions())).Id);
+        }
     }
 }

@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react";
 import { User, UserManager } from "oidc-client-ts";
 import { useNavigate } from "react-router-dom";
 import { Loading } from "../Loading";
-import { UserContextProvider } from "../UserContext";
 
 type UserState = { targetUrl: string | undefined } | undefined;
 
@@ -149,7 +148,7 @@ export const AuthenticationContextProvider: React.FC<Props> = ({
         },
       }}
     >
-      <UserContextProvider>{children}</UserContextProvider>
+      {children}
     </AuthenticationContext.Provider>
   );
 };

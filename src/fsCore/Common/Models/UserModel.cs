@@ -1,40 +1,46 @@
-using System.Net;
 using System.Text.Json.Serialization;
 using Common.Permissions;
-using Common.Utils;
 using Common.Attributes;
+using Common.Models.Validators;
+using FluentValidation;
 namespace Common.Models
 {
-    public class User : BaseModel
+    public class UserWithoutEmail : BaseModel
     {
+        protected static readonly UserValidator _validator = new();
+        [JsonPropertyName("id")]
+        [LockedProperty]
+        public Guid? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
-        private string _email;
-        [LockedProperty]
-        [JsonPropertyName("email")]
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                if (!value.ToLower().IsValidEmail())
-                {
-                    throw new ApiException(ErrorConstants.InvalidEmail, HttpStatusCode.UnprocessableEntity);
-                }
-                _email = value.ToLower();
-            }
-        }
         [JsonPropertyName("name")]
         public string? Name { get; set; }
         [JsonPropertyName("username")]
         public string Username { get; set; }
-        public User(string email, bool emailVerified, string? name = null, string? username = null)
+    }
+    public class User : UserWithoutEmail
+    {
+        private string _email;
+        [LockedProperty]
+        [SensitiveProperty]
+        [JsonPropertyName("email")]
+        public string Email
         {
+            get => _email?.ToLower();
+            set
+            {
+                _email = value;
+            }
+        }
+        public User(string email, bool emailVerified, string? name = null, string? username = null, Guid? id = null)
+        {
+            Id = id;
             EmailVerified = emailVerified;
             Email = email;
             Name = name;
             Username = username ?? CalculateDefaultUsername();
+            _validator.ValidateAndThrow(this);
         }
         public string CalculateDefaultUsername()
         {
@@ -45,27 +51,14 @@ namespace Common.Models
     {
         [JsonPropertyName("permissions")]
         public PermissionSet<Group> GroupPermissions { get; set; } = new PermissionSet<Group>();
-        public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name, user.Username) { }
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string userame, GroupMember? member = null) : base(email, emailVerified, name, userame)
-        {
-            if (member is not null)
-            {
-                BuildPermissions(member);
-            }
-        }
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username, ICollection<GroupMember>? member = null) : base(email, emailVerified, name, username)
-        {
-            if (member is not null)
-            {
-                BuildPermissions(member);
-            }
-        }
+        public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name, user.Username, user.Id) { }
         [JsonConstructor]
-        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username) : base(email, emailVerified, name, username) { }
+        public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username, Guid? id) : base(email, emailVerified, name, username, id) { }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
         {
             foreach (var group in groups)
             {
+                group.Emblem = null;
                 BuildPermissions(group);
             }
             return this;
@@ -73,7 +66,7 @@ namespace Common.Models
 
         public UserWithGroupPermissionSet BuildPermissions(Group group)
         {
-            if (group.LeaderEmail == Email)
+            if (group.LeaderId == Id)
             {
                 GroupPermissions
                     .AddCan(PermissionConstants.BelongsTo, group)
@@ -88,13 +81,14 @@ namespace Common.Models
             {
                 throw new Exception();
             }
+            member.Group.Emblem = null;
             if (member.Position is null)
             {
                 throw new Exception();
             }
             GroupPermissions
                 .AddCan(PermissionConstants.BelongsTo, member.Group);
-            if (member.Group.LeaderEmail == Email)
+            if (member.Group.Id == Id)
             {
                 GroupPermissions
                     .AddCan(PermissionConstants.Manage, member.Group)

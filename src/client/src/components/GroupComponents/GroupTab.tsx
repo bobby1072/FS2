@@ -1,11 +1,14 @@
 import {
   Box,
+  Button,
   Grid,
   IconButton,
   Paper,
   Tooltip,
   Typography,
 } from "@mui/material";
+import LockIcon from "@mui/icons-material/Lock";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { GroupModel } from "../../models/GroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -16,9 +19,10 @@ import { useCurrentUser } from "../../common/UserContext";
 export const GroupTab: React.FC<{
   group: GroupModel;
   openModal: () => void;
-}> = ({ group, openModal }) => {
+  linkToMainGroupPage?: boolean;
+}> = ({ group, openModal, linkToMainGroupPage = true }) => {
   const [viewId, setViewId] = useState<boolean>(false);
-  const { email: selfEmail } = useCurrentUser();
+  const { id: selfId } = useCurrentUser();
   return (
     <Paper elevation={2}>
       <Grid
@@ -31,22 +35,31 @@ export const GroupTab: React.FC<{
         spacing={2}
         padding={2}
       >
-        <Grid item width="100%" minHeight={"10vh"}>
-          {group.emblem && (
-            <>
-              <Box
-                component="img"
-                sx={{
-                  border: "0.1px solid #999999",
-                  maxHeight: "50vh",
-                  width: "80%",
-                }}
-                src={`data:image/jpeg;base64,${group.emblem}`}
-                alt={`emblem: ${group.id}`}
-              />
-            </>
+        <Grid item width={"100%"} justifyContent="flex-end" display="flex">
+          {group.public ? (
+            <Tooltip title={"public"}>
+              <LockOpenIcon />
+            </Tooltip>
+          ) : (
+            <Tooltip title="private">
+              <LockIcon />
+            </Tooltip>
           )}
         </Grid>
+        {group.emblem && (
+          <Grid item width="100%" minHeight={"10vh"}>
+            <Box
+              component="img"
+              sx={{
+                border: "0.1px solid #999999",
+                maxHeight: "50vh",
+                width: "80%",
+              }}
+              src={`data:image/jpeg;base64,${group.emblem}`}
+              alt={`emblem: ${group.id}`}
+            />
+          </Grid>
+        )}
         <Grid item width="100%">
           {!viewId && (
             <Tooltip title="Show group id">
@@ -87,11 +100,23 @@ export const GroupTab: React.FC<{
             {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
           </Typography>
         </Grid>
-        {selfEmail === group.leaderEmail && (
-          <Grid item width="100%">
+        {selfId === group.leaderId && (
+          <Grid item>
             <IconButton onClick={openModal} color="primary">
               <EditIcon />
             </IconButton>
+          </Grid>
+        )}
+        {linkToMainGroupPage && (
+          <Grid item>
+            <Button
+              onClick={() => {
+                window.location.href = `/Group/${group.id}`;
+              }}
+              variant="contained"
+            >
+              See more
+            </Button>
           </Grid>
         )}
       </Grid>

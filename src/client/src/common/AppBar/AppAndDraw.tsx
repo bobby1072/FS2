@@ -45,7 +45,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-end",
 }));
 
-export const AppAndDraw: React.FC<{ children: React.ReactNode }> = ({
+export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
   const theme = useTheme();

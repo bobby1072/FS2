@@ -12,5 +12,14 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupPositionEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<ICollection<GroupPosition>?> GetAllPositionsForGroup(Guid groupId)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var groupPositions = await dbContext.Position
+                .Include(gp => gp.Group)
+                .Where(gp => gp.GroupId == groupId)
+                .ToListAsync();
+            return groupPositions.Select(gp => gp.ToRuntime()).ToList();
+        }
     }
 }

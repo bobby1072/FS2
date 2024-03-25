@@ -45,7 +45,10 @@ export const AccountPage: React.FC = () => {
                 spacing={0.1}
               >
                 <Grid item>
-                  <Typography fontSize={23}>Username: {username}</Typography>
+                  <Typography fontSize={23}>
+                    <strong>Username: </strong>
+                    {username}
+                  </Typography>
                 </Grid>
                 <Grid item>
                   <IconButton
@@ -60,13 +63,19 @@ export const AccountPage: React.FC = () => {
               </Grid>
             </Grid>
             <Grid item>
-              <Typography fontSize={20}>Email: {email}</Typography>
+              <Typography fontSize={20}>
+                <strong>Email: </strong>
+                {email}
+              </Typography>
             </Grid>
           </Paper>
         </Grid>
       </AppAndDraw>
       {editUsernameModal && (
-        <EditUsernameModal closeModal={() => setEditUsernameModal(false)} />
+        <EditUsernameModal
+          closeModal={() => setEditUsernameModal(false)}
+          currentUsername={username!}
+        />
       )}
     </PageBase>
   );

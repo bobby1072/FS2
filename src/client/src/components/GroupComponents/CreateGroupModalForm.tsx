@@ -16,25 +16,23 @@ import { useSnackbar } from "notistack";
 import { ApiException } from "../../common/ApiException";
 const formSchema = z.object({
   name: z.string(),
-  description: z.string().optional(),
+  description: z.string().optional().nullable(),
   isPublic: z.boolean(),
   isListed: z.boolean(),
-  leaderEmail: z.string().optional(),
-  emblem: z.string().optional(),
-  id: z.string().optional(),
-  createdAt: z.string().optional(),
+  leaderId: z.string().optional().nullable(),
+  emblem: z.string().optional().nullable(),
+  id: z.string().optional().nullable(),
+  createdAt: z.string().optional().nullable(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
-const mapDefaultValues = (
-  group?: GroupModel
-): Partial<SaveGroupInput> | undefined => {
+const mapDefaultValues = (group?: GroupModel): Partial<SaveGroupInput> => {
   if (!group) return { isListed: true, isPublic: true };
   return {
     id: group.id,
     name: group.name,
     description: group?.description,
     isPublic: group.public,
-    leaderEmail: group.leaderEmail,
+    leaderId: group.leaderId,
     createdAt: group.createdAt,
     isListed: group.listed,
     emblem: group?.emblem?.toString(),
@@ -42,10 +40,15 @@ const mapDefaultValues = (
 };
 export const CreateGroupModalForm: React.FC<{
   group?: GroupModel;
-  setIsDirty?: (boolVal: boolean) => void;
+  setIsSaveDisabled?: (boolVal: boolean) => void;
   closeModal?: () => void;
   useSnackBarOnSuccess?: boolean;
-}> = ({ group, setIsDirty, useSnackBarOnSuccess = false, closeModal }) => {
+}> = ({
+  group,
+  setIsSaveDisabled,
+  useSnackBarOnSuccess = false,
+  closeModal,
+}) => {
   const {
     data: savedId,
     mutate: saveGroupMutation,
@@ -58,13 +61,13 @@ export const CreateGroupModalForm: React.FC<{
     register,
     watch,
     setValue,
-    formState: { errors: formError, isDirty },
+    formState: { errors: formError, isDirty: isFormDirty },
   } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
-  const { isListed, isPublic, id, name } = watch();
+  const { isListed, isPublic, id, name, emblem } = watch();
   const [allErrors, setAllErrors] = useState<
     | ApiException
     | FieldErrors<{
@@ -76,17 +79,15 @@ export const CreateGroupModalForm: React.FC<{
         id?: string | undefined;
       }>
   >();
+  const isDirty = isFormDirty || group?.emblem !== emblem;
   useEffect(() => {
     if (savedId && useSnackBarOnSuccess)
       enqueueSnackbar(`New group id: ${savedId}`, { variant: "success" });
     if (savedId && closeModal) closeModal();
   }, [savedId, enqueueSnackbar, id, useSnackBarOnSuccess, closeModal]);
   useEffect(() => {
-    setIsDirty?.(isSaving);
-  }, [isSaving, setIsDirty]);
-  useEffect(() => {
-    setIsDirty?.(!isDirty || !name);
-  }, [isDirty, setIsDirty, name]);
+    setIsSaveDisabled?.(!isDirty || !name || isSaving);
+  }, [isDirty, setIsSaveDisabled, name, isSaving]);
   useEffect(() => {
     if (formError) setAllErrors(formError);
   }, [formError]);
@@ -135,6 +136,7 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isPublic}
+                  defaultChecked={isPublic}
                   {...register("isPublic", { required: false })}
                 />
               }
@@ -152,6 +154,7 @@ export const CreateGroupModalForm: React.FC<{
               control={
                 <Switch
                   checked={isListed}
+                  defaultChecked={isListed}
                   {...register("isListed", { required: false })}
                 />
               }

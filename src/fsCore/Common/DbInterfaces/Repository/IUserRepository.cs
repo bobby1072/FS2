@@ -4,6 +4,7 @@ namespace Common.Dbinterfaces.Repository
 {
     public interface IUserRepository
     {
+        Task<ICollection<UserWithoutEmail>> FindManyLikeWithSensitiveRemoved(string searchTerm);
         Task<bool> IsUserNameUnique(User runtimeObj);
         Task<ICollection<User>?> Create(ICollection<User> userToCreate);
         Task<ICollection<User>?> Update(ICollection<User> userToUpdate);
