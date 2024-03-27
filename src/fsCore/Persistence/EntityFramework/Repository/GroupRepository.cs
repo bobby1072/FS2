@@ -12,12 +12,12 @@ namespace Persistence.EntityFramework.Repository
         protected override GroupEntity _runtimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
         public async Task<int> GetCount()
         {
-            using var dbConext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbConext = await DbContextFactory.CreateDbContextAsync();
             return await dbConext.Group.CountAsync();
         }
         public async Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
-            using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var runtimeArray = (await _addRelationsToQuery(dbContext.Set<GroupEntity>(), relations)
                 .Where(x => EF.Property<T>(x, fieldName.ToPascalCase()).Equals(field))
                 .OrderBy(x => EF.Property<object>(x, fieldNameToOrderBy.ToPascalCase()))
@@ -29,7 +29,7 @@ namespace Persistence.EntityFramework.Repository
         }
         public async Task<ICollection<Group>?> ManyGroupWithoutEmblem(Guid leaderId, ICollection<string>? relations = null)
         {
-            using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.LeaderId == leaderId)
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
@@ -38,7 +38,7 @@ namespace Persistence.EntityFramework.Repository
         }
         public async Task<Group?> GetGroupWithoutEmblem(Guid groupId, ICollection<string>? relations = null)
         {
-            using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var group = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.Id == groupId)
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
