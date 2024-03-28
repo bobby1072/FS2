@@ -34,6 +34,6 @@ namespace Persistence.EntityFramework
         public virtual DbSet<GroupEntity> Group { get; set; }
         public virtual DbSet<GroupPositionEntity> Position { get; set; }
         public virtual DbSet<GroupMemberEntity> GroupMember { get; set; }
-
+        public virtual DbSet<GroupCatchEntity> GroupCatch { get; set; }
     }
 }

@@ -15,9 +15,6 @@ namespace Common.Models
         public Group? Group { get; set; }
         [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
-        [LockedProperty]
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [LockedProperty]
@@ -40,7 +37,11 @@ namespace Common.Models
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
+        [JsonPropertyName("worldFishTaxocode")]
+        public string? WorldFishTaxocode { get; set; }
+        [JsonPropertyName("worldFish")]
+        public WorldFish? WorldFish { get; set; }
+        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user, string? worldFishTaxocode, WorldFish? worldFish)
         {
             Id = id;
             Latitude = latitude;
@@ -49,6 +50,8 @@ namespace Common.Models
             Species = species;
             Weight = weight;
             Length = length;
+            WorldFishTaxocode = worldFishTaxocode;
+            WorldFish = worldFish;
             Description = description;
             CreatedAt = createdAt ?? DateTime.UtcNow;
             CaughtAt = caughtAt;

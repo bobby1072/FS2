@@ -50,7 +50,7 @@ namespace Common.Models
     public class UserWithGroupPermissionSet : User
     {
         [JsonPropertyName("permissions")]
-        public PermissionSet<Group> GroupPermissions { get; set; } = new PermissionSet<Group>();
+        public GroupPermissionSet GroupPermissions { get; set; } = new GroupPermissionSet();
         public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name, user.Username, user.Id) { }
         [JsonConstructor]
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username, Guid? id) : base(email, emailVerified, name, username, id) { }
@@ -128,5 +128,17 @@ namespace Common.Models
             }
             return this;
         }
+    }
+    public class GroupPermissionSet : PermissionSet<Group>
+    {
+        public bool Can(string action, Guid groupId)
+        {
+            return Abilities.Any(x => x.Action == action && x.Subject.Id == groupId && x.Fields is null);
+        }
+        public bool Can(string action, Guid groupId, string field)
+        {
+            return Abilities.Any(x => x.Action == action && x.Subject.Id == groupId && (x.Fields is null || x.Fields?.Contains(field) == true));
+        }
+
     }
 }

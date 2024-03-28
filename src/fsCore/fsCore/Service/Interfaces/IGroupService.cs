@@ -10,7 +10,7 @@ namespace fsCore.Service.Interfaces
         Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count);
         Task<ICollection<GroupMember>> GetGroupMembers(Guid groupId, UserWithGroupPermissionSet currentUser);
-        Task<Group> GetGroup(Guid groupId);
+        Task<Group> GetGroupWithoutEmblemForInternalUse(Guid groupId);
         Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser);
         Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser);
         Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser);

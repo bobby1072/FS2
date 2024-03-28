@@ -109,12 +109,7 @@ export const GroupTab: React.FC<{
         )}
         {linkToMainGroupPage && (
           <Grid item>
-            <Button
-              onClick={() => {
-                window.location.href = `/Group/${group.id}`;
-              }}
-              variant="contained"
-            >
+            <Button href={`/Group/${group.id}`} variant="contained">
               See more
             </Button>
           </Grid>

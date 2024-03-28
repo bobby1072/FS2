@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string CouldntSaveCatch = "Couldn't save group catch";
         public const string InvalidGroupPositionName = "Invalid group position name. No punctuation or numbers allowed";
         public const string BadRequest = "Bad request";
         public const string InvalidGroupDescription = "Invalid group description";

@@ -14,15 +14,17 @@ namespace Persistence.EntityFramework.Repository
         }
         public async Task<bool> IsUserNameUnique(User runtimeObj)
         {
-            await using var context = DbContextFactory.CreateDbContext();
+            await using var context = await DbContextFactory.CreateDbContextAsync();
             var foundUsername = await context.User.FirstOrDefaultAsync(x => x.Username == runtimeObj.Username);
             return foundUsername is null;
         }
         public async Task<ICollection<UserWithoutEmail>> FindManyLikeWithSensitiveRemoved(string searchTerm)
         {
-            await using var context = DbContextFactory.CreateDbContext();
-            var foundUsersLike = await context.User
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            var foundUsersLike = await context
+                .User
                 .Where(x => x.Username.ToLower().Contains(searchTerm.ToLower()))
+                .Take(10)
                 .ToArrayAsync();
             return foundUsersLike?.Select(x => new UserWithoutEmail { EmailVerified = x.EmailVerified, Id = x.Id, Name = x.Name, Username = x.Username }).ToArray() ?? Array.Empty<UserWithoutEmail>();
         }

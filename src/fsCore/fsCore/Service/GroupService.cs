@@ -37,7 +37,7 @@ namespace fsCore.Service
         {
             if (group.Id is not null)
             {
-                var foundGroup = await _repo.GetOne(group.Id, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+                var foundGroup = await _repo.GetGroupWithoutEmblem(group.Id ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound)) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
                 if (group.ValidateAgainstOriginal(foundGroup) is false)
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
@@ -66,8 +66,7 @@ namespace fsCore.Service
         }
         public async Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(position.GroupId, _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, position.GroupId))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -88,8 +87,7 @@ namespace fsCore.Service
         }
         public async Task<GroupPosition> DeletePosition(Guid positionId, Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, groupId))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -112,7 +110,7 @@ namespace fsCore.Service
             var allGroups = await _repo.GetMany(startIndex, count, currentUser.Id, _groupType.GetProperty("LeaderId".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
-        public async Task<Group> GetGroup(Guid groupId)
+        public async Task<Group> GetGroupWithoutEmblemForInternalUse(Guid groupId)
         {
             var foundGroup = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return foundGroup;
@@ -132,15 +130,11 @@ namespace fsCore.Service
         }
         public async Task<ICollection<GroupMember>> GetGroupMembers(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroupTask = _repo.GetGroupWithoutEmblem(groupId);
-            var foundMembersTask = _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
-            await Task.WhenAll(foundGroupTask, foundMembersTask);
-            var foundGroup = await foundGroupTask ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            var foundMembers = await foundMembersTask;
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup, nameof(GroupMember)))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, groupId, nameof(GroupMember)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
+            var foundMembers = await _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
             var finalMembersList = foundMembers ?? Array.Empty<GroupMember>();
             foreach (var member in finalMembersList)
             {
@@ -153,8 +147,7 @@ namespace fsCore.Service
         }
         public async Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetGroupWithoutEmblem(groupMember.GroupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup, nameof(GroupMember)))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, groupMember.GroupId, nameof(GroupMember)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -174,8 +167,8 @@ namespace fsCore.Service
         }
         public async Task<GroupMember> DeleteGroupMember(Guid groupMemberId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroupMember = await _groupMemberRepo.GetOne(groupMemberId, "id".ToPascalCase(), new string[] { "Group" }) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (groupMemberId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroupMember.Group!, nameof(GroupMember)))
+            var foundGroupMember = await _groupMemberRepo.GetOne(groupMemberId, "id".ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
+            if (groupMemberId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroupMember.GroupId!, nameof(GroupMember)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

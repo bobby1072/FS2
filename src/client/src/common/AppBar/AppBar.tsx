@@ -91,9 +91,7 @@ export const MainAppBar: React.FC<{
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={(event) => {
-                window.location.href = "/Account";
-              }}
+              href="/Account"
               color="inherit"
             >
               <AccountCircle />
