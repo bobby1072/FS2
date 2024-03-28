@@ -17,6 +17,22 @@ namespace fsCore.Service
             _worldFishRepository = worldFishRepo;
             _groupService = groupService;
         }
+        public async Task<GroupCatch> DeleteGroupCatch(Guid id, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        {
+            var foundCatch = await _repo.GetOne(id) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (foundCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            else
+            {
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, groupId))
+                {
+                    throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+                }
+            }
+            return (await _repo.Delete(new[] { foundCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.FailedToDeleteFish, HttpStatusCode.InternalServerError);
+        }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             if (groupCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupCatch.GroupId, nameof(GroupCatch)))
@@ -30,8 +46,13 @@ namespace fsCore.Service
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
             }
-            if (groupCatch.Id is not null)
+            if (groupCatch.Id is Guid foundId)
             {
+                var foundGroupCatch = await _repo.GetOne(foundId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+                if (groupCatch.ValidateAgainstOriginal(foundGroupCatch) is false)
+                {
+                    throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                }
                 return (await _repo.Update(new[] { groupCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
             else
@@ -45,8 +66,9 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            var groupCatch = await _repo.GetOneFull(latLng, groupId);
-            return groupCatch ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            var groupCatch = await _repo.GetOneFull(latLng, groupId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            groupCatch.User?.RemoveSensitive();
+            return groupCatch;
         }
         public async Task<ICollection<PartialGroupCatch>> GetCatchesInSquareRange(LatLng bottomLeftLatLong, LatLng topRightLatLong, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {

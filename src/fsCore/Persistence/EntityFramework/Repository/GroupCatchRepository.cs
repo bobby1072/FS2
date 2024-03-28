@@ -13,6 +13,14 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupCatchEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<GroupCatch?> GetOne(Guid id)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var groupCatch = await dbContext.GroupCatch
+                .Where(gc => gc.Id == id)
+                .FirstOrDefaultAsync();
+            return groupCatch?.ToRuntime();
+        }
         public async Task<ICollection<PartialGroupCatch>?> GetCatchesInSquareRange(LatLng bottomLeft, LatLng topRight, Guid groupId)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
@@ -32,6 +40,7 @@ namespace Persistence.EntityFramework.Repository
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
                 .Include(gc => gc.WorldFish)
+                .Include(gc => gc.User)
                 .FirstOrDefaultAsync(gc => gc.Latitude == latLng.Latitude && gc.Longitude == latLng.Longitude && gc.GroupId == groupId);
             return groupCatch?.ToRuntime();
         }

@@ -36,5 +36,6 @@ namespace Common
         public const string InvalidUserEmail = "Invalid format for user 'email'";
         public const string InternalServerError = "Internal server error";
         public const string FailedToCreateFish = "Failed to create fish";
+        public const string FailedToDeleteFish = "Failed to delete fish";
     }
 }
