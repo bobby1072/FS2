@@ -26,7 +26,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
-import { GroupModel } from "../models/GroupModel";
+import { IGroupModel } from "../models/GroupModel";
 import { useCurrentUser } from "../common/UserContext";
 
 interface IMatchRange {
@@ -64,17 +64,12 @@ export const AllGroupDisplayPage: React.FC = () => {
   );
   const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] = useState<
-    boolean | GroupModel
+    boolean | IGroupModel
   >(false);
   useEffect(() => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
-  }, [
-    groupStartIndex,
-    queryClient,
-    listedGroupsRefetch,
-    groupViewChoice,
-  ]);
+  }, [groupStartIndex, queryClient, listedGroupsRefetch, groupViewChoice]);
   const isError = (listedGroupsError as any) || (countError as any);
   return (
     <PageBase>
@@ -237,9 +232,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                   <Grid item width="60%" key={x.id}>
                     <GroupTab
                       group={x}
-                      linkToMainGroupPage={
-                        x.public || x.leaderId === username
-                      }
+                      linkToMainGroupPage={x.public || x.leaderId === username}
                       openModal={() => {
                         setCreateNewGroupModal(x);
                       }}

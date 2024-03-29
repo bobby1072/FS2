@@ -2,7 +2,7 @@ import MUIDataTable, {
   MUIDataTableColumnDef,
   MUIDataTableOptions,
 } from "mui-datatables";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/GroupPositionModel";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ interface GroupPositionRowItem {
   canReadMembers: boolean;
   canReadCatches: boolean;
 }
-const mapBaseDataToRowItems = (rawData: GroupPositionModel[]) => {
+const mapBaseDataToRowItems = (rawData: IGroupPositionModel[]) => {
   const rowItems: GroupPositionRowItem[] = [];
   for (let i = 0; i < rawData.length; i++) {
     const localItem = rawData[i];
@@ -40,7 +40,7 @@ const mapBaseDataToRowItems = (rawData: GroupPositionModel[]) => {
   return rowItems;
 };
 export const GroupPositionDataTable: React.FC<{
-  positions: GroupPositionModel[];
+  positions: IGroupPositionModel[];
   groupId: string;
 }> = ({ positions, groupId }) => {
   const [selectedRows, setSelectedRows] = usePersistedState(
@@ -50,7 +50,7 @@ export const GroupPositionDataTable: React.FC<{
   const rowItems = mapBaseDataToRowItems(positions);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string>();
   const [addPositionModalOpen, setAddPositionModalOpen] = useState<
-    boolean | GroupPositionModel
+    boolean | IGroupPositionModel
   >(false);
   const { enqueueSnackbar } = useSnackbar();
   const {

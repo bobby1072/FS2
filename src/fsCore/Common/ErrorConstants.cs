@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string InvalidLatitudeAndLongitude = "Invalid latitude and longitude";
         public const string InvalidGroupCatchSpecies = "Invalid species used in catch";
         public const string InvalidGroupCatch = "Invalid catch";
         public const string CouldntSaveCatch = "Couldn't save group catch";

@@ -1,17 +1,17 @@
 import { Autocomplete, IconButton, TextField } from "@mui/material";
-import { UserModel } from "../models/UserModel";
+import { IUserModel } from "../models/UserModel";
 import { useSearchUsers } from "./hooks/SearchUsers";
 import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 
 export const UsersSearch: React.FC<{
   filter?: (
-    value: Omit<UserModel, "email">,
+    value: Omit<IUserModel, "email">,
     index: number,
-    array: Omit<UserModel, "email">[]
+    array: Omit<IUserModel, "email">[]
   ) => boolean;
-  value?: Omit<UserModel, "email">;
-  onChange: (value?: Omit<UserModel, "email">) => void;
+  value?: Omit<IUserModel, "email">;
+  onChange: (value?: Omit<IUserModel, "email">) => void;
 }> = ({ filter = () => true, value, onChange }) => {
   const { data, isLoading, mutate, reset } = useSearchUsers();
   const [searchTerm, setSearchTerm] = useState("");

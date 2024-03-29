@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { GroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/GroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
@@ -17,7 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import { prettyDateWithYear } from "../../utils/DateTime";
 import { useCurrentUser } from "../../common/UserContext";
 export const GroupTab: React.FC<{
-  group: GroupModel;
+  group: IGroupModel;
   openModal: () => void;
   linkToMainGroupPage?: boolean;
 }> = ({ group, openModal, linkToMainGroupPage = true }) => {

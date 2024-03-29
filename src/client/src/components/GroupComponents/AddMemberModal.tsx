@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { GroupMemberModel } from "../../models/GroupMemberModel";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupMemberModel } from "../../models/GroupMemberModel";
+import { IGroupPositionModel } from "../../models/GroupPositionModel";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { useSaveMemberMutation } from "./hooks/SaveMemberMutation";
 import { useEffect, useState } from "react";
-import { UserModel } from "../../models/UserModel";
+import { IUserModel } from "../../models/UserModel";
 import {
   Alert,
   Button,
@@ -33,7 +33,7 @@ export type SaveGroupMemberInput = z.infer<typeof formSchema>;
 
 const mapDefaultValues = (
   groupId: string,
-  values?: GroupMemberModel
+  values?: IGroupMemberModel
 ): Partial<SaveGroupMemberInput> => {
   if (!values) return { groupId };
   return {
@@ -46,8 +46,8 @@ const mapDefaultValues = (
 
 export const AddMemberModal: React.FC<{
   existingMemberIds: string[];
-  defaultValue?: GroupMemberModel;
-  positions: GroupPositionModel[];
+  defaultValue?: IGroupMemberModel;
+  positions: IGroupPositionModel[];
   groupId: string;
   closeModal: () => void;
 }> = ({ defaultValue, positions, groupId, existingMemberIds, closeModal }) => {
@@ -78,10 +78,10 @@ export const AddMemberModal: React.FC<{
       }>
   >();
   const [chosenPosition, setChosenPosition] = useState<
-    GroupPositionModel | undefined
+    IGroupPositionModel | undefined
   >(positions.find((x) => x.id === defaultValue?.positionId) ?? undefined);
   const [chosenUser, setChosenUser] = useState<
-    Omit<UserModel, "email"> | undefined
+    Omit<IUserModel, "email"> | undefined
   >(defaultValue?.user as any);
   const { positionId, userId } = watch();
   const isSaveDisabled = !isDirty || isLoading || !positionId || !userId;

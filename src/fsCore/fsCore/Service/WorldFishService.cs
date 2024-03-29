@@ -30,25 +30,10 @@ namespace fsCore.Service
                 }
             }
         }
-        public async Task<ICollection<WorldFish>> AllFish()
-        {
-            var allFish = await _repo.GetAll();
-            return allFish ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-        }
-        public async Task<ICollection<WorldFish>> FindSomeLike(WorldFish fishAny)
-        {
-            var similarFish = await _repo.FindSomeLike(fishAny);
-            return similarFish ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-        }
         public async Task<ICollection<WorldFish>> FindSomeLike(string fishAnyName)
         {
             var similarFish = await _repo.FindSomeLike(fishAnyName);
-            return similarFish ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-        }
-        public async Task<WorldFish> FindOne(WorldFish fish)
-        {
-            var foundFish = await _repo.GetOne(fish);
-            return foundFish ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            return similarFish ?? Array.Empty<WorldFish>();
         }
         public async Task<WorldFish> FindOne(string fishProp, string propertyName)
         {
@@ -59,16 +44,6 @@ namespace fsCore.Service
                 return x.Name == propertyName.ToPascalCase() && typeof(string) == x.PropertyType;
             }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
             return await _repo.GetOne(fishProp, propertyName.ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-        }
-        public async Task<WorldFish?> CreateFish(WorldFish newFish, bool includeFish = false)
-        {
-            var foundCopy = await _repo.GetOne(newFish);
-            if (foundCopy is not null)
-            {
-                throw new ApiException(ErrorConstants.FishAlreadyExists, HttpStatusCode.Conflict);
-            }
-            var createdFish = await _repo.Create(new List<WorldFish> { newFish }) ?? throw new ApiException(ErrorConstants.FailedToCreateFish);
-            return includeFish ? createdFish.FirstOrDefault() : null;
         }
     }
 }

@@ -2,7 +2,6 @@ using Common;
 using Common.Authentication;
 using fsCore.Service;
 using fsCore.Middleware;
-using fsCore.Service;
 using fsCore.Service.Hangfire;
 using fsCore.Service.Interfaces;
 using Hangfire;
@@ -87,6 +86,7 @@ builder.Services
     .AddScoped<IWorldFishService, WorldFishService>()
     .AddScoped<IUserService, UserService>()
     .AddScoped<IGroupService, GroupService>()
+    .AddScoped<IGroupCatchService, GroupCatchService>()
     .AddScoped<IHangfireJobsService, HangfireJobService>();
 
 builder.Services

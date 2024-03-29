@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { GroupModel } from "../../../models/GroupModel";
+import { IGroupModel } from "../../../models/GroupModel";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
@@ -8,7 +8,7 @@ import { ApiException } from "../../../common/ApiException";
 export const useGetAllListedGroups = (startIndex: number, count: number) => {
   const { user } = useAuthentication();
   const queryResults = useQuery<
-    Omit<GroupModel, "positions" | "members" | "leader">[],
+    Omit<IGroupModel, "positions" | "members" | "leader">[],
     ApiException
   >(Constants.QueryKeys.GetAllListedGroups, () => {
     if (!user?.access_token) throw new ApiException("No bearer token found");
@@ -33,7 +33,7 @@ export const useGetAllGroupsChoiceGroup = (
 ) => {
   const { user } = useAuthentication();
   const queryResults = useQuery<
-    Omit<GroupModel, "positions" | "members" | "leader">[],
+    Omit<IGroupModel, "positions" | "members" | "leader">[],
     ApiException
   >(
     Constants.QueryKeys.GetGroupsWithChoice,

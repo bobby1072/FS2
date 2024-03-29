@@ -1,4 +1,4 @@
-export interface GroupPositionModel {
+export interface IGroupPositionModel {
   id?: string;
   groupId: string;
   name: string;

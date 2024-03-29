@@ -1,14 +1,14 @@
 import { useQuery } from "react-query";
-import { GroupModel } from "../../../models/GroupModel";
+import { IGroupModel } from "../../../models/GroupModel";
 import { ApiException } from "../../../common/ApiException";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
-import { GroupMemberModel } from "../../../models/GroupMemberModel";
+import { IGroupMemberModel } from "../../../models/GroupMemberModel";
 
 export const useGetFullGroup = (groupId?: string) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<Omit<GroupModel, "members">, ApiException>(
+  const queryResults = useQuery<Omit<IGroupModel, "members">, ApiException>(
     Constants.QueryKeys.GetGroupAndPositions,
     () => {
       if (!groupId) throw new ApiException("No group id given");
@@ -27,7 +27,7 @@ export const useGetFullGroup = (groupId?: string) => {
 
 export const useGetAllMembers = (groupId?: string) => {
   const { user } = useAuthentication();
-  const queryResults = useQuery<GroupMemberModel[], ApiException>(
+  const queryResults = useQuery<IGroupMemberModel[], ApiException>(
     Constants.QueryKeys.GetAllMembersForGroup,
     () => {
       if (!groupId) throw new ApiException("No group id given");

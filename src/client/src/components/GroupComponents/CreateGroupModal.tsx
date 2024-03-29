@@ -8,14 +8,14 @@ import {
 } from "@mui/material";
 import { StyledDialogTitle } from "../../common/StyledDialogTitle";
 import { CreateGroupModalForm } from "./CreateGroupModalForm";
-import { GroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/GroupModel";
 import { useEffect, useState } from "react";
 import { useDeleteGroupMutation } from "./hooks/DeleteGroupMutation";
 import { useSnackbar } from "notistack";
 
 export const CreateGroupModal: React.FC<{
   closeModal: () => void;
-  group?: GroupModel;
+  group?: IGroupModel;
 }> = ({ closeModal, group }) => {
   const [saveDisabled, setSaveDisabled] = useState<boolean>(true);
   const { enqueueSnackbar } = useSnackbar();

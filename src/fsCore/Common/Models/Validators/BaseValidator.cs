@@ -3,8 +3,16 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public abstract class BaseValidator<T> : AbstractValidator<T> where T : BaseModel
+    public abstract class BaseValidator<T> : AbstractValidator<T> where T : class
     {
+        protected bool _LatWithInRange(double lat)
+        {
+            return lat >= -90 && lat <= 90;
+        }
+        protected bool _LngWithInRange(double lng)
+        {
+            return lng >= -180 && lng <= 180;
+        }
         protected virtual bool _notHaveWhitespaceOrBeEmpty(string input) => !string.IsNullOrWhiteSpace(input) && !input.Contains(' ');
         protected virtual bool _notHaveNonAlphanumerics(string input) => input.All(char.IsLetterOrDigit);
         protected virtual bool _notHaveInvalidEmail(string input) => input.IsValidEmail();

@@ -1,6 +1,6 @@
-import { GroupPositionModel } from "./GroupPositionModel";
+import { IGroupPositionModel } from "./GroupPositionModel";
 
-export interface GroupModel {
+export interface IGroupModel {
   id?: string;
   name: string;
   description?: string | null;
@@ -16,5 +16,5 @@ export interface GroupModel {
   public: boolean;
   listed: boolean;
   emblem?: string | null;
-  positions?: GroupPositionModel[] | null;
+  positions?: IGroupPositionModel[] | null;
 }

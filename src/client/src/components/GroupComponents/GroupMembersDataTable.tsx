@@ -3,9 +3,9 @@ import MUIDataTable, {
   MUIDataTableOptions,
 } from "mui-datatables";
 import { Add as AddIcon } from "@mui/icons-material";
-import { GroupMemberModel } from "../../models/GroupMemberModel";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
-import { UserModel } from "../../models/UserModel";
+import { IGroupMemberModel } from "../../models/GroupMemberModel";
+import { IGroupPositionModel } from "../../models/GroupPositionModel";
+import { IUserModel } from "../../models/UserModel";
 import Avatar from "react-avatar";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -28,9 +28,9 @@ interface GroupMemberRowItem {
 }
 
 const mapBaseDataToRowItems = (
-  members: GroupMemberModel[],
-  positions: GroupPositionModel[],
-  leader?: UserModel
+  members: IGroupMemberModel[],
+  positions: IGroupPositionModel[],
+  leader?: IUserModel
 ): GroupMemberRowItem[] => {
   const rowItems: GroupMemberRowItem[] = [];
   if (leader) {
@@ -70,10 +70,10 @@ const mapBaseDataToRowItems = (
 };
 
 export const GroupMembersDataTable: React.FC<{
-  members: GroupMemberModel[];
-  leader: UserModel;
+  members: IGroupMemberModel[];
+  leader: IUserModel;
   groupId: string;
-  positions: GroupPositionModel[];
+  positions: IGroupPositionModel[];
 }> = ({ leader, members, positions, groupId }) => {
   const rowItems = mapBaseDataToRowItems(
     members ?? [],
@@ -96,7 +96,7 @@ export const GroupMembersDataTable: React.FC<{
     }
   }, [deletedMember, enqueueSnackbar, setMemberToDeleteId]);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<
-    boolean | GroupMemberModel
+    boolean | IGroupMemberModel
   >(false);
   const columns: MUIDataTableColumnDef[] = [
     {

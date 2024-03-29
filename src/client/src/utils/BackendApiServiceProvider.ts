@@ -1,12 +1,13 @@
 import axios, { AxiosInstance } from "axios";
-import { ClientConfigResponse } from "../models/ClientConfigResponse";
-import { UserModel } from "../models/UserModel";
+import { IClientConfigResponse } from "../models/ClientConfigResponse";
+import { IUserModel } from "../models/UserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
-import { GroupModel } from "../models/GroupModel";
+import { IGroupModel } from "../models/GroupModel";
 import { ApiException } from "../common/ApiException";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
-import { GroupMemberModel } from "../models/GroupMemberModel";
+import { IGroupMemberModel } from "../models/GroupMemberModel";
 import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
+import { IWorldFishModel } from "../models/WorldFishModel";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
@@ -23,7 +24,7 @@ export default abstract class BackendApiServiceProvider {
   });
   public static async GetClientConfig() {
     const { data } = await this._httpClient
-      .get<ClientConfigResponse>("ClientConfig")
+      .get<IClientConfigResponse>("ClientConfig")
       .catch((e) => {
         throw new ApiException(
           e.response.data as string,
@@ -38,7 +39,7 @@ export default abstract class BackendApiServiceProvider {
     count: number
   ) {
     const { data } = await this._httpClient
-      .get<GroupModel[]>(
+      .get<IGroupModel[]>(
         `Group/GetSelfGroups?startIndex=${startIndex}&count=${count}`,
         {
           headers: {
@@ -60,7 +61,7 @@ export default abstract class BackendApiServiceProvider {
     count: number
   ) {
     const { data } = await this._httpClient
-      .get<GroupModel[]>(
+      .get<IGroupModel[]>(
         `Group/GetAllListedGroups?startIndex=${startIndex}&count=${count}`,
         {
           headers: {
@@ -76,9 +77,9 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
-  public static async GetUser(accessToken: string): Promise<UserModel> {
+  public static async GetUser(accessToken: string): Promise<IUserModel> {
     const { data } = await this._httpClient
-      .get<UserModel>("User/Self", {
+      .get<IUserModel>("User/Self", {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -144,7 +145,7 @@ export default abstract class BackendApiServiceProvider {
     accessToken: string
   ) {
     const { data } = await this._httpClient
-      .get<GroupModel>(`Group/GetGroupWithPositions?groupId=${groupId}`, {
+      .get<IGroupModel>(`Group/GetGroupWithPositions?groupId=${groupId}`, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -192,7 +193,7 @@ export default abstract class BackendApiServiceProvider {
   }
   public static async GetGroupMembers(groupId: string, accessToken: string) {
     const { data } = await this._httpClient
-      .get<GroupMemberModel[]>(`Group/GetGroupMembers?groupId=${groupId}`, {
+      .get<IGroupMemberModel[]>(`Group/GetGroupMembers?groupId=${groupId}`, {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },
@@ -225,7 +226,7 @@ export default abstract class BackendApiServiceProvider {
   }
   public static async SearchUsers(searchTerm: string, accessToken: string) {
     const { data } = await this._httpClient
-      .get<Omit<UserModel, "email">[]>(
+      .get<Omit<IUserModel, "email">[]>(
         `User/SearchUsers?searchTerm=${searchTerm}`,
         {
           headers: {
@@ -274,4 +275,24 @@ export default abstract class BackendApiServiceProvider {
       });
     return data;
   }
+  public static WorldFishClient = {
+    FindSomeLink: async (fishAnyName: string, accessToken: string) => {
+      const { data } = await this._httpClient
+        .get<IWorldFishModel[]>(
+          `WorldFish/FindSomeLink?fishAnyName=${fishAnyName}`,
+          {
+            headers: {
+              Authorization: this.FormatAccessToken(accessToken),
+            },
+          }
+        )
+        .catch((e) => {
+          throw new ApiException(
+            e.response.data as string,
+            Number(e.response.status)
+          );
+        });
+      return data;
+    },
+  };
 }
