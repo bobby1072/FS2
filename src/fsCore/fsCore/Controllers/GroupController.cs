@@ -3,7 +3,6 @@ using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {

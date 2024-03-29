@@ -44,10 +44,10 @@ namespace Common.Permissions
                 .Where(x => x.Fields is not null)
                 .Select(x => x.Fields)
                 .SelectMany(x => x);
-            var combinedFields = new List<List<string>>
+            var combinedFields = new string[][]
                 {
-                    newPerm.Fields.ToList(),
-                    allSimilarFieldsFound.ToList()
+                    newPerm.Fields.ToArray(),
+                    allSimilarFieldsFound.ToArray()
                 };
             Abilities.Add(new Permission<TModel>(newPerm.Action, newPerm.Subject, combinedFields.SelectMany(x => x).ToHashSet()));
         }

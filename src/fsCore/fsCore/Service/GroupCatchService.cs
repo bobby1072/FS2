@@ -17,16 +17,16 @@ namespace fsCore.Service
             _worldFishRepository = worldFishRepo;
             _groupService = groupService;
         }
-        public async Task<GroupCatch> DeleteGroupCatch(Guid id, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        public async Task<GroupCatch> DeleteGroupCatch(Guid id, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             var foundCatch = await _repo.GetOne(id) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-            if (foundCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupId, nameof(GroupCatch)))
+            if (foundCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
             else
             {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, groupId))
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, foundCatch.GroupId))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
@@ -57,7 +57,8 @@ namespace fsCore.Service
             }
             else
             {
-                return (await _repo.Create(new[] { groupCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
+
+                return (await _repo.Create(new[] { groupCatch.ApplyDefaults(userWithGroupPermissionSet.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
         }
         public async Task<GroupCatch> GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(LatLng latLng, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)

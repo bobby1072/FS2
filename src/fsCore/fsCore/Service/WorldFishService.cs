@@ -23,8 +23,8 @@ namespace fsCore.Service
             }
             else
             {
-                var fishToCreate = allWorldFishFromFile.Where(x => !allDbFish.Any(y => y.Taxocode == x.Taxocode)).ToList();
-                if (fishToCreate is not null && fishToCreate.Count > 0)
+                var fishToCreate = allWorldFishFromFile.Where(x => !allDbFish.Any(y => y.Taxocode == x.Taxocode)).ToArray();
+                if (fishToCreate is not null && fishToCreate.Count() > 0)
                 {
                     await _repo.Create(fishToCreate);
                 }

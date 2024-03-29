@@ -101,8 +101,8 @@ namespace fsCore.Service
             await Task.WhenAll(allMembersTask, allGroupsTask);
             var allMembers = (await allMembersTask) ?? Array.Empty<GroupMember>();
             var allGroups = (await allGroupsTask) ?? Array.Empty<Group>();
-            var finalGroupArray = allMembers.Select(x => x.Group).Union(allGroups).ToHashSet();
-            return (finalGroupArray ?? new HashSet<Group>(), allMembers ?? new List<GroupMember>());
+            var finalGroupArray = allMembers.Select(x => x.Group).Union(allGroups).Where(x => x is not null).ToHashSet();
+            return (finalGroupArray ?? new HashSet<Group>(), allMembers ?? Array.Empty<GroupMember>());
         }
         public async Task<ICollection<Group>> GetAllSelfLeadGroups(User currentUser, int startIndex, int count)
         {

@@ -10,6 +10,6 @@ namespace Common.Models.Validators
         protected virtual bool _notHaveInvalidEmail(string input) => input.IsValidEmail();
         protected virtual bool _notJustBeWhiteSpace(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsWhiteSpace);
         protected virtual bool _notJustHaveNumbers(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsDigit);
-        protected virtual bool _lettersAndWhiteSpaceOnly(string input) => input.Any(char.IsLetter) && !input.Any(char.IsDigit) && !input.Any(char.IsPunctuation);
+        protected virtual bool _lettersAndWhiteSpaceOnly(string input) => input.Any(char.IsLetter) && !input.All(char.IsWhiteSpace) && !input.Any(char.IsDigit) && !input.Any(char.IsPunctuation);
     }
 }

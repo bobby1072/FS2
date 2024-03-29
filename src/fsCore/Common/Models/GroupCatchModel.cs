@@ -1,10 +1,13 @@
 using System.Text.Json.Serialization;
 using Common.Attributes;
+using Common.Models.Validators;
+using FluentValidation;
 
 namespace Common.Models
 {
     public class GroupCatch : BaseModel
     {
+        private static GroupCatchValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
@@ -13,6 +16,7 @@ namespace Common.Models
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
+        [LockedProperty]
         [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
         [JsonPropertyName("user")]
@@ -59,6 +63,7 @@ namespace Common.Models
             GroupId = groupId;
             Group = group;
             User = user;
+            _validator.ValidateAndThrow(this);
         }
         public GroupCatch ApplyDefaults(Guid? userId = null)
         {
