@@ -268,7 +268,6 @@ export const GroupPositionDataTable: React.FC<{
           yesAction={() => {
             reset();
             deletePositionFunc({
-              groupId: groupId,
               positionId: positionToDeleteId,
             });
           }}

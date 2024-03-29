@@ -1,5 +1,6 @@
 using System.Net;
 using Common.Models;
+using Common.Models.MiscModels;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
@@ -39,6 +40,15 @@ namespace fsCore.Controllers
         {
             var (latLng, groupId) = input.BreakDown();
             return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, _getCurrentUserWithPermissions()));
+        }
+        [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpPost("GetCatchesInSquareRange")]
+        public async Task<IActionResult> GetCatchesInSquareRange([FromBody] SquareRangeCatchesInput input)
+        {
+            var (bottomLeftLatLong, topRightLatLong, groupId) = input.BreakDown();
+            return Ok(await _groupCatchService.GetCatchesInSquareRange(bottomLeftLatLong, topRightLatLong, groupId, _getCurrentUserWithPermissions()));
         }
     }
 }

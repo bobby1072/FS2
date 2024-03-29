@@ -55,9 +55,9 @@ namespace fsCore.Service
             }
 
         }
-        public async Task<Group> DeleteGroup(Guid group, UserWithGroupPermissionSet currentUser)
+        public async Task<Group> DeleteGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(group, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -85,13 +85,13 @@ namespace fsCore.Service
 
             }
         }
-        public async Task<GroupPosition> DeletePosition(Guid positionId, Guid groupId, UserWithGroupPermissionSet currentUser)
+        public async Task<GroupPosition> DeletePosition(Guid positionId, UserWithGroupPermissionSet currentUser)
         {
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, groupId))
+            var position = await _groupPositionRepo.GetOne(positionId, _groupPositionType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, position.GroupId))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            var position = await _groupPositionRepo.GetOne(positionId, _groupPositionType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
             return (await _groupPositionRepo.Delete(new[] { position }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntDeleteGroup, HttpStatusCode.InternalServerError);
         }
         public async Task<(ICollection<Group>, ICollection<GroupMember>)> GetAllGroupsAndMembershipsForUser(User currentUser)
