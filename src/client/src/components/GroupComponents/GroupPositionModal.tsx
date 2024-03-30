@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IGroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import {
   Alert,
   Button,

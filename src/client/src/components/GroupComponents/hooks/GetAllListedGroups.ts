@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { IGroupModel } from "../../../models/GroupModel";
+import { IGroupModel } from "../../../models/IGroupModel";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";

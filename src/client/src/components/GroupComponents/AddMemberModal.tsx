@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { IGroupMemberModel } from "../../models/GroupMemberModel";
-import { IGroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupMemberModel } from "../../models/IGroupMemberModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { useSaveMemberMutation } from "./hooks/SaveMemberMutation";
 import { useEffect, useState } from "react";
-import { IUserModel } from "../../models/UserModel";
+import { IUserModel } from "../../models/IUserModel";
 import {
   Alert,
   Button,

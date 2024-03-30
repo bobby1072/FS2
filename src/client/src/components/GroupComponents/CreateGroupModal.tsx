@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { StyledDialogTitle } from "../../common/StyledDialogTitle";
 import { CreateGroupModalForm } from "./CreateGroupModalForm";
-import { IGroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/IGroupModel";
 import { useEffect, useState } from "react";
 import { useDeleteGroupMutation } from "./hooks/DeleteGroupMutation";
 import { useSnackbar } from "notistack";

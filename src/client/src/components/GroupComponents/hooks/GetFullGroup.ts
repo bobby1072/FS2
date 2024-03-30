@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
-import { IGroupModel } from "../../../models/GroupModel";
+import { IGroupModel } from "../../../models/IGroupModel";
 import { ApiException } from "../../../common/ApiException";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
-import { IGroupMemberModel } from "../../../models/GroupMemberModel";
+import { IGroupMemberModel } from "../../../models/IGroupMemberModel";
 
 export const useGetFullGroup = (groupId?: string) => {
   const { user } = useAuthentication();

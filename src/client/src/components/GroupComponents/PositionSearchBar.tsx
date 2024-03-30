@@ -1,5 +1,5 @@
 import React from "react";
-import { IGroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import { Autocomplete, IconButton, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { IGroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/IGroupModel";
 import { useSaveGroupMutation } from "./hooks/SaveGroupMutation";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";

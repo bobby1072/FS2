@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import Constants from "../Constants";
 import BackendApiServiceProvider from "../../utils/BackendApiServiceProvider";
-import { IUserModel } from "../../models/UserModel";
+import { IUserModel } from "../../models/IUserModel";
 import { useAuthentication } from "../contexts/AuthenticationContext";
 import { ApiException } from "../ApiException";
 

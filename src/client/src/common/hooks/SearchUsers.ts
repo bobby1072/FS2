@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
 import { useAuthentication } from "../contexts/AuthenticationContext";
-import { IUserModel } from "../../models/UserModel";
+import { IUserModel } from "../../models/IUserModel";
 import { ApiException } from "../ApiException";
 import BackendApiServiceProvider from "../../utils/BackendApiServiceProvider";
 

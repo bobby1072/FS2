@@ -2,7 +2,7 @@ import MUIDataTable, {
   MUIDataTableColumnDef,
   MUIDataTableOptions,
 } from "mui-datatables";
-import { IGroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -81,7 +81,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage the group",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageGroup"),
         customBodyRender: (value) => {
           return value ? (
@@ -97,7 +97,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage catches",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageCatches"),
         customBodyRender: (value) => {
           return value ? (
@@ -113,7 +113,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage members",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageMembers"),
         customBodyRender: (value) => {
           return value ? (
@@ -130,7 +130,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can read members",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canReadMembers"),
         customBodyRender: (value) => {
           return value ? (
@@ -146,7 +146,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can read catches",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canReadCatches"),
         customBodyRender: (value) => {
           return value ? (
@@ -161,6 +161,7 @@ export const GroupPositionDataTable: React.FC<{
       name: "id",
       label: " ",
       options: {
+        sort: false,
         viewColumns: false,
         customBodyRender: (id) => {
           return (

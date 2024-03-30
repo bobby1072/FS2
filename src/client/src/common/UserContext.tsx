@@ -1,5 +1,5 @@
 import React, { ReactNode, createContext, useContext } from "react";
-import { IUserModel } from "../models/UserModel";
+import { IUserModel } from "../models/IUserModel";
 import { useGetUserQuery } from "./hooks/GetUserQuery";
 import { Loading } from "./Loading";
 

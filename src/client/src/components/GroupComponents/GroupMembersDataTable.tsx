@@ -3,9 +3,9 @@ import MUIDataTable, {
   MUIDataTableOptions,
 } from "mui-datatables";
 import { Add as AddIcon } from "@mui/icons-material";
-import { IGroupMemberModel } from "../../models/GroupMemberModel";
-import { IGroupPositionModel } from "../../models/GroupPositionModel";
-import { IUserModel } from "../../models/UserModel";
+import { IGroupMemberModel } from "../../models/IGroupMemberModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
+import { IUserModel } from "../../models/IUserModel";
 import Avatar from "react-avatar";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -125,7 +125,7 @@ export const GroupMembersDataTable: React.FC<{
       label: "Name",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {

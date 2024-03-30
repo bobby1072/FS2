@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { IClientConfigResponse } from "../../models/ClientConfigResponse";
+import { IClientConfigResponse } from "../../models/IClientConfigResponse";
 import { useClientConfigQuery } from "../hooks/ClientConfigQuery";
 import { Loading } from "../Loading";
 import { ApiException } from "../ApiException";

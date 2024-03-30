@@ -1,5 +1,5 @@
 import { Autocomplete, IconButton, TextField } from "@mui/material";
-import { IUserModel } from "../models/UserModel";
+import { IUserModel } from "../models/IUserModel";
 import { useSearchUsers } from "./hooks/SearchUsers";
 import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";

@@ -20,7 +20,9 @@ namespace fsCore.Controllers.ControllerModels
         [JsonPropertyName("caughtAt")]
         public DateTime CaughtAt { get; set; }
         [JsonPropertyName("catchPhoto")]
-        public byte[]? CatchPhoto { get; set; }
+        public string? CatchPhoto { get; set; }
+        [JsonPropertyName("createdAt")]
+        public string? CreatedAt { get; set; }
         [JsonPropertyName("latitude")]
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
@@ -40,8 +42,8 @@ namespace fsCore.Controllers.ControllerModels
                 longitude: Longitude,
                 description: Description,
                 id: Id,
-                createdAt: null,
-                catchPhoto: CatchPhoto,
+                createdAt: CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
+                catchPhoto: CatchPhoto is not null ? Convert.FromBase64String(CatchPhoto) : null,
                 group: null,
                 user: null,
                 worldFishTaxocode: WorldFishTaxocode,

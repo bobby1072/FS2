@@ -1,4 +1,4 @@
-import { IGroupPositionModel } from "./GroupPositionModel";
+import { IGroupPositionModel } from "./IGroupPositionModel";
 
 export interface IGroupModel {
   id?: string;

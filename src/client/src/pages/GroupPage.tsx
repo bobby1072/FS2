@@ -26,7 +26,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
-import { IGroupModel } from "../models/GroupModel";
+import { IGroupModel } from "../models/IGroupModel";
 import { useCurrentUser } from "../common/UserContext";
 
 interface IMatchRange {

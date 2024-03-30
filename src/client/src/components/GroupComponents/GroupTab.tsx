@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { IGroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/IGroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";

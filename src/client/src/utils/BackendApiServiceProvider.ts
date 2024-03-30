@@ -1,13 +1,13 @@
 import axios, { AxiosInstance } from "axios";
-import { IClientConfigResponse } from "../models/ClientConfigResponse";
-import { IUserModel } from "../models/UserModel";
+import { IClientConfigResponse } from "../models/IClientConfigResponse";
+import { IUserModel } from "../models/IUserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
-import { IGroupModel } from "../models/GroupModel";
+import { IGroupModel } from "../models/IGroupModel";
 import { ApiException } from "../common/ApiException";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
-import { IGroupMemberModel } from "../models/GroupMemberModel";
+import { IGroupMemberModel } from "../models/IGroupMemberModel";
 import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
-import { IWorldFishModel } from "../models/WorldFishModel";
+import { IWorldFishModel } from "../models/IWorldFishModel";
 
 export default abstract class BackendApiServiceProvider {
   private static FormatAccessToken(accessToken: string) {
