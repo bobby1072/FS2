@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { IClientConfigResponse } from "../models/IClientConfigResponse";
-import { IUserModel } from "../models/IUserModel";
+import { IUserModel, IUserWithPermissionsRawModel } from "../models/IUserModel";
 import { SaveGroupInput } from "../components/GroupComponents/CreateGroupModalForm";
 import { IGroupModel } from "../models/IGroupModel";
 import { ApiException } from "../common/ApiException";
@@ -80,6 +80,21 @@ export default abstract class BackendApiServiceProvider {
   public static async GetUser(accessToken: string): Promise<IUserModel> {
     const { data } = await this._httpClient
       .get<IUserModel>("User/Self", {
+        headers: {
+          Authorization: this.FormatAccessToken(accessToken),
+        },
+      })
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
+  public static async GetUserWithGroupPermissions(accessToken: string) {
+    const { data } = await this._httpClient
+      .get<IUserWithPermissionsRawModel>("User/SelfWithGroupPermissions", {
         headers: {
           Authorization: this.FormatAccessToken(accessToken),
         },

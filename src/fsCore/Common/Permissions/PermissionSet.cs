@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Common.Permissions
 {
-    public class Permission<T> where T : class
+    public class Permission<T>
     {
         [JsonConstructor]
         public Permission() { }
@@ -19,7 +19,7 @@ namespace Common.Permissions
             Fields = fields?.ToHashSet();
         }
     }
-    public class PermissionSet<TModel> where TModel : class
+    public class PermissionSet<TModel>
     {
         [JsonPropertyName("abilities")]
         public ICollection<Permission<TModel>> Abilities { get; set; } = new HashSet<Permission<TModel>>();

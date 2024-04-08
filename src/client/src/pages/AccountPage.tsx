@@ -1,6 +1,6 @@
 import { Grid, IconButton, Paper, Typography } from "@mui/material";
 import { PageBase } from "../common/PageBase";
-import { useCurrentUser } from "../common/UserContext";
+import { useCurrentUser } from "../common/contexts/UserContext";
 import Avatar from "react-avatar";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import EditIcon from "@mui/icons-material/Edit";

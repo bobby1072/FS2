@@ -15,7 +15,7 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import { prettyDateWithYear } from "../../utils/DateTime";
-import { useCurrentUser } from "../../common/UserContext";
+import { useCurrentUser } from "../../common/contexts/UserContext";
 export const GroupTab: React.FC<{
   group: IGroupModel;
   openModal: () => void;

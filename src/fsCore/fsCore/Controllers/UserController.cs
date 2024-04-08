@@ -1,6 +1,8 @@
 using System.Net;
 using Common.Models;
+using Common.Permissions;
 using fsCore.Controllers.Attributes;
+using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +40,15 @@ namespace fsCore.Controllers
         public async Task<IActionResult> SearchUsers(string searchTerm)
         {
             return Ok(await _userService.SearchUsers(searchTerm));
+        }
+        [ProducesDefaultResponseType(typeof(RawUserPermission))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser]
+        [RequiredUserWithPermissions(true)]
+        [HttpGet("SelfWithGroupPermissions")]
+        public async Task<IActionResult> GetUserWithPermissions()
+        {
+            return Ok(RawUserPermission.FromUserWithPermissions(_getCurrentUserWithPermissions()));
         }
     }
 }

@@ -20,7 +20,7 @@ import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
-import { UserContextProvider } from "./common/UserContext";
+import { UserContextProvider } from "./common/contexts/UserContext";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
