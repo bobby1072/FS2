@@ -27,16 +27,16 @@ export class PermissionManager {
     if (fields) {
       return this._permissions.some(
         (p) =>
-          (p.action === action &&
+          (p.action.includes(action) &&
             p.subject === subject &&
             (!p.fields || p.fields.length === 0)) ||
-          (p.action === action &&
+          (p.action.includes(action) &&
             p.subject === subject &&
             p.fields?.includes(fields))
       );
     }
     return this._permissions.some(
-      (p) => p.action === action && p.subject === subject
+      (p) => p.action.includes(action) && p.subject === subject
     );
   }
 }
@@ -57,9 +57,12 @@ export const PermissionContextProvider: React.FC<{
   const {
     groupPermissions: { abilities },
   } = useCurrentUser();
-  const [permissionManager] = useState<PermissionManager>(
-    new PermissionManager(abilities ?? [])
-  );
+  const [permissionManager, setPermissionsManager] =
+    useState<PermissionManager>();
+  useEffect(() => {
+    setPermissionsManager(new PermissionManager(abilities ?? []));
+  }, [abilities]);
+  if (!permissionManager) return null;
   return (
     <AppAbilityContext.Provider value={{ permissionManager }}>
       {children}

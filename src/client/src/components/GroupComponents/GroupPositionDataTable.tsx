@@ -13,6 +13,10 @@ import { useDeletePositionMutation } from "./hooks/DeletePosition";
 import { useSnackbar } from "notistack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { usePersistedState } from "../../common/hooks/PersistedState";
+import {
+  PermissionActions,
+  useCurrentPermissionSet,
+} from "../../common/contexts/AbilitiesContext";
 
 interface GroupPositionRowItem {
   name: string;
@@ -47,6 +51,7 @@ export const GroupPositionDataTable: React.FC<{
     "positionTableSelectedRows",
     ["name", "canManageGroup", "canManageCatches", "canManageMembers"]
   );
+  const { permissionManager } = useCurrentPermissionSet();
   const rowItems = mapBaseDataToRowItems(positions);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string>();
   const [addPositionModalOpen, setAddPositionModalOpen] = useState<
@@ -66,6 +71,10 @@ export const GroupPositionDataTable: React.FC<{
       enqueueSnackbar("Position deleted", { variant: "error" });
     }
   }, [deletedPosition, enqueueSnackbar, setPositionToDeleteId]);
+  const canManageGroup = permissionManager.Can(
+    PermissionActions.Manage,
+    groupId
+  );
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "name",
@@ -163,6 +172,7 @@ export const GroupPositionDataTable: React.FC<{
       options: {
         sort: false,
         viewColumns: false,
+        display: canManageGroup ? true : "excluded",
         customBodyRender: (id) => {
           return (
             <Grid
@@ -217,18 +227,19 @@ export const GroupPositionDataTable: React.FC<{
         setSelectedRows([...selectedRows, changedColumn]);
       }
     },
-    customToolbar: () => (
-      <>
-        <Tooltip title={"Add position"}>
-          <IconButton
-            size="large"
-            onClick={() => setAddPositionModalOpen(true)}
-          >
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
+    customToolbar: () =>
+      canManageGroup && (
+        <>
+          <Tooltip title={"Add position"}>
+            <IconButton
+              size="large"
+              onClick={() => setAddPositionModalOpen(true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
     print: false,
     viewColumns: true,
     searchPlaceholder: "Search",

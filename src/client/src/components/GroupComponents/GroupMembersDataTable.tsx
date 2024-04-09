@@ -157,6 +157,13 @@ export const GroupMembersDataTable: React.FC<{
       name: "id",
       label: " ",
       options: {
+        display: permissionManager.Can(
+          PermissionActions.Manage,
+          groupId,
+          PermissionFields.GroupMember
+        )
+          ? true
+          : "excluded",
         customBodyRender: (id) => {
           return id === leader.id ? null : (
             <Grid

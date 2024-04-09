@@ -118,7 +118,7 @@ namespace fsCore.Service
         public async Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Positions", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (foundGroup.Public is false && (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundGroup) || !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup)))
+            if (foundGroup.Public is false && !currentUser.GroupPermissions.Can(PermissionConstants.BelongsTo, foundGroup))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
