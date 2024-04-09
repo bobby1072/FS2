@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { IUserWithPermissionsRawModel } from "../../models/IUserModel";
 import { ApiException } from "../ApiException";
 import { useCurrentUser } from "./UserContext";
@@ -7,7 +7,11 @@ export enum PermissionActions {
   Manage = "manage",
   BelongsTo = "belongsTo",
 }
-export class PermissionProvider {
+export enum PermissionFields {
+  GroupCatch = "GroupCatch",
+  GroupMember = "GroupMember",
+}
+export class PermissionManager {
   private _permissions: IUserWithPermissionsRawModel["groupPermissions"]["abilities"] =
     [];
   public constructor(
@@ -18,14 +22,14 @@ export class PermissionProvider {
   public Can(
     action: PermissionActions,
     subject: string,
-    fields?: string | null
+    fields?: PermissionFields | null
   ) {
     if (fields) {
       return this._permissions.some(
         (p) =>
           (p.action === action &&
             p.subject === subject &&
-            (!fields || fields.length === 0)) ||
+            (!p.fields || p.fields.length === 0)) ||
           (p.action === action &&
             p.subject === subject &&
             p.fields?.includes(fields))
@@ -37,11 +41,11 @@ export class PermissionProvider {
   }
 }
 
-export const AppAbilityContext = createContext<PermissionProvider | undefined>(
-  undefined
-);
+export const AppAbilityContext = createContext<
+  { permissionManager: PermissionManager } | undefined
+>(undefined);
 
-export const useGetPermissionSet = () => {
+export const useCurrentPermissionSet = () => {
   const value = useContext(AppAbilityContext);
   if (!value) throw new ApiException("No permission set found");
   return value;
@@ -53,9 +57,11 @@ export const PermissionContextProvider: React.FC<{
   const {
     groupPermissions: { abilities },
   } = useCurrentUser();
-  const permissionSet = new PermissionProvider(abilities);
+  const [permissionManager] = useState<PermissionManager>(
+    new PermissionManager(abilities ?? [])
+  );
   return (
-    <AppAbilityContext.Provider value={permissionSet}>
+    <AppAbilityContext.Provider value={{ permissionManager }}>
       {children}
     </AppAbilityContext.Provider>
   );

@@ -15,6 +15,13 @@ import { YesOrNoModal } from "../../common/YesOrNoModal";
 import { useSnackbar } from "notistack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useGetAllMembers } from "./hooks/GetFullGroup";
+import { Loading } from "../../common/Loading";
+import {
+  PermissionActions,
+  PermissionFields,
+  useCurrentPermissionSet,
+} from "../../common/contexts/AbilitiesContext";
 
 interface GroupMemberRowItem {
   username: string;
@@ -70,11 +77,11 @@ const mapBaseDataToRowItems = (
 };
 
 export const GroupMembersDataTable: React.FC<{
-  members: IGroupMemberModel[];
   leader: IUserModel;
   groupId: string;
   positions: IGroupPositionModel[];
-}> = ({ leader, members, positions, groupId }) => {
+}> = ({ leader, positions, groupId }) => {
+  const { data: members } = useGetAllMembers(groupId);
   const rowItems = mapBaseDataToRowItems(
     members ?? [],
     positions ?? [],
@@ -98,6 +105,8 @@ export const GroupMembersDataTable: React.FC<{
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<
     boolean | IGroupMemberModel
   >(false);
+  const { permissionManager } = useCurrentPermissionSet();
+  if (!members) return <Loading />;
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "potentialAvatar",
@@ -194,15 +203,23 @@ export const GroupMembersDataTable: React.FC<{
     resizableColumns: false,
     rowsPerPage: 15,
     download: false,
-    customToolbar: () => (
-      <>
-        <Tooltip title={"Add member"}>
-          <IconButton size="large" onClick={() => setAddMemberModalOpen(true)}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
+    customToolbar: () =>
+      permissionManager.Can(
+        PermissionActions.Manage,
+        groupId,
+        PermissionFields.GroupMember
+      ) && (
+        <>
+          <Tooltip title={"Add member"}>
+            <IconButton
+              size="large"
+              onClick={() => setAddMemberModalOpen(true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
     print: false,
     viewColumns: false,
     searchPlaceholder: "Search",

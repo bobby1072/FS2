@@ -27,7 +27,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
 import { IGroupModel } from "../models/IGroupModel";
-import { useCurrentUser } from "../common/contexts/UserContext";
 
 interface IMatchRange {
   groupStartIndex: number;
@@ -43,7 +42,6 @@ export const AllGroupDisplayPage: React.FC = () => {
   const [groupViewChoice, setGroupViewChoice] = useState<GroupQueryChoice>(
     GroupQueryChoice.AllListed
   );
-  const { username } = useCurrentUser();
   const [groupFilterString, setGroupFilterString] = useState<string>();
   const { data: totalGroupCount, error: countError } = useGetGroupCount();
   const {
@@ -232,7 +230,6 @@ export const AllGroupDisplayPage: React.FC = () => {
                   <Grid item width="60%" key={x.id}>
                     <GroupTab
                       group={x}
-                      linkToMainGroupPage={x.public || x.leaderId === username}
                       openModal={() => {
                         setCreateNewGroupModal(x);
                       }}

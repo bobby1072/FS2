@@ -1,4 +1,7 @@
-import { PermissionActions } from "../common/contexts/AbilitiesContext";
+import {
+  PermissionActions,
+  PermissionFields,
+} from "../common/contexts/AbilitiesContext";
 import { IGroupModel } from "./IGroupModel";
 
 export interface IUserModel {
@@ -14,7 +17,7 @@ export interface IUserWithPermissionsRawModel extends IUserModel {
     abilities: {
       action: PermissionActions;
       subject: string;
-      fields?: string[] | null;
+      fields?: PermissionFields[] | null;
     }[];
   };
 }

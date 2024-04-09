@@ -1,5 +1,5 @@
 import { AccountCircle } from "@mui/icons-material";
-import { AllGroupDisplayPage } from "../pages/GroupPage";
+import { AllGroupDisplayPage } from "../pages/GroupsPage";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { AccountPage } from "../pages/AccountPage";
 import { IndividualGroupPage } from "../pages/IndividualGroupPage";
