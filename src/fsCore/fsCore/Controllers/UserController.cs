@@ -18,14 +18,6 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(User))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUser(true)]
-        [HttpGet("Self")]
-        public async Task<IActionResult> GetSelf()
-        {
-            return Ok(_getCurrentUser());
-        }
-        [ProducesDefaultResponseType(typeof(User))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUser(true)]
         [HttpGet("ChangeUsername")]
         public async Task<IActionResult> ChangeUserName(string newUsername)
         {

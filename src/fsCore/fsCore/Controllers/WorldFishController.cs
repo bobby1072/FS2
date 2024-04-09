@@ -27,17 +27,5 @@ namespace fsCore.Controllers
             }
             return Ok(await _worldFishService.FindSomeLike(fishAnyName));
         }
-        [ProducesDefaultResponseType(typeof(WorldFish))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [ProducesResponseType((int)HttpStatusCode.NotFound)]
-        [HttpGet("FindOne")]
-        public async Task<IActionResult> FindOneRoute(string fishProp, string propertyName)
-        {
-            if (string.IsNullOrEmpty(fishProp) || string.IsNullOrEmpty(propertyName))
-            {
-                throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.UnprocessableEntity);
-            }
-            return Ok(await _worldFishService.FindOne(fishProp, propertyName));
-        }
     }
 }

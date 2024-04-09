@@ -11,17 +11,6 @@ namespace Persistence.EntityFramework.Repository
             return WorldFishEntity.RuntimeToEntity(runtimeObj);
         }
         public WorldFishRepository(IDbContextFactory<FsContext> dbContextFactory) : base(dbContextFactory) { }
-        public async Task<ICollection<WorldFish>?> FindSomeLike(WorldFish fish)
-        {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-            var entity = WorldFishEntity.RuntimeToEntity(fish);
-            var foundEnts = await dbContext.WorldFish
-                .Where(x => (fish.Nickname != null && x.Nickname != null && x.Nickname.ToLower().Contains(fish.Nickname.ToLower())) ||
-                            (fish.ScientificName != null && x.ScientificName != null && x.ScientificName.ToLower().Contains(fish.ScientificName.ToLower())) ||
-                            (fish.EnglishName != null && x.EnglishName != null && x.EnglishName.ToLower().Contains(fish.EnglishName.ToLower())))
-                .ToArrayAsync();
-            return foundEnts?.Select(x => x.ToRuntime()).ToArray();
-        }
         public async Task<ICollection<WorldFish>?> FindSomeLike(string anyFish)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
