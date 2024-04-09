@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/IGroupModel";
 import { useSaveGroupMutation } from "./hooks/SaveGroupMutation";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,7 @@ const formSchema = z.object({
   createdAt: z.string().optional().nullable(),
 });
 export type SaveGroupInput = z.infer<typeof formSchema>;
-const mapDefaultValues = (group?: GroupModel): Partial<SaveGroupInput> => {
+const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
   if (!group) return { isListed: true, isPublic: true };
   return {
     id: group.id,
@@ -39,7 +39,7 @@ const mapDefaultValues = (group?: GroupModel): Partial<SaveGroupInput> => {
   };
 };
 export const CreateGroupModalForm: React.FC<{
-  group?: GroupModel;
+  group?: IGroupModel;
   setIsSaveDisabled?: (boolVal: boolean) => void;
   closeModal?: () => void;
   useSnackBarOnSuccess?: boolean;

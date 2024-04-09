@@ -3,7 +3,6 @@ using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
 using fsCore.Service.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {
@@ -60,9 +59,9 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpGet("DeletePosition")]
-        public async Task<IActionResult> DeletePosition(Guid groupId, Guid positionId)
+        public async Task<IActionResult> DeletePosition(Guid positionId)
         {
-            return Ok(await _groupService.DeletePosition(positionId, groupId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupService.DeletePosition(positionId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

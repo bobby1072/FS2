@@ -1,10 +1,10 @@
-import { GroupModel } from "./GroupModel";
-import { GroupPositionModel } from "./GroupPositionModel";
+import { IGroupModel } from "./IGroupModel";
+import { IGroupPositionModel } from "./IGroupPositionModel";
 
-export interface GroupMemberModel {
+export interface IGroupMemberModel {
   id?: string;
   groupId: string;
-  group?: GroupModel | null;
+  group?: IGroupModel | null;
   userId: string;
   user?: {
     id: string;
@@ -14,5 +14,5 @@ export interface GroupMemberModel {
     name?: string | null;
   } | null;
   positionId: string;
-  position?: GroupPositionModel | null;
+  position?: IGroupPositionModel | null;
 }

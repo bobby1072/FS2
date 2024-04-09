@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import {
   Alert,
   Button,
@@ -33,7 +33,7 @@ const formSchema = z.object({
 export type SaveGroupPositionInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (
   groupId: string,
-  position?: GroupPositionModel
+  position?: IGroupPositionModel
 ): Partial<SaveGroupPositionInput> => {
   if (!position)
     return {
@@ -56,7 +56,7 @@ const mapDefaultValues = (
   };
 };
 export const GroupPositionModal: React.FC<{
-  defaultValue?: GroupPositionModel;
+  defaultValue?: IGroupPositionModel;
   closeModal: () => void;
   groupId: string;
 }> = ({ defaultValue, closeModal, groupId }) => {

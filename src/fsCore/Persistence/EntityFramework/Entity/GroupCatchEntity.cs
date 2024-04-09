@@ -24,9 +24,12 @@ namespace Persistence.EntityFramework.Entity
         public byte[]? CatchPhoto { get; set; }
         public double Latitude { get; set; }
         public double Longitude { get; set; }
+        public string? WorldFishTaxocode { get; set; }
+        [ForeignKey(nameof(WorldFishTaxocode))]
+        public WorldFishEntity? WorldFish { get; set; }
         public override GroupCatch ToRuntime()
         {
-            return new GroupCatch(UserId, GroupId, Species, Weight, CaughtAt, Length, Latitude, Longitude, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime());
+            return new GroupCatch(UserId, GroupId, Species, Weight, CaughtAt, Length, Latitude, Longitude, Description, Id, CreatedAt, CatchPhoto, Group?.ToRuntime(), User?.ToRuntime(), WorldFishTaxocode, WorldFish?.ToRuntime());
         }
         public static GroupCatchEntity RuntimeToEntity(GroupCatch groupCatch)
         {

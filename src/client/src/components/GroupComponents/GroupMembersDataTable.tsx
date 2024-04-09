@@ -3,9 +3,9 @@ import MUIDataTable, {
   MUIDataTableOptions,
 } from "mui-datatables";
 import { Add as AddIcon } from "@mui/icons-material";
-import { GroupMemberModel } from "../../models/GroupMemberModel";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
-import { UserModel } from "../../models/UserModel";
+import { IGroupMemberModel } from "../../models/IGroupMemberModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
+import { IUserModel } from "../../models/IUserModel";
 import Avatar from "react-avatar";
 import { Grid, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -15,6 +15,13 @@ import { YesOrNoModal } from "../../common/YesOrNoModal";
 import { useSnackbar } from "notistack";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { useGetAllMembers } from "./hooks/GetFullGroup";
+import { Loading } from "../../common/Loading";
+import {
+  PermissionActions,
+  PermissionFields,
+  useCurrentPermissionSet,
+} from "../../common/contexts/AbilitiesContext";
 
 interface GroupMemberRowItem {
   username: string;
@@ -28,9 +35,9 @@ interface GroupMemberRowItem {
 }
 
 const mapBaseDataToRowItems = (
-  members: GroupMemberModel[],
-  positions: GroupPositionModel[],
-  leader?: UserModel
+  members: IGroupMemberModel[],
+  positions: IGroupPositionModel[],
+  leader?: IUserModel
 ): GroupMemberRowItem[] => {
   const rowItems: GroupMemberRowItem[] = [];
   if (leader) {
@@ -70,11 +77,11 @@ const mapBaseDataToRowItems = (
 };
 
 export const GroupMembersDataTable: React.FC<{
-  members: GroupMemberModel[];
-  leader: UserModel;
+  leader: IUserModel;
   groupId: string;
-  positions: GroupPositionModel[];
-}> = ({ leader, members, positions, groupId }) => {
+  positions: IGroupPositionModel[];
+}> = ({ leader, positions, groupId }) => {
+  const { data: members } = useGetAllMembers(groupId);
   const rowItems = mapBaseDataToRowItems(
     members ?? [],
     positions ?? [],
@@ -96,8 +103,10 @@ export const GroupMembersDataTable: React.FC<{
     }
   }, [deletedMember, enqueueSnackbar, setMemberToDeleteId]);
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<
-    boolean | GroupMemberModel
+    boolean | IGroupMemberModel
   >(false);
+  const { permissionManager } = useCurrentPermissionSet();
+  if (!members) return <Loading />;
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "potentialAvatar",
@@ -125,7 +134,7 @@ export const GroupMembersDataTable: React.FC<{
       label: "Name",
       options: {
         filter: true,
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -148,6 +157,13 @@ export const GroupMembersDataTable: React.FC<{
       name: "id",
       label: " ",
       options: {
+        display: permissionManager.Can(
+          PermissionActions.Manage,
+          groupId,
+          PermissionFields.GroupMember
+        )
+          ? true
+          : "excluded",
         customBodyRender: (id) => {
           return id === leader.id ? null : (
             <Grid
@@ -194,15 +210,23 @@ export const GroupMembersDataTable: React.FC<{
     resizableColumns: false,
     rowsPerPage: 15,
     download: false,
-    customToolbar: () => (
-      <>
-        <Tooltip title={"Add member"}>
-          <IconButton size="large" onClick={() => setAddMemberModalOpen(true)}>
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
+    customToolbar: () =>
+      permissionManager.Can(
+        PermissionActions.Manage,
+        groupId,
+        PermissionFields.GroupMember
+      ) && (
+        <>
+          <Tooltip title={"Add member"}>
+            <IconButton
+              size="large"
+              onClick={() => setAddMemberModalOpen(true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
     print: false,
     viewColumns: false,
     searchPlaceholder: "Search",

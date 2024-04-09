@@ -1,10 +1,13 @@
 using System.Text.Json.Serialization;
 using Common.Attributes;
+using Common.Models.Validators;
+using FluentValidation;
 
 namespace Common.Models
 {
     public class GroupCatch : BaseModel
     {
+        private static GroupCatchValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
@@ -13,11 +16,9 @@ namespace Common.Models
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
+        [LockedProperty]
         [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
-        [LockedProperty]
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [LockedProperty]
@@ -40,7 +41,11 @@ namespace Common.Models
         public double Latitude { get; set; }
         [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user)
+        [JsonPropertyName("worldFishTaxocode")]
+        public string? WorldFishTaxocode { get; set; }
+        [JsonPropertyName("worldFish")]
+        public WorldFish? WorldFish { get; set; }
+        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user, string? worldFishTaxocode, WorldFish? worldFish)
         {
             Id = id;
             Latitude = latitude;
@@ -49,6 +54,8 @@ namespace Common.Models
             Species = species;
             Weight = weight;
             Length = length;
+            WorldFishTaxocode = worldFishTaxocode;
+            WorldFish = worldFish;
             Description = description;
             CreatedAt = createdAt ?? DateTime.UtcNow;
             CaughtAt = caughtAt;
@@ -56,6 +63,7 @@ namespace Common.Models
             GroupId = groupId;
             Group = group;
             User = user;
+            _validator.ValidateAndThrow(this);
         }
         public GroupCatch ApplyDefaults(Guid? userId = null)
         {

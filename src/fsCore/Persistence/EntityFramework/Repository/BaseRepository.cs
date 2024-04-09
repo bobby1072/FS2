@@ -159,7 +159,7 @@ namespace Persistence.EntityFramework.Repository
                 var set = dbContext.Set<TEnt>();
                 var similarItems = await _addRelationsToQuery(set, relationships)
                     .Where(likePredicate)
-                    .ToListAsync();
+                    .ToArrayAsync();
                 var runtimeObj = similarItems?.Select(x => x.ToRuntime());
                 return runtimeObj?.OfType<TBase>().ToArray();
             }

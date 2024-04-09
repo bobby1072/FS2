@@ -18,8 +18,8 @@ namespace Persistence.EntityFramework.Repository
             var groupPositions = await dbContext.Position
                 .Include(gp => gp.Group)
                 .Where(gp => gp.GroupId == groupId)
-                .ToListAsync();
-            return groupPositions.Select(gp => gp.ToRuntime()).ToList();
+                .ToArrayAsync();
+            return groupPositions.Select(gp => gp.ToRuntime()).ToArray();
         }
     }
 }

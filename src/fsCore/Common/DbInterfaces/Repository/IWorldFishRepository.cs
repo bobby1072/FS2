@@ -10,6 +10,5 @@ namespace Common.Dbinterfaces.Repository
         Task<WorldFish?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<WorldFish?> GetOne(WorldFish WorldFish, ICollection<string>? relationships = null);
         Task<ICollection<WorldFish>?> FindSomeLike(string anyFish);
-        Task<ICollection<WorldFish>?> FindSomeLike(WorldFish fish);
     }
 }

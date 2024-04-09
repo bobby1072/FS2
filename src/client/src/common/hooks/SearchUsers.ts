@@ -1,6 +1,6 @@
 import { useMutation } from "react-query";
 import { useAuthentication } from "../contexts/AuthenticationContext";
-import { UserModel } from "../../models/UserModel";
+import { IUserModel } from "../../models/IUserModel";
 import { ApiException } from "../ApiException";
 import BackendApiServiceProvider from "../../utils/BackendApiServiceProvider";
 
@@ -10,7 +10,7 @@ export const useSearchUsers = (minTermLength: number = 2) => {
     throw new Error("User not found");
   }
   const mutationResult = useMutation<
-    Omit<UserModel, "email">[],
+    Omit<IUserModel, "email">[],
     ApiException,
     { searchTerm: string }
   >(async (st) =>

@@ -3,6 +3,10 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string InvalidLatitudeAndLongitude = "Invalid latitude and longitude";
+        public const string InvalidGroupCatchSpecies = "Invalid species used in catch";
+        public const string InvalidGroupCatch = "Invalid catch";
+        public const string CouldntSaveCatch = "Couldn't save group catch";
         public const string InvalidGroupPositionName = "Invalid group position name. No punctuation or numbers allowed";
         public const string BadRequest = "Bad request";
         public const string InvalidGroupDescription = "Invalid group description";
@@ -35,5 +39,6 @@ namespace Common
         public const string InvalidUserEmail = "Invalid format for user 'email'";
         public const string InternalServerError = "Internal server error";
         public const string FailedToCreateFish = "Failed to create fish";
+        public const string FailedToDeleteFish = "Failed to delete fish";
     }
 }

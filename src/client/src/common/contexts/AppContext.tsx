@@ -1,10 +1,10 @@
 import { createContext, useContext } from "react";
-import { ClientConfigResponse } from "../../models/ClientConfigResponse";
+import { IClientConfigResponse } from "../../models/IClientConfigResponse";
 import { useClientConfigQuery } from "../hooks/ClientConfigQuery";
 import { Loading } from "../Loading";
 import { ApiException } from "../ApiException";
 
-export const AppContext = createContext<ClientConfigResponse | undefined>(
+export const AppContext = createContext<IClientConfigResponse | undefined>(
   undefined
 );
 

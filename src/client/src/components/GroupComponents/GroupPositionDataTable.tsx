@@ -2,7 +2,7 @@ import MUIDataTable, {
   MUIDataTableColumnDef,
   MUIDataTableOptions,
 } from "mui-datatables";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
@@ -13,6 +13,10 @@ import { useDeletePositionMutation } from "./hooks/DeletePosition";
 import { useSnackbar } from "notistack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { usePersistedState } from "../../common/hooks/PersistedState";
+import {
+  PermissionActions,
+  useCurrentPermissionSet,
+} from "../../common/contexts/AbilitiesContext";
 
 interface GroupPositionRowItem {
   name: string;
@@ -23,7 +27,7 @@ interface GroupPositionRowItem {
   canReadMembers: boolean;
   canReadCatches: boolean;
 }
-const mapBaseDataToRowItems = (rawData: GroupPositionModel[]) => {
+const mapBaseDataToRowItems = (rawData: IGroupPositionModel[]) => {
   const rowItems: GroupPositionRowItem[] = [];
   for (let i = 0; i < rawData.length; i++) {
     const localItem = rawData[i];
@@ -40,17 +44,18 @@ const mapBaseDataToRowItems = (rawData: GroupPositionModel[]) => {
   return rowItems;
 };
 export const GroupPositionDataTable: React.FC<{
-  positions: GroupPositionModel[];
+  positions: IGroupPositionModel[];
   groupId: string;
 }> = ({ positions, groupId }) => {
   const [selectedRows, setSelectedRows] = usePersistedState(
     "positionTableSelectedRows",
     ["name", "canManageGroup", "canManageCatches", "canManageMembers"]
   );
+  const { permissionManager } = useCurrentPermissionSet();
   const rowItems = mapBaseDataToRowItems(positions);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string>();
   const [addPositionModalOpen, setAddPositionModalOpen] = useState<
-    boolean | GroupPositionModel
+    boolean | IGroupPositionModel
   >(false);
   const { enqueueSnackbar } = useSnackbar();
   const {
@@ -66,6 +71,10 @@ export const GroupPositionDataTable: React.FC<{
       enqueueSnackbar("Position deleted", { variant: "error" });
     }
   }, [deletedPosition, enqueueSnackbar, setPositionToDeleteId]);
+  const canManageGroup = permissionManager.Can(
+    PermissionActions.Manage,
+    groupId
+  );
   const columns: MUIDataTableColumnDef[] = [
     {
       name: "name",
@@ -81,7 +90,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage the group",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageGroup"),
         customBodyRender: (value) => {
           return value ? (
@@ -97,7 +106,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage catches",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageCatches"),
         customBodyRender: (value) => {
           return value ? (
@@ -113,7 +122,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can manage members",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canManageMembers"),
         customBodyRender: (value) => {
           return value ? (
@@ -130,7 +139,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can read members",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canReadMembers"),
         customBodyRender: (value) => {
           return value ? (
@@ -146,7 +155,7 @@ export const GroupPositionDataTable: React.FC<{
       label: "Can read catches",
       options: {
         filter: true,
-        sort: true,
+        sort: false,
         display: selectedRows.includes("canReadCatches"),
         customBodyRender: (value) => {
           return value ? (
@@ -161,7 +170,9 @@ export const GroupPositionDataTable: React.FC<{
       name: "id",
       label: " ",
       options: {
+        sort: false,
         viewColumns: false,
+        display: canManageGroup ? true : "excluded",
         customBodyRender: (id) => {
           return (
             <Grid
@@ -216,18 +227,19 @@ export const GroupPositionDataTable: React.FC<{
         setSelectedRows([...selectedRows, changedColumn]);
       }
     },
-    customToolbar: () => (
-      <>
-        <Tooltip title={"Add position"}>
-          <IconButton
-            size="large"
-            onClick={() => setAddPositionModalOpen(true)}
-          >
-            <AddIcon />
-          </IconButton>
-        </Tooltip>
-      </>
-    ),
+    customToolbar: () =>
+      canManageGroup && (
+        <>
+          <Tooltip title={"Add position"}>
+            <IconButton
+              size="large"
+              onClick={() => setAddPositionModalOpen(true)}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ),
     print: false,
     viewColumns: true,
     searchPlaceholder: "Search",
@@ -268,7 +280,6 @@ export const GroupPositionDataTable: React.FC<{
           yesAction={() => {
             reset();
             deletePositionFunc({
-              groupId: groupId,
               positionId: positionToDeleteId,
             });
           }}

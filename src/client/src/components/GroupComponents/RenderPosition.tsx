@@ -1,7 +1,7 @@
 import { Chip, Grid, Typography } from "@mui/material";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 
-export const RenderPosition: React.FC<{ option: GroupPositionModel }> = ({
+export const RenderPosition: React.FC<{ option: IGroupPositionModel }> = ({
   option,
 }) => {
   return (

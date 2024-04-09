@@ -14,14 +14,9 @@ export const useDeletePositionMutation = () => {
     ApiException,
     {
       positionId: string;
-      groupId: string;
     }
   >((p) =>
-    BackendApiServiceProvider.DeletePosition(
-      p.positionId,
-      p.groupId,
-      user.access_token
-    )
+    BackendApiServiceProvider.DeletePosition(p.positionId, user.access_token)
   );
   useEffect(() => {
     if (mutationResults.data) {

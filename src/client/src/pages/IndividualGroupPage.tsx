@@ -1,19 +1,21 @@
 import { useParams } from "react-router-dom";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import { PageBase } from "../common/PageBase";
-import {
-  useGetAllMembers,
-  useGetFullGroup,
-} from "../components/GroupComponents/hooks/GetFullGroup";
+import { useGetFullGroup } from "../components/GroupComponents/hooks/GetFullGroup";
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
 import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
 import { GroupPositionDataTable } from "../components/GroupComponents/GroupPositionDataTable";
+import {
+  PermissionActions,
+  PermissionFields,
+  useCurrentPermissionSet,
+} from "../common/contexts/AbilitiesContext";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup } = useGetFullGroup(groupId);
-  const { data: groupMembers } = useGetAllMembers(groupId);
+  const { permissionManager } = useCurrentPermissionSet();
   if (!mainGroup) return <Loading fullScreen />;
   const {
     name: groupName,
@@ -22,6 +24,11 @@ export const IndividualGroupPage: React.FC = () => {
     leader: groupLeader,
     positions: allPositions,
   } = mainGroup;
+  const canReadMembers = permissionManager.Can(
+    PermissionActions.Read,
+    groupId!,
+    PermissionFields.GroupMember
+  );
   return (
     <PageBase>
       <AppAndDraw>
@@ -85,15 +92,16 @@ export const IndividualGroupPage: React.FC = () => {
               </Grid>
             </Paper>
           </Grid>
-          <Grid item width="50%">
-            <GroupMembersDataTable
-              leader={(groupLeader as any) ?? undefined}
-              members={groupMembers ?? []}
-              positions={allPositions ?? []}
-              groupId={mainGroup.id!}
-            />
-          </Grid>
-          <Grid item width="50%">
+          {canReadMembers && (
+            <Grid item width="50%">
+              <GroupMembersDataTable
+                leader={(groupLeader as any) ?? undefined}
+                positions={allPositions ?? []}
+                groupId={mainGroup.id!}
+              />
+            </Grid>
+          )}
+          <Grid item width={canReadMembers ? "50%" : "100%"}>
             <GroupPositionDataTable
               positions={allPositions ?? []}
               groupId={mainGroup.id!}

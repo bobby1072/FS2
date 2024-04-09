@@ -1,4 +1,4 @@
-export interface ClientConfigResponse {
+export interface IClientConfigResponse {
   apiHost: string;
   authorityHost: string;
   scope: string;

@@ -1,12 +1,12 @@
 import React from "react";
-import { GroupPositionModel } from "../../models/GroupPositionModel";
+import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import { Autocomplete, IconButton, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 export const PositionSearchBar: React.FC<{
-  positions: GroupPositionModel[];
-  position?: GroupPositionModel;
-  onChange: (position?: GroupPositionModel) => void;
+  positions: IGroupPositionModel[];
+  position?: IGroupPositionModel;
+  onChange: (position?: IGroupPositionModel) => void;
 }> = ({ positions, position, onChange }) => {
   if (position) {
     return (

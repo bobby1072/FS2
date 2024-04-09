@@ -9,20 +9,22 @@ import {
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { GroupModel } from "../../models/GroupModel";
+import { IGroupModel } from "../../models/IGroupModel";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import { prettyDateWithYear } from "../../utils/DateTime";
-import { useCurrentUser } from "../../common/UserContext";
+import {
+  PermissionActions,
+  useCurrentPermissionSet,
+} from "../../common/contexts/AbilitiesContext";
 export const GroupTab: React.FC<{
-  group: GroupModel;
+  group: IGroupModel;
   openModal: () => void;
-  linkToMainGroupPage?: boolean;
-}> = ({ group, openModal, linkToMainGroupPage = true }) => {
+}> = ({ group, openModal }) => {
+  const { permissionManager } = useCurrentPermissionSet();
   const [viewId, setViewId] = useState<boolean>(false);
-  const { id: selfId } = useCurrentUser();
   return (
     <Paper elevation={2}>
       <Grid
@@ -100,21 +102,17 @@ export const GroupTab: React.FC<{
             {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
           </Typography>
         </Grid>
-        {selfId === group.leaderId && (
+        {permissionManager.Can(PermissionActions.Manage, group.id!) && (
           <Grid item>
             <IconButton onClick={openModal} color="primary">
               <EditIcon />
             </IconButton>
           </Grid>
         )}
-        {linkToMainGroupPage && (
+        {(group.public ||
+          permissionManager.Can(PermissionActions.BelongsTo, group.id!)) && (
           <Grid item>
-            <Button
-              onClick={() => {
-                window.location.href = `/Group/${group.id}`;
-              }}
-              variant="contained"
-            >
+            <Button href={`/Group/${group.id}`} variant="contained">
               See more
             </Button>
           </Grid>
