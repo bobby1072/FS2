@@ -12,9 +12,10 @@ namespace Common.Models
                 return false;
             }
             var allPropertiesToCheck = checkAgainst.GetType().GetProperties();
-            foreach (var property in allPropertiesToCheck)
+            for (var i = 0; i < allPropertiesToCheck.Length; i++)
             {
-                if (property.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
+                var property = allPropertiesToCheck[i];
+                if (property?.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
                 {
                     return false;
                 }
@@ -25,8 +26,10 @@ namespace Common.Models
         {
             if (obj is not null)
             {
-                foreach (var property in this.GetType().GetProperties())
+                var thisType = this.GetType().GetProperties();
+                for (var i = 0; i < thisType.Length; i++)
                 {
+                    var property = thisType[i];
                     var foundSelfValue = property.GetValue(this);
                     var foundObjVal = property.GetValue(obj);
                     if (foundSelfValue != foundObjVal)
@@ -41,9 +44,10 @@ namespace Common.Models
         public virtual void RemoveSensitive()
         {
             var allProperties = this.GetType().GetProperties();
-            foreach (var property in allProperties)
+            for (var i = 0; i < allProperties.Length; i++)
             {
-                if (property.GetCustomAttribute<SensitiveProperty>() is not null)
+                var property = allProperties[i];
+                if (property?.GetCustomAttribute<SensitiveProperty>() is not null)
                 {
                     property.SetValue(this, null);
                 }

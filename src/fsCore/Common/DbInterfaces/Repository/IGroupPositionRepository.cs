@@ -8,7 +8,6 @@ namespace Common.Dbinterfaces.Repository
         Task<ICollection<GroupPosition>?> Update(ICollection<GroupPosition> groupPositionToUpdate);
         Task<ICollection<GroupPosition>?> Delete(ICollection<GroupPosition> groupPositionToDelete);
         Task<ICollection<GroupPosition>?> GetAll(params string[] relationships);
-        Task<GroupPosition?> GetOne(IDictionary<string, object> fieldAndName, ICollection<string>? relationships = null);
         Task<ICollection<GroupPosition>?> GetMany<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<ICollection<GroupPosition>?> GetAllPositionsForGroup(Guid groupId);
         Task<GroupPosition?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);

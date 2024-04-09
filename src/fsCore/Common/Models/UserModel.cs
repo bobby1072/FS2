@@ -56,8 +56,10 @@ namespace Common.Models
         public UserWithGroupPermissionSet(string email, bool emailVerified, string? name, string username, Guid? id) : base(email, emailVerified, name, username, id) { }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<Group> groups)
         {
-            foreach (var group in groups)
+            var groupsAsArray = groups.ToArray();
+            for (var i = 0; i < groupsAsArray.Length; i++)
             {
+                var group = groupsAsArray[i];
                 group.Emblem = null;
                 BuildPermissions(group);
             }
@@ -122,8 +124,10 @@ namespace Common.Models
         }
         public UserWithGroupPermissionSet BuildPermissions(ICollection<GroupMember> groupMembers)
         {
-            foreach (var member in groupMembers)
+            var groupMembersArray = groupMembers.ToArray();
+            for (var i = 0; i < groupMembersArray.Length; i++)
             {
+                var member = groupMembersArray[i];
                 BuildPermissions(member);
             }
             return this;

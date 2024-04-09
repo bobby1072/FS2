@@ -14,6 +14,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { MainAppBar } from "./AppBar";
 import { AuthenticatedRoutes } from "../AutheticatedRoutes";
+import { ButtonBase } from "@mui/material";
 
 const drawerWidth = 300;
 
@@ -82,20 +83,16 @@ export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
           <List>
             {AuthenticatedRoutes.filter((x) => x.showOnDrawer === true).map(
               (details) => (
-                <ListItem
-                  key={details.text}
-                  disablePadding
-                  onClick={() => {
-                    window.location.href = details.link;
-                  }}
-                >
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <details.icon />
-                    </ListItemIcon>
-                    <ListItemText primary={details.text} />
-                  </ListItemButton>
-                </ListItem>
+                <ButtonBase href={details.link} sx={{ width: "100%" }}>
+                  <ListItem key={details.text} disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <details.icon />
+                      </ListItemIcon>
+                      <ListItemText primary={details.text} />
+                    </ListItemButton>
+                  </ListItem>
+                </ButtonBase>
               )
             )}
           </List>

@@ -135,9 +135,10 @@ namespace fsCore.Service
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
             var foundMembers = await _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
-            var finalMembersList = foundMembers ?? Array.Empty<GroupMember>();
-            foreach (var member in finalMembersList)
+            var finalMembersList = foundMembers?.ToArray() ?? Array.Empty<GroupMember>();
+            for (var i = 0; i < finalMembersList.Length; i++)
             {
+                var member = finalMembersList[i];
                 if (member.User?.Email != currentUser.Email)
                 {
                     member.User?.RemoveSensitive();

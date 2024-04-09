@@ -1,4 +1,4 @@
-import React, { ReactNode, createContext, useContext, useEffect } from "react";
+import React, { ReactNode, createContext, useContext } from "react";
 import { IUserWithPermissionsRawModel } from "../../models/IUserModel";
 import { useGetUserWithPermissionsQuery } from "../hooks/GetUserQuery";
 import { Loading } from "../Loading";
