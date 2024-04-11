@@ -310,4 +310,25 @@ export default abstract class BackendApiServiceProvider {
       return data;
     },
   };
+  public static async SearchListedGroups(
+    groupName: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<IGroupModel[]>(
+        `Group/SearchAllListedGroups?groupName=${groupName}`,
+        {
+          headers: {
+            Authorization: this.FormatAccessToken(accessToken),
+          },
+        }
+      )
+      .catch((e) => {
+        throw new ApiException(
+          e.response.data as string,
+          Number(e.response.status)
+        );
+      });
+    return data;
+  }
 }

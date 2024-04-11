@@ -18,7 +18,7 @@ namespace Persistence.EntityFramework.Repository
         public async Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
-            var runtimeArray = (await _addRelationsToQuery(dbContext.Set<GroupEntity>(), relations)
+            var runtimeArray = (await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => EF.Property<T>(x, fieldName.ToPascalCase()).Equals(field))
                 .OrderBy(x => EF.Property<object>(x, fieldNameToOrderBy.ToPascalCase()))
                 .Skip(startIndex)
@@ -44,6 +44,16 @@ namespace Persistence.EntityFramework.Repository
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
                 .FirstOrDefaultAsync();
             return group is null ? null : new Group(group.Name, null, group.Description, group.Id, group.CreatedAt, group.Public, group.Listed, group.LeaderId, group.Leader?.ToRuntime(), group.Positions?.Select(p => p.ToRuntime()).ToArray());
+        }
+        public async Task<ICollection<Group>?> SearchListedGroups(string groupNameString)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundGroup = await dbContext
+                .Group
+                .Where(x => x.Listed == true && x.Name.ToLower().Contains(groupNameString.ToLower()))
+                .Take(5)
+                .ToArrayAsync();
+            return foundGroup?.Select(x => x.ToRuntime()).ToArray();
         }
     }
 

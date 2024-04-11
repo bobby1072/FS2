@@ -1,4 +1,5 @@
 using System.Net;
+using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
@@ -70,6 +71,18 @@ namespace fsCore.Controllers
         public async Task<IActionResult> ListedGroupsWithIndex(int startIndex, int count)
         {
             return Ok(await _groupService.GetAllListedGroups(startIndex, count));
+        }
+        [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithPermissions]
+        [HttpGet("SearchAllListedGroups")]
+        public async Task<IActionResult> SearchAllListedGroups(string groupName)
+        {
+            if (string.IsNullOrEmpty(groupName))
+            {
+                throw new ApiException(ErrorConstants.BadUrlParamsGiven, HttpStatusCode.BadRequest);
+            }
+            return Ok(await _groupService.SearchAllListedGroups(groupName));
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

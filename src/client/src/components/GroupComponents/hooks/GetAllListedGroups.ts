@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { IGroupModel } from "../../../models/IGroupModel";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
@@ -61,4 +61,28 @@ export const useGetAllGroupsChoiceGroup = (
     }
   );
   return { ...queryResults };
+};
+
+export const useSearchAllListedGroupsMutation = (options?: {
+  retry: (count: number, exception: ApiException) => boolean;
+}) => {
+  const { user } = useAuthentication();
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const mutationResults = useMutation<
+    IGroupModel[],
+    ApiException,
+    { groupName: string }
+  >(
+    (gn) =>
+      BackendApiServiceProvider.SearchListedGroups(
+        gn.groupName,
+        user.access_token
+      ),
+    {
+      ...(options?.retry && { retry: options.retry }),
+    }
+  );
+  return { ...mutationResults };
 };

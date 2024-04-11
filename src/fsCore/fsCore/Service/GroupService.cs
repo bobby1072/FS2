@@ -27,6 +27,11 @@ namespace fsCore.Service
         {
             return await _repo.GetCount();
         }
+        public async Task<ICollection<Group>> SearchAllListedGroups(string groupNameString)
+        {
+            var allGroups = await _repo.SearchListedGroups(groupNameString);
+            return allGroups ?? Array.Empty<Group>();
+        }
         public async Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count)
         {
             if (count > 5) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);

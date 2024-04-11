@@ -16,6 +16,7 @@ import { PageBase } from "../common/PageBase";
 import {
   GroupQueryChoice,
   useGetAllGroupsChoiceGroup,
+  useSearchAllListedGroupsMutation,
 } from "../components/GroupComponents/hooks/GetAllListedGroups";
 import { GroupTab } from "../components/GroupComponents/GroupTab";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
@@ -27,6 +28,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useQueryClient } from "react-query";
 import Constants from "../common/Constants";
 import { IGroupModel } from "../models/IGroupModel";
+import { ApiException } from "../common/ApiException";
 
 interface IMatchRange {
   groupStartIndex: number;
@@ -35,31 +37,47 @@ interface IMatchRange {
 
 const calcMaxPages = (len: number, matchRange: IMatchRange) =>
   Math.ceil(len / matchRange.groupSeeCount);
-
+const retryFunc = (index: number, err: ApiException) => {
+  if (err.status === 404) return false;
+  return index < 3;
+};
 export const AllGroupDisplayPage: React.FC = () => {
   const [{ groupSeeCount, groupStartIndex }, setGroupsIndexing] =
     useState<IMatchRange>({ groupStartIndex: 1, groupSeeCount: 5 });
   const [groupViewChoice, setGroupViewChoice] = useState<GroupQueryChoice>(
     GroupQueryChoice.AllListed
   );
-  const [groupFilterString, setGroupFilterString] = useState<string>();
   const { data: totalGroupCount, error: countError } = useGetGroupCount();
+  const {
+    data: searchedForListedGroups,
+    mutate: searchGroup,
+    isLoading: searchedGroupLoading,
+    error: searchedGroupError,
+  } = useSearchAllListedGroupsMutation({ retry: retryFunc });
   const {
     data: listedGroups,
     refetch: listedGroupsRefetch,
-    isLoading,
+    isLoading: isListedGroupsLoading,
     error: listedGroupsError,
   } = useGetAllGroupsChoiceGroup(
     groupStartIndex === 1 ? 0 : (groupStartIndex - 1) * groupSeeCount,
     groupSeeCount,
     groupViewChoice,
     {
-      retry: (index, err) => {
-        if (err.status === 404) return false;
-        return index < 3;
-      },
+      retry: retryFunc,
     }
   );
+  const [currentGroupsToSee, setCurrentGroupsToSee] = useState<IGroupModel[]>();
+  useEffect(() => {
+    if (listedGroups) {
+      setCurrentGroupsToSee(listedGroups);
+    }
+  }, [listedGroups]);
+  useEffect(() => {
+    if (searchedForListedGroups) {
+      setCurrentGroupsToSee(searchedForListedGroups);
+    }
+  }, [searchedForListedGroups]);
   const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] = useState<
     boolean | IGroupModel
@@ -68,7 +86,8 @@ export const AllGroupDisplayPage: React.FC = () => {
     queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
   }, [groupStartIndex, queryClient, listedGroupsRefetch, groupViewChoice]);
-  const isError = (listedGroupsError as any) || (countError as any);
+  const isError = listedGroupsError || countError || searchedGroupError;
+  const isLoading = searchedGroupLoading || isListedGroupsLoading;
   return (
     <PageBase>
       <AppAndDraw>
@@ -98,11 +117,21 @@ export const AllGroupDisplayPage: React.FC = () => {
                     label="Search"
                     fullWidth
                     onChange={(e) => {
-                      setGroupsIndexing({
-                        groupStartIndex: 1,
-                        groupSeeCount: 5,
-                      });
-                      setGroupFilterString(e.target.value);
+                      if (!e.target.value) {
+                        if (groupStartIndex !== 1) {
+                          setGroupsIndexing({
+                            groupStartIndex: 1,
+                            groupSeeCount: 5,
+                          });
+                        } else {
+                          queryClient.removeQueries(
+                            Constants.QueryKeys.GetGroupsWithChoice
+                          );
+                          listedGroupsRefetch();
+                        }
+                      } else {
+                        searchGroup({ groupName: e.target.value });
+                      }
                     }}
                   />
                 </Grid>
@@ -170,7 +199,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                       <div
                         style={{ cursor: "pointer" }}
                         onClick={() => {
-                          if (totalGroupCount && listedGroups)
+                          if (totalGroupCount && currentGroupsToSee)
                             setGroupsIndexing((_) =>
                               groupStartIndex !== 1
                                 ? {
@@ -189,7 +218,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                         style={{ cursor: "pointer" }}
                         aria-label="next-page"
                         onClick={() => {
-                          if (totalGroupCount && listedGroups)
+                          if (totalGroupCount && currentGroupsToSee)
                             setGroupsIndexing((_) =>
                               calcMaxPages(totalGroupCount, {
                                 groupSeeCount,
@@ -215,27 +244,18 @@ export const AllGroupDisplayPage: React.FC = () => {
             <Divider />
           </Grid>
           <Grid item sx={{ mb: 1 }}></Grid>
-          {listedGroups && !isLoading && !isError ? (
+          {currentGroupsToSee && !isLoading && !isError ? (
             <>
-              {listedGroups
-                ?.filter((x) =>
-                  groupFilterString
-                    ? x.name
-                        .toLocaleLowerCase()
-                        .includes(groupFilterString.toLowerCase()) ||
-                      groupFilterString === x.id
-                    : true
-                )
-                .map((x) => (
-                  <Grid item width="60%" key={x.id}>
-                    <GroupTab
-                      group={x}
-                      openModal={() => {
-                        setCreateNewGroupModal(x);
-                      }}
-                    />
-                  </Grid>
-                ))}
+              {currentGroupsToSee.map((x) => (
+                <Grid item width="60%" key={x.id}>
+                  <GroupTab
+                    group={x}
+                    openModal={() => {
+                      setCreateNewGroupModal(x);
+                    }}
+                  />
+                </Grid>
+              ))}
             </>
           ) : (
             <Grid item width="100%">
