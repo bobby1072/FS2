@@ -8,7 +8,6 @@ import { useSaveMemberMutation } from "./hooks/SaveMemberMutation";
 import { useEffect, useState } from "react";
 import { IUserModel } from "../../models/IUserModel";
 import {
-  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -21,6 +20,7 @@ import { StyledDialogTitle } from "../../common/StyledDialogTitle";
 import { UsersSearch } from "../../common/UsersSearch";
 import { PositionSearchBar } from "./PositionSearchBar";
 import { ApiException } from "../../common/ApiException";
+import { ErrorComponent } from "../../common/ErrorComponent";
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -160,17 +160,9 @@ export const AddMemberModal: React.FC<{
                 />
               </FormGroup>
             </Grid>
-            {allErrors instanceof Error && (
-              <Grid item width={"100%"}>
-                <Alert severity="error">{allErrors.message}</Alert>
-              </Grid>
-            )}
-            {!(allErrors instanceof ApiException) &&
-              allErrors?.root?.message && (
-                <Grid item width={"100%"}>
-                  <Alert severity="error">{allErrors.root.message}</Alert>
-                </Grid>
-              )}
+            <Grid item width={"100%"}>
+              <ErrorComponent error={allErrors} />
+            </Grid>
           </Grid>
         </form>
       </DialogContent>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import {
-  Alert,
   Button,
   Dialog,
   DialogActions,
@@ -19,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSavePositionMutation } from "./hooks/SavePositionMutation";
 import { ApiException } from "../../common/ApiException";
 import { useSnackbar } from "notistack";
+import { ErrorComponent } from "../../common/ErrorComponent";
 
 const formSchema = z.object({
   id: z.string().optional().nullable(),
@@ -199,17 +199,9 @@ export const GroupPositionModal: React.FC<{
                 label="can read catches"
               />
             </Grid>
-            {allErrors instanceof Error && (
-              <Grid item width={"100%"}>
-                <Alert severity="error">{allErrors.message}</Alert>
-              </Grid>
-            )}
-            {!(allErrors instanceof ApiException) &&
-              allErrors?.root?.message && (
-                <Grid item width={"100%"}>
-                  <Alert severity="error">{allErrors.root.message}</Alert>
-                </Grid>
-              )}
+            <Grid item width={"100%"}>
+              <ErrorComponent error={allErrors} />
+            </Grid>
           </Grid>
         </form>
       </DialogContent>

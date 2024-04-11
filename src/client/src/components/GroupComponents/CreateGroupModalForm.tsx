@@ -14,6 +14,7 @@ import {
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { ApiException } from "../../common/ApiException";
+import { ErrorComponent } from "../../common/ErrorComponent";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional().nullable(),
@@ -188,16 +189,9 @@ export const CreateGroupModalForm: React.FC<{
             }}
           />
         </Grid>
-        {allErrors instanceof Error && (
-          <Grid item width={"100%"}>
-            <Alert severity="error">{allErrors.message}</Alert>
-          </Grid>
-        )}
-        {!(allErrors instanceof ApiException) && allErrors?.root?.message && (
-          <Grid item width={"100%"}>
-            <Alert severity="error">{allErrors.root.message}</Alert>
-          </Grid>
-        )}
+        <Grid item width={"100%"}>
+          <ErrorComponent error={allErrors} />
+        </Grid>
         {savedId && (
           <Grid item width={"100%"}>
             <Alert severity="success">Group saved!</Alert>

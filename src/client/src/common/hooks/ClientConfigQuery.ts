@@ -6,7 +6,10 @@ import { ApiException } from "../ApiException";
 export const useClientConfigQuery = () => {
   const queryResults = useQuery<IClientConfigResponse, ApiException>(
     Constants.QueryKeys.ClientConfig,
-    () => BackendApiServiceProvider.GetClientConfig()
+    () => BackendApiServiceProvider.GetClientConfig(),
+    {
+      retry: (count) => count < 2,
+    }
   );
   return {
     ...queryResults,

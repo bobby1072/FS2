@@ -135,7 +135,6 @@ namespace Persistence.EntityFramework.Repository
             var set = dbContext.Set<TEnt>();
             set.RemoveRange(entObj.Select(x => _runtimeToEntity(x)));
             await dbContext.SaveChangesAsync();
-            var runtimeObjs = set.Local.Select(x => x.ToRuntime());
             return entObj;
         }
         public virtual async Task<ICollection<TBase>?> Update(ICollection<TBase> entObj)
