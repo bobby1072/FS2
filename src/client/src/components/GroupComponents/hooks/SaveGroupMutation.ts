@@ -3,7 +3,7 @@ import { useAuthentication } from "../../../common/contexts/AuthenticationContex
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import Constants from "../../../common/Constants";
 import { useEffect } from "react";
-import { SaveGroupInput } from "../CreateGroupModalForm";
+import { SaveGroupInput } from "../CreateGroupForm";
 import { ApiException } from "../../../common/ApiException";
 
 export const useSaveGroupMutation = () => {

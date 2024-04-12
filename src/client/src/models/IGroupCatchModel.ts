@@ -2,6 +2,12 @@ import { IGroupModel } from "./IGroupModel";
 import { IUserModel } from "./IUserModel";
 import { IWorldFishModel } from "./IWorldFishModel";
 
+export interface IPartialGroupCatchModel {
+  Species: string;
+  Latitude: number;
+  Longitude: number;
+}
+
 export interface IGroupCatchModel {
   id: string;
   groupId: string;

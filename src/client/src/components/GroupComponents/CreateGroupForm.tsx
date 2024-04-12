@@ -39,7 +39,7 @@ const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
     emblem: group?.emblem?.toString(),
   };
 };
-export const CreateGroupModalForm: React.FC<{
+export const CreateGroupForm: React.FC<{
   group?: IGroupModel;
   setIsSaveDisabled?: (boolVal: boolean) => void;
   closeModal?: () => void;
