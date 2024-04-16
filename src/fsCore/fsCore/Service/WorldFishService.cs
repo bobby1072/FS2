@@ -13,8 +13,8 @@ namespace fsCore.Service
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         public async Task MigrateJsonFishToDb()
         {
-            var file = await File.ReadAllTextAsync(@"../Common/Data/allFish.json");
-            var allFileFish = JsonSerializer.Deserialize<ICollection<JsonFileWorldFish>>(file) ?? throw new Exception();
+            var file = await File.ReadAllTextAsync(Path.GetFullPath($"Common{Path.DirectorySeparatorChar}Data{Path.DirectorySeparatorChar}allFish.json"));
+            var allFileFish = JsonSerializer.Deserialize<JsonFileWorldFish[]>(file) ?? throw new Exception();
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
             var allDbFish = await _repo.GetAll();
             if (allDbFish is null)

@@ -10,4 +10,5 @@ export const useSaveCatchMutation = () => {
   const mutationResults = useMutation<string, ApiException, SaveCatchInput>(
     (gc) => BackendApiServiceProvider.SaveGroupCatch(gc, user.access_token)
   );
+  return { ...mutationResults };
 };
