@@ -10,10 +10,13 @@ namespace Common.Utils
         {
             await using var stream = file.OpenReadStream();
             using var image = await Image.LoadAsync(stream);
-            image.Mutate(x => x.Resize(width, height));
+            if (image.Width > width || image.Height > height)
+            {
+                image.Mutate(x => x.Resize(width, height));
+            }
             return Convert.FromBase64String(image.ToBase64String(JpegFormat.Instance).TrimBase64String());
         }
-        public static async Task<byte[]> ToByteArray(this IFormFile file)
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file)
         {
             await using var memoryStream = new MemoryStream();
             await file.CopyToAsync(memoryStream);

@@ -15,6 +15,8 @@ import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { ApiException } from "../../common/ApiException";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import imageCompression from "browser-image-compression";
+import { base64StringToJpegFile } from "../../utils/StringUtils";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional().nullable(),
@@ -25,10 +27,10 @@ const formSchema = z.object({
   id: z.string().optional().nullable(),
   createdAt: z.string().optional().nullable(),
 });
-const mapValuesToFormData = (
+const mapValuesToFormData = async (
   values: SaveGroupInput,
   newEmblem?: File
-): FormData => {
+): Promise<FormData> => {
   const formData = new FormData();
   if (values.id) formData.append("id", values.id);
   if (values.leaderId) formData.append("leaderId", values.leaderId);
@@ -43,22 +45,17 @@ const mapValuesToFormData = (
   if (newEmblem) {
     formData.append(
       "emblem",
-      new File([newEmblem], "groupEmblem.jpg", { type: "image/jpeg" })
+      await imageCompression(
+        new File([newEmblem], "groupEmblem.jpg", { type: "image/jpeg" }),
+        { maxSizeMB: 1, initialQuality: 0.8 }
+      )
     );
   } else if (values.emblem) {
-    const byteCharacters = atob(values.emblem);
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-    const byteArray = new Uint8Array(byteNumbers);
-
-    // Create a Blob from the byteArray
-    const blob = new Blob([byteArray], { type: "image/jpeg" });
-
-    // Create a File object from the Blob
-    const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-    formData.append("emblem", file);
+    const file = base64StringToJpegFile(values.emblem);
+    formData.append(
+      "emblem",
+      await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.8 })
+    );
   }
   return formData;
 };
@@ -140,10 +137,10 @@ export const CreateGroupForm: React.FC<{
   useEffect(() => {
     if (mutationError) setAllErrors(mutationError);
   }, [mutationError]);
-  const submitHandler = (values: SaveGroupInput) => {
+  const submitHandler = async (values: SaveGroupInput) => {
     resetMutation();
     saveGroupMutation(
-      mapValuesToFormData(
+      await mapValuesToFormData(
         values,
         typeof addedEmblem === "string" ? undefined : addedEmblem
       )

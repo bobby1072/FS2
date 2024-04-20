@@ -1,7 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { IClientConfigResponse } from "../models/IClientConfigResponse";
 import { IUserModel, IUserWithPermissionsRawModel } from "../models/IUserModel";
-import { SaveGroupInput } from "../components/GroupComponents/CreateGroupForm";
 import { IGroupModel } from "../models/IGroupModel";
 import { ApiException } from "../common/ApiException";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";

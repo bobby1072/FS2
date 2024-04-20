@@ -1,53 +1,42 @@
 using System.Text.Json.Serialization;
 using Common.Models;
+using Common.Utils;
 
 namespace fsCore.Controllers.ControllerModels
 {
-    public class SaveCatchInput
+    public class SaveCatchFormInput
     {
-        [JsonPropertyName("id")]
         public Guid? Id { get; set; }
-        [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
-        [JsonPropertyName("species")]
         public string Species { get; set; }
-        [JsonPropertyName("weight")]
         public double Weight { get; set; }
-        [JsonPropertyName("length")]
         public double Length { get; set; }
-        [JsonPropertyName("description")]
         public string? Description { get; set; }
-        [JsonPropertyName("caughtAt")]
         public DateTime CaughtAt { get; set; }
-        [JsonPropertyName("catchPhoto")]
-        public string? CatchPhoto { get; set; }
-        [JsonPropertyName("createdAt")]
+        public IFormFile? CatchPhoto { get; set; }
         public string? CreatedAt { get; set; }
-        [JsonPropertyName("latitude")]
         public double Latitude { get; set; }
-        [JsonPropertyName("longitude")]
         public double Longitude { get; set; }
-        [JsonPropertyName("worldFishTaxocode")]
         public string? WorldFishTaxocode { get; set; }
-        public GroupCatch ToGroupCatch(Guid userId)
+        public async Task<GroupCatch> ToGroupCatchAsync(Guid userId)
         {
             return new GroupCatch(
-                userId: userId,
-                groupId: GroupId,
-                species: Species,
-                weight: Weight,
-                caughtAt: CaughtAt,
-                length: Length,
-                latitude: Latitude,
-                longitude: Longitude,
-                description: Description,
-                id: Id,
-                createdAt: CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
-                catchPhoto: CatchPhoto is not null ? Convert.FromBase64String(CatchPhoto) : null,
-                group: null,
-                user: null,
-                worldFishTaxocode: WorldFishTaxocode,
-                worldFish: null
+                userId,
+                GroupId,
+                Species,
+                Weight,
+                CaughtAt,
+                Length,
+                Latitude,
+                Longitude,
+                Description,
+                Id,
+                CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
+                CatchPhoto is not null ? await CatchPhoto.ToByteArrayAsync() : null,
+                null,
+                null,
+                WorldFishTaxocode,
+                null
             );
         }
     }
