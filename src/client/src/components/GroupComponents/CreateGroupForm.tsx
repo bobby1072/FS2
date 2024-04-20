@@ -47,14 +47,14 @@ const mapValuesToFormData = async (
       "emblem",
       await imageCompression(
         new File([newEmblem], "groupEmblem.jpg", { type: "image/jpeg" }),
-        { maxSizeMB: 1, initialQuality: 0.8 }
+        { maxSizeMB: 1, initialQuality: 0.5 }
       )
     );
   } else if (values.emblem) {
     const file = base64StringToJpegFile(values.emblem);
     formData.append(
       "emblem",
-      await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.8 })
+      await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.5 })
     );
   }
   return formData;

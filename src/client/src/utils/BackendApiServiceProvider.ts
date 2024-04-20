@@ -252,9 +252,9 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
-  public static async SaveGroupCatch(gc: SaveCatchInput, accessToken: string) {
+  public static async SaveGroupCatch(gc: FormData, accessToken: string) {
     const { data } = await this._httpClient
-      .get<string>(`Group/SaveGroupCatch`, {
+      .post<string>(`Group/SaveGroupCatch`, gc, {
         headers: {
           Authorization: this._formatAccessToken(accessToken),
         },
