@@ -6,6 +6,11 @@ namespace Common.Utils
 {
     public static class StringExtensions
     {
+        public static string TrimBase64String(this string input)
+        {
+            string pattern = @"^data:image\/[^;]+;base64,";
+            return Regex.Replace(input, pattern, string.Empty);
+        }
         public static string ToPascalCase(this string original)
         {
             Regex invalidCharsRgx = new Regex("[^_a-zA-Z0-9]");

@@ -89,7 +89,7 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
-  public static async SaveGroup(accessToken: string, group: SaveGroupInput) {
+  public static async SaveGroup(accessToken: string, group: FormData) {
     const { data } = await this._httpClient
       .post<string>("Group/SaveGroup", group, {
         headers: {

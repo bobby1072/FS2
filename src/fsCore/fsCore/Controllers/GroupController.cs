@@ -35,9 +35,21 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions(true)]
         [HttpPost("SaveGroup")]
-        public async Task<IActionResult> SaveGroup([FromBody] SaveGroupInput group)
+        public async Task<IActionResult> SaveGroup([FromForm] IFormFile emblem, [FromForm] Guid? id, [FromForm] Guid leaderId, [FromForm] string name, [FromForm] string? description, [FromForm] string isPublic, [FromForm] string isListed, [FromForm] string? createdAt)
         {
-            var savedGroup = await _groupService.SaveGroup(group.ToGroup(), _getCurrentUserWithPermissions());
+            var group = new SaveGroupFormInput
+            {
+                Emblem = emblem,
+                Id = id,
+                LeaderId = leaderId,
+                Name = name,
+                Description = description,
+                IsPublic = isPublic,
+                IsListed = isListed,
+                CreatedAt = createdAt
+            };
+            var parsedGroup = await group.ToGroupAsync();
+            var savedGroup = await _groupService.SaveGroup(parsedGroup, _getCurrentUserWithPermissions());
             return Ok(savedGroup.Id);
         }
         [ProducesDefaultResponseType(typeof(Guid))]

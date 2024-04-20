@@ -98,7 +98,7 @@ export const GroupTab: React.FC<{
         )}
         <Grid item width="100%">
           <Typography variant="h3" fontSize={18}>
-            <strong>Created at: </strong>
+            <strong>Created on: </strong>
             {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
           </Typography>
         </Grid>

@@ -42,7 +42,7 @@ namespace fsCore.Controllers.ControllerModels
                 longitude: Longitude,
                 description: Description,
                 id: Id,
-                createdAt: CreatedAt is not null ? DateTime.Parse(CreatedAt) : DateTime.Now,
+                createdAt: CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
                 catchPhoto: CatchPhoto is not null ? Convert.FromBase64String(CatchPhoto) : null,
                 group: null,
                 user: null,

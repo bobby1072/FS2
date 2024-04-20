@@ -25,6 +25,44 @@ const formSchema = z.object({
   id: z.string().optional().nullable(),
   createdAt: z.string().optional().nullable(),
 });
+const mapValuesToFormData = (
+  values: SaveGroupInput,
+  newEmblem?: File
+): FormData => {
+  const formData = new FormData();
+  if (values.id) formData.append("id", values.id);
+  if (values.leaderId) formData.append("leaderId", values.leaderId);
+  formData.append("name", values.name);
+  formData.append("description", values.description ?? "");
+  formData.append("isPublic", values.isPublic.toString());
+  formData.append("isListed", values.isListed.toString());
+  formData.append(
+    "createdAt",
+    values.createdAt ? new Date(values.createdAt).toISOString() : ""
+  );
+  if (newEmblem) {
+    formData.append(
+      "emblem",
+      new File([newEmblem], "groupEmblem.jpg", { type: "image/jpeg" })
+    );
+  } else if (values.emblem) {
+    const byteCharacters = atob(values.emblem);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+    const byteArray = new Uint8Array(byteNumbers);
+
+    // Create a Blob from the byteArray
+    const blob = new Blob([byteArray], { type: "image/jpeg" });
+
+    // Create a File object from the Blob
+    const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+    formData.append("emblem", file);
+  }
+  return formData;
+};
+
 export type SaveGroupInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
   if (!group) return { isListed: true, isPublic: true };
@@ -61,13 +99,13 @@ export const CreateGroupForm: React.FC<{
     handleSubmit,
     register,
     watch,
-    setValue,
     formState: { errors: formError, isDirty: isFormDirty },
   } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
+  const [addedEmblem, setAddedEmblem] = useState<string | File>();
   const { isListed, isPublic, id, name, emblem } = watch();
   const [allErrors, setAllErrors] = useState<
     | ApiException
@@ -81,6 +119,13 @@ export const CreateGroupForm: React.FC<{
       }>
   >();
   const isDirty = isFormDirty || group?.emblem !== emblem;
+  useEffect(() => {
+    if (emblem) {
+      setAddedEmblem(emblem);
+    } else if (group?.emblem) {
+      setAddedEmblem(group?.emblem);
+    }
+  }, [group?.emblem, emblem]);
   useEffect(() => {
     if (savedId && useSnackBarOnSuccess)
       enqueueSnackbar(`New group id: ${savedId}`, { variant: "success" });
@@ -97,7 +142,12 @@ export const CreateGroupForm: React.FC<{
   }, [mutationError]);
   const submitHandler = (values: SaveGroupInput) => {
     resetMutation();
-    saveGroupMutation(values);
+    saveGroupMutation(
+      mapValuesToFormData(
+        values,
+        typeof addedEmblem === "string" ? undefined : addedEmblem
+      )
+    );
   };
   return (
     <form onSubmit={handleSubmit(submitHandler)} id="groupSaveForm">
@@ -176,15 +226,7 @@ export const CreateGroupForm: React.FC<{
             onChange={(e) => {
               const foundFile = e.target.files?.item(0);
               if (foundFile) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  const result = reader.result as string;
-                  setValue(
-                    "emblem",
-                    result.replace(/^data:image\/[^;]+;base64,/, "")
-                  );
-                };
-                reader.readAsDataURL(foundFile);
+                setAddedEmblem(foundFile);
               }
             }}
           />

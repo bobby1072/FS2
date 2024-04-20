@@ -5,12 +5,14 @@ using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using fsCore.Service.Interfaces;
+using Hangfire;
 
 namespace fsCore.Service
 {
     internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
+        [AutomaticRetry(Attempts = 1)]
         public async Task MigrateJsonFishToDb()
         {
             var file = await File.ReadAllTextAsync(Path.GetFullPath($"Common{Path.DirectorySeparatorChar}Data{Path.DirectorySeparatorChar}allFish.json"));
