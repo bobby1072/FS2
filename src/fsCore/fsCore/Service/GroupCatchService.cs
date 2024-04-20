@@ -57,7 +57,6 @@ namespace fsCore.Service
             }
             else
             {
-
                 return (await _repo.Create(new[] { groupCatch.ApplyDefaults(userWithGroupPermissionSet.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
         }

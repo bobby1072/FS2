@@ -76,15 +76,7 @@ namespace Common.Models
             {
                 return false;
             }
-            else if (group.Id != Id)
-            {
-                return false;
-            }
-            else if (group.LeaderId != LeaderId)
-            {
-                return false;
-            }
-            else if (DateTime.Equals(CreatedAt, group.CreatedAt))
+            else if (group.Id != Id || group.LeaderId != LeaderId || CreatedAt.Millisecond != group.CreatedAt.Millisecond)
             {
                 return false;
             }
