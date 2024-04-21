@@ -17,6 +17,7 @@ import { ApiException } from "../../common/ApiException";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import imageCompression from "browser-image-compression";
 import { base64StringToJpegFile } from "../../utils/StringUtils";
+import { faker } from "@faker-js/faker";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional().nullable(),
@@ -25,7 +26,7 @@ const formSchema = z.object({
   leaderId: z.string().optional().nullable(),
   emblem: z.string().optional().nullable(),
   id: z.string().optional().nullable(),
-  createdAt: z.string().optional().nullable(),
+  createdAt: z.string().datetime().optional().nullable(),
 });
 const mapValuesToFormData = async (
   values: SaveGroupInput,
@@ -46,12 +47,21 @@ const mapValuesToFormData = async (
     formData.append(
       "emblem",
       await imageCompression(
-        new File([newEmblem], "groupEmblem.jpg", { type: "image/jpeg" }),
+        new File(
+          [newEmblem],
+          `groupEmblem${values.id ?? faker.string.uuid()}.jpg`,
+          {
+            type: "image/jpeg",
+          }
+        ),
         { maxSizeMB: 1, initialQuality: 0.5 }
       )
     );
   } else if (values.emblem) {
-    const file = base64StringToJpegFile(values.emblem);
+    const file = base64StringToJpegFile(
+      values.emblem,
+      `groupEmblem${values.id ?? faker.string.uuid()}.jpg`
+    );
     formData.append(
       "emblem",
       await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.5 })
@@ -71,7 +81,7 @@ const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
     leaderId: group.leaderId,
     createdAt: group.createdAt,
     isListed: group.listed,
-    emblem: group?.emblem?.toString(),
+    emblem: group.emblem?.toString(),
   };
 };
 export const CreateGroupForm: React.FC<{

@@ -13,7 +13,7 @@ export interface IGroupCatchModel {
   groupId: string;
   group?: IGroupModel | null;
   species: string;
-  WorldFishTaxocode?: string | null;
+  worldFishTaxocode?: string | null;
   worldFish?: IWorldFishModel | null;
   weight: number;
   length: number;
