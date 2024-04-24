@@ -113,25 +113,34 @@ export const IndividualGroupPage: React.FC = () => {
               groupId={mainGroup.id!}
             />
           </Grid>
-          <Grid
-            item
-            width="100%"
-            sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}
-          >
-            {!catchToEdit ? (
-              <Button onClick={() => setCatchToEdit(true)} variant="contained">
-                Create new catch
-              </Button>
-            ) : (
-              <Button variant="outlined" onClick={() => setCatchToEdit(false)}>
-                Clear new catch
-              </Button>
-            )}
-          </Grid>
+          {permissionManager.Can(PermissionActions.BelongsTo, groupId!) && (
+            <Grid
+              item
+              width="100%"
+              sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}
+            >
+              {!catchToEdit ? (
+                <Button
+                  onClick={() => setCatchToEdit(true)}
+                  variant="contained"
+                >
+                  Create new catch
+                </Button>
+              ) : (
+                <Button
+                  variant="outlined"
+                  onClick={() => setCatchToEdit(false)}
+                >
+                  Clear new catch
+                </Button>
+              )}
+            </Grid>
+          )}
           {catchToEdit && (
             <Grid item width="100%">
               <Paper elevation={2}>
                 <SaveGroupCatchForm
+                  closeForm={() => setCatchToEdit(false)}
                   useSnackBarOnSuccess
                   groupId={groupId!}
                   groupCatch={

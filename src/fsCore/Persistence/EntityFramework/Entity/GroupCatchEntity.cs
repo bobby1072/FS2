@@ -37,6 +37,8 @@ namespace Persistence.EntityFramework.Entity
             {
                 Id = groupCatch.Id ?? Guid.NewGuid(),
                 Species = groupCatch.Species,
+                UserId = groupCatch.UserId,
+                WorldFishTaxocode = groupCatch.WorldFishTaxocode,
                 Weight = groupCatch.Weight,
                 Length = groupCatch.Length,
                 Description = groupCatch.Description,

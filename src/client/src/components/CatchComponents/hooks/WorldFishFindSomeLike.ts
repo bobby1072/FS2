@@ -15,7 +15,7 @@ export const useWorldFishFindSomeLikeMutation = () => {
     { fishAnyname: string }
   >(
     (f) =>
-      BackendApiServiceProvider.WorldFishClient.FindSomeLink(
+      BackendApiServiceProvider.WorldFishClient.FindSomeLike(
         f.fishAnyname,
         user.access_token
       ),

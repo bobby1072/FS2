@@ -57,7 +57,7 @@ namespace fsCore.Service
             }
             else
             {
-                return (await _repo.Create(new[] { groupCatch.ApplyDefaults(userWithGroupPermissionSet.Id) }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
+                return (await _repo.Create(new[] { groupCatch.ApplyDefaults() }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
         }
         public async Task<GroupCatch> GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(LatLng latLng, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)

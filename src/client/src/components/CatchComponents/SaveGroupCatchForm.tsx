@@ -3,7 +3,7 @@ import imageCompression from "browser-image-compression";
 import { base64StringToJpegFile } from "../../utils/StringUtils";
 import { IGroupCatchModel } from "../../models/IGroupCatchModel";
 import { useSaveCatchMutation } from "./hooks/SaveCatchMutation";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -15,7 +15,7 @@ import { IWorldFishModel } from "../../models/IWorldFishModel";
 import { Mention, MentionsInput } from "react-mentions";
 import { Close } from "@mui/icons-material";
 import { ErrorComponent } from "../../common/ErrorComponent";
-
+import { ApiException } from "../../common/ApiException";
 const inputStyle = {
   control: {
     backgroundColor: "#fff",
@@ -38,20 +38,6 @@ const inputStyle = {
     },
   },
 
-  "&singleLine": {
-    display: "inline-block",
-    width: 180,
-
-    highlighter: {
-      padding: 1,
-      border: "2px inset transparent",
-    },
-    input: {
-      padding: 1,
-      border: "2px inset",
-    },
-  },
-
   suggestions: {
     list: {
       backgroundColor: "white",
@@ -67,16 +53,17 @@ const inputStyle = {
     },
   },
 };
+
 const formSchema = z.object({
   id: z.string().optional().nullable(),
   groupId: z.string(),
   species: z.string(),
   worldFishTaxocode: z.string().optional().nullable(),
-  weight: z.number(),
-  length: z.number(),
+  weight: z.string().transform((x) => Number(x)),
+  length: z.string().transform((x) => Number(x)),
   description: z.string().optional().nullable(),
-  latitude: z.number(),
-  longitude: z.number(),
+  latitude: z.string().transform((x) => Number(x)),
+  longitude: z.string().transform((x) => Number(x)),
   caughtAt: z.string().datetime(),
   createdAt: z.string().datetime().optional().nullable(),
   catchPhoto: z.string().optional().nullable(),
@@ -149,7 +136,8 @@ export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
   groupId: string;
-}> = ({ groupCatch, useSnackBarOnSuccess, groupId }) => {
+  closeForm?: () => void;
+}> = ({ groupCatch, useSnackBarOnSuccess, groupId, closeForm }) => {
   const {
     data: savedCatchId,
     mutate: saveCatchMutation,
@@ -187,22 +175,34 @@ export const SaveGroupCatchForm: React.FC<{
     []
   );
   const [fishSearchTerm, setFishSearchTerm] = useState<string>("");
+  const [allErrors, setAllErrors] = useState<ApiException | FieldErrors<any>>();
+  useEffect(() => {
+    setAllErrors(mutationError || formErrors);
+  }, [mutationError, formErrors]);
   const {
     data: worldFishLike,
     mutate: fireWorldFishLike,
     isLoading: worldFishLikeLoading,
   } = useWorldFishFindSomeLikeMutation();
+  const clearSpeciesSearch = () => {
+    setFishSearchTerm("");
+    setValue("species", "");
+    setWorldFishOptions([]);
+    setValue("worldFishTaxocode", undefined);
+  };
   useEffect(() => {
     if (fishSearchTerm?.length > 1) {
       fireWorldFishLike({ fishAnyname: fishSearchTerm });
     }
   }, [fishSearchTerm, fireWorldFishLike]);
   useEffect(() => {
-    if (savedCatchId && useSnackBarOnSuccess)
+    if (savedCatchId && useSnackBarOnSuccess) {
       enqueueSnackbar(`New catch saved: ${savedCatchId}`, {
         variant: "success",
       });
-  }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar]);
+      closeForm?.();
+    }
+  }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar, closeForm]);
   useEffect(() => {
     if (worldFishLike) {
       setWorldFishOptions(worldFishLike);
@@ -233,8 +233,7 @@ export const SaveGroupCatchForm: React.FC<{
                       size="small"
                       onClick={() => {
                         setSpeciesLocked(false);
-                        setFishSearchTerm("");
-                        setValue("species", "");
+                        clearSpeciesSearch();
                       }}
                     >
                       <Close fontSize="inherit" />
@@ -256,8 +255,7 @@ export const SaveGroupCatchForm: React.FC<{
                     setFishSearchTerm(totalInput);
                     setValue("species", totalInput);
                   } else {
-                    setFishSearchTerm("");
-                    setValue("species", "");
+                    clearSpeciesSearch();
                   }
                 }}
               >
@@ -268,7 +266,14 @@ export const SaveGroupCatchForm: React.FC<{
                   onAdd={(id) => {
                     setSpeciesLocked(true);
                     setFishSearchTerm("");
+                    const foundWorldFish = worldFishOptions.find(
+                      (x) => x.taxocode === id
+                    )?.englishName;
+                    if (foundWorldFish) {
+                      setValue("species", foundWorldFish);
+                    }
                     setValue("worldFishTaxocode", id.toString());
+                    setWorldFishOptions([]);
                   }}
                   style={{ backgroundColor: "#EBEBEB" }}
                   data={worldFishOptions
@@ -401,9 +406,11 @@ export const SaveGroupCatchForm: React.FC<{
             Save catch
           </Button>
         </Grid>
-        <Grid item width="100%">
-          <ErrorComponent error={formErrors || mutationError} />
-        </Grid>
+        {allErrors && (
+          <Grid item width="100%">
+            <ErrorComponent error={allErrors} />
+          </Grid>
+        )}
       </Grid>
     </form>
   );

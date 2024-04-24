@@ -63,7 +63,7 @@ CREATE TABLE public."group_catch" (
     latitude DECIMAL NOT NULL,
     longitude DECIMAL NOT NULL,
     world_fish_taxocode TEXT,
-    CONSTRAINT catches_world_fish_taxocode_fk FOREIGN KEY (world_fish_taxocode) REFERENCES public.world_fish(taxocode) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT catches_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT catches_username_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT group_catch_world_fish_taxocode_fk FOREIGN KEY (world_fish_taxocode) REFERENCES public.world_fish(taxocode) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_catch_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_catch_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );

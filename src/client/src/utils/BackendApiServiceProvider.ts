@@ -216,10 +216,10 @@ export default abstract class BackendApiServiceProvider {
     return data;
   }
   public static WorldFishClient = {
-    FindSomeLink: async (fishAnyName: string, accessToken: string) => {
+    FindSomeLike: async (fishAnyName: string, accessToken: string) => {
       const { data } = await this._httpClient
         .get<IWorldFishModel[]>(
-          `WorldFish/FindSomeLink?fishAnyName=${fishAnyName}`,
+          `WorldFish/FindSomeLike?fishAnyName=${fishAnyName}`,
           {
             headers: {
               Authorization: this._formatAccessToken(accessToken),
@@ -253,7 +253,7 @@ export default abstract class BackendApiServiceProvider {
   }
   public static async SaveGroupCatch(gc: FormData, accessToken: string) {
     const { data } = await this._httpClient
-      .post<string>(`Group/SaveGroupCatch`, gc, {
+      .post<string>(`GroupCatch/SaveGroupCatch`, gc, {
         headers: {
           Authorization: this._formatAccessToken(accessToken),
         },

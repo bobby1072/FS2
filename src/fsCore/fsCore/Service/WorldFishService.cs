@@ -15,7 +15,7 @@ namespace fsCore.Service
         [AutomaticRetry(Attempts = 1)]
         public async Task MigrateJsonFishToDb()
         {
-            var file = await File.ReadAllTextAsync(Path.GetFullPath($"Common{Path.DirectorySeparatorChar}Data{Path.DirectorySeparatorChar}allFish.json"));
+            var file = await File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
             var allFileFish = JsonSerializer.Deserialize<JsonFileWorldFish[]>(file) ?? throw new Exception();
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
             var allDbFish = await _repo.GetAll();
