@@ -10,9 +10,7 @@ export const base64StringToJpegFile = (
     byteNumbers[i] = byteCharacters.charCodeAt(i);
   }
   const byteArray = new Uint8Array(byteNumbers);
-
   const blob = new Blob([byteArray], { type: "image/jpeg" });
-
   const file = new File([blob], filePath ?? `${faker.string.uuid()}.jpg`, {
     type: "image/jpeg",
   });

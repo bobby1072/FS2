@@ -6,11 +6,67 @@ import { useSaveCatchMutation } from "./hooks/SaveCatchMutation";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ApiException } from "../../common/ApiException";
-import { Grid } from "@mui/material";
+import { FormGroup, Grid, IconButton, TextField } from "@mui/material";
 import { faker } from "@faker-js/faker";
+import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
+import { IWorldFishModel } from "../../models/IWorldFishModel";
+import { Mention, MentionsInput } from "react-mentions";
+import { Close } from "@mui/icons-material";
+import { ErrorComponent } from "../../common/ErrorComponent";
 
+const inputStyle = {
+  control: {
+    backgroundColor: "#fff",
+    fontSize: 14,
+    fontWeight: "normal",
+  },
+
+  "&multiLine": {
+    control: {
+      fontFamily: "monospace",
+      minHeight: 63,
+    },
+    highlighter: {
+      padding: 9,
+      border: "1px solid transparent",
+    },
+    input: {
+      padding: 9,
+      border: "1px solid silver",
+    },
+  },
+
+  "&singleLine": {
+    display: "inline-block",
+    width: 180,
+
+    highlighter: {
+      padding: 1,
+      border: "2px inset transparent",
+    },
+    input: {
+      padding: 1,
+      border: "2px inset",
+    },
+  },
+
+  suggestions: {
+    list: {
+      backgroundColor: "white",
+      border: "1px solid rgba(0,0,0,0.15)",
+      fontSize: 14,
+    },
+    item: {
+      padding: "5px 15px",
+      borderBottom: "1px solid rgba(0,0,0,0.15)",
+      "&focused": {
+        backgroundColor: "#cee4e5",
+      },
+    },
+  },
+};
 const formSchema = z.object({
   id: z.string().optional().nullable(),
   groupId: z.string(),
@@ -102,8 +158,9 @@ export const SaveGroupCatchForm: React.FC<{
   const {
     handleSubmit,
     register,
+    setValue,
     watch,
-    formState: { errors: formErros, isDirty: isformDirty },
+    formState: { errors: formErrors, isDirty: isFormDirty },
   } = useForm<SaveCatchInput>({
     defaultValues: mapDefaultValues(groupCatch),
     resolver: zodResolver(formSchema),
@@ -111,8 +168,8 @@ export const SaveGroupCatchForm: React.FC<{
   const { enqueueSnackbar } = useSnackbar();
   const [addedCatchPhoto, setAddedCatchPhoto] = useState<string | File>();
   const [allErrors, setAllErrors] = useState<ApiException | FieldErrors<any>>();
-  const { catchPhoto } = watch();
-  const isDirty = isformDirty || catchPhoto !== groupCatch?.catchPhoto;
+  const { catchPhoto, species } = watch();
+  const isDirty = isFormDirty || catchPhoto !== groupCatch?.catchPhoto;
   const submitHandler = async (values: SaveCatchInput) => {
     resetMutation();
     saveCatchMutation(
@@ -122,6 +179,32 @@ export const SaveGroupCatchForm: React.FC<{
       )
     );
   };
+  const [speciesLocked, setSpeciesLocked] = useState<boolean>(false);
+  const [worldFishOptions, setWorldFishOptions] = useState<IWorldFishModel[]>(
+    []
+  );
+  const [fishSearchTerm, setFishSearchTerm] = useState<string>("");
+  const {
+    data: worldFishLike,
+    mutate: fireWorldFishLike,
+    isLoading: worldFishLikeLoading,
+  } = useWorldFishFindSomeLikeMutation();
+  useEffect(() => {
+    if (fishSearchTerm?.length > 1) {
+      fireWorldFishLike({ fishAnyname: fishSearchTerm });
+    }
+  }, [fishSearchTerm, fireWorldFishLike]);
+  useEffect(() => {
+    if (savedCatchId && useSnackBarOnSuccess)
+      enqueueSnackbar(`New catch saved: ${savedCatchId}`, {
+        variant: "success",
+      });
+  }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar]);
+  useEffect(() => {
+    if (worldFishLike) {
+      setWorldFishOptions(worldFishLike);
+    }
+  }, [worldFishLike]);
   return (
     <form id="saveCatchFrom" onSubmit={handleSubmit(submitHandler)}>
       <Grid
@@ -131,7 +214,77 @@ export const SaveGroupCatchForm: React.FC<{
         width={"100%"}
         justifyContent="center"
         alignItems="center"
-      ></Grid>
+      >
+        <Grid item width="25%">
+          <FormGroup>
+            {speciesLocked ? (
+              <TextField
+                label="Species"
+                disabled
+                value={species}
+                variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      color="inherit"
+                      size="small"
+                      onClick={() => {
+                        setSpeciesLocked(false);
+                        setFishSearchTerm("");
+                        setValue("species", "");
+                      }}
+                    >
+                      <Close fontSize="inherit" />
+                    </IconButton>
+                  ),
+                }}
+              />
+            ) : (
+              <MentionsInput
+                value={species}
+                placeholder="Type a species..."
+                singleLine={true}
+                allowSpaceInQuery
+                style={inputStyle}
+                allowSuggestionsAboveCursor
+                onChange={(e) => {
+                  const totalInput = e.target.value;
+                  if (totalInput) {
+                    setFishSearchTerm(totalInput);
+                    setValue("species", totalInput);
+                  } else {
+                    setFishSearchTerm("");
+                    setValue("species", "");
+                  }
+                }}
+              >
+                <Mention
+                  trigger={""}
+                  isLoading={worldFishLikeLoading}
+                  appendSpaceOnAdd
+                  onAdd={(id) => {
+                    setSpeciesLocked(true);
+                    setFishSearchTerm("");
+                    setValue("species", `%${id}%`);
+                  }}
+                  style={{ backgroundColor: "#EBEBEB" }}
+                  data={worldFishOptions
+                    .filter((x) => x.englishName)
+                    .map((x) => ({
+                      id: x.taxocode,
+                      display: `${x.englishName}${
+                        x.nickname ? ` (${x.nickname})` : ""
+                      }`,
+                    }))}
+                />
+              </MentionsInput>
+            )}
+          </FormGroup>
+        </Grid>
+        <Grid item width="100%">
+          <ErrorComponent error={formErrors || mutationError} />
+        </Grid>
+      </Grid>
     </form>
   );
 };

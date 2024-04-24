@@ -11,12 +11,14 @@ import {
   PermissionFields,
   useCurrentPermissionSet,
 } from "../common/contexts/AbilitiesContext";
+import { ErrorComponent } from "../common/ErrorComponent";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
-  const { data: mainGroup } = useGetFullGroup(groupId);
+  const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
   const { permissionManager } = useCurrentPermissionSet();
-  if (!mainGroup) return <Loading fullScreen />;
+  if (error) return <ErrorComponent fullScreen error={error} />;
+  else if (!mainGroup || isLoading) return <Loading fullScreen />;
   const {
     name: groupName,
     emblem: groupEmblem,

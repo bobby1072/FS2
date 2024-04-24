@@ -104,7 +104,7 @@ export const AllGroupDisplayPage: React.FC = () => {
             </Typography>
           </Grid>
           <Grid item width="100%">
-            <Paper>
+            <Paper elevation={1}>
               <Grid
                 container
                 direction="row"

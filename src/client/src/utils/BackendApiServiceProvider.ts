@@ -7,7 +7,6 @@ import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPosit
 import { IGroupMemberModel } from "../models/IGroupMemberModel";
 import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
 import { IWorldFishModel } from "../models/IWorldFishModel";
-import { SaveCatchInput } from "../components/CatchComponents/SaveGroupCatchForm";
 
 export default abstract class BackendApiServiceProvider {
   private static _generalErrorHandler(e: any): PromiseLike<never> {
