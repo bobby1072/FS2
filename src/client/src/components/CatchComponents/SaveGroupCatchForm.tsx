@@ -170,7 +170,9 @@ export const SaveGroupCatchForm: React.FC<{
       )
     );
   };
-  const [speciesLocked, setSpeciesLocked] = useState<boolean>(false);
+  const [speciesLocked, setSpeciesLocked] = useState<boolean>(
+    groupCatch?.id ? true : false
+  );
   const [worldFishOptions, setWorldFishOptions] = useState<IWorldFishModel[]>(
     []
   );
@@ -250,6 +252,7 @@ export const SaveGroupCatchForm: React.FC<{
                 style={inputStyle}
                 allowSuggestionsAboveCursor
                 onChange={(e) => {
+                  setValue("worldFishTaxocode", undefined);
                   const totalInput = e.target.value;
                   if (totalInput) {
                     setFishSearchTerm(totalInput);
