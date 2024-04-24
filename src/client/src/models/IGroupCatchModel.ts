@@ -3,9 +3,12 @@ import { IUserModel } from "./IUserModel";
 import { IWorldFishModel } from "./IWorldFishModel";
 
 export interface IPartialGroupCatchModel {
-  Species: string;
-  Latitude: number;
-  Longitude: number;
+  species: string;
+  latitude: number;
+  longitude: number;
+  caughtAt: string;
+  weight: number;
+  user: Omit<IUserModel, "email">;
 }
 
 export interface IGroupCatchModel {

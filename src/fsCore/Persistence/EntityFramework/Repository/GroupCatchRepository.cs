@@ -1,3 +1,5 @@
+using System.Net;
+using Common;
 using Common.Dbinterfaces.Repository;
 using Common.Models;
 using Common.Models.MiscModels;
@@ -25,15 +27,17 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var catches = await dbContext.GroupCatch
+                .Include(gc => gc.User)
+                .Include(gc => gc.WorldFish)
                 .Where(c =>
                     c.Latitude > bottomLeft.Latitude &&
                     c.Latitude < topRight.Latitude &&
                     c.Longitude > bottomLeft.Longitude &&
                     c.Longitude < topRight.Longitude &&
                     c.GroupId == groupId)
-                .Select(c => new { c.Species, c.Latitude, c.Longitude })
+                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish })
                 .ToArrayAsync();
-            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude)).ToArray();
+            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound))).ToArray();
         }
         public async Task<GroupCatch?> GetOneFull(LatLng latLng, Guid groupId)
         {

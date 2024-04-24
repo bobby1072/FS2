@@ -9,6 +9,7 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
 import { UserManager } from "oidc-client-ts";
 import { Loading } from "./common/Loading";
@@ -22,6 +23,7 @@ import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
 import { UserContextProvider } from "./common/contexts/UserContext";
 import { PermissionContextProvider } from "./common/contexts/AbilitiesContext";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
@@ -90,12 +92,9 @@ const queryClient = new QueryClient({
   },
 });
 if (window.location.pathname === "/oidc-silent-renew") {
-  new UserManager({} as any)
-    .signinSilentCallback()
-    .then()
-    .catch((error: any) => {
-      console.error(error);
-    });
+  new UserManager({} as any).signinSilentCallback().catch((error: any) => {
+    console.error(error);
+  });
 } else {
   const router = createBrowserRouter(AppRoutes);
 
@@ -105,16 +104,18 @@ if (window.location.pathname === "/oidc-silent-renew") {
   root.render(
     <React.StrictMode>
       <ThemeProvider theme={fsTheme}>
-        <QueryClientProvider client={queryClient}>
-          <SnackbarProvider>
-            <AppContextProvider>
-              <RouterProvider
-                router={router}
-                fallbackElement={<Loading fullScreen={true} />}
-              />
-            </AppContextProvider>
-          </SnackbarProvider>
-        </QueryClientProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>
+            <SnackbarProvider>
+              <AppContextProvider>
+                <RouterProvider
+                  router={router}
+                  fallbackElement={<Loading fullScreen={true} />}
+                />
+              </AppContextProvider>
+            </SnackbarProvider>
+          </QueryClientProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </React.StrictMode>
   );

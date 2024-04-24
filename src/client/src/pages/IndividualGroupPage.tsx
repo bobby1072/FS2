@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import { PageBase } from "../common/PageBase";
 import { useGetFullGroup } from "../components/GroupComponents/hooks/GetFullGroup";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Box, Button, Grid, Paper, Typography } from "@mui/material";
 import { Loading } from "../common/Loading";
 import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
 import { GroupPositionDataTable } from "../components/GroupComponents/GroupPositionDataTable";
@@ -12,11 +12,15 @@ import {
   useCurrentPermissionSet,
 } from "../common/contexts/AbilitiesContext";
 import { ErrorComponent } from "../common/ErrorComponent";
+import { useState } from "react";
+import { IGroupCatchModel } from "../models/IGroupCatchModel";
+import { SaveGroupCatchForm } from "../components/CatchComponents/SaveGroupCatchForm";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
   const { permissionManager } = useCurrentPermissionSet();
+  const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
   if (error) return <ErrorComponent fullScreen error={error} />;
   else if (!mainGroup || isLoading) return <Loading fullScreen />;
   const {
@@ -109,6 +113,34 @@ export const IndividualGroupPage: React.FC = () => {
               groupId={mainGroup.id!}
             />
           </Grid>
+          <Grid
+            item
+            width="100%"
+            sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}
+          >
+            {!catchToEdit ? (
+              <Button onClick={() => setCatchToEdit(true)} variant="contained">
+                Create new catch
+              </Button>
+            ) : (
+              <Button variant="outlined" onClick={() => setCatchToEdit(false)}>
+                Clear new catch
+              </Button>
+            )}
+          </Grid>
+          {catchToEdit && (
+            <Grid item width="100%">
+              <Paper elevation={2}>
+                <SaveGroupCatchForm
+                  useSnackBarOnSuccess
+                  groupId={groupId!}
+                  groupCatch={
+                    typeof catchToEdit !== "boolean" ? catchToEdit : undefined
+                  }
+                />
+              </Paper>
+            </Grid>
+          )}
         </Grid>
       </AppAndDraw>
     </PageBase>

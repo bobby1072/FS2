@@ -173,6 +173,8 @@ export const CreateGroupForm: React.FC<{
             fullWidth
             multiline
             rows={2}
+            error={!!formError?.name}
+            helperText={formError?.name?.message}
           />
         </Grid>
         <Grid item width="50%">
@@ -182,6 +184,8 @@ export const CreateGroupForm: React.FC<{
             fullWidth
             multiline
             rows={2}
+            error={!!formError?.description}
+            helperText={formError?.description?.message}
           />
         </Grid>
         <Grid

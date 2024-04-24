@@ -27,7 +27,7 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithPermissions]
         [HttpPost("SaveGroupCatch")]
-        public async Task<IActionResult> SaveGroupCatch([FromForm] Guid? id, [FromForm] Guid groupId, [FromForm] string species, [FromForm] double weight, [FromForm] double length, [FromForm] string? description, [FromForm] DateTime caughtAt, [FromForm] IFormFile? catchPhoto, [FromForm] string? createdAt, [FromForm] double latitude, [FromForm] double longitude, [FromForm] string? worldFishTaxocode)
+        public async Task<IActionResult> SaveGroupCatch([FromForm] Guid? id, [FromForm] Guid groupId, [FromForm] string species, [FromForm] double weight, [FromForm] double length, [FromForm] string? description, [FromForm] string caughtAt, [FromForm] IFormFile? catchPhoto, [FromForm] string? createdAt, [FromForm] double latitude, [FromForm] double longitude, [FromForm] string? worldFishTaxocode)
         {
             var groupCatch = new SaveCatchFormInput
             {

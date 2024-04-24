@@ -76,7 +76,11 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return await _repo.GetCatchesInSquareRange(bottomLeftLatLong, topRightLatLong, groupId) ?? Array.Empty<PartialGroupCatch>();
+            return (await _repo.GetCatchesInSquareRange(bottomLeftLatLong, topRightLatLong, groupId))?.Select(x =>
+            {
+                x.User?.RemoveSensitive();
+                return x;
+            }).ToArray() ?? Array.Empty<PartialGroupCatch>();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace fsCore.Controllers.ControllerModels
         public double Weight { get; set; }
         public double Length { get; set; }
         public string? Description { get; set; }
-        public DateTime CaughtAt { get; set; }
+        public string CaughtAt { get; set; }
         public IFormFile? CatchPhoto { get; set; }
         public string? CreatedAt { get; set; }
         public double Latitude { get; set; }
@@ -25,7 +25,7 @@ namespace fsCore.Controllers.ControllerModels
                 GroupId,
                 Species,
                 Weight,
-                CaughtAt,
+                CaughtAt is not null ? DateTime.Parse(CaughtAt).ToUniversalTime() : DateTime.UtcNow,
                 Length,
                 Latitude,
                 Longitude,

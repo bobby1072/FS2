@@ -3,12 +3,12 @@ import imageCompression from "browser-image-compression";
 import { base64StringToJpegFile } from "../../utils/StringUtils";
 import { IGroupCatchModel } from "../../models/IGroupCatchModel";
 import { useSaveCatchMutation } from "./hooks/SaveCatchMutation";
-import { FieldErrors, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
+import { DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
-import { ApiException } from "../../common/ApiException";
-import { FormGroup, Grid, IconButton, TextField } from "@mui/material";
+import { Button, FormGroup, Grid, IconButton, TextField } from "@mui/material";
 import { faker } from "@faker-js/faker";
 import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
 import { IWorldFishModel } from "../../models/IWorldFishModel";
@@ -125,12 +125,13 @@ const mapValuesToFormData = async (
 
 export type SaveCatchInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (
+  groupId: string,
   groupCatch?: IGroupCatchModel
 ): Partial<SaveCatchInput> => {
-  if (!groupCatch) return {};
+  if (!groupCatch) return { groupId };
   return {
     id: groupCatch.id,
-    groupId: groupCatch.groupId,
+    groupId,
     species: groupCatch.species,
     worldFishTaxocode: groupCatch.worldFishTaxocode,
     weight: groupCatch.weight,
@@ -147,7 +148,8 @@ const mapDefaultValues = (
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
-}> = ({ groupCatch, useSnackBarOnSuccess }) => {
+  groupId: string;
+}> = ({ groupCatch, useSnackBarOnSuccess, groupId }) => {
   const {
     data: savedCatchId,
     mutate: saveCatchMutation,
@@ -157,18 +159,19 @@ export const SaveGroupCatchForm: React.FC<{
   } = useSaveCatchMutation();
   const {
     handleSubmit,
+    control,
     register,
     setValue,
     watch,
     formState: { errors: formErrors, isDirty: isFormDirty },
   } = useForm<SaveCatchInput>({
-    defaultValues: mapDefaultValues(groupCatch),
+    defaultValues: mapDefaultValues(groupId, groupCatch),
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
   const [addedCatchPhoto, setAddedCatchPhoto] = useState<string | File>();
-  const [allErrors, setAllErrors] = useState<ApiException | FieldErrors<any>>();
-  const { catchPhoto, species } = watch();
+  const { catchPhoto, species, weight, length, latitude, longitude, caughtAt } =
+    watch();
   const isDirty = isFormDirty || catchPhoto !== groupCatch?.catchPhoto;
   const submitHandler = async (values: SaveCatchInput) => {
     resetMutation();
@@ -210,7 +213,7 @@ export const SaveGroupCatchForm: React.FC<{
       <Grid
         container
         spacing={2}
-        padding={2}
+        padding={1}
         width={"100%"}
         justifyContent="center"
         alignItems="center"
@@ -243,7 +246,7 @@ export const SaveGroupCatchForm: React.FC<{
               <MentionsInput
                 value={species}
                 placeholder="Type a species..."
-                singleLine={true}
+                singleLine={false}
                 allowSpaceInQuery
                 style={inputStyle}
                 allowSuggestionsAboveCursor
@@ -265,7 +268,7 @@ export const SaveGroupCatchForm: React.FC<{
                   onAdd={(id) => {
                     setSpeciesLocked(true);
                     setFishSearchTerm("");
-                    setValue("species", `%${id}%`);
+                    setValue("worldFishTaxocode", id.toString());
                   }}
                   style={{ backgroundColor: "#EBEBEB" }}
                   data={worldFishOptions
@@ -280,6 +283,123 @@ export const SaveGroupCatchForm: React.FC<{
               </MentionsInput>
             )}
           </FormGroup>
+        </Grid>
+        <Grid item width="25%">
+          <TextField
+            label="Weight"
+            fullWidth
+            type="number"
+            {...register("weight", { required: true })}
+            error={!!formErrors?.weight}
+            helperText={formErrors?.weight?.message}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <TextField
+            label="Length"
+            fullWidth
+            type="number"
+            {...register("length", { required: true })}
+            error={!!formErrors?.length}
+            helperText={formErrors?.length?.message}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <TextField
+            label="Description"
+            fullWidth
+            multiline
+            {...register("description")}
+            error={!!formErrors?.description}
+            helperText={formErrors?.description?.message}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <TextField
+            label="Latitude"
+            fullWidth
+            type="number"
+            {...register("latitude", { required: true })}
+            error={!!formErrors?.latitude}
+            helperText={formErrors?.latitude?.message}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <TextField
+            type="number"
+            label="Longitude"
+            fullWidth
+            {...register("longitude", { required: true })}
+            error={!!formErrors?.longitude}
+            helperText={formErrors?.longitude?.message}
+          />
+        </Grid>
+        <Grid item width="25%">
+          <FormGroup>
+            <Controller
+              control={control}
+              name="caughtAt"
+              render={({ field }) => {
+                return (
+                  <DatePicker
+                    label="Caught at"
+                    inputRef={field.ref}
+                    value={field.value ? new Date(field.value) : undefined}
+                    onChange={(date) => {
+                      field.onChange(date?.toISOString());
+                    }}
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        required: true,
+                        InputLabelProps: { shrink: true },
+                        onKeyDown: (e: any) => e.preventDefault(),
+                      },
+                    }}
+                  />
+                );
+              }}
+            />
+          </FormGroup>
+        </Grid>
+        <Grid
+          item
+          width="25%"
+          sx={{
+            textAlign: "center",
+          }}
+        >
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const foundFile = e.target.files?.item(0);
+              if (foundFile) {
+                setAddedCatchPhoto(foundFile);
+              }
+            }}
+          />
+        </Grid>
+        <Grid item width="100%">
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={
+              !isDirty ||
+              isSavingCatch ||
+              Object.values(formErrors).some((x) => !!x) ||
+              !species ||
+              !weight ||
+              !length ||
+              !latitude ||
+              !longitude ||
+              !caughtAt
+            }
+          >
+            Save catch
+          </Button>
         </Grid>
         <Grid item width="100%">
           <ErrorComponent error={formErrors || mutationError} />
