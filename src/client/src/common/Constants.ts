@@ -10,6 +10,7 @@ enum QueryKeys {
   GetGroupAndPositions = "get-group-and-positions",
   GetAllPositionsForGroup = "get-all-positions-for-group",
   GetAllMembersForGroup = "get-all-members-for-group",
+  GetAllPartialCatchesFroGroup = "get-all-partial-catches-for-group",
 }
 export default abstract class Constants {
   public static readonly QueryKeys: typeof QueryKeys = QueryKeys;

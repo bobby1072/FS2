@@ -9,6 +9,7 @@ export interface IPartialGroupCatchModel {
   caughtAt: string;
   weight: number;
   user: Omit<IUserModel, "email">;
+  worldFish?: IWorldFishModel | null;
 }
 
 export interface IGroupCatchModel {

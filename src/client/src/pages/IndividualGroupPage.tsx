@@ -20,15 +20,40 @@ import {
   useCurrentPermissionSet,
 } from "../common/contexts/AbilitiesContext";
 import { ErrorComponent } from "../common/ErrorComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IGroupCatchModel } from "../models/IGroupCatchModel";
-import { SaveGroupCatchForm } from "../components/CatchComponents/SaveGroupCatchForm";
+import {
+  SaveCatchInput,
+  SaveGroupCatchForm,
+  formSchema,
+  mapDefaultValues,
+} from "../components/CatchComponents/SaveGroupCatchForm";
+import { useGetAllPartialCatchesForGroupQuery } from "../components/CatchComponents/hooks/GetAllPartialCatchesForGroup";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { LocationFinder } from "../components/MapComponents/LocationFinder";
+import { GenerateMap } from "../components/MapComponents/GenerateMap";
+import { CatchMarker } from "../components/CatchComponents/CatchMarker";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
   const { permissionManager } = useCurrentPermissionSet();
+  const { data: groupCatches, error: groupCatchesError } =
+    useGetAllPartialCatchesForGroupQuery(groupId!);
+  const [currentMapZoom, setCurrentMapZoom] = useState<number>();
   const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
+  const formMethods = useForm<SaveCatchInput>({
+    defaultValues: mapDefaultValues(
+      groupId!,
+      catchToEdit && typeof catchToEdit !== "boolean" ? catchToEdit : undefined
+    ),
+    resolver: zodResolver(formSchema),
+  });
+  useEffect(() => {
+    formMethods.reset();
+  }, [catchToEdit, formMethods]);
+  const { latitude, longitude } = formMethods.watch();
   if (error) return <ErrorComponent fullScreen error={error} />;
   else if (!mainGroup || isLoading) return <Loading fullScreen />;
   const {
@@ -148,16 +173,49 @@ export const IndividualGroupPage: React.FC = () => {
             <Grid item width="100%">
               <Accordion>
                 <AccordionDetails>
-                  <SaveGroupCatchForm
-                    closeForm={() => setCatchToEdit(false)}
-                    useSnackBarOnSuccess
-                    groupId={groupId!}
-                    groupCatch={
-                      typeof catchToEdit !== "boolean" ? catchToEdit : undefined
-                    }
-                  />
+                  <FormProvider {...formMethods}>
+                    <SaveGroupCatchForm
+                      closeForm={() => setCatchToEdit(false)}
+                      useSnackBarOnSuccess
+                      groupId={groupId!}
+                      groupCatch={
+                        typeof catchToEdit !== "boolean"
+                          ? catchToEdit
+                          : undefined
+                      }
+                    />
+                  </FormProvider>
                 </AccordionDetails>
               </Accordion>
+            </Grid>
+          )}
+          <Grid item width="100%">
+            <GenerateMap
+              center={
+                latitude && longitude
+                  ? [Number(latitude), Number(longitude)]
+                  : undefined
+              }
+              zoom={currentMapZoom}
+            >
+              {catchToEdit && (
+                <LocationFinder
+                  lat={latitude ? Number(latitude) : undefined}
+                  lng={latitude ? Number(longitude) : undefined}
+                  setCurrentZoom={setCurrentMapZoom}
+                  setLatLng={({ lat, lng }) => {
+                    formMethods.setValue("latitude", lat);
+                    formMethods.setValue("longitude", lng);
+                  }}
+                />
+              )}
+              {groupCatches &&
+                groupCatches.map((gc) => <CatchMarker groupCatch={gc} />)}
+            </GenerateMap>
+          </Grid>
+          {groupCatchesError && (
+            <Grid item width="100%">
+              <ErrorComponent error={groupCatchesError} />
             </Grid>
           )}
         </Grid>

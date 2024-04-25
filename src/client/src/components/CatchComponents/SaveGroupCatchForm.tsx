@@ -3,10 +3,9 @@ import imageCompression from "browser-image-compression";
 import { base64StringToJpegFile } from "../../utils/StringUtils";
 import { IGroupCatchModel } from "../../models/IGroupCatchModel";
 import { useSaveCatchMutation } from "./hooks/SaveCatchMutation";
-import { Controller, FieldErrors, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, FieldErrors, useFormContext } from "react-hook-form";
 import { useSnackbar } from "notistack";
-import { DatePicker } from "@mui/x-date-pickers";
+import { DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import {
   Autocomplete,
@@ -15,6 +14,7 @@ import {
   Grid,
   IconButton,
   TextField,
+  Typography,
 } from "@mui/material";
 import { faker } from "@faker-js/faker";
 import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
@@ -22,8 +22,9 @@ import { IWorldFishModel } from "../../models/IWorldFishModel";
 import { Close } from "@mui/icons-material";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
+import { getPrettyWorldFish } from "../../common/GetPrettyWorldFish";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   id: z.string().optional().nullable(),
   groupId: z.string(),
   species: z.string(),
@@ -80,7 +81,7 @@ const mapValuesToFormData = async (
 };
 
 export type SaveCatchInput = z.infer<typeof formSchema>;
-const mapDefaultValues = (
+export const mapDefaultValues = (
   groupId: string,
   groupCatch?: IGroupCatchModel
 ): Partial<SaveCatchInput> => {
@@ -121,10 +122,7 @@ export const SaveGroupCatchForm: React.FC<{
     setValue,
     watch,
     formState: { errors: formErrors, isDirty: isFormDirty },
-  } = useForm<SaveCatchInput>({
-    defaultValues: mapDefaultValues(groupId, groupCatch),
-    resolver: zodResolver(formSchema),
-  });
+  } = useFormContext<SaveCatchInput>();
   const { enqueueSnackbar } = useSnackbar();
   const [addedCatchPhoto, setAddedCatchPhoto] = useState<string | File>();
   const { catchPhoto, species, weight, length, latitude, longitude, caughtAt } =
@@ -214,15 +212,24 @@ export const SaveGroupCatchForm: React.FC<{
               />
             ) : (
               <Autocomplete
-                options={worldFishOptions
-                  .filter((x) => x.englishName)
-                  .map((x) => ({
-                    id: x.taxocode,
-                    display: `${x.englishName}${
-                      x.nickname ? ` (${x.nickname})` : ""
-                    }`,
-                  }))}
-                getOptionLabel={(option) => option.display}
+                options={worldFishOptions.filter((x) => x.englishName)}
+                getOptionLabel={getPrettyWorldFish}
+                renderOption={(props, option) => (
+                  <li {...props}>
+                    <Grid container direction="column">
+                      <Grid item>
+                        <Typography>
+                          <strong>{getPrettyWorldFish(option)}</strong>
+                        </Typography>
+                      </Grid>
+                      <Grid item>
+                        <Typography fontSize={12}>
+                          {option.scientificName}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </li>
+                )}
                 onInputChange={(e, value, reason) => {
                   if (reason === "input" && e?.type === "change" && value) {
                     setFishSearchTerm(value);
@@ -232,7 +239,7 @@ export const SaveGroupCatchForm: React.FC<{
                   }
                 }}
                 isOptionEqualToValue={(option, value) =>
-                  option.id! === value.id!
+                  option.taxocode! === value.taxocode!
                 }
                 renderInput={(params) => (
                   <TextField
@@ -251,9 +258,9 @@ export const SaveGroupCatchForm: React.FC<{
                     : "Start typing to search"
                 }
                 onChange={(_, option) => {
-                  setValue("worldFishTaxocode", option?.id.toString());
+                  setValue("worldFishTaxocode", option?.taxocode.toString());
                   const foundWorldFish = worldFishOptions.find(
-                    (x) => x.taxocode === option?.id
+                    (x) => x.taxocode === option?.taxocode
                   )?.englishName;
                   if (foundWorldFish) {
                     setValue("species", foundWorldFish);
@@ -300,6 +307,7 @@ export const SaveGroupCatchForm: React.FC<{
           <TextField
             label="Latitude"
             fullWidth
+            value={latitude ?? ""}
             type="number"
             {...register("latitude", { required: true })}
             error={!!formErrors?.latitude}
@@ -310,6 +318,7 @@ export const SaveGroupCatchForm: React.FC<{
           <TextField
             type="number"
             label="Longitude"
+            value={longitude ?? ""}
             fullWidth
             {...register("longitude", { required: true })}
             error={!!formErrors?.longitude}
@@ -323,7 +332,7 @@ export const SaveGroupCatchForm: React.FC<{
               name="caughtAt"
               render={({ field }) => {
                 return (
-                  <DatePicker
+                  <DateTimePicker
                     label="Caught at"
                     inputRef={field.ref}
                     value={field.value ? new Date(field.value) : undefined}

@@ -4,8 +4,8 @@ import { Popup, useMapEvents } from "react-leaflet";
 import { GenerateMap } from "./GenerateMap";
 
 export const LocationFinder: React.FC<{
-  lat: number;
-  lng: number;
+  lat?: number;
+  lng?: number;
   setLatLng: (latLng: { lat: number; lng: number }) => void;
   setCurrentZoom: (zoom: number) => void;
 }> = ({ lat, lng, setLatLng, setCurrentZoom }) => {
