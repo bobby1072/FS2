@@ -33,11 +33,43 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LocationFinder } from "../components/MapComponents/LocationFinder";
 import { GenerateMap } from "../components/MapComponents/GenerateMap";
+import { IGroupModel } from "../models/IGroupModel";
+import { DivIcon, point } from "leaflet";
+import { Marker } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import { CatchMarker } from "../components/CatchComponents/CatchMarker";
+
+const createClusterCustomIcon = (cluster: any) => {
+  return new DivIcon({
+    html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
+    className: "custom-marker-cluster",
+    iconSize: point(33, 33, true),
+  });
+};
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
+  const { permissionManager } = useCurrentPermissionSet();
+  if (
+    !mainGroup?.public &&
+    !permissionManager.Can(PermissionActions.BelongsTo, groupId!)
+  )
+    return (
+      <ErrorComponent
+        fullScreen
+        error={new Error("You do not have permission to view this group.")}
+      />
+    );
+  else if (error) return <ErrorComponent fullScreen error={error} />;
+  else if (!mainGroup || isLoading) return <Loading fullScreen />;
+  return <IndividualGroupPageInner group={mainGroup} />;
+};
+
+const IndividualGroupPageInner: React.FC<{
+  group: Omit<IGroupModel, "members">;
+}> = ({ group: mainGroup }) => {
+  const { id: groupId } = useParams<{ id: string }>();
   const { permissionManager } = useCurrentPermissionSet();
   const { data: groupCatches, error: groupCatchesError } =
     useGetAllPartialCatchesForGroupQuery(groupId!);
@@ -54,8 +86,6 @@ export const IndividualGroupPage: React.FC = () => {
     formMethods.reset();
   }, [catchToEdit, formMethods]);
   const { latitude, longitude } = formMethods.watch();
-  if (error) return <ErrorComponent fullScreen error={error} />;
-  else if (!mainGroup || isLoading) return <Loading fullScreen />;
   const {
     name: groupName,
     emblem: groupEmblem,
@@ -209,8 +239,13 @@ export const IndividualGroupPage: React.FC = () => {
                   }}
                 />
               )}
-              {groupCatches &&
-                groupCatches.map((gc) => <CatchMarker groupCatch={gc} />)}
+              {groupCatches && (
+                <MarkerClusterGroup chunkedLoading>
+                  {groupCatches.map((gc) => (
+                    <CatchMarker groupCatch={gc} />
+                  ))}
+                </MarkerClusterGroup>
+              )}
             </GenerateMap>
           </Grid>
           {groupCatchesError && (

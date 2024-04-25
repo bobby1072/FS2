@@ -193,7 +193,7 @@ export const CreateGroupForm: React.FC<{
           width="40%"
           sx={{ display: "flex", justifyContent: "flex-start" }}
         >
-          <Tooltip title="Public groups are visible to everyone. Private groups are only visible to members and are invite only.">
+          <Tooltip title="Public groups are free for everyone to look at. Private groups are invite only.">
             <FormControlLabel
               control={
                 <Switch
