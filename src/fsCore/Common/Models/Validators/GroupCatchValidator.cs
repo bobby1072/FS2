@@ -11,6 +11,8 @@ namespace Common.Models.Validators
             RuleFor(x => x.Description).Must(_notJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupCatch);
             RuleFor(x => x.Latitude).Must(_LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
             RuleFor(x => x.Longitude).Must(_LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
+            RuleFor(x => x.Length).Must(_numbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
+            RuleFor(x => x.Weight).Must(_numbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
         }
 
     }

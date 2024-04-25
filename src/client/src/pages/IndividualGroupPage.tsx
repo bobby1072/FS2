@@ -2,7 +2,15 @@ import { useParams } from "react-router-dom";
 import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import { PageBase } from "../common/PageBase";
 import { useGetFullGroup } from "../components/GroupComponents/hooks/GetFullGroup";
-import { Box, Button, Grid, Paper, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Loading } from "../common/Loading";
 import { GroupMembersDataTable } from "../components/GroupComponents/GroupMembersDataTable";
 import { GroupPositionDataTable } from "../components/GroupComponents/GroupPositionDataTable";
@@ -131,23 +139,25 @@ export const IndividualGroupPage: React.FC = () => {
                   variant="outlined"
                   onClick={() => setCatchToEdit(false)}
                 >
-                  Clear new catch
+                  Cancel
                 </Button>
               )}
             </Grid>
           )}
           {catchToEdit && (
             <Grid item width="100%">
-              <Paper elevation={2}>
-                <SaveGroupCatchForm
-                  closeForm={() => setCatchToEdit(false)}
-                  useSnackBarOnSuccess
-                  groupId={groupId!}
-                  groupCatch={
-                    typeof catchToEdit !== "boolean" ? catchToEdit : undefined
-                  }
-                />
-              </Paper>
+              <Accordion>
+                <AccordionDetails>
+                  <SaveGroupCatchForm
+                    closeForm={() => setCatchToEdit(false)}
+                    useSnackBarOnSuccess
+                    groupId={groupId!}
+                    groupCatch={
+                      typeof catchToEdit !== "boolean" ? catchToEdit : undefined
+                    }
+                  />
+                </AccordionDetails>
+              </Accordion>
             </Grid>
           )}
         </Grid>

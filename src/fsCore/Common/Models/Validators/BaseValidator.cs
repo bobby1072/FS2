@@ -19,5 +19,6 @@ namespace Common.Models.Validators
         protected static bool _notJustBeWhiteSpace(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsWhiteSpace);
         protected static bool _notJustHaveNumbers(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsDigit);
         protected static bool _lettersAndWhiteSpaceOnly(string input) => input.Any(char.IsLetter) && !input.All(char.IsWhiteSpace) && !input.Any(char.IsDigit) && !input.Any(char.IsPunctuation);
+        protected static bool _numbersArePositive(double input) => input > 0;
     }
 }

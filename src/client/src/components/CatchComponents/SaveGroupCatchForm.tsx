@@ -8,51 +8,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
-import { Button, FormGroup, Grid, IconButton, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  FormGroup,
+  Grid,
+  IconButton,
+  TextField,
+} from "@mui/material";
 import { faker } from "@faker-js/faker";
 import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
 import { IWorldFishModel } from "../../models/IWorldFishModel";
-import { Mention, MentionsInput } from "react-mentions";
 import { Close } from "@mui/icons-material";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
-const inputStyle = {
-  control: {
-    backgroundColor: "#fff",
-    fontSize: 14,
-    fontWeight: "normal",
-  },
-
-  "&multiLine": {
-    control: {
-      fontFamily: "monospace",
-      minHeight: 63,
-    },
-    highlighter: {
-      padding: 9,
-      border: "1px solid transparent",
-    },
-    input: {
-      padding: 9,
-      border: "1px solid silver",
-    },
-  },
-
-  suggestions: {
-    list: {
-      backgroundColor: "white",
-      border: "1px solid rgba(0,0,0,0.15)",
-      fontSize: 14,
-    },
-    item: {
-      padding: "5px 15px",
-      borderBottom: "1px solid rgba(0,0,0,0.15)",
-      "&focused": {
-        backgroundColor: "#cee4e5",
-      },
-    },
-  },
-};
 
 const formSchema = z.object({
   id: z.string().optional().nullable(),
@@ -234,8 +203,8 @@ export const SaveGroupCatchForm: React.FC<{
                       color="inherit"
                       size="small"
                       onClick={() => {
-                        setSpeciesLocked(false);
                         clearSpeciesSearch();
+                        setSpeciesLocked(false);
                       }}
                     >
                       <Close fontSize="inherit" />
@@ -244,51 +213,56 @@ export const SaveGroupCatchForm: React.FC<{
                 }}
               />
             ) : (
-              <MentionsInput
-                value={species}
-                placeholder="Type a species..."
-                singleLine={false}
-                allowSpaceInQuery
-                style={inputStyle}
-                allowSuggestionsAboveCursor
-                onChange={(e) => {
-                  setValue("worldFishTaxocode", undefined);
-                  const totalInput = e.target.value;
-                  if (totalInput) {
-                    setFishSearchTerm(totalInput);
-                    setValue("species", totalInput);
-                  } else {
+              <Autocomplete
+                options={worldFishOptions
+                  .filter((x) => x.englishName)
+                  .map((x) => ({
+                    id: x.taxocode,
+                    display: `${x.englishName}${
+                      x.nickname ? ` (${x.nickname})` : ""
+                    }`,
+                  }))}
+                getOptionLabel={(option) => option.display}
+                onInputChange={(e, value, reason) => {
+                  if (reason === "input" && e?.type === "change" && value) {
+                    setFishSearchTerm(value);
+                    setValue("species", value);
+                  } else if (reason === "clear" || !value) {
                     clearSpeciesSearch();
                   }
                 }}
-              >
-                <Mention
-                  trigger={""}
-                  isLoading={worldFishLikeLoading}
-                  appendSpaceOnAdd
-                  onAdd={(id) => {
-                    setSpeciesLocked(true);
-                    setFishSearchTerm("");
-                    const foundWorldFish = worldFishOptions.find(
-                      (x) => x.taxocode === id
-                    )?.englishName;
-                    if (foundWorldFish) {
-                      setValue("species", foundWorldFish);
-                    }
-                    setValue("worldFishTaxocode", id.toString());
-                    setWorldFishOptions([]);
-                  }}
-                  style={{ backgroundColor: "#EBEBEB" }}
-                  data={worldFishOptions
-                    .filter((x) => x.englishName)
-                    .map((x) => ({
-                      id: x.taxocode,
-                      display: `${x.englishName}${
-                        x.nickname ? ` (${x.nickname})` : ""
-                      }`,
-                    }))}
-                />
-              </MentionsInput>
+                isOptionEqualToValue={(option, value) =>
+                  option.id! === value.id!
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label={"Species"}
+                    InputLabelProps={{ shrink: true }}
+                    size="medium"
+                  />
+                )}
+                noOptionsText={
+                  worldFishLikeLoading
+                    ? "Loading..."
+                    : worldFishLike
+                    ? "No results"
+                    : "Start typing to search"
+                }
+                onChange={(_, option) => {
+                  setValue("worldFishTaxocode", option?.id.toString());
+                  const foundWorldFish = worldFishOptions.find(
+                    (x) => x.taxocode === option?.id
+                  )?.englishName;
+                  if (foundWorldFish) {
+                    setValue("species", foundWorldFish);
+                  }
+                  setSpeciesLocked(true);
+                  setFishSearchTerm("");
+                  setWorldFishOptions([]);
+                }}
+              />
             )}
           </FormGroup>
         </Grid>

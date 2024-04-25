@@ -71,7 +71,6 @@ export const UsersSearch: React.FC<{
           variant="outlined"
           label="Person"
           InputLabelProps={{ shrink: true }}
-          inputProps={{ ...params.inputProps }}
           size="medium"
         />
       )}
