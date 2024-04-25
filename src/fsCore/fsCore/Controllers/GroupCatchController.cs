@@ -17,7 +17,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("DeleteGroupCatch")]
         public async Task<IActionResult> DeleteGroupCatch(Guid id)
         {
@@ -25,7 +25,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpPost("SaveGroupCatch")]
         public async Task<IActionResult> SaveGroupCatch([FromForm] Guid? id, [FromForm] Guid groupId, [FromForm] string species, [FromForm] double weight, [FromForm] double length, [FromForm] string? description, [FromForm] string caughtAt, [FromForm] IFormFile? catchPhoto, [FromForm] string? createdAt, [FromForm] double latitude, [FromForm] double longitude, [FromForm] string? worldFishTaxocode)
         {
@@ -49,7 +49,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpPost("GetFullFish")]
         public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
         {
@@ -58,12 +58,11 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpPost("GetCatchesInSquareRange")]
-        public async Task<IActionResult> GetCatchesInSquareRange([FromBody] SquareRangeCatchesInput input)
+        [RequiredUserWithGroupPermissions]
+        [HttpGet("GetCatchesInGroup")]
+        public async Task<IActionResult> GetCatchesForGroup(Guid groupId)
         {
-            var (bottomLeftLatLong, topRightLatLong, groupId) = input.BreakDown();
-            return Ok(await _groupCatchService.GetCatchesInSquareRange(bottomLeftLatLong, topRightLatLong, groupId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupCatchService.GetAllPartialCatchesForGroup(groupId, _getCurrentUserWithPermissions()));
         }
     }
 }

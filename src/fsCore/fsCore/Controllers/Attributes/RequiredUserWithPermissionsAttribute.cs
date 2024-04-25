@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace fsCore.Controllers.Attributes
 {
-    internal sealed class RequiredUserWithPermissions : AuthorizeAttribute, IAuthorizationFilter
+    internal sealed class RequiredUserWithGroupPermissions : AuthorizeAttribute, IAuthorizationFilter
     {
         public bool UpdateAlways { get; set; }
-        public RequiredUserWithPermissions(bool updateAfter = false)
+        public RequiredUserWithGroupPermissions(bool updateAfter = false)
         {
             UpdateAlways = updateAfter;
         }

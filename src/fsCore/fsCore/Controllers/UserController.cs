@@ -36,7 +36,7 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(RawUserPermission))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUser]
-        [RequiredUserWithPermissions(true)]
+        [RequiredUserWithGroupPermissions(true)]
         [HttpGet("SelfWithGroupPermissions")]
         public async Task<IActionResult> GetUserWithPermissions()
         {

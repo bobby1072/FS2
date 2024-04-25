@@ -11,5 +11,6 @@ namespace Common.Dbinterfaces.Repository
         Task<GroupCatch?> GetOneFull(LatLng latLng, Guid groupId);
         Task<GroupCatch?> GetOne(Guid id);
         Task<ICollection<PartialGroupCatch>?> GetCatchesInSquareRange(LatLng bottomLeft, LatLng topRight, Guid groupId);
+        Task<ICollection<PartialGroupCatch>?> GetAllPartialCatchesForGroup(Guid groupId);
     }
 }

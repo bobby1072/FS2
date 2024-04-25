@@ -33,6 +33,18 @@ namespace fsCore.Service
             }
             return (await _repo.Delete(new[] { foundCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.FailedToDeleteFish, HttpStatusCode.InternalServerError);
         }
+        public async Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForGroup(Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        {
+            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return (await _repo.GetAllPartialCatchesForGroup(groupId))?.Select(x =>
+            {
+                x.User?.RemoveSensitive();
+                return x;
+            }).ToArray() ?? Array.Empty<PartialGroupCatch>();
+        }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             if (groupCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupCatch.GroupId, nameof(GroupCatch)))

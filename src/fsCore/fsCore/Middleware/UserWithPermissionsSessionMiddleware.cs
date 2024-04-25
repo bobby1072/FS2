@@ -13,7 +13,7 @@ namespace fsCore.Middleware
         public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService)
         {
             var endpointData = httpContext.GetEndpoint();
-            if (endpointData?.Metadata.GetMetadata<RequiredUserWithPermissions>() is RequiredUserWithPermissions foundAttribute)
+            if (endpointData?.Metadata.GetMetadata<RequiredUserWithGroupPermissions>() is RequiredUserWithGroupPermissions foundAttribute)
             {
                 var foundUserWithPermissions = httpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession);
                 if (foundAttribute.UpdateAlways || foundUserWithPermissions is null)

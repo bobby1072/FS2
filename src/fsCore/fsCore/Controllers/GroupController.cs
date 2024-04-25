@@ -17,7 +17,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Group))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("GetGroupWithPositions")]
         public async Task<IActionResult> GetGroupWithPositions(Guid groupId)
         {
@@ -25,7 +25,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("GetGroupMembers")]
         public async Task<IActionResult> GetGroupMembers(Guid groupId)
         {
@@ -33,7 +33,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
+        [RequiredUserWithGroupPermissions(true)]
         [HttpPost("SaveGroup")]
         public async Task<IActionResult> SaveGroup([FromForm] IFormFile emblem, [FromForm] Guid? id, [FromForm] Guid leaderId, [FromForm] string name, [FromForm] string? description, [FromForm] string isPublic, [FromForm] string isListed, [FromForm] string? createdAt)
         {
@@ -54,7 +54,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
+        [RequiredUserWithGroupPermissions(true)]
         [HttpGet("DeleteGroup")]
         public async Task<IActionResult> DeleteGroup(Guid groupId)
         {
@@ -62,7 +62,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
+        [RequiredUserWithGroupPermissions(true)]
         [HttpPost("SavePosition")]
         public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
         {
@@ -70,7 +70,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions(true)]
+        [RequiredUserWithGroupPermissions(true)]
         [HttpGet("DeletePosition")]
         public async Task<IActionResult> DeletePosition(Guid positionId)
         {
@@ -78,7 +78,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("GetAllListedGroups")]
         public async Task<IActionResult> ListedGroupsWithIndex(int startIndex, int count)
         {
@@ -86,7 +86,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("SearchAllListedGroups")]
         public async Task<IActionResult> SearchAllListedGroups(string groupName)
         {
@@ -98,7 +98,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("GetGroupCount")]
         public async Task<IActionResult> GetGroupCount()
         {
@@ -106,7 +106,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("GetSelfGroups")]
         public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
         {
@@ -114,7 +114,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpPost("SaveGroupMember")]
         public async Task<IActionResult> SaveGroupMember([FromBody] GroupMember groupMember)
         {
@@ -122,7 +122,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("DeleteGroupMember")]
         public async Task<IActionResult> DeleteGroupMember(Guid groupMemberId)
         {
