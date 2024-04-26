@@ -219,6 +219,7 @@ const IndividualGroupPageInner: React.FC<{
               permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
               <Grid item width="100%">
                 <CatchesMap
+                  setCatchToEdit={setCatchToEdit}
                   catchToEdit={!!catchToEdit}
                   latitude={latitude}
                   longitude={longitude}
@@ -239,12 +240,14 @@ const CatchesMap: React.FC<{
   latitude: number;
   longitude: number;
   currentMapZoom?: number;
-  formMethods: UseFormReturn<any, any, any>;
+  setCatchToEdit: (c: IGroupCatchModel) => void;
+  formMethods: UseFormReturn<SaveCatchInput>;
   setCurrentMapZoom: (z: number) => void;
   catchToEdit: boolean;
 }> = ({
   catchToEdit,
   latitude,
+  setCatchToEdit,
   longitude,
   setCurrentMapZoom,
   currentMapZoom,
@@ -280,7 +283,16 @@ const CatchesMap: React.FC<{
             groupCatches && (
               <MarkerClusterGroup chunkedLoading>
                 {groupCatches.map((gc) => (
-                  <CatchMarker groupCatch={gc} />
+                  <CatchMarker
+                    groupCatch={gc}
+                    groupId={groupId!}
+                    formUpdates={{
+                      setCatchToEdit: (gc) => {
+                        setCatchToEdit(gc);
+                      },
+                    }}
+                    useSnackBarOnSuccess
+                  />
                 ))}
               </MarkerClusterGroup>
             )}

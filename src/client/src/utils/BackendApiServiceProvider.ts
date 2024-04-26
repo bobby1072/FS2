@@ -291,4 +291,14 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
+  public static async DeleteGroupCatch(catchId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<string>(`GroupCatch/DeleteGroupCatch?id=${catchId}`, {
+        headers: {
+          Authorization: this._formatAccessToken(accessToken),
+        },
+      })
+      .catch(this._generalErrorHandler);
+    return data;
+  }
 }

@@ -24,7 +24,7 @@ import { IWorldFishModel } from "../../models/IWorldFishModel";
 import { Close } from "@mui/icons-material";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
-import { getPrettyWorldFish } from "../../common/GetPrettyWorldFish";
+import { getPrettyWorldFishName } from "../../common/GetPrettyWorldFish";
 
 export const formSchema = z.object({
   id: z.string().optional().nullable(),
@@ -221,13 +221,13 @@ export const SaveGroupCatchForm: React.FC<{
             ) : (
               <Autocomplete
                 options={worldFishOptions.filter((x) => x.englishName)}
-                getOptionLabel={getPrettyWorldFish}
+                getOptionLabel={getPrettyWorldFishName}
                 renderOption={(props, option) => (
                   <li {...props}>
                     <Grid container direction="column">
                       <Grid item>
                         <Typography>
-                          <strong>{getPrettyWorldFish(option)}</strong>
+                          <strong>{getPrettyWorldFishName(option)}</strong>
                         </Typography>
                       </Grid>
                       <Grid item>
