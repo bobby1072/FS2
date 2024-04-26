@@ -50,7 +50,7 @@ namespace Persistence.EntityFramework.Repository
                 .ToArrayAsync();
             return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), c.Weight, c.Id)).ToArray();
         }
-        public async Task<GroupCatch?> GetOneFull(LatLng latLng, Guid groupId)
+        public async Task<GroupCatch?> GetOne(LatLng latLng, Guid groupId)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch

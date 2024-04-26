@@ -17,6 +17,15 @@ namespace fsCore.Service
             _worldFishRepository = worldFishRepo;
             _groupService = groupService;
         }
+        public async Task<GroupCatch> GetFullCatchById(Guid catchId, UserWithGroupPermissionSet currentUser)
+        {
+            var foundCatch = await _repo.GetOne(catchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return foundCatch;
+        }
         public async Task<GroupCatch> DeleteGroupCatch(Guid id, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             var foundCatch = await _repo.GetOne(id) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
@@ -78,7 +87,7 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            var groupCatch = await _repo.GetOneFull(latLng, groupId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            var groupCatch = await _repo.GetOne(latLng, groupId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             groupCatch.User?.RemoveSensitive();
             return groupCatch;
         }

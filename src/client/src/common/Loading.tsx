@@ -39,7 +39,7 @@ export const Loading: React.FC<{ fullScreen?: boolean }> = ({
         <LinearProgress />
       </Grid>
       <Grid item width="100%">
-        <Typography variant="h1" fontSize={50}>
+        <Typography variant="h1" fontSize={30}>
           Loading...
         </Typography>
       </Grid>

@@ -24,7 +24,6 @@ import { SnackbarProvider } from "notistack";
 import { UserContextProvider } from "./common/contexts/UserContext";
 import { PermissionContextProvider } from "./common/contexts/AbilitiesContext";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-document.title = "FS2";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
   return isLoggedIn ? (
@@ -82,7 +81,6 @@ const AppRoutes: RouteObject[] = [
     ),
   })),
 ];
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

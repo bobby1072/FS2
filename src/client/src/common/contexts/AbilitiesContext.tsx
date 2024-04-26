@@ -45,7 +45,7 @@ export const AppAbilityContext = createContext<
   { permissionManager: PermissionManager } | undefined
 >(undefined);
 
-export const useCurrentPermissionSet = () => {
+export const useCurrentPermissionManager = () => {
   const value = useContext(AppAbilityContext);
   if (!value) throw new ApiException("No permission set found");
   return value;

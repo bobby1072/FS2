@@ -5,9 +5,12 @@ import { getPrettyWorldFish } from "../../common/GetPrettyWorldFish";
 import { Icon } from "leaflet";
 import markerPhoto from "../../data/images/map-marker.png";
 import { prettyDateWithTime } from "../../utils/DateTime";
+import { useCurrentPermissionManager } from "../../common/contexts/AbilitiesContext";
+import { useFormContext } from "react-hook-form";
+import { SaveCatchInput } from "./SaveGroupCatchForm";
 const iconMarker = new Icon({
   iconUrl: markerPhoto,
-  iconSize: [34, 34],
+  iconSize: [35, 35],
 });
 export const CatchMarker: React.FC<{
   groupCatch: IPartialGroupCatchModel;
@@ -23,6 +26,7 @@ export const CatchMarker: React.FC<{
     weight,
   },
 }) => {
+  const { permissionManager } = useCurrentPermissionManager();
   return (
     <Marker position={[latitude, longitude]} icon={iconMarker}>
       <Popup>
@@ -36,7 +40,7 @@ export const CatchMarker: React.FC<{
           textAlign="center"
         >
           <Grid item>
-            <Typography variant="h6">
+            <Typography variant="h5" sx={{ textDecoration: "underline" }}>
               <strong>
                 {worldFish ? getPrettyWorldFish(worldFish) : species}
               </strong>
@@ -55,7 +59,7 @@ export const CatchMarker: React.FC<{
           </Grid>
           <Grid item>
             <Typography variant="subtitle2">
-              <strong>Weighing:</strong> {weight}
+              <strong>Weighing:</strong> {weight} kg
             </Typography>
           </Grid>
           <Grid item width="90%">

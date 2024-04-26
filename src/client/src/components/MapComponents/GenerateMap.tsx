@@ -25,8 +25,13 @@ export const GenerateMap: React.FC<{
   return (
     <MapContainer
       center={center ? center : [52.4912, -1.9348]}
-      zoom={zoom ? zoom : 4}
+      zoom={zoom ? zoom : 6}
       scrollWheelZoom={true}
+      minZoom={3}
+      maxBounds={[
+        [-90, -180],
+        [90, 180],
+      ]}
       doubleClickZoom
       className="leaflet-container"
     >

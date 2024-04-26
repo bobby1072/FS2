@@ -50,11 +50,19 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
-        [HttpPost("GetFullFish")]
+        [HttpPost("GetFullCatchByLatLng")]
         public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
         {
             var (latLng, groupId) = input.BreakDown();
             return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, _getCurrentUserWithPermissions()));
+        }
+        [ProducesDefaultResponseType(typeof(GroupCatch))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithGroupPermissions]
+        [HttpPost("GetFullCatchById")]
+        public async Task<IActionResult> GetFullFishById(Guid catchId)
+        {
+            return Ok(await _groupCatchService.GetFullCatchById(catchId, _getCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]

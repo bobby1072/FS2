@@ -7,7 +7,10 @@ import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPosit
 import { IGroupMemberModel } from "../models/IGroupMemberModel";
 import { SaveGroupMemberInput } from "../components/GroupComponents/AddMemberModal";
 import { IWorldFishModel } from "../models/IWorldFishModel";
-import { IPartialGroupCatchModel } from "../models/IGroupCatchModel";
+import {
+  IGroupCatchModel,
+  IPartialGroupCatchModel,
+} from "../models/IGroupCatchModel";
 
 export default abstract class BackendApiServiceProvider {
   private static _generalErrorHandler(e: any): PromiseLike<never> {
@@ -275,6 +278,16 @@ export default abstract class BackendApiServiceProvider {
           },
         }
       )
+      .catch(this._generalErrorHandler);
+    return data;
+  }
+  public static async GetFullCatchById(catchId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<IGroupCatchModel>(`GroupCatch/GetFullCatchById?catchId=${catchId}`, {
+        headers: {
+          Authorization: this._formatAccessToken(accessToken),
+        },
+      })
       .catch(this._generalErrorHandler);
     return data;
   }

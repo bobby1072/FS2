@@ -17,7 +17,7 @@ import { GroupPositionDataTable } from "../components/GroupComponents/GroupPosit
 import {
   PermissionActions,
   PermissionFields,
-  useCurrentPermissionSet,
+  useCurrentPermissionManager,
 } from "../common/contexts/AbilitiesContext";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { useEffect, useState } from "react";
@@ -26,20 +26,21 @@ import {
   SaveCatchInput,
   SaveGroupCatchForm,
   formSchema,
-  mapDefaultValues,
+  mapDefaultValuesToSaveCatchInput,
 } from "../components/CatchComponents/SaveGroupCatchForm";
 import { useGetAllPartialCatchesForGroupQuery } from "../components/CatchComponents/hooks/GetAllPartialCatchesForGroup";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, UseFormReturn, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LocationFinder } from "../components/MapComponents/LocationFinder";
 import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { IGroupModel } from "../models/IGroupModel";
 import { CatchMarker } from "../components/CatchComponents/CatchMarker";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
-  const { permissionManager } = useCurrentPermissionSet();
+  const { permissionManager } = useCurrentPermissionManager();
   if (
     !mainGroup?.public &&
     !permissionManager.Can(PermissionActions.BelongsTo, groupId!)
@@ -59,13 +60,11 @@ const IndividualGroupPageInner: React.FC<{
   group: Omit<IGroupModel, "members">;
 }> = ({ group: mainGroup }) => {
   const { id: groupId } = useParams<{ id: string }>();
-  const { permissionManager } = useCurrentPermissionSet();
-  const { data: groupCatches, error: groupCatchesError } =
-    useGetAllPartialCatchesForGroupQuery(groupId!);
+  const { permissionManager } = useCurrentPermissionManager();
   const [currentMapZoom, setCurrentMapZoom] = useState<number>();
   const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
   const formMethods = useForm<SaveCatchInput>({
-    defaultValues: mapDefaultValues(
+    defaultValues: mapDefaultValuesToSaveCatchInput(
       groupId!,
       catchToEdit && typeof catchToEdit !== "boolean" ? catchToEdit : undefined
     ),
@@ -90,109 +89,114 @@ const IndividualGroupPageInner: React.FC<{
   return (
     <PageBase>
       <AppAndDraw>
-        <Grid container justifyContent="center" alignItems="center" spacing={2}>
-          <Grid item width="80%">
-            <Paper elevation={2}>
-              <Grid
-                container
-                direction={"column"}
-                justifyContent="center"
-                alignItems="center"
-                padding={4}
-                spacing={2}
-              >
-                <Grid item width="100%">
-                  <Typography
-                    variant="h3"
-                    textAlign="center"
-                    fontSize={50}
-                    overflow="auto"
-                  >
-                    {groupName}
-                  </Typography>
-                </Grid>
-                {groupEmblem && (
-                  <Grid item>
-                    <Box
-                      component="img"
-                      sx={{
-                        border: "0.1px solid #999999",
-                        maxHeight: "80vh",
-                        width: "100%",
-                      }}
-                      src={`data:image/jpeg;base64,${groupEmblem}`}
-                      alt={`emblem: ${groupId}`}
-                    />
+        <FormProvider {...formMethods}>
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+          >
+            <Grid item width="80%">
+              <Paper elevation={2}>
+                <Grid
+                  container
+                  direction={"column"}
+                  justifyContent="center"
+                  alignItems="center"
+                  padding={4}
+                  spacing={2}
+                >
+                  <Grid item width="100%">
+                    <Typography
+                      variant="h3"
+                      textAlign="center"
+                      fontSize={50}
+                      overflow="auto"
+                    >
+                      {groupName}
+                    </Typography>
                   </Grid>
-                )}
-                <Grid item>
-                  <Typography
-                    variant="subtitle2"
-                    textAlign="center"
-                    fontSize={17}
-                  >
-                    <strong>Id: </strong>
-                    {groupId}
-                  </Typography>
-                </Grid>
-                {groupDescription && (
+                  {groupEmblem && (
+                    <Grid item>
+                      <Box
+                        component="img"
+                        sx={{
+                          border: "0.1px solid #999999",
+                          maxHeight: "80vh",
+                          width: "100%",
+                        }}
+                        src={`data:image/jpeg;base64,${groupEmblem}`}
+                        alt={`emblem: ${groupId}`}
+                      />
+                    </Grid>
+                  )}
                   <Grid item>
                     <Typography
                       variant="subtitle2"
                       textAlign="center"
-                      fontSize={20}
+                      fontSize={17}
                     >
-                      <strong>Description: </strong>
-                      {groupDescription}
+                      <strong>Id: </strong>
+                      {groupId}
                     </Typography>
                   </Grid>
-                )}
+                  {groupDescription && (
+                    <Grid item>
+                      <Typography
+                        variant="subtitle2"
+                        textAlign="center"
+                        fontSize={20}
+                      >
+                        <strong>Description: </strong>
+                        {groupDescription}
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </Paper>
+            </Grid>
+            {canReadMembers && (
+              <Grid item width="50%">
+                <GroupMembersDataTable
+                  leader={(groupLeader as any) ?? undefined}
+                  positions={allPositions ?? []}
+                  groupId={mainGroup.id!}
+                />
               </Grid>
-            </Paper>
-          </Grid>
-          {canReadMembers && (
-            <Grid item width="50%">
-              <GroupMembersDataTable
-                leader={(groupLeader as any) ?? undefined}
+            )}
+            <Grid item width={canReadMembers ? "50%" : "100%"}>
+              <GroupPositionDataTable
                 positions={allPositions ?? []}
                 groupId={mainGroup.id!}
               />
             </Grid>
-          )}
-          <Grid item width={canReadMembers ? "50%" : "100%"}>
-            <GroupPositionDataTable
-              positions={allPositions ?? []}
-              groupId={mainGroup.id!}
-            />
-          </Grid>
-          {permissionManager.Can(PermissionActions.BelongsTo, groupId!) && (
-            <Grid
-              item
-              width="100%"
-              sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}
-            >
-              {!catchToEdit ? (
-                <Button
-                  onClick={() => setCatchToEdit(true)}
-                  variant="contained"
-                >
-                  Create new catch
-                </Button>
-              ) : (
-                <Button
-                  variant="outlined"
-                  onClick={() => setCatchToEdit(false)}
-                >
-                  Cancel
-                </Button>
-              )}
-            </Grid>
-          )}
-          {catchToEdit && (
-            <Grid item width="100%">
-              <Accordion>
-                <AccordionDetails>
-                  <FormProvider {...formMethods}>
+            {permissionManager.Can(PermissionActions.BelongsTo, groupId!) && (
+              <Grid
+                item
+                width="100%"
+                sx={{ display: "flex", justifyContent: "flex-end", mb: 1 }}
+              >
+                {!catchToEdit ? (
+                  <Button
+                    onClick={() => setCatchToEdit(true)}
+                    variant="contained"
+                  >
+                    Create new catch
+                  </Button>
+                ) : (
+                  <Button
+                    variant="outlined"
+                    onClick={() => setCatchToEdit(false)}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </Grid>
+            )}
+            {catchToEdit && (
+              <Grid item width="100%">
+                <Accordion>
+                  <AccordionDetails>
                     <SaveGroupCatchForm
                       closeForm={() => setCatchToEdit(false)}
                       useSnackBarOnSuccess
@@ -203,43 +207,97 @@ const IndividualGroupPageInner: React.FC<{
                           : undefined
                       }
                     />
-                  </FormProvider>
-                </AccordionDetails>
-              </Accordion>
-            </Grid>
-          )}
-          {groupCatchesError && (
-            <Grid item width="100%">
-              <ErrorComponent error={groupCatchesError} />
-            </Grid>
-          )}
-          <Grid item width="100%">
-            <GenerateMap
-              center={latitude && longitude ? [latitude, longitude] : undefined}
-              zoom={currentMapZoom}
-            >
-              {catchToEdit && (
-                <LocationFinder
-                  lat={latitude ? latitude : undefined}
-                  lng={latitude ? longitude : undefined}
-                  setCurrentZoom={setCurrentMapZoom}
-                  setLatLng={({ lat, lng }) => {
-                    formMethods.setValue("latitude", lat);
-                    formMethods.setValue("longitude", lng);
-                  }}
+                  </AccordionDetails>
+                </Accordion>
+              </Grid>
+            )}
+            {(permissionManager.Can(
+              PermissionActions.Read,
+              groupId!,
+              PermissionFields.GroupCatch
+            ) ||
+              permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
+              <Grid item width="100%">
+                <CatchesMap
+                  catchToEdit={!!catchToEdit}
+                  latitude={latitude}
+                  longitude={longitude}
+                  setCurrentMapZoom={setCurrentMapZoom}
+                  currentMapZoom={currentMapZoom}
+                  formMethods={formMethods}
                 />
-              )}
-              {groupCatches && (
-                <>
-                  {groupCatches.map((gc) => (
-                    <CatchMarker groupCatch={gc} />
-                  ))}
-                </>
-              )}
-            </GenerateMap>
+              </Grid>
+            )}
           </Grid>
-        </Grid>
+        </FormProvider>
       </AppAndDraw>
     </PageBase>
+  );
+};
+
+const CatchesMap: React.FC<{
+  latitude: number;
+  longitude: number;
+  currentMapZoom?: number;
+  formMethods: UseFormReturn<any, any, any>;
+  setCurrentMapZoom: (z: number) => void;
+  catchToEdit: boolean;
+}> = ({
+  catchToEdit,
+  latitude,
+  longitude,
+  setCurrentMapZoom,
+  currentMapZoom,
+  formMethods,
+}) => {
+  const { id: groupId } = useParams<{ id: string }>();
+  const { permissionManager } = useCurrentPermissionManager();
+  const { data: groupCatches, error: groupCatchesError } =
+    useGetAllPartialCatchesForGroupQuery(groupId!);
+  return (
+    <Grid container direction="column" spacing={1}>
+      <Grid item width="100%">
+        <GenerateMap
+          center={latitude && longitude ? [latitude, longitude] : undefined}
+          zoom={currentMapZoom}
+        >
+          {catchToEdit && (
+            <LocationFinder
+              lat={latitude && longitude ? latitude : undefined}
+              lng={latitude && longitude ? longitude : undefined}
+              setCurrentZoom={setCurrentMapZoom}
+              setLatLng={({ lat, lng }) => {
+                formMethods.setValue("latitude", lat);
+                formMethods.setValue("longitude", lng);
+              }}
+            />
+          )}
+          {permissionManager.Can(
+            PermissionActions.Read,
+            groupId!,
+            PermissionFields.GroupCatch
+          ) &&
+            groupCatches && (
+              <MarkerClusterGroup chunkedLoading>
+                {groupCatches.map((gc) => (
+                  <CatchMarker groupCatch={gc} />
+                ))}
+              </MarkerClusterGroup>
+            )}
+        </GenerateMap>
+      </Grid>
+      {groupCatchesError && (
+        <Grid item width="100%">
+          <ErrorComponent error={groupCatchesError} />
+        </Grid>
+      )}
+      {groupCatches && groupCatches.length === 0 && (
+        <Grid item width="100%">
+          <ErrorComponent
+            error={new Error("No catches saved for this group")}
+          />
+        </Grid>
+      )}
+    </Grid>
   );
 };

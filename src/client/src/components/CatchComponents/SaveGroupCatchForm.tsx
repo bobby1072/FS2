@@ -14,6 +14,7 @@ import {
   FormGroup,
   Grid,
   IconButton,
+  InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
@@ -82,7 +83,7 @@ const mapValuesToFormData = async (
 };
 
 export type SaveCatchInput = z.infer<typeof formSchema>;
-export const mapDefaultValues = (
+export const mapDefaultValuesToSaveCatchInput = (
   groupId: string,
   groupCatch?: IGroupCatchModel
 ): Partial<SaveCatchInput> => {
@@ -285,6 +286,9 @@ export const SaveGroupCatchForm: React.FC<{
             label="Weight"
             fullWidth
             type="number"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            }}
             {...register("weight", { required: true })}
             error={!!formErrors?.weight}
             helperText={formErrors?.weight?.message}
@@ -296,6 +300,9 @@ export const SaveGroupCatchForm: React.FC<{
             fullWidth
             type="number"
             {...register("length", { required: true })}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+            }}
             error={!!formErrors?.length}
             helperText={formErrors?.length?.message}
           />
@@ -404,10 +411,10 @@ export const SaveGroupCatchForm: React.FC<{
             <ErrorComponent error={allErrors} />
           </Grid>
         )}
-        {!allErrors && showMapInfoMessage && (
+        {!Object.values(formErrors).some((x) => !!x) && showMapInfoMessage && (
           <Grid item width="100%">
             <Alert severity="info">
-              <Typography fontSize={30}>
+              <Typography>
                 Click on the map to set the latitude and longitude
               </Typography>
             </Alert>

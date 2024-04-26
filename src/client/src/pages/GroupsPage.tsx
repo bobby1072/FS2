@@ -99,7 +99,11 @@ export const AllGroupDisplayPage: React.FC = () => {
           spacing={3}
         >
           <Grid item width="100%">
-            <Typography variant="h3" fontSize={50}>
+            <Typography
+              variant="h3"
+              sx={{ textDecoration: "underline" }}
+              fontSize={50}
+            >
               All groups
             </Typography>
           </Grid>

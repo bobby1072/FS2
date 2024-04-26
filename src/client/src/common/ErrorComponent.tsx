@@ -69,7 +69,7 @@ export const ErrorComponent: React.FC<{
       {!error && (
         <Grid item width={"100%"}>
           <Alert severity="error">
-            <Typography fontSize={fontSize}>
+            <Typography fontSize={fontSize ?? undefined}>
               Sorry, an error has occurred
             </Typography>
           </Alert>
@@ -78,14 +78,18 @@ export const ErrorComponent: React.FC<{
       {error instanceof Error && (
         <Grid item width={"100%"}>
           <Alert severity="error">
-            <Typography fontSize={fontSize}>{error.message}</Typography>
+            <Typography fontSize={fontSize ?? undefined}>
+              {error.message}
+            </Typography>
           </Alert>
         </Grid>
       )}
       {!(error instanceof ApiException) && error?.root?.message && (
         <Grid item width={"100%"}>
           <Alert severity="error">
-            <Typography fontSize={fontSize}>{error.root.message}</Typography>
+            <Typography fontSize={fontSize ?? undefined}>
+              {error.root.message}
+            </Typography>
           </Alert>
         </Grid>
       )}

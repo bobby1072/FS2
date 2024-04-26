@@ -25,6 +25,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "7.48.2",
     "react-leaflet": "^4.2.1",
+    "react-leaflet-cluster": "^2.1.0",
     "react-mentions": "^4.4.10",
     "react-query": "3.39.3",
     "react-router-dom": "6.20.0",
