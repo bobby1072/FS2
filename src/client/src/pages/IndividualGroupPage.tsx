@@ -34,18 +34,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LocationFinder } from "../components/MapComponents/LocationFinder";
 import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { IGroupModel } from "../models/IGroupModel";
-import { DivIcon, point } from "leaflet";
-import { Marker } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
 import { CatchMarker } from "../components/CatchComponents/CatchMarker";
-
-const createClusterCustomIcon = (cluster: any) => {
-  return new DivIcon({
-    html: `<span class="cluster-icon">${cluster.getChildCount()}</span>`,
-    className: "custom-marker-cluster",
-    iconSize: point(33, 33, true),
-  });
-};
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -207,7 +196,7 @@ const IndividualGroupPageInner: React.FC<{
                     <SaveGroupCatchForm
                       closeForm={() => setCatchToEdit(false)}
                       useSnackBarOnSuccess
-                      groupId={groupId!}
+                      showMapInfoMessage
                       groupCatch={
                         typeof catchToEdit !== "boolean"
                           ? catchToEdit
@@ -219,19 +208,20 @@ const IndividualGroupPageInner: React.FC<{
               </Accordion>
             </Grid>
           )}
+          {groupCatchesError && (
+            <Grid item width="100%">
+              <ErrorComponent error={groupCatchesError} />
+            </Grid>
+          )}
           <Grid item width="100%">
             <GenerateMap
-              center={
-                latitude && longitude
-                  ? [Number(latitude), Number(longitude)]
-                  : undefined
-              }
+              center={latitude && longitude ? [latitude, longitude] : undefined}
               zoom={currentMapZoom}
             >
               {catchToEdit && (
                 <LocationFinder
-                  lat={latitude ? Number(latitude) : undefined}
-                  lng={latitude ? Number(longitude) : undefined}
+                  lat={latitude ? latitude : undefined}
+                  lng={latitude ? longitude : undefined}
                   setCurrentZoom={setCurrentMapZoom}
                   setLatLng={({ lat, lng }) => {
                     formMethods.setValue("latitude", lat);
@@ -240,19 +230,14 @@ const IndividualGroupPageInner: React.FC<{
                 />
               )}
               {groupCatches && (
-                <MarkerClusterGroup chunkedLoading>
+                <>
                   {groupCatches.map((gc) => (
                     <CatchMarker groupCatch={gc} />
                   ))}
-                </MarkerClusterGroup>
+                </>
               )}
             </GenerateMap>
           </Grid>
-          {groupCatchesError && (
-            <Grid item width="100%">
-              <ErrorComponent error={groupCatchesError} />
-            </Grid>
-          )}
         </Grid>
       </AppAndDraw>
     </PageBase>

@@ -99,7 +99,7 @@ export const GroupTab: React.FC<{
         <Grid item width="100%">
           <Typography variant="h3" fontSize={18}>
             <strong>Created on: </strong>
-            {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
+            {prettyDateWithYear(new Date(group.createdAt))}
           </Typography>
         </Grid>
         {permissionManager.Can(PermissionActions.Manage, group.id!) && (

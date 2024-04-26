@@ -19,6 +19,13 @@ export const AuthenticatedRoutes: {
     component: () => <IndividualGroupPage />,
   },
   {
+    text: "Individual group catch page",
+    link: "/GroupCatch/:id",
+    showOnDrawer: false,
+    icon: () => <></>,
+    component: () => <></>,
+  },
+  {
     text: "Groups page",
     link: "/Groups",
     showOnDrawer: true,

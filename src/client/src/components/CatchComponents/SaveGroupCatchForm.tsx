@@ -8,6 +8,7 @@ import { useSnackbar } from "notistack";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Autocomplete,
   Button,
   FormGroup,
@@ -105,9 +106,14 @@ export const mapDefaultValues = (
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
-  groupId: string;
+  showMapInfoMessage?: boolean;
   closeForm?: () => void;
-}> = ({ groupCatch, useSnackBarOnSuccess, groupId, closeForm }) => {
+}> = ({
+  groupCatch,
+  useSnackBarOnSuccess,
+  closeForm,
+  showMapInfoMessage = false,
+}) => {
   const {
     data: savedCatchId,
     mutate: saveCatchMutation,
@@ -125,8 +131,9 @@ export const SaveGroupCatchForm: React.FC<{
   } = useFormContext<SaveCatchInput>();
   const { enqueueSnackbar } = useSnackbar();
   const [addedCatchPhoto, setAddedCatchPhoto] = useState<string | File>();
+  const allFieldValues = watch();
   const { catchPhoto, species, weight, length, latitude, longitude, caughtAt } =
-    watch();
+    allFieldValues;
   const isDirty = isFormDirty || catchPhoto !== groupCatch?.catchPhoto;
   const submitHandler = async (values: SaveCatchInput) => {
     resetMutation();
@@ -395,6 +402,15 @@ export const SaveGroupCatchForm: React.FC<{
         {allErrors && (
           <Grid item width="100%">
             <ErrorComponent error={allErrors} />
+          </Grid>
+        )}
+        {!allErrors && showMapInfoMessage && (
+          <Grid item width="100%">
+            <Alert severity="info">
+              <Typography fontSize={30}>
+                Click on the map to set the latitude and longitude
+              </Typography>
+            </Alert>
           </Grid>
         )}
       </Grid>

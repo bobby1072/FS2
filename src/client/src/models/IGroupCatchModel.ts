@@ -3,6 +3,7 @@ import { IUserModel } from "./IUserModel";
 import { IWorldFishModel } from "./IWorldFishModel";
 
 export interface IPartialGroupCatchModel {
+  id: string;
   species: string;
   latitude: number;
   longitude: number;

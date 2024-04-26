@@ -35,9 +35,9 @@ namespace Persistence.EntityFramework.Repository
                     c.Longitude > bottomLeft.Longitude &&
                     c.Longitude < topRight.Longitude &&
                     c.GroupId == groupId)
-                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish })
+                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish, c.Weight, c.Id })
                 .ToArrayAsync();
-            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound))).ToArray();
+            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), c.Weight, c.Id)).ToArray();
         }
         public async Task<ICollection<PartialGroupCatch>?> GetAllPartialCatchesForGroup(Guid groupId)
         {
@@ -46,9 +46,9 @@ namespace Persistence.EntityFramework.Repository
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
                 .Where(c => c.GroupId == groupId)
-                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish })
+                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish, c.Weight, c.Id })
                 .ToArrayAsync();
-            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound))).ToArray();
+            return catches?.Select(c => new PartialGroupCatch(c.Species, c.Latitude, c.Longitude, c.WorldFish?.ToRuntime(), c.CaughtAt, c.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), c.Weight, c.Id)).ToArray();
         }
         public async Task<GroupCatch?> GetOneFull(LatLng latLng, Guid groupId)
         {

@@ -25,10 +25,10 @@ export const GenerateMap: React.FC<{
   return (
     <MapContainer
       center={center ? center : [52.4912, -1.9348]}
-      zoom={zoom ? zoom : 6}
+      zoom={zoom ? zoom : 4}
       scrollWheelZoom={true}
       doubleClickZoom
-      className="leaflet-container--alt"
+      className="leaflet-container"
     >
       <MapLayers />
       {children}
