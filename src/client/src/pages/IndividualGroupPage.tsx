@@ -286,11 +286,6 @@ const CatchesMap: React.FC<{
                   <CatchMarker
                     groupCatch={gc}
                     groupId={groupId!}
-                    formUpdates={{
-                      setCatchToEdit: (gc) => {
-                        setCatchToEdit(gc);
-                      },
-                    }}
                     useSnackBarOnSuccess
                   />
                 ))}

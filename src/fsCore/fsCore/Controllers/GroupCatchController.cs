@@ -59,7 +59,7 @@ namespace fsCore.Controllers
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
-        [HttpPost("GetFullCatchById")]
+        [HttpGet("GetFullCatchById")]
         public async Task<IActionResult> GetFullFishById(Guid catchId)
         {
             return Ok(await _groupCatchService.GetFullCatchById(catchId, _getCurrentUserWithPermissions()));

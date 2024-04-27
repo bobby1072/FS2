@@ -1,7 +1,5 @@
 import { Typography } from "@mui/material";
-import { useState } from "react";
 import { Popup, useMapEvents } from "react-leaflet";
-import { GenerateMap } from "./GenerateMap";
 
 export const LocationFinder: React.FC<{
   lat?: number;
@@ -29,27 +27,4 @@ export const LocationFinder: React.FC<{
   } else {
     return null;
   }
-};
-
-export const LatLngMap: React.FC<{
-  lat: number;
-  lng: number;
-  setLatLng: (latLng: { lat: number; lng: number }) => void;
-}> = ({ lat, lng, setLatLng }) => {
-  const [currentMapZoom, setCurrentMapZoom] = useState<number>();
-  return (
-    <GenerateMap
-      center={lat && lng ? [lat, lng] : undefined}
-      zoom={currentMapZoom}
-    >
-      <LocationFinder
-        lat={lat}
-        lng={lng}
-        setLatLng={setLatLng}
-        setCurrentZoom={(zoom: number) => {
-          setCurrentMapZoom(zoom);
-        }}
-      />
-    </GenerateMap>
-  );
 };

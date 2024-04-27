@@ -1,12 +1,9 @@
 import { Marker, Popup } from "react-leaflet";
-import {
-  IGroupCatchModel,
-  IPartialGroupCatchModel,
-} from "../../models/IGroupCatchModel";
+import { IPartialGroupCatchModel } from "../../models/IGroupCatchModel";
 import { Button, Grid, Typography } from "@mui/material";
 import { getPrettyWorldFishName } from "../../common/GetPrettyWorldFish";
 import { Icon } from "leaflet";
-import markerPhoto from "../../data/images/map-marker.png";
+import markerPhoto from "../MapComponents/images/map-marker.png";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { prettyDateWithTime } from "../../utils/DateTime";
 import {
@@ -54,13 +51,9 @@ export const CatchMarker: React.FC<{
   groupCatch: IPartialGroupCatchModel;
   useSnackBarOnSuccess?: boolean;
   groupId: string;
-  formUpdates?: {
-    setCatchToEdit: (gc: IGroupCatchModel) => void;
-  };
 }> = ({
   useSnackBarOnSuccess = false,
   groupId,
-  formUpdates,
   groupCatch: {
     latitude,
     longitude,
@@ -74,17 +67,6 @@ export const CatchMarker: React.FC<{
 }) => {
   const { id: currentUserId } = useCurrentUser();
   const { permissionManager } = useCurrentPermissionManager();
-  // const { mutate: getFullCatch, data: fullCatch } = useGetFullCatchMutation();
-  // useEffect(() => {
-  //   if (formUpdates && catchUserId === currentUserId) {
-  //     getFullCatch(catchId);
-  //   }
-  // }, [formUpdates, getFullCatch, catchId, catchUserId, currentUserId]);
-  // useEffect(() => {
-  //   if (fullCatch) {
-  //     formUpdates?.setCatchToEdit(fullCatch);
-  //   }
-  // }, [fullCatch, formUpdates]);
   return (
     <Marker position={[latitude, longitude]} icon={GenericIconMarker}>
       <Popup>
