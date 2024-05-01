@@ -17,7 +17,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { AppContextProvider } from "./common/contexts/AppContext";
 import { useAuthentication } from "./common/contexts/AuthenticationContext";
 import { SignInCallback } from "./common/authentication/SignInCallback";
-import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
+import { AuthenticatedRouteWrapper } from "./common/authentication/AuthenticatedRouteWrapper";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
@@ -70,13 +70,13 @@ const AppRoutes: RouteObject[] = [
     path: option.link,
     element: (
       <Wrapper>
-        <AuthenticatedRoute>
+        <AuthenticatedRouteWrapper>
           <UserContextProvider>
             <PermissionContextProvider>
               <option.component />
             </PermissionContextProvider>
           </UserContextProvider>
-        </AuthenticatedRoute>
+        </AuthenticatedRouteWrapper>
       </Wrapper>
     ),
   })),

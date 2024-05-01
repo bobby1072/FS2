@@ -13,8 +13,9 @@ import {
 } from "../../common/contexts/AbilitiesContext";
 import { useCurrentUser } from "../../common/contexts/UserContext";
 import { useDeleteCatchMutation } from "./hooks/DeleteCatch";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
+import { YesOrNoModal } from "../../common/YesOrNoModal";
 export const GenericIconMarker = new Icon({
   iconUrl: markerPhoto,
   iconSize: [35, 35],
@@ -26,25 +27,39 @@ const DeleteButtonForMarker: React.FC<{
   const {
     mutate: deleteCatch,
     isLoading: deleting,
+    error: deleteError,
     data: deletedId,
   } = useDeleteCatchMutation();
+  const [openModal, setOpenModal] = useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
-    if (useSnackBarOnSuccess && deletedId) {
+    if (useSnackBarOnSuccess && deletedId)
       enqueueSnackbar("Catch deleted", { variant: "error" });
-    }
   }, [deletedId, enqueueSnackbar, useSnackBarOnSuccess]);
   return (
-    <Button
-      variant="contained"
-      color="error"
-      disabled={deleting}
-      onClick={() => {
-        deleteCatch(catchId);
-      }}
-    >
-      <DeleteIcon />
-    </Button>
+    <>
+      <Button
+        variant="contained"
+        color="error"
+        disabled={deleting}
+        onClick={() => {
+          setOpenModal(true);
+        }}
+      >
+        <DeleteIcon />
+      </Button>
+      {openModal && (
+        <YesOrNoModal
+          closeModal={() => setOpenModal(false)}
+          question={"Are you sure you want to delete this catch?"}
+          yesAction={() => {
+            deleteCatch(catchId);
+          }}
+          allErrors={deleteError ?? undefined}
+          saveDisabled={deleting}
+        />
+      )}
+    </>
   );
 };
 // export const UpdateCatchButtonForMarker: React.FC<{
