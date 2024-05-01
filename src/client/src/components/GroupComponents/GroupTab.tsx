@@ -17,13 +17,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import { prettyDateWithYear } from "../../utils/DateTime";
 import {
   PermissionActions,
-  useCurrentPermissionSet,
+  useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
 export const GroupTab: React.FC<{
   group: IGroupModel;
   openModal: () => void;
 }> = ({ group, openModal }) => {
-  const { permissionManager } = useCurrentPermissionSet();
+  const { permissionManager } = useCurrentPermissionManager();
   const [viewId, setViewId] = useState<boolean>(false);
   return (
     <Paper elevation={2}>
@@ -83,7 +83,11 @@ export const GroupTab: React.FC<{
           )}
         </Grid>
         <Grid item width="100%">
-          <Typography variant="h2" fontSize={25}>
+          <Typography
+            variant="h2"
+            fontSize={25}
+            sx={{ textDecoration: "underline" }}
+          >
             <strong>Name: </strong>
             {group.name}
           </Typography>
@@ -98,8 +102,8 @@ export const GroupTab: React.FC<{
         )}
         <Grid item width="100%">
           <Typography variant="h3" fontSize={18}>
-            <strong>Created at: </strong>
-            {prettyDateWithYear(new Date(Date.parse(group.createdAt)))}
+            <strong>Created on: </strong>
+            {prettyDateWithYear(new Date(group.createdAt))}
           </Typography>
         </Grid>
         {permissionManager.Can(PermissionActions.Manage, group.id!) && (

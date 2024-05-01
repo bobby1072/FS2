@@ -32,7 +32,7 @@ namespace fsCore.Service
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
-            var data = JsonSerializer.Deserialize<IDictionary<string, string>>(content)
+            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(content)
                        ?? throw new InvalidOperationException("Could not deserialise user info data");
 
             var claims = data.Select(kvp => new Claim(kvp.Key, kvp.Value));

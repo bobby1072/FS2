@@ -7,7 +7,7 @@ import {
   Typography,
 } from "@mui/material";
 import { StyledDialogTitle } from "../../common/StyledDialogTitle";
-import { CreateGroupModalForm } from "./CreateGroupModalForm";
+import { CreateGroupForm } from "./CreateGroupForm";
 import { IGroupModel } from "../../models/IGroupModel";
 import { useEffect, useState } from "react";
 import { useDeleteGroupMutation } from "./hooks/DeleteGroupMutation";
@@ -38,7 +38,7 @@ export const CreateGroupModal: React.FC<{
         </Typography>
       </StyledDialogTitle>
       <DialogContent dividers={true}>
-        <CreateGroupModalForm
+        <CreateGroupForm
           group={group}
           closeModal={closeModal}
           useSnackBarOnSuccess={true}

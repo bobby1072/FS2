@@ -11,9 +11,5 @@ namespace fsCore.Controllers.ControllerModels
         public LatLng TopRightLatLong { get; set; }
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
-        public (LatLng, LatLng, Guid) BreakDown()
-        {
-            return (BottomLeftLatLong, TopRightLatLong, GroupId);
-        }
     }
 }

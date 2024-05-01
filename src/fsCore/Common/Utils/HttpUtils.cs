@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Common.Utils
 {
-    public static class HttpContextUtils
+    public static class HttpUtils
     {
         public static JwtSecurityToken? GetTokenData(this HttpContext context)
         {

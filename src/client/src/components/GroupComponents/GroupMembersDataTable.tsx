@@ -20,7 +20,7 @@ import { Loading } from "../../common/Loading";
 import {
   PermissionActions,
   PermissionFields,
-  useCurrentPermissionSet,
+  useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
 
 interface GroupMemberRowItem {
@@ -105,7 +105,7 @@ export const GroupMembersDataTable: React.FC<{
   const [addMemberModalOpen, setAddMemberModalOpen] = useState<
     boolean | IGroupMemberModel
   >(false);
-  const { permissionManager } = useCurrentPermissionSet();
+  const { permissionManager } = useCurrentPermissionManager();
   if (!members) return <Loading />;
   const columns: MUIDataTableColumnDef[] = [
     {

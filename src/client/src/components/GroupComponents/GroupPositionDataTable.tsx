@@ -15,7 +15,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { usePersistedState } from "../../common/hooks/PersistedState";
 import {
   PermissionActions,
-  useCurrentPermissionSet,
+  useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
 
 interface GroupPositionRowItem {
@@ -51,7 +51,7 @@ export const GroupPositionDataTable: React.FC<{
     "positionTableSelectedRows",
     ["name", "canManageGroup", "canManageCatches", "canManageMembers"]
   );
-  const { permissionManager } = useCurrentPermissionSet();
+  const { permissionManager } = useCurrentPermissionManager();
   const rowItems = mapBaseDataToRowItems(positions);
   const [positionToDeleteId, setPositionToDeleteId] = useState<string>();
   const [addPositionModalOpen, setAddPositionModalOpen] = useState<

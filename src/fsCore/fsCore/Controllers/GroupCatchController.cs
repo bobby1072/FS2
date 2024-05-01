@@ -17,7 +17,7 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpGet("DeleteGroupCatch")]
         public async Task<IActionResult> DeleteGroupCatch(Guid id)
         {
@@ -25,30 +25,52 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
+        [RequiredUserWithGroupPermissions]
         [HttpPost("SaveGroupCatch")]
-        public async Task<IActionResult> SaveGroupCatch([FromBody] SaveCatchInput groupCatch)
+        public async Task<IActionResult> SaveGroupCatch([FromForm] Guid? id, [FromForm] Guid groupId, [FromForm] string species, [FromForm] double weight, [FromForm] double length, [FromForm] string? description, [FromForm] string caughtAt, [FromForm] IFormFile? catchPhoto, [FromForm] string? createdAt, [FromForm] double latitude, [FromForm] double longitude, [FromForm] string? worldFishTaxocode)
         {
+            var groupCatch = new SaveCatchFormInput
+            {
+                Id = id,
+                GroupId = groupId,
+                Species = species,
+                Weight = weight,
+                Length = length,
+                Description = description,
+                CaughtAt = caughtAt,
+                CatchPhoto = catchPhoto,
+                CreatedAt = createdAt,
+                Latitude = latitude,
+                Longitude = longitude,
+                WorldFishTaxocode = worldFishTaxocode
+            };
             var currentUser = _getCurrentUserWithPermissions();
-            return Ok((await _groupCatchService.SaveGroupCatch(groupCatch.ToGroupCatch(currentUser.Id ?? throw new Exception()), currentUser)).Id);
+            return Ok((await _groupCatchService.SaveGroupCatch(await groupCatch.ToGroupCatchAsync(currentUser.Id ?? throw new Exception()), currentUser)).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpPost("GetFullFish")]
+        [RequiredUserWithGroupPermissions]
+        [HttpPost("GetFullCatchByLatLng")]
         public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
         {
             var (latLng, groupId) = input.BreakDown();
             return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, _getCurrentUserWithPermissions()));
         }
+        [ProducesDefaultResponseType(typeof(GroupCatch))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithGroupPermissions]
+        [HttpGet("GetFullCatchById")]
+        public async Task<IActionResult> GetFullFishById(Guid catchId)
+        {
+            return Ok(await _groupCatchService.GetFullCatchById(catchId, _getCurrentUserWithPermissions()));
+        }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithPermissions]
-        [HttpPost("GetCatchesInSquareRange")]
-        public async Task<IActionResult> GetCatchesInSquareRange([FromBody] SquareRangeCatchesInput input)
+        [RequiredUserWithGroupPermissions]
+        [HttpGet("GetCatchesInGroup")]
+        public async Task<IActionResult> GetCatchesForGroup(Guid groupId)
         {
-            var (bottomLeftLatLong, topRightLatLong, groupId) = input.BreakDown();
-            return Ok(await _groupCatchService.GetCatchesInSquareRange(bottomLeftLatLong, topRightLatLong, groupId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupCatchService.GetAllPartialCatchesForGroup(groupId, _getCurrentUserWithPermissions()));
         }
     }
 }

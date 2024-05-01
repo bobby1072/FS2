@@ -3,6 +3,7 @@ import { AllGroupDisplayPage } from "../pages/GroupsPage";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { AccountPage } from "../pages/AccountPage";
 import { IndividualGroupPage } from "../pages/IndividualGroupPage";
+import { IndividualCatchPage } from "../pages/IndividualCatchPage";
 
 export const AuthenticatedRoutes: {
   text: string;
@@ -17,6 +18,13 @@ export const AuthenticatedRoutes: {
     showOnDrawer: false,
     icon: () => <></>,
     component: () => <IndividualGroupPage />,
+  },
+  {
+    text: "Individual group catch page",
+    link: "/GroupCatch/:id",
+    showOnDrawer: false,
+    icon: () => <></>,
+    component: () => <IndividualCatchPage />,
   },
   {
     text: "Groups page",

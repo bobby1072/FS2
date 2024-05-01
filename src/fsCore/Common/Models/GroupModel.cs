@@ -14,6 +14,7 @@ namespace Common.Models
         public string Name { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
+        [LockedProperty]
         [JsonPropertyName("leaderId")]
         public Guid LeaderId { get; set; }
         [JsonPropertyName("leader")]
@@ -68,6 +69,18 @@ namespace Common.Models
                 && group.Listed == Listed;
             }
             return false;
+        }
+        public override bool ValidateAgainstOriginal<T>(T checkAgainst)
+        {
+            if (checkAgainst is not Group group)
+            {
+                return false;
+            }
+            else if (group.Id != Id || group.LeaderId != LeaderId || CreatedAt.Millisecond != group.CreatedAt.Millisecond)
+            {
+                return false;
+            }
+            else return true;
         }
     }
 }

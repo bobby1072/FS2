@@ -3,7 +3,6 @@ import { useAuthentication } from "../../../common/contexts/AuthenticationContex
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import Constants from "../../../common/Constants";
 import { useEffect } from "react";
-import { SaveGroupInput } from "../CreateGroupModalForm";
 import { ApiException } from "../../../common/ApiException";
 
 export const useSaveGroupMutation = () => {
@@ -12,7 +11,7 @@ export const useSaveGroupMutation = () => {
   if (!user) {
     throw new Error("User not found");
   }
-  const mutationProps = useMutation<string, ApiException, SaveGroupInput>((g) =>
+  const mutationProps = useMutation<string, ApiException, FormData>((g) =>
     BackendApiServiceProvider.SaveGroup(user.access_token, g)
   );
   useEffect(() => {

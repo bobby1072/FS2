@@ -75,5 +75,17 @@ namespace Common.Models
             }
             return this;
         }
+        public override bool ValidateAgainstOriginal<T>(T checkAgainst)
+        {
+            if (checkAgainst is not GroupCatch groupCatch)
+            {
+                return false;
+            }
+            else if (UserId != groupCatch.UserId || GroupId != groupCatch.GroupId || groupCatch.CreatedAt.Millisecond != CreatedAt.Millisecond)
+            {
+                return false;
+            }
+            else return true;
+        }
     }
 }

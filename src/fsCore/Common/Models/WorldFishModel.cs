@@ -24,7 +24,7 @@ namespace Common.Models
             Isscaap = isscaap;
             A3Code = a3Code;
             ScientificName = scientificName;
-            EnglishName = englishName;
+            EnglishName = _trimEnglishName(englishName);
             if (nickname == null && englishName != null)
             {
                 Nickname = _getNickname(englishName);
@@ -33,6 +33,14 @@ namespace Common.Models
             {
                 Nickname = nickname;
             }
+        }
+        private static string? _trimEnglishName(string? englishName)
+        {
+            if (englishName is null) return null;
+            var fishRegexPattern = @"\(([^)]*)\)";
+            var myRegex = new Regex(fishRegexPattern, RegexOptions.IgnoreCase);
+            var regexMatch = myRegex.Match(englishName);
+            return regexMatch.Success ? englishName.Replace(regexMatch.Value, " ") : englishName;
         }
         private static string? _getNickname(string engName)
         {

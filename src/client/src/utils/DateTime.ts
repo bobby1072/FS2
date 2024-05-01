@@ -21,54 +21,93 @@ const parseAndValidateDate = (
   return copy;
 };
 
+export const prettyDateWithTime = (date: Date): string => {
+  const dateMinutes = date.getUTCMinutes();
+  return `${prettyDateWithYear(date)} ${date.getUTCHours()}:${
+    dateMinutes.toString().length < 2 ? `0${dateMinutes}` : dateMinutes
+  }`;
+};
+
 export const prettyDateCurrentYearWithTime = (date: Date): string => {
   const d = new Date(date);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
-  const hr = new Intl.DateTimeFormat("en", {
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
+  const da = new Intl.DateTimeFormat(navigator.language, {
+    day: "2-digit",
+  }).format(d);
+  const hr = new Intl.DateTimeFormat(navigator.language, {
     hour: "2-digit",
     hour12: false,
   }).format(d);
-  const min = new Intl.DateTimeFormat("en", { minute: "numeric" }).format(d);
+  const min = new Intl.DateTimeFormat(navigator.language, {
+    minute: "numeric",
+  }).format(d);
   return `${da}-${mo} ${hr}:${min}`;
 };
 
 export const prettyDateCurrentYear = (date: Date): string => {
   const d = new Date(date);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
+  const da = new Intl.DateTimeFormat(navigator.language, {
+    day: "2-digit",
+  }).format(d);
   return `${da}-${mo}`;
 };
 
 export const ariaDayInWeekCurrentYear = (date: Date | string): string => {
   const d = parseAndValidateDate(date, "Date");
-  const weekDay = new Intl.DateTimeFormat("en", { weekday: "long" }).format(d);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
+  const weekDay = new Intl.DateTimeFormat(navigator.language, {
+    weekday: "long",
+  }).format(d);
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
+  const da = new Intl.DateTimeFormat(navigator.language, {
+    day: "2-digit",
+  }).format(d);
   return `${weekDay} ${da} ${mo}`;
 };
 
 export const prettyDateWithYear = (date: Date): string => {
   const d = new Date(date);
-  const ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(d);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const da = new Intl.DateTimeFormat("en", { day: "2-digit" }).format(d);
+  const ye = new Intl.DateTimeFormat(navigator.language, {
+    year: "numeric",
+  }).format(d);
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
+  const da = new Intl.DateTimeFormat(navigator.language, {
+    day: "2-digit",
+  }).format(d);
   return `${da}-${mo}-${ye}`;
 };
 
 export const dateFormatterEquivalent = (date?: Date): string | undefined => {
   if (!date) return undefined;
   const d = new Date(date);
-  const ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(d);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
-  const da = new Intl.DateTimeFormat("en", { day: "numeric" }).format(d);
+  const ye = new Intl.DateTimeFormat(navigator.language, {
+    year: "numeric",
+  }).format(d);
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
+  const da = new Intl.DateTimeFormat(navigator.language, {
+    day: "numeric",
+  }).format(d);
   return `${mo} ${da}, ${ye}`;
 };
 
 export const prettyMonthWithYear = (date: Date): string => {
   const d = new Date(date);
-  const ye = new Intl.DateTimeFormat("en", { year: "numeric" }).format(d);
-  const mo = new Intl.DateTimeFormat("en", { month: "short" }).format(d);
+  const ye = new Intl.DateTimeFormat(navigator.language, {
+    year: "numeric",
+  }).format(d);
+  const mo = new Intl.DateTimeFormat(navigator.language, {
+    month: "short",
+  }).format(d);
   return `${mo}-${ye}`;
 };
 

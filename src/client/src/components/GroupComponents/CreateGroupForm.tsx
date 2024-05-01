@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { ApiException } from "../../common/ApiException";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import imageCompression from "browser-image-compression";
+import { base64StringToJpegFile } from "../../utils/StringUtils";
+import { faker } from "@faker-js/faker";
 const formSchema = z.object({
   name: z.string(),
   description: z.string().optional().nullable(),
@@ -23,8 +26,50 @@ const formSchema = z.object({
   leaderId: z.string().optional().nullable(),
   emblem: z.string().optional().nullable(),
   id: z.string().optional().nullable(),
-  createdAt: z.string().optional().nullable(),
+  createdAt: z.string().datetime().optional().nullable(),
 });
+const mapValuesToFormData = async (
+  values: SaveGroupInput,
+  newEmblem?: File
+): Promise<FormData> => {
+  const formData = new FormData();
+  if (values.id) formData.append("id", values.id);
+  if (values.leaderId) formData.append("leaderId", values.leaderId);
+  formData.append("name", values.name);
+  formData.append("description", values.description ?? "");
+  formData.append("isPublic", values.isPublic.toString());
+  formData.append("isListed", values.isListed.toString());
+  formData.append(
+    "createdAt",
+    values.createdAt ? new Date(values.createdAt).toISOString() : ""
+  );
+  if (newEmblem) {
+    formData.append(
+      "emblem",
+      await imageCompression(
+        new File(
+          [newEmblem],
+          `groupEmblem${values.id ?? faker.string.uuid()}.jpg`,
+          {
+            type: "image/jpeg",
+          }
+        ),
+        { maxSizeMB: 1, initialQuality: 0.5 }
+      )
+    );
+  } else if (values.emblem) {
+    const file = base64StringToJpegFile(
+      values.emblem,
+      `groupEmblem${values.id ?? faker.string.uuid()}.jpg`
+    );
+    formData.append(
+      "emblem",
+      await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.5 })
+    );
+  }
+  return formData;
+};
+
 export type SaveGroupInput = z.infer<typeof formSchema>;
 const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
   if (!group) return { isListed: true, isPublic: true };
@@ -36,10 +81,10 @@ const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
     leaderId: group.leaderId,
     createdAt: group.createdAt,
     isListed: group.listed,
-    emblem: group?.emblem?.toString(),
+    emblem: group.emblem?.toString(),
   };
 };
-export const CreateGroupModalForm: React.FC<{
+export const CreateGroupForm: React.FC<{
   group?: IGroupModel;
   setIsSaveDisabled?: (boolVal: boolean) => void;
   closeModal?: () => void;
@@ -61,13 +106,13 @@ export const CreateGroupModalForm: React.FC<{
     handleSubmit,
     register,
     watch,
-    setValue,
     formState: { errors: formError, isDirty: isFormDirty },
   } = useForm<SaveGroupInput>({
     defaultValues: mapDefaultValues(group),
     resolver: zodResolver(formSchema),
   });
   const { enqueueSnackbar } = useSnackbar();
+  const [addedEmblem, setAddedEmblem] = useState<string | File>();
   const { isListed, isPublic, id, name, emblem } = watch();
   const [allErrors, setAllErrors] = useState<
     | ApiException
@@ -82,6 +127,13 @@ export const CreateGroupModalForm: React.FC<{
   >();
   const isDirty = isFormDirty || group?.emblem !== emblem;
   useEffect(() => {
+    if (emblem) {
+      setAddedEmblem(emblem);
+    } else if (group?.emblem) {
+      setAddedEmblem(group?.emblem);
+    }
+  }, [group?.emblem, emblem]);
+  useEffect(() => {
     if (savedId && useSnackBarOnSuccess)
       enqueueSnackbar(`New group id: ${savedId}`, { variant: "success" });
     if (savedId && closeModal) closeModal();
@@ -95,9 +147,14 @@ export const CreateGroupModalForm: React.FC<{
   useEffect(() => {
     if (mutationError) setAllErrors(mutationError);
   }, [mutationError]);
-  const submitHandler = (values: SaveGroupInput) => {
+  const submitHandler = async (values: SaveGroupInput) => {
     resetMutation();
-    saveGroupMutation(values);
+    saveGroupMutation(
+      await mapValuesToFormData(
+        values,
+        typeof addedEmblem === "string" ? undefined : addedEmblem
+      )
+    );
   };
   return (
     <form onSubmit={handleSubmit(submitHandler)} id="groupSaveForm">
@@ -116,6 +173,8 @@ export const CreateGroupModalForm: React.FC<{
             fullWidth
             multiline
             rows={2}
+            error={!!formError?.name}
+            helperText={formError?.name?.message}
           />
         </Grid>
         <Grid item width="50%">
@@ -125,6 +184,8 @@ export const CreateGroupModalForm: React.FC<{
             fullWidth
             multiline
             rows={2}
+            error={!!formError?.description}
+            helperText={formError?.description?.message}
           />
         </Grid>
         <Grid
@@ -132,7 +193,7 @@ export const CreateGroupModalForm: React.FC<{
           width="40%"
           sx={{ display: "flex", justifyContent: "flex-start" }}
         >
-          <Tooltip title="Public groups are visible to everyone. Private groups are only visible to members and are invite only.">
+          <Tooltip title="Public groups are free for everyone to look at. Private groups are invite only.">
             <FormControlLabel
               control={
                 <Switch
@@ -176,15 +237,7 @@ export const CreateGroupModalForm: React.FC<{
             onChange={(e) => {
               const foundFile = e.target.files?.item(0);
               if (foundFile) {
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  const result = reader.result as string;
-                  setValue(
-                    "emblem",
-                    result.replace(/^data:image\/[^;]+;base64,/, "")
-                  );
-                };
-                reader.readAsDataURL(foundFile);
+                setAddedEmblem(foundFile);
               }
             }}
           />

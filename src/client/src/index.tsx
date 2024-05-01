@@ -9,6 +9,7 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
 import { UserManager } from "oidc-client-ts";
 import { Loading } from "./common/Loading";
@@ -16,13 +17,13 @@ import { LandingPage } from "./pages/LandingPage";
 import { AppContextProvider } from "./common/contexts/AppContext";
 import { useAuthentication } from "./common/contexts/AuthenticationContext";
 import { SignInCallback } from "./common/authentication/SignInCallback";
-import { AuthenticatedRoute } from "./common/authentication/AuthenticatedRoute";
+import { AuthenticatedRouteWrapper } from "./common/authentication/AuthenticatedRouteWrapper";
 import { ThemeProvider } from "@mui/material";
 import { fsTheme } from "./theme";
 import { SnackbarProvider } from "notistack";
 import { UserContextProvider } from "./common/contexts/UserContext";
 import { PermissionContextProvider } from "./common/contexts/AbilitiesContext";
-document.title = "FS2";
+import { LocalizationProvider } from "@mui/x-date-pickers";
 const FallbackRoute: React.FC = () => {
   const { isLoggedIn } = useAuthentication();
   return isLoggedIn ? (
@@ -69,18 +70,17 @@ const AppRoutes: RouteObject[] = [
     path: option.link,
     element: (
       <Wrapper>
-        <AuthenticatedRoute>
+        <AuthenticatedRouteWrapper>
           <UserContextProvider>
             <PermissionContextProvider>
               <option.component />
             </PermissionContextProvider>
           </UserContextProvider>
-        </AuthenticatedRoute>
+        </AuthenticatedRouteWrapper>
       </Wrapper>
     ),
   })),
 ];
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -90,12 +90,9 @@ const queryClient = new QueryClient({
   },
 });
 if (window.location.pathname === "/oidc-silent-renew") {
-  new UserManager({} as any)
-    .signinSilentCallback()
-    .then()
-    .catch((error: any) => {
-      console.error(error);
-    });
+  new UserManager({} as any).signinSilentCallback().catch((error: any) => {
+    console.error(error);
+  });
 } else {
   const router = createBrowserRouter(AppRoutes);
 
@@ -105,16 +102,18 @@ if (window.location.pathname === "/oidc-silent-renew") {
   root.render(
     <React.StrictMode>
       <ThemeProvider theme={fsTheme}>
-        <QueryClientProvider client={queryClient}>
-          <SnackbarProvider>
-            <AppContextProvider>
-              <RouterProvider
-                router={router}
-                fallbackElement={<Loading fullScreen={true} />}
-              />
-            </AppContextProvider>
-          </SnackbarProvider>
-        </QueryClientProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <QueryClientProvider client={queryClient}>
+            <SnackbarProvider>
+              <AppContextProvider>
+                <RouterProvider
+                  router={router}
+                  fallbackElement={<Loading fullScreen={true} />}
+                />
+              </AppContextProvider>
+            </SnackbarProvider>
+          </QueryClientProvider>
+        </LocalizationProvider>
       </ThemeProvider>
     </React.StrictMode>
   );

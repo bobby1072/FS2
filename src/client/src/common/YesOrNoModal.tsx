@@ -7,7 +7,6 @@ import {
   Typography,
 } from "@mui/material";
 import { StyledDialogTitle } from "./StyledDialogTitle";
-import { useSnackbar } from "notistack";
 import { FieldErrors } from "react-hook-form";
 import { ApiException } from "./ApiException";
 import { ErrorComponent } from "./ErrorComponent";
@@ -20,10 +19,6 @@ export const YesOrNoModal: React.FC<{
   noAction?: () => void;
   title?: string;
   allErrors?: ApiException | FieldErrors;
-  notification?: {
-    notificationMessage: string;
-    variant: "success" | "error" | "warning" | "info";
-  };
 }> = ({
   closeModal,
   allErrors,
@@ -31,10 +26,8 @@ export const YesOrNoModal: React.FC<{
   question: message,
   yesAction,
   noAction,
-  notification,
   title,
 }) => {
-  const { enqueueSnackbar } = useSnackbar();
   return (
     <Dialog open onClose={closeModal}>
       <StyledDialogTitle>
@@ -54,9 +47,11 @@ export const YesOrNoModal: React.FC<{
               {message}
             </Typography>
           </Grid>
-          <Grid item width="100%">
-            <ErrorComponent error={allErrors} />
-          </Grid>
+          {allErrors && (
+            <Grid item width="100%">
+              <ErrorComponent error={allErrors} />
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions>
@@ -91,10 +86,6 @@ export const YesOrNoModal: React.FC<{
               disabled={saveDisabled}
               onClick={() => {
                 yesAction();
-                notification &&
-                  enqueueSnackbar(notification.notificationMessage, {
-                    variant: notification.variant,
-                  });
               }}
             >
               Yes
