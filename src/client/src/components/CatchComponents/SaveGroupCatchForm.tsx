@@ -36,7 +36,10 @@ export const formSchema = z.object({
   description: z.string().optional().nullable(),
   latitude: z.string().transform((x) => Number(x)),
   longitude: z.string().transform((x) => Number(x)),
-  caughtAt: z.string().datetime(),
+  caughtAt: z
+    .string()
+    .datetime()
+    .transform((x) => new Date(x)),
   createdAt: z.string().datetime().optional().nullable(),
   catchPhoto: z.string().optional().nullable(),
 });
@@ -55,6 +58,7 @@ const mapValuesToFormData = async (
   formData.append("latitude", values.latitude.toString());
   formData.append("longitude", values.longitude.toString());
   formData.append("caughtAt", new Date(values.caughtAt).toISOString());
+  formData.append("caughtAt", values.createdAt ?? "");
   if (newCatchPhoto) {
     formData.append(
       "catchPhoto",
@@ -98,7 +102,7 @@ export const mapDefaultValuesToSaveCatchInput = (
     description: groupCatch.description,
     latitude: groupCatch.latitude,
     longitude: groupCatch.longitude,
-    caughtAt: groupCatch.caughtAt,
+    caughtAt: new Date(groupCatch.caughtAt),
     createdAt: groupCatch.createdAt,
     catchPhoto: groupCatch.catchPhoto?.toString(),
   };

@@ -47,13 +47,38 @@ const DeleteButtonForMarker: React.FC<{
     </Button>
   );
 };
+// export const UpdateCatchButtonForMarker: React.FC<{
+//   setCatchToEdit: (gc: IGroupCatchModel) => void;
+//   catchId: string;
+// }> = ({ catchId, setCatchToEdit }) => {
+//   const { data, isLoading, mutate } = useGetFullCatchMutation();
+//   useEffect(() => {
+//     if (data) {
+//       setCatchToEdit(data);
+//     }
+//   }, [data, setCatchToEdit]);
+//   return (
+//     <Button
+//       variant="contained"
+//       color="primary"
+//       disabled={isLoading}
+//       onClick={() => {
+//         mutate(catchId);
+//       }}
+//     >
+//       <EditIcon />
+//     </Button>
+//   );
+// };
 export const CatchMarker: React.FC<{
   groupCatch: IPartialGroupCatchModel;
   useSnackBarOnSuccess?: boolean;
+  // setCatchToEdit: (gc: IGroupCatchModel) => void;
   groupId: string;
 }> = ({
   useSnackBarOnSuccess = false,
   groupId,
+  // setCatchToEdit,
   groupCatch: {
     latitude,
     longitude,
@@ -114,10 +139,25 @@ export const CatchMarker: React.FC<{
           ) ||
             currentUserId === catchUserId) && (
             <Grid item width="40%">
-              <DeleteButtonForMarker
-                catchId={catchId}
-                useSnackBarOnSuccess={useSnackBarOnSuccess}
-              />
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                spacing={0.8}
+              >
+                <Grid item width="100%">
+                  <DeleteButtonForMarker
+                    catchId={catchId}
+                    useSnackBarOnSuccess={useSnackBarOnSuccess}
+                  />
+                </Grid>
+                {/* <Grid item width="50%">
+                  <UpdateCatchButtonForMarker
+                    catchId={catchId}
+                    setCatchToEdit={setCatchToEdit}
+                  />
+                </Grid> */}
+              </Grid>
             </Grid>
           )}
         </Grid>

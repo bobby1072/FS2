@@ -36,6 +36,7 @@ import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { IGroupModel } from "../models/IGroupModel";
 import { CatchMarker } from "../components/CatchComponents/CatchMarker";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { LayersControl } from "react-leaflet";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -62,18 +63,6 @@ const IndividualGroupPageInner: React.FC<{
   const { id: groupId } = useParams<{ id: string }>();
   const { permissionManager } = useCurrentPermissionManager();
   const [currentMapZoom, setCurrentMapZoom] = useState<number>();
-  const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
-  const formMethods = useForm<SaveCatchInput>({
-    defaultValues: mapDefaultValuesToSaveCatchInput(
-      groupId!,
-      catchToEdit && typeof catchToEdit !== "boolean" ? catchToEdit : undefined
-    ),
-    resolver: zodResolver(formSchema),
-  });
-  useEffect(() => {
-    formMethods.reset();
-  }, [catchToEdit, formMethods]);
-  const { latitude, longitude } = formMethods.watch();
   const {
     name: groupName,
     emblem: groupEmblem,
@@ -86,6 +75,18 @@ const IndividualGroupPageInner: React.FC<{
     groupId!,
     PermissionFields.GroupMember
   );
+  const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
+  const formMethods = useForm<SaveCatchInput>({
+    defaultValues: mapDefaultValuesToSaveCatchInput(
+      groupId!,
+      catchToEdit && typeof catchToEdit !== "boolean" ? catchToEdit : undefined
+    ),
+    resolver: zodResolver(formSchema),
+  });
+  const { latitude, longitude } = formMethods.watch();
+  useEffect(() => {
+    formMethods.reset();
+  }, [catchToEdit, formMethods]);
   return (
     <PageBase>
       <AppAndDraw>
@@ -202,9 +203,7 @@ const IndividualGroupPageInner: React.FC<{
                       useSnackBarOnSuccess
                       showMapInfoMessage
                       groupCatch={
-                        typeof catchToEdit !== "boolean"
-                          ? catchToEdit
-                          : undefined
+                        catchToEdit === true ? undefined : catchToEdit
                       }
                     />
                   </AccordionDetails>
@@ -219,9 +218,9 @@ const IndividualGroupPageInner: React.FC<{
               permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
               <Grid item width="100%">
                 <CatchesMap
-                  setCatchToEdit={setCatchToEdit}
                   catchToEdit={!!catchToEdit}
                   latitude={latitude}
+                  setCatchToEdit={setCatchToEdit}
                   longitude={longitude}
                   setCurrentMapZoom={setCurrentMapZoom}
                   currentMapZoom={currentMapZoom}
@@ -239,17 +238,17 @@ const IndividualGroupPageInner: React.FC<{
 const CatchesMap: React.FC<{
   latitude: number;
   longitude: number;
+  setCatchToEdit: (gc: IGroupCatchModel) => void;
   currentMapZoom?: number;
-  setCatchToEdit: (c: IGroupCatchModel) => void;
   formMethods: UseFormReturn<SaveCatchInput>;
   setCurrentMapZoom: (z: number) => void;
   catchToEdit: boolean;
 }> = ({
   catchToEdit,
   latitude,
-  setCatchToEdit,
   longitude,
   setCurrentMapZoom,
+  setCatchToEdit,
   currentMapZoom,
   formMethods,
 }) => {
@@ -281,15 +280,20 @@ const CatchesMap: React.FC<{
             PermissionFields.GroupCatch
           ) &&
             groupCatches && (
-              <MarkerClusterGroup chunkedLoading>
-                {groupCatches.map((gc) => (
-                  <CatchMarker
-                    groupCatch={gc}
-                    groupId={groupId!}
-                    useSnackBarOnSuccess
-                  />
-                ))}
-              </MarkerClusterGroup>
+              <LayersControl position="topright">
+                <LayersControl.Overlay name="Group catches" checked>
+                  <MarkerClusterGroup chunkedLoading>
+                    {groupCatches.map((gc) => (
+                      <CatchMarker
+                        // setCatchToEdit={setCatchToEdit}
+                        groupCatch={gc}
+                        groupId={groupId!}
+                        useSnackBarOnSuccess
+                      />
+                    ))}
+                  </MarkerClusterGroup>
+                </LayersControl.Overlay>
+              </LayersControl>
             )}
         </GenerateMap>
       </Grid>

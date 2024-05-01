@@ -19,6 +19,8 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
+                .Include(gc => gc.User)
+                .Include(gc => gc.WorldFish)
                 .Where(gc => gc.Id == id)
                 .FirstOrDefaultAsync();
             return groupCatch?.ToRuntime();
