@@ -1,3 +1,4 @@
+using DataImporter;
 using fsCore.Service.Interfaces;
 using Hangfire;
 
@@ -8,7 +9,6 @@ namespace fsCore.Service.Hangfire
         private readonly IBackgroundJobClient _backgroundJobs;
         private readonly IRecurringJobManager _recurringJobManager;
         private readonly ILogger<HangfireJobService> _logger;
-
         public HangfireJobService(
             IBackgroundJobClient backgroundJobs,
             ILogger<HangfireJobService> logger,
@@ -40,12 +40,11 @@ namespace fsCore.Service.Hangfire
         }
         public void RegisterMonthlyJobs()
         {
-            _setUpWorldFishMigration(_recurringJobManager, _backgroundJobs);
         }
-        public void _setUpWorldFishMigration(IRecurringJobManager recuringJobManager, IBackgroundJobClient backgroundJobManager)
+        public void RegisterInitialBackgroundJobs()
         {
-            backgroundJobManager.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
-            recuringJobManager.AddOrUpdate<IWorldFishService>("Migrate fish to db", service => service.MigrateJsonFishToDb(), Cron.Monthly());
+            _backgroundJobs.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
+            _backgroundJobs.Enqueue<IDataImporter>(importer => importer.Import());
         }
     }
 }

@@ -1,4 +1,7 @@
 namespace DataImporter.ModelImporters
 {
-    public interface IGroupImporter : IDataImporter { }
+    internal interface IGroupImporter
+    {
+        Task Import();
+    }
 }

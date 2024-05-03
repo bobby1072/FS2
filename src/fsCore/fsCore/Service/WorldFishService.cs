@@ -12,7 +12,7 @@ namespace fsCore.Service
     internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
-        [AutomaticRetry(Attempts = 1)]
+        [AutomaticRetry(Attempts = 4, LogEvents = true)]
         public async Task MigrateJsonFishToDb()
         {
             var file = await File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));

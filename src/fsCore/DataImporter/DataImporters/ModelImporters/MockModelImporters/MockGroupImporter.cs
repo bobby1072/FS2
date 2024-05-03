@@ -4,10 +4,16 @@ namespace DataImporter.ModelImporters
 {
     public class MockGroupImporter : IGroupImporter
     {
-        private IGroupRepository _groupRepository;
-        public MockGroupImporter(IGroupRepository groupRepository)
+        private readonly IGroupRepository _groupRepository;
+        private readonly IUserRepository _userRepository;
+        public MockGroupImporter(IGroupRepository groupRepository, IUserRepository userRepo)
         {
             _groupRepository = groupRepository;
+            _userRepository = userRepo;
+        }
+        public async Task Import()
+        {
+
         }
     }
 }

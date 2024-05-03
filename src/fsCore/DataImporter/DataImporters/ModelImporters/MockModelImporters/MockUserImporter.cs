@@ -28,7 +28,7 @@ namespace DataImporter.DataImporters.ModelImporters.MockModelImporters
                     var submittedUsers = await _userRepository.Create(newUserArray);
                     userSaved = true;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     tryAmountCount++;
                     if (tryAmountCount >= 5)
