@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class GroupCatchBuilder
+    internal static class MockGroupCatchBuilder
     {
         private static readonly Random _random = new();
         public static GroupCatch Build(Guid groupId, Guid userId, string? worldFishTaxocode, string? speciesName)

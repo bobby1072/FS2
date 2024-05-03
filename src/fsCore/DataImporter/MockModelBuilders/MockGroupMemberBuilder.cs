@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class GroupMemberBuilder
+    internal static class MockGroupMemberBuilder
     {
         public static GroupMember Build(Guid groupId, Guid userId, Guid positionId)
         {

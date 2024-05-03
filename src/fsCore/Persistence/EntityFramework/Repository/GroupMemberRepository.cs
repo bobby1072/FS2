@@ -1,5 +1,5 @@
 using Common;
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;

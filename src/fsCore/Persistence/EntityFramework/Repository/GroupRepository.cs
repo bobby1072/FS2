@@ -1,4 +1,4 @@
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using Microsoft.EntityFrameworkCore;

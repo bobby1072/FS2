@@ -2,9 +2,9 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal class UserBuilder
+    internal static class MockUserBuilder
     {
-        public User Build()
+        public static User Build()
         {
             return new User(
                 Faker.Internet.Email(),

@@ -1,6 +1,6 @@
 using System.Net;
 using Common;
-using Common.Dbinterfaces.ErrorHandlers;
+using Common.DbInterfaces.ErrorHandlers;
 using FluentValidation;
 
 namespace fsCore.Middleware

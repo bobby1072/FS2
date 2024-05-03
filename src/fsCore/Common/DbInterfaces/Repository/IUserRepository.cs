@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace Common.Dbinterfaces.Repository
+namespace Common.DbInterfaces.Repository
 {
     public interface IUserRepository
     {

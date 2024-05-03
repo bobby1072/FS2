@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class GroupBuilder
+    internal static class MockGroupBuilder
     {
         private static Random _random = new();
         public static Group Build(Guid leaderId)
