@@ -4,7 +4,7 @@ namespace DataImporter.ModelBuilders
 {
     internal class UserBuilder
     {
-        public User BuildModel()
+        public User Build()
         {
             return new User(
                 Faker.Internet.Email(),
