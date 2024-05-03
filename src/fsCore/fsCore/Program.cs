@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Text.Json;
+using DataImporter;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -49,6 +50,9 @@ builder.Services
 
 builder.Services
     .AddSqlPersistence(config);
+
+builder.Services
+    .AddDataImporter(config);
 
 builder.Services
     .AddAuthorization()

@@ -14,12 +14,14 @@ ARG CONF=Release
 WORKDIR /src
 
 COPY src/fsCore/Common/*.csproj ./fsCore/Common/
+COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
 COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
 
 RUN dotnet restore fsCore/fsCore/fsCore.csproj 
 
 COPY src/fsCore/Common/ ./fsCore/Common/
+COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/ ./fsCore/fsCore/
 COPY src/fsCore/Persistence/ ./fsCore/Persistence/
 

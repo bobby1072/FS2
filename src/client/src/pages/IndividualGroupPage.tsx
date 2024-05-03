@@ -282,10 +282,9 @@ const CatchesMap: React.FC<{
               <LayersControl position="topright">
                 <LayersControl.Overlay name="Group catches" checked>
                   <MarkerClusterGroup chunkedLoading>
-                    {groupCatches.map((gc) => (
+                    {groupCatches.map((pgc) => (
                       <CatchMarker
-                        // setCatchToEdit={setCatchToEdit}
-                        groupCatch={gc}
+                        groupCatch={pgc}
                         groupId={groupId!}
                         useSnackBarOnSuccess
                       />
