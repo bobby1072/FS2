@@ -83,11 +83,7 @@ export const GroupTab: React.FC<{
           )}
         </Grid>
         <Grid item width="100%">
-          <Typography
-            variant="h2"
-            fontSize={25}
-            sx={{ textDecoration: "underline" }}
-          >
+          <Typography variant="h2" fontSize={25}>
             <strong>Name: </strong>
             {group.name}
           </Typography>
