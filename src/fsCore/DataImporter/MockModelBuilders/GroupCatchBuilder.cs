@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace DataImporter.ModelBuilders
+namespace DataImporter.MockModelBuilders
 {
     internal static class GroupCatchBuilder
     {
@@ -22,7 +22,7 @@ namespace DataImporter.ModelBuilders
                 null,
                 null,
                 null,
-                null,
+                worldFishTaxocode,
                 null
             );
         }

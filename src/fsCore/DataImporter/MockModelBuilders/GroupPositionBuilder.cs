@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace DataImporter.ModelBuilders
+namespace DataImporter.MockModelBuilders
 {
     internal static class GroupPositionBuilder
     {

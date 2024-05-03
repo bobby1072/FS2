@@ -1,6 +1,6 @@
 namespace DataImporter
 {
-    public interface IDataImorter
+    public interface IDataImporter
     {
         Task Import();
     }
