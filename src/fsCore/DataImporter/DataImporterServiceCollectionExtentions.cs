@@ -18,10 +18,19 @@ namespace DataImporter
                     .AddScoped<IGroupImporter, MockGroupImporter>()
                     .AddScoped<IGroupPositionImporter, MockGroupPositionImporter>()
                     .AddScoped<IGroupMemberImporter, MockGroupMemberImporter>()
-                    .AddScoped<IGroupCatchImporter, MockGroupCatchImporter>();
+                    .AddScoped<IGroupCatchImporter, MockGroupCatchImporter>()
+                    .AddScoped<IDataImporter, GenericDataImporter>();
             }
-            services
-                .AddScoped<IDataImporter, GenericDataImporter>();
+            else if (!useJsonFileImport)
+            {
+                services
+                    .AddScoped<IDataImporter, ProductionDataImporter>();
+            }
+            else
+            {
+                services
+                    .AddScoped<IDataImporter, JsonDataImporter>();
+            }
             return services;
         }
     }
