@@ -5,10 +5,10 @@ using Microsoft.Extensions.Logging;
 
 namespace DataImporter
 {
-    internal class DataImporter : IDataImporter
+    internal class GenericDataImporter : IDataImporter
     {
         private readonly IUserImporter _userImporter;
-        private readonly ILogger<DataImporter> _logger;
+        private readonly ILogger<GenericDataImporter> _logger;
         private readonly IGroupImporter _groupImporter;
         private readonly IUserRepository _userRepository;
         private readonly IGroupMemberImporter _groupMemberImporter;
@@ -16,9 +16,11 @@ namespace DataImporter
         private readonly IGroupMemberRepository _groupMemberRepository;
         private readonly IGroupPositionImporter _groupPositionImporter;
         private readonly IGroupPositionRepository _positionRepository;
+        private readonly IGroupCatchImporter _groupCatchImporter;
         private readonly IGroupCatchRepository _groupCatchRepository;
-        public DataImporter(IUserImporter userImporter, ILogger<DataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter, IGroupMemberImporter groupMemberImporter)
+        public GenericDataImporter(IUserImporter userImporter, ILogger<GenericDataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter, IGroupMemberImporter groupMemberImporter, IGroupCatchImporter groupCatchImporter)
         {
+            _groupCatchImporter = groupCatchImporter;
             _groupMemberImporter = groupMemberImporter;
             _userImporter = userImporter;
             _groupPositionImporter = groupPositionImporter;
@@ -50,6 +52,8 @@ namespace DataImporter
                 await _groupPositionImporter.Import();
 
                 await _groupMemberImporter.Import();
+
+                await _groupCatchImporter.Import();
             }
             catch (Exception e)
             {

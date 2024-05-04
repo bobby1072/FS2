@@ -7,6 +7,6 @@ namespace DataImporter.ModelImporters.MockModelImporters
         GROUPS = 20,
         POSITIONS = 40,
         MEMBERS = 80,
-        CATCHES = 1000
+        MAXCATCHESPERGROUP = 200
     }
 }

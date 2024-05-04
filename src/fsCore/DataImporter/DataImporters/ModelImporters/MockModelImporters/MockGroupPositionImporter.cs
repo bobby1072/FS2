@@ -18,32 +18,21 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            int tryAmountCount = 0;
             try
             {
                 var allGroups = await _groupRepository.GetAll();
-                bool userSaved = false;
-                while (!userSaved)
+                var listOfPositionsToCreate = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONS];
+                for (int x = 0; x < (int)NumberOfMockModelToCreate.POSITIONS; x += 2)
                 {
-                    var listOfPositionsToCreate = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONS];
-                    for (int x = 0; x < (int)NumberOfMockModelToCreate.POSITIONS; x += 2)
-                    {
-                        var tempGroup = allGroups?.ElementAt(x == 0 ? 0 : x / 2);
-                        listOfPositionsToCreate[x] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
-                        listOfPositionsToCreate[x + 1] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
-                    }
-                    var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
-                    userSaved = true;
+                    var tempGroup = allGroups?.ElementAt(x == 0 ? 0 : x / 2);
+                    listOfPositionsToCreate[x] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
+                    listOfPositionsToCreate[x + 1] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
                 }
+                var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
             }
             catch (Exception e)
             {
-                tryAmountCount++;
                 _logger.LogError("Failed to create or save groups users: {0}", e);
-                if (tryAmountCount >= 5)
-                {
-                    throw new InvalidOperationException("Cannot save mock groups");
-                }
             }
         }
     }

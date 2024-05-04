@@ -16,7 +16,6 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            int tryAmountCount = 0;
             try
             {
                 bool userSaved = false;
@@ -34,12 +33,8 @@ namespace DataImporter.ModelImporters.MockModelImporters
             }
             catch (Exception e)
             {
-                tryAmountCount++;
                 _logger.LogError("Failed to create or save mock users: {0}", e);
-                if (tryAmountCount >= 5)
-                {
-                    throw new InvalidOperationException("Cannot save mock users");
-                }
+
             }
         }
     }

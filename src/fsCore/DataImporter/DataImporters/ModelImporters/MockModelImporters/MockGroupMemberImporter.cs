@@ -20,11 +20,11 @@ namespace DataImporter.ModelImporters.MockModelImporters
             _groupPositionRepository = groupPositionRepository;
             _userRepository = userRepo;
         }
-        private GroupMember AddGroupMembersToList(ICollection<GroupMember> groupMembers, ICollection<GroupPosition> allPositions, ICollection<User> allUsers)
+        private static GroupMember AddGroupMembersToList(ICollection<GroupMember> groupMembers, ICollection<GroupPosition> allPositions, ICollection<User> allUsers)
         {
             var random = new Random();
-            var foundUser = allUsers.ElementAt(random.Next(0, (int)NumberOfMockModelToCreate.USERS));
-            var foundPosition = allPositions.ElementAt(random.Next(0, (int)NumberOfMockModelToCreate.POSITIONS));
+            var foundUser = allUsers.ElementAt(random.Next(0, allUsers.Count));
+            var foundPosition = allPositions.ElementAt(random.Next(0, allPositions.Count));
             var tempCreatedMember = MockGroupMemberBuilder.Build(foundPosition?.GroupId ?? throw new InvalidDataException("No groupId on position"), foundUser?.Id ?? throw new InvalidDataException("No id on group"), foundPosition?.Id ?? throw new InvalidDataException("No id on position"));
             if (groupMembers.FirstOrDefault(x => x?.GroupId == foundPosition.GroupId && x?.UserId == foundUser.Id) is not null)
             {
@@ -37,7 +37,6 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            int tryAmountCount = 0;
             try
             {
 
@@ -45,28 +44,17 @@ namespace DataImporter.ModelImporters.MockModelImporters
                 var allGroups = _groupRepository.GetAll();
                 var allPositions = _groupPositionRepository.GetAll();
                 await Task.WhenAll(allUser, allGroups, allPositions);
-                bool userSaved = false;
-                while (!userSaved)
+                var groupMembersToSave = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERS];
+                for (int x = 0; x < (int)NumberOfMockModelToCreate.MEMBERS; x++)
                 {
-                    var groupMembersToSave = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERS];
-                    for (int x = 0; x < (int)NumberOfMockModelToCreate.MEMBERS; x++)
-                    {
-                        var tempGroupMember = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
-                        groupMembersToSave[x] = tempGroupMember;
-                    }
-                    var createdGroupMembers = await _groupMemberRepository.Create(groupMembersToSave) ?? throw new InvalidOperationException("Failed to create groups");
-                    userSaved = true;
+                    var tempGroupMember = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
+                    groupMembersToSave[x] = tempGroupMember;
                 }
+                var createdGroupMembers = await _groupMemberRepository.Create(groupMembersToSave) ?? throw new InvalidOperationException("Failed to create groups");
             }
             catch (Exception e)
             {
-                tryAmountCount++;
                 _logger.LogError("Failed to create or save mock groups: {0}", e);
-
-                if (tryAmountCount >= 5)
-                {
-                    throw new InvalidOperationException("Cannot save mock groups");
-                }
             }
         }
     }
