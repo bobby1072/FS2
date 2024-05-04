@@ -35,7 +35,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                         var random = new Random();
                         var currentGroupCatchList = new GroupCatch[random.Next(0, (int)NumberOfMockModelToCreate.MaxCatchesPerGroup)];
                         var randomGroupMemberList = allMembers.Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id).ToArray();
-                        var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length));
+                        var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length - 1));
                         for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
                         {
                             currentGroupCatchList[deepI] = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));

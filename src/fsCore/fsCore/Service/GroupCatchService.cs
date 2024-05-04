@@ -20,7 +20,7 @@ namespace fsCore.Service
         public async Task<GroupCatch> GetFullCatchById(Guid catchId, UserWithGroupPermissionSet currentUser)
         {
             var foundCatch = await _repo.GetOne(catchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
+            if (foundCatch.Group?.CatchesPublic != false && !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
@@ -44,7 +44,8 @@ namespace fsCore.Service
         }
         public async Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForGroup(Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
-            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupId, nameof(GroupCatch)))
+            var foundGroup = await _groupService.GetGroupWithoutEmblemForInternalUse(groupId);
+            if (foundGroup.CatchesPublic == false && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

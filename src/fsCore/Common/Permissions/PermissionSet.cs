@@ -35,7 +35,7 @@ namespace Common.Permissions
         {
             return Abilities.FirstOrDefault(x => x.Action == action && x.Subject.GetType().GetProperties().FirstOrDefault(x => x.Name == propertyName && x.GetType() == typeof(TModel))?.Equals(singleSubjectProperty) is not null);
         }
-        private void _add(Permission<TModel> newPerm)
+        private void Add(Permission<TModel> newPerm)
         {
 
             var similarPermissionsBySubjectAndAction = Abilities.Where(x => x.Action == newPerm.Action && x.Subject.Equals(x.Subject));
@@ -56,7 +56,7 @@ namespace Common.Permissions
             var newPerm = new Permission<TModel>(action, subject, fields?.ToHashSet());
             if (newPerm.Fields is not null)
             {
-                _add(newPerm);
+                Add(newPerm);
             }
             else
             {
@@ -69,7 +69,7 @@ namespace Common.Permissions
             var newPerm = new Permission<TModel>(action, subject, new HashSet<string> { field });
             if (newPerm.Fields is not null)
             {
-                _add(newPerm);
+                Add(newPerm);
             }
             else
             {

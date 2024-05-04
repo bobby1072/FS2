@@ -4,7 +4,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
     {
         Users = 10,
         GroupsPerUser = 2,
-        PositionPerGroup = 1,
+        PositionPerGroup = 2,
         MembersPerPosition = 2,
         MaxCatchesPerGroup = 200
     }

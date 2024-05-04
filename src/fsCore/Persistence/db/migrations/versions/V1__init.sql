@@ -20,6 +20,7 @@ CREATE TABLE public."group" (
     name TEXT NOT NULL UNIQUE,
     description TEXT,
     leader_id UUID NOT NULL,
+    catches_public BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP with time zone NOT NULL DEFAULT NOW(),
     public BOOLEAN NOT NULL DEFAULT FALSE,
     listed BOOLEAN NOT NULL DEFAULT FALSE,

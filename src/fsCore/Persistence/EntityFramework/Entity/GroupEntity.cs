@@ -18,11 +18,12 @@ namespace Persistence.EntityFramework.Entity
         public bool Public { get; set; }
         public bool Listed { get; set; }
         public byte[]? Emblem { get; set; }
+        public bool CatchesPublic { get; set; }
         public virtual ICollection<GroupPositionEntity>? Positions { get; set; }
         public virtual ICollection<GroupCatchEntity>? Catches { get; set; }
         public override Group ToRuntime()
         {
-            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, LeaderId, Leader?.ToRuntime(), Positions?.Select(p => p.ToRuntime()).ToArray());
+            return new Group(Name, Emblem, Description, Id, CreatedAt, Public, Listed, CatchesPublic, LeaderId, Leader?.ToRuntime(), Positions?.Select(p => p.ToRuntime()).ToArray());
         }
         public static GroupEntity RuntimeToEntity(Group group)
         {
@@ -33,6 +34,7 @@ namespace Persistence.EntityFramework.Entity
                 Name = group.Name,
                 CreatedAt = DateTime.SpecifyKind(group.CreatedAt, DateTimeKind.Utc),
                 Public = group.Public,
+                CatchesPublic = group.CatchesPublic,
                 Listed = group.Listed,
                 Emblem = group.Emblem,
                 Description = group.Description

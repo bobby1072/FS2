@@ -15,6 +15,7 @@ namespace DataImporter.MockModelBuilders
                 DateTime.UtcNow,
                 random.Next(0, 2) == 1,
                 true,
+                true,
                 leaderId
             );
         }

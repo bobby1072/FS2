@@ -208,16 +208,18 @@ const IndividualGroupPageInner: React.FC<{
                 </Accordion>
               </Grid>
             )}
-            {(permissionManager.Can(
-              PermissionActions.Read,
-              groupId!,
-              PermissionFields.GroupCatch
-            ) ||
+            {(mainGroup.catchesPublic ||
+              permissionManager.Can(
+                PermissionActions.Read,
+                groupId!,
+                PermissionFields.GroupCatch
+              ) ||
               permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
               <Grid item width="100%">
                 <CatchesMap
                   catchToEdit={!!catchToEdit}
                   latitude={latitude}
+                  group={mainGroup}
                   longitude={longitude}
                   setCurrentMapZoom={setCurrentMapZoom}
                   currentMapZoom={currentMapZoom}
@@ -239,8 +241,10 @@ const CatchesMap: React.FC<{
   formMethods: UseFormReturn<SaveCatchInput>;
   setCurrentMapZoom: (z: number) => void;
   catchToEdit: boolean;
+  group: IGroupModel;
 }> = ({
   catchToEdit,
+  group,
   latitude,
   longitude,
   setCurrentMapZoom,
@@ -275,11 +279,12 @@ const CatchesMap: React.FC<{
               }}
             />
           )}
-          {permissionManager.Can(
-            PermissionActions.Read,
-            groupId!,
-            PermissionFields.GroupCatch
-          ) &&
+          {(group.catchesPublic ||
+            permissionManager.Can(
+              PermissionActions.Read,
+              groupId!,
+              PermissionFields.GroupCatch
+            )) &&
             groupCatches && (
               <LayersControl position="topright">
                 <LayersControl.Overlay name="Group catches" checked>

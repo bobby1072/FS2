@@ -12,6 +12,7 @@ namespace fsCore.Controllers.ControllerModels
         public string? Description { get; set; }
         public string IsPublic { get; set; }
         public string IsListed { get; set; }
+        public string CatchesPublic { get; set; }
         public string? CreatedAt { get; set; }
         public async Task<Group> ToGroupAsync()
         {
@@ -23,6 +24,7 @@ namespace fsCore.Controllers.ControllerModels
                 CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
                 bool.Parse(IsPublic),
                 bool.Parse(IsListed),
+                bool.Parse(CatchesPublic),
                 LeaderId
             );
         }

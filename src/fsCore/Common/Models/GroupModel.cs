@@ -10,6 +10,8 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
+        [JsonPropertyName("catchesPublic")]
+        public bool CatchesPublic { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
         [JsonPropertyName("description")]
@@ -30,13 +32,14 @@ namespace Common.Models
         public byte[]? Emblem { get; set; }
         [JsonPropertyName("positions")]
         public ICollection<GroupPosition>? Positions { get; set; }
-        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, Guid leaderId, User? leader = null, ICollection<GroupPosition>? positions = null)
+        public Group(string name, byte[]? emblem, string? description, Guid? id, DateTime? createdAt, bool? @public, bool? listed, bool? catchesPublic, Guid leaderId, User? leader = null, ICollection<GroupPosition>? positions = null)
         {
             Positions = positions;
             Id = id;
             Name = name;
             Leader = leader;
             LeaderId = leaderId;
+            CatchesPublic = catchesPublic ?? false;
             CreatedAt = createdAt ?? DateTime.UtcNow;
             Public = @public ?? false;
             Listed = listed ?? false;

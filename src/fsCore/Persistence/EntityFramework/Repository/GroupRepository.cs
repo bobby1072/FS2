@@ -27,18 +27,18 @@ namespace Persistence.EntityFramework.Repository
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.LeaderId == leaderId)
-                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
                 .ToArrayAsync();
-            return foundEnts?.Length > 0 ? foundEnts.Select(x => new Group(x.Name, null, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader?.ToRuntime(), x.Positions?.Select(p => p.ToRuntime()).ToArray())).ToArray() : Array.Empty<Group>();
+            return foundEnts?.Length > 0 ? foundEnts.Select(x => new Group(x.Name, null, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.CatchesPublic, x.LeaderId, x.Leader?.ToRuntime(), x.Positions?.Select(p => p.ToRuntime()).ToArray())).ToArray() : Array.Empty<Group>();
         }
         public async Task<Group?> GetGroupWithoutEmblem(Guid groupId, ICollection<string>? relations = null)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var group = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.Id == groupId)
-                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions })
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
                 .FirstOrDefaultAsync();
-            return group is null ? null : new Group(group.Name, null, group.Description, group.Id, group.CreatedAt, group.Public, group.Listed, group.LeaderId, group.Leader?.ToRuntime(), group.Positions?.Select(p => p.ToRuntime()).ToArray());
+            return group is null ? null : new Group(group.Name, null, group.Description, group.Id, group.CreatedAt, group.Public, group.Listed, group.CatchesPublic, group.LeaderId, group.Leader?.ToRuntime(), group.Positions?.Select(p => p.ToRuntime()).ToArray());
         }
         public async Task<ICollection<Group>?> SearchListedGroups(string groupNameString)
         {

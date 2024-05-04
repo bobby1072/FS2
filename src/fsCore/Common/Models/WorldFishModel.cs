@@ -24,17 +24,17 @@ namespace Common.Models
             Isscaap = isscaap;
             A3Code = a3Code;
             ScientificName = scientificName;
-            EnglishName = _trimEnglishName(englishName);
+            EnglishName = TrimEnglishName(englishName);
             if (nickname == null && englishName != null)
             {
-                Nickname = _getNickname(englishName);
+                Nickname = GetNickname(englishName);
             }
             else
             {
                 Nickname = nickname;
             }
         }
-        private static string? _trimEnglishName(string? englishName)
+        private static string? TrimEnglishName(string? englishName)
         {
             if (englishName is null) return null;
             var fishRegexPattern = @"\(([^)]*)\)";
@@ -42,7 +42,7 @@ namespace Common.Models
             var regexMatch = myRegex.Match(englishName);
             return regexMatch.Success ? englishName.Replace(regexMatch.Value, " ") : englishName;
         }
-        private static string? _getNickname(string engName)
+        private static string? GetNickname(string engName)
         {
             var fishRegexPattern = @"\(([^)]*)\)";
             var myRegex = new Regex(fishRegexPattern, RegexOptions.IgnoreCase);

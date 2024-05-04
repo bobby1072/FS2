@@ -23,6 +23,7 @@ const formSchema = z.object({
   description: z.string().optional().nullable(),
   isPublic: z.boolean(),
   isListed: z.boolean(),
+  catchesPublic: z.boolean(),
   leaderId: z.string().optional().nullable(),
   emblem: z.string().optional().nullable(),
   id: z.string().optional().nullable(),
@@ -39,6 +40,7 @@ const mapValuesToFormData = async (
   formData.append("description", values.description ?? "");
   formData.append("isPublic", values.isPublic.toString());
   formData.append("isListed", values.isListed.toString());
+  formData.append("catchesPublic", values.catchesPublic.toString());
   formData.append(
     "createdAt",
     values.createdAt ? new Date(values.createdAt).toISOString() : ""
@@ -77,6 +79,7 @@ const mapDefaultValues = (group?: IGroupModel): Partial<SaveGroupInput> => {
     id: group.id,
     name: group.name,
     description: group?.description,
+    catchesPublic: group.catchesPublic,
     isPublic: group.public,
     leaderId: group.leaderId,
     createdAt: group.createdAt,
@@ -113,7 +116,7 @@ export const CreateGroupForm: React.FC<{
   });
   const { enqueueSnackbar } = useSnackbar();
   const [addedEmblem, setAddedEmblem] = useState<string | File>();
-  const { isListed, isPublic, id, name, emblem } = watch();
+  const { isListed, catchesPublic, isPublic, id, name, emblem } = watch();
   const [allErrors, setAllErrors] = useState<
     | ApiException
     | FieldErrors<{
@@ -190,7 +193,25 @@ export const CreateGroupForm: React.FC<{
         </Grid>
         <Grid
           item
-          width="40%"
+          width="30%"
+          sx={{ display: "flex", justifyContent: "flex-start" }}
+        >
+          <Tooltip title="This means group catches are visible to everyone.">
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={catchesPublic}
+                  defaultChecked={catchesPublic}
+                  {...register("catchesPublic", { required: false })}
+                />
+              }
+              label="Catches public"
+            />
+          </Tooltip>
+        </Grid>
+        <Grid
+          item
+          width="30%"
           sx={{ display: "flex", justifyContent: "flex-start" }}
         >
           <Tooltip title="Public groups are free for everyone to look at. Private groups are invite only.">
@@ -208,7 +229,7 @@ export const CreateGroupForm: React.FC<{
         </Grid>
         <Grid
           item
-          width="40%"
+          width="30%"
           sx={{ display: "flex", justifyContent: "flex-end" }}
         >
           <Tooltip title="Listed groups are visible to everyone. Unlisted groups are never visible on the main page.">

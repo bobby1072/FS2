@@ -5,6 +5,7 @@ export interface IGroupModel {
   name: string;
   description?: string | null;
   leaderId: string;
+  catchesPublic: boolean;
   leader?: {
     id: string;
     email?: string | null;

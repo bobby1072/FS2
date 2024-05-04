@@ -135,6 +135,10 @@ namespace Common.Models
     }
     public class GroupPermissionSet : PermissionSet<Group>
     {
+        public Group? FindGroupAssociatedWithUser(Guid groupId)
+        {
+            return Abilities.FirstOrDefault(x => x.Subject.Id == groupId)?.Subject;
+        }
         public bool Can(string action, Guid groupId)
         {
             return Abilities.Any(x => x.Action == action && x.Subject.Id == groupId && x.Fields is null);

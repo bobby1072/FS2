@@ -15,15 +15,42 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupCatchEntity.RuntimeToEntity(runtimeObj);
         }
-        public async Task<GroupCatch?> GetOne(Guid id)
+        public async Task<GroupCatch> GetOne(Guid id)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
+                .Include(gc => gc.Group)
                 .Where(gc => gc.Id == id)
-                .FirstOrDefaultAsync();
-            return groupCatch?.ToRuntime();
+                .Select(gc => new
+                {
+                    gc.Id,
+                    gc.GroupId,
+                    GroupName = gc.Group.Name,
+                    GroupDescription = gc.Group.Description,
+                    GroupCatchesPublic = gc.Group.CatchesPublic,
+                    GroupListed = gc.Group.Listed,
+                    GroupPublic = gc.Group.Public,
+                    GroupCreatedAt = gc.Group.CreatedAt,
+                    GroupLeaderId = gc.Group.LeaderId,
+                    gc.UserId,
+                    gc.User,
+                    gc.Species,
+                    gc.Weight,
+                    gc.Length,
+                    gc.Description,
+                    gc.CreatedAt,
+                    gc.CaughtAt,
+                    gc.CatchPhoto,
+                    gc.Latitude,
+                    gc.Longitude,
+                    gc.WorldFishTaxocode,
+                    gc.WorldFish
+                })
+                .FirstOrDefaultAsync() ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            var newGroup = new Group(groupCatch.GroupName, null, groupCatch.GroupDescription, groupCatch.GroupId, groupCatch.GroupCreatedAt, groupCatch.GroupPublic, groupCatch.GroupListed, groupCatch.GroupCatchesPublic, groupCatch.GroupLeaderId);
+            return new GroupCatch(groupCatch.UserId, groupCatch.GroupId, groupCatch.Species, groupCatch.Weight, groupCatch.CaughtAt, groupCatch.Length, groupCatch.Latitude, groupCatch.Longitude, groupCatch.Description, groupCatch.Id, groupCatch.CreatedAt, groupCatch.CatchPhoto, newGroup, groupCatch.User?.ToRuntime(), groupCatch.WorldFishTaxocode, groupCatch.WorldFish?.ToRuntime());
         }
         public async Task<ICollection<PartialGroupCatch>?> GetCatchesInSquareRange(LatLng bottomLeft, LatLng topRight, Guid groupId)
         {
