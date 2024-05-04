@@ -1,5 +1,5 @@
 using System.Net;
-using Common.Dbinterfaces.ErrorHandlers;
+using Common.DbInterfaces.ErrorHandlers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence

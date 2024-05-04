@@ -18,6 +18,12 @@ namespace Persistence.EntityFramework.Repository
         {
             DbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
         }
+        public virtual async Task<int> GetCount()
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundOneQuerySet = dbContext.Set<TEnt>();
+            return await foundOneQuerySet.CountAsync();
+        }
         protected virtual IQueryable<TEnt> _addRelationsToQuery(IQueryable<TEnt> set, ICollection<string>? relationships = null)
         {
             if (relationships is null) return set;
@@ -157,6 +163,13 @@ namespace Persistence.EntityFramework.Repository
                 .Take(count)
             .ToArrayAsync()).Select(x => x.ToRuntime());
             return runtimeArray?.Count() > 0 ? runtimeArray?.OfType<TBase>().ToArray() : null;
+        }
+        public virtual async Task DeleteAll()
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var set = dbContext.Set<TEnt>();
+            set.RemoveRange(set);
+            await dbContext.SaveChangesAsync();
         }
     }
 }

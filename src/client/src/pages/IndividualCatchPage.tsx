@@ -16,7 +16,8 @@ export const IndividualCatchPage: React.FC = () => {
     error: catchError,
   } = useGetFullCatchQuery(catchId);
   const { permissionManager } = useCurrentPermissionManager();
-  if (
+  if (catchLoading) return <Loading fullScreen />;
+  else if (
     fullCatch &&
     !permissionManager.Can(
       PermissionActions.Read,
@@ -32,6 +33,6 @@ export const IndividualCatchPage: React.FC = () => {
     );
   } else if (catchError)
     return <ErrorComponent fullScreen error={catchError} />;
-  else if (!fullCatch || catchLoading) return <Loading fullScreen />;
+  else if (!fullCatch) return <ErrorComponent fullScreen />;
   return null;
 };

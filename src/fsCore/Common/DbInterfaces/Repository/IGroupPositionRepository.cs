@@ -1,9 +1,12 @@
 using Common.Models;
 
-namespace Common.Dbinterfaces.Repository
+namespace Common.DbInterfaces.Repository
 {
     public interface IGroupPositionRepository
     {
+        Task DeleteAll();
+
+        Task<int> GetCount();
         Task<ICollection<GroupPosition>?> Create(ICollection<GroupPosition> groupPositionToCreate);
         Task<ICollection<GroupPosition>?> Update(ICollection<GroupPosition> groupPositionToUpdate);
         Task<ICollection<GroupPosition>?> Delete(ICollection<GroupPosition> groupPositionToDelete);

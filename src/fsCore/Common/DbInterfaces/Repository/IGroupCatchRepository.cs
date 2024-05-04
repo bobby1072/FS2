@@ -1,10 +1,13 @@
 using Common.Models;
 using Common.Models.MiscModels;
 
-namespace Common.Dbinterfaces.Repository
+namespace Common.DbInterfaces.Repository
 {
     public interface IGroupCatchRepository
     {
+
+        Task<int> GetCount();
+        Task DeleteAll();
         Task<ICollection<GroupCatch>?> Create(ICollection<GroupCatch> GroupCatchToCreate);
         Task<ICollection<GroupCatch>?> Update(ICollection<GroupCatch> GroupCatchToUpdate);
         Task<ICollection<GroupCatch>?> Delete(ICollection<GroupCatch> GroupCatchToDelete);

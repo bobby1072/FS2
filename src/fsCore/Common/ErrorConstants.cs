@@ -11,7 +11,7 @@ namespace Common
         public const string InvalidGroupPositionName = "Invalid group position name. No punctuation or numbers allowed";
         public const string BadRequest = "Bad request";
         public const string InvalidGroupDescription = "Invalid group description";
-        public const string UsernameCorrectFormat = "Username invalid";
+        public const string UsernameInvalid = "Username invalid";
         public const string GroupNameCorrectFormat = "Group name invalid";
         public const string NotAllowedToEditThoseFields = "Not allowed to edit those fields";
         public const string TooManyRecordsRequested = "To many records requested";

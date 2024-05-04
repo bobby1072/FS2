@@ -1,6 +1,6 @@
 using System.Net;
 using Common;
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Models.MiscModels;
 using Microsoft.EntityFrameworkCore;

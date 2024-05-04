@@ -21,7 +21,6 @@ import {
 } from "../common/contexts/AbilitiesContext";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { useEffect, useState } from "react";
-import { IGroupCatchModel } from "../models/IGroupCatchModel";
 import {
   SaveCatchInput,
   SaveGroupCatchForm,
@@ -42,7 +41,9 @@ export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
   const { permissionManager } = useCurrentPermissionManager();
-  if (
+  if (isLoading) return <Loading fullScreen />;
+  else if (
+    mainGroup &&
     !mainGroup?.public &&
     !permissionManager.Can(PermissionActions.BelongsTo, groupId!)
   )
@@ -53,7 +54,7 @@ export const IndividualGroupPage: React.FC = () => {
       />
     );
   else if (error) return <ErrorComponent fullScreen error={error} />;
-  else if (!mainGroup || isLoading) return <Loading fullScreen />;
+  else if (!mainGroup) return <ErrorComponent fullScreen />;
   return <IndividualGroupPageInner group={mainGroup} />;
 };
 
@@ -75,7 +76,7 @@ const IndividualGroupPageInner: React.FC<{
     groupId!,
     PermissionFields.GroupMember
   );
-  const [catchToEdit, setCatchToEdit] = useState<IGroupCatchModel | boolean>();
+  const [catchToEdit, setCatchToEdit] = useState<boolean>();
   const formMethods = useForm<SaveCatchInput>({
     defaultValues: mapDefaultValuesToSaveCatchInput(
       groupId!,
@@ -202,9 +203,6 @@ const IndividualGroupPageInner: React.FC<{
                       closeForm={() => setCatchToEdit(false)}
                       useSnackBarOnSuccess
                       showMapInfoMessage
-                      groupCatch={
-                        catchToEdit === true ? undefined : catchToEdit
-                      }
                     />
                   </AccordionDetails>
                 </Accordion>
@@ -220,7 +218,6 @@ const IndividualGroupPageInner: React.FC<{
                 <CatchesMap
                   catchToEdit={!!catchToEdit}
                   latitude={latitude}
-                  setCatchToEdit={setCatchToEdit}
                   longitude={longitude}
                   setCurrentMapZoom={setCurrentMapZoom}
                   currentMapZoom={currentMapZoom}
@@ -238,7 +235,6 @@ const IndividualGroupPageInner: React.FC<{
 const CatchesMap: React.FC<{
   latitude: number;
   longitude: number;
-  setCatchToEdit: (gc: IGroupCatchModel) => void;
   currentMapZoom?: number;
   formMethods: UseFormReturn<SaveCatchInput>;
   setCurrentMapZoom: (z: number) => void;
@@ -248,7 +244,6 @@ const CatchesMap: React.FC<{
   latitude,
   longitude,
   setCurrentMapZoom,
-  setCatchToEdit,
   currentMapZoom,
   formMethods,
 }) => {
@@ -257,7 +252,13 @@ const CatchesMap: React.FC<{
   const { data: groupCatches, error: groupCatchesError } =
     useGetAllPartialCatchesForGroupQuery(groupId!);
   return (
-    <Grid container direction="column" spacing={1}>
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      justifyContent="center"
+      spacing={1}
+    >
       <Grid item width="100%">
         <GenerateMap
           center={latitude && longitude ? [latitude, longitude] : undefined}
@@ -283,10 +284,9 @@ const CatchesMap: React.FC<{
               <LayersControl position="topright">
                 <LayersControl.Overlay name="Group catches" checked>
                   <MarkerClusterGroup chunkedLoading>
-                    {groupCatches.map((gc) => (
+                    {groupCatches.map((pgc) => (
                       <CatchMarker
-                        // setCatchToEdit={setCatchToEdit}
-                        groupCatch={gc}
+                        groupCatch={pgc}
                         groupId={groupId!}
                         useSnackBarOnSuccess
                       />

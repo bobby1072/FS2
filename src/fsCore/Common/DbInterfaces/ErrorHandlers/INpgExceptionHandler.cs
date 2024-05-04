@@ -1,4 +1,4 @@
-namespace Common.Dbinterfaces.ErrorHandlers
+namespace Common.DbInterfaces.ErrorHandlers
 {
     public interface INpgExceptionHandler
     {

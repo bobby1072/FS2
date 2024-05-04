@@ -9,6 +9,7 @@ services:
       - 5234:80
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      EnvironmentName: Development
       ClientConfig__UserInfoEndpoint: http://oidc:80/connect/userinfo
       JWT_ISSUER_HOST: http://oidc:80
       ASPNETCORE_URLS: http://+80

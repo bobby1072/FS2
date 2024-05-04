@@ -6,9 +6,9 @@ using Microsoft.Extensions.Logging;
 using Persistence.Migrations;
 using Persistence.EntityFramework;
 using Microsoft.EntityFrameworkCore;
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Persistence.EntityFramework.Repository;
-using Common.Dbinterfaces.ErrorHandlers;
+using Common.DbInterfaces.ErrorHandlers;
 
 namespace Persistence
 {

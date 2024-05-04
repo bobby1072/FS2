@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Text.Json;
+using DataImporter;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -49,6 +50,9 @@ builder.Services
 
 builder.Services
     .AddSqlPersistence(config);
+
+builder.Services
+    .AddDataImporter(config);
 
 builder.Services
     .AddAuthorization()
@@ -95,7 +99,10 @@ builder.Services
         ?.UseSimpleAssemblyNameTypeSerializer()
         ?.UseRecommendedSerializerSettings()
         ?.UsePostgreSqlStorage(dbConnectString))
-        ?.AddHangfireServer();
+        ?.AddHangfireServer(options =>
+        {
+            options.Queues = HangfireConstants.Queues.FullList;
+        });
 
 var app = builder.Build();
 
@@ -103,6 +110,7 @@ using (var scope = app.Services.CreateScope())
 {
     var hangfireService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
     hangfireService.RegisterRecurringJobs();
+    hangfireService.RegisterStartupJobs();
 }
 if (app.Environment.IsDevelopment())
 {

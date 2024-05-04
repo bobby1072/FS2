@@ -1,6 +1,6 @@
 using System.Net;
 using Common;
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using fsCore.Service.Interfaces;
@@ -88,14 +88,11 @@ namespace fsCore.Service
             var isUnique = false;
             while (!isUnique)
             {
-                if (user.Username is null)
-                {
-                    user.Username = user.CalculateDefaultUsername();
-                }
+                user.Username ??= user.CalculateDefaultUsername();
                 isUnique = await _repo.IsUserNameUnique(user);
                 if (!isUnique)
                 {
-                    user.Username = $"{user.Email.Split('@')[0]}{new Random().Next(100000000, 999999999)}";
+                    user.Username = $"{user.Email.Split('@')[0]}{Guid.NewGuid()}";
                 }
             }
             return user.Username!;

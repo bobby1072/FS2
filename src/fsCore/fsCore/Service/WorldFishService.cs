@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using Common;
-using Common.Dbinterfaces.Repository;
+using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using fsCore.Service.Interfaces;
@@ -12,13 +12,17 @@ namespace fsCore.Service
     internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
-        [AutomaticRetry(Attempts = 1)]
+        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 10 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()
         {
-            var file = await File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
+            var fileJob = File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
+            var allDbFishJob = _repo.GetAll();
+            await Task.WhenAll(fileJob, allDbFishJob);
+            var file = await fileJob;
+            var allDbFish = await allDbFishJob;
             var allFileFish = JsonSerializer.Deserialize<JsonFileWorldFish[]>(file) ?? throw new Exception();
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
-            var allDbFish = await _repo.GetAll();
             if (allDbFish is null)
             {
                 await _repo.Create(allWorldFishFromFile);
