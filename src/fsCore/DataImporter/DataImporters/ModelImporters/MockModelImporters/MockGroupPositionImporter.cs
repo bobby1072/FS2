@@ -20,13 +20,17 @@ namespace DataImporter.ModelImporters.MockModelImporters
         {
             try
             {
-                var allGroups = await _groupRepository.GetAll();
-                var listOfPositionsToCreate = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONS];
-                for (int x = 0; x < (int)NumberOfMockModelToCreate.POSITIONS; x += 2)
+                var allGroups = await _groupRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all groups");
+                var listOfPositionsToCreate = new List<GroupPosition>();
+                for (int x = 0; x < allGroups.Count; x++)
                 {
-                    var tempGroup = allGroups?.ElementAt(x == 0 ? 0 : x / 2);
-                    listOfPositionsToCreate[x] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
-                    listOfPositionsToCreate[x + 1] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidDataException("No id on group"));
+                    var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONSPERGROUP];
+                    var tempGroup = allGroups.ElementAt(x);
+                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.POSITIONSPERGROUP; deepX++)
+                    {
+                        currentPositionsList[deepX] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
+                    }
+                    listOfPositionsToCreate.AddRange(currentPositionsList);
                 }
                 var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
             }

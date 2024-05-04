@@ -3,9 +3,9 @@ namespace DataImporter.ModelImporters.MockModelImporters
     internal enum NumberOfMockModelToCreate
     {
         USERS = 10,
-        GROUPS = 20,
-        POSITIONS = 40,
-        MEMBERS = 80,
+        GROUPSPERUSERS = 2,
+        POSITIONSPERGROUP = 2,
+        MEMBERSPERPOSITION = 2,
         MAXCATCHESPERGROUP = 200
     }
 }

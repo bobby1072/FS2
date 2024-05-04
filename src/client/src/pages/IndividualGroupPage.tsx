@@ -41,7 +41,9 @@ export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
   const { data: mainGroup, error, isLoading } = useGetFullGroup(groupId);
   const { permissionManager } = useCurrentPermissionManager();
-  if (
+  if (isLoading) return <Loading fullScreen />;
+  else if (!mainGroup) return <ErrorComponent fullScreen />;
+  else if (
     !mainGroup?.public &&
     !permissionManager.Can(PermissionActions.BelongsTo, groupId!)
   )
@@ -52,7 +54,6 @@ export const IndividualGroupPage: React.FC = () => {
       />
     );
   else if (error) return <ErrorComponent fullScreen error={error} />;
-  else if (!mainGroup || isLoading) return <Loading fullScreen />;
   return <IndividualGroupPageInner group={mainGroup} />;
 };
 

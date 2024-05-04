@@ -44,11 +44,15 @@ namespace DataImporter.ModelImporters.MockModelImporters
                 var allGroups = _groupRepository.GetAll();
                 var allPositions = _groupPositionRepository.GetAll();
                 await Task.WhenAll(allUser, allGroups, allPositions);
-                var groupMembersToSave = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERS];
-                for (int x = 0; x < (int)NumberOfMockModelToCreate.MEMBERS; x++)
+                var groupMembersToSave = new List<GroupMember>();
+                for (int x = 0; x < allPositions.Result?.Count; x++)
                 {
-                    var tempGroupMember = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
-                    groupMembersToSave[x] = tempGroupMember;
+                    var tempGroupMemberArray = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERSPERPOSITION];
+                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.MEMBERSPERPOSITION; deepX++)
+                    {
+                        tempGroupMemberArray[deepX] = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
+                    }
+                    groupMembersToSave.AddRange(tempGroupMemberArray);
                 }
                 var createdGroupMembers = await _groupMemberRepository.Create(groupMembersToSave) ?? throw new InvalidOperationException("Failed to create groups");
             }

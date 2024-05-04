@@ -21,14 +21,16 @@ namespace DataImporter.ModelImporters.MockModelImporters
             try
             {
                 var allUsers = await _userRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all users");
-                var listOfGroupsToCreate = new Group[(int)NumberOfMockModelToCreate.GROUPS];
-                for (int x = 0; x < (int)NumberOfMockModelToCreate.GROUPS - 1; x += 2)
+                var listOfGroupsToCreate = new List<Group>();
+                for (int x = 0; x < allUsers.Count; x++)
                 {
-                    var foundUser = allUsers.ElementAt(x == 0 ? 0 : x / 2);
-                    var tempGroup = MockGroupBuilder.Build(foundUser.Id ?? throw new InvalidDataException("No id on user"));
-                    listOfGroupsToCreate[x] = tempGroup;
-                    var tempGroup2 = MockGroupBuilder.Build(foundUser.Id ?? throw new InvalidDataException("No id on user"));
-                    listOfGroupsToCreate[x + 1] = tempGroup2;
+                    var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GROUPSPERUSERS];
+                    var foundUser = allUsers.ElementAt(x);
+                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.GROUPSPERUSERS; deepX++)
+                    {
+                        currentGroupList[deepX] = MockGroupBuilder.Build(foundUser?.Id ?? throw new InvalidOperationException("Cannot get user id"));
+                    }
+                    listOfGroupsToCreate.AddRange(currentGroupList);
                 }
                 var createdGroups = await _groupRepository.Create(listOfGroupsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
             }
