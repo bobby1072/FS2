@@ -1,7 +1,6 @@
 namespace DataImporter.ModelImporters
 {
-    internal interface IUserImporter
+    internal interface IUserImporter : IImporter
     {
-        Task Import();
     }
 }

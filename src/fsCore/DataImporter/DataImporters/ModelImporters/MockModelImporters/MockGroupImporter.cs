@@ -18,15 +18,15 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            var allUsers = await _userRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all users");
-            var listOfGroupsToCreate = new Group[(int)NumberOfMockModelToCreate.GROUPS];
-            bool userSaved = false;
             int tryAmountCount = 0;
-            while (!userSaved)
+            try
             {
-                try
+                var allUsers = await _userRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all users");
+                bool userSaved = false;
+                while (!userSaved)
                 {
 
+                    var listOfGroupsToCreate = new Group[(int)NumberOfMockModelToCreate.GROUPS];
                     for (int x = 0; x < (int)NumberOfMockModelToCreate.GROUPS - 1; x += 2)
                     {
                         var foundUser = allUsers.ElementAt(x == 0 ? 0 : x / 2);
@@ -38,15 +38,15 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     var createdGroups = await _groupRepository.Create(listOfGroupsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
                     userSaved = true;
                 }
-                catch (Exception e)
-                {
-                    tryAmountCount++;
-                    _logger.LogError("Failed to create or save groups users: {0}", e);
+            }
+            catch (Exception e)
+            {
+                tryAmountCount++;
+                _logger.LogError("Failed to create or save mock groups: {0}", e);
 
-                    if (tryAmountCount >= 5)
-                    {
-                        throw new InvalidOperationException("Cannot save mock groups");
-                    }
+                if (tryAmountCount >= 5)
+                {
+                    throw new InvalidOperationException("Cannot save mock groups");
                 }
             }
         }

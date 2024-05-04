@@ -5,19 +5,21 @@ using Microsoft.Extensions.Logging;
 
 namespace DataImporter
 {
-    internal class MockDataImporter : IDataImporter
+    internal class DataImporter : IDataImporter
     {
         private readonly IUserImporter _userImporter;
-        private readonly ILogger<MockDataImporter> _logger;
+        private readonly ILogger<DataImporter> _logger;
         private readonly IGroupImporter _groupImporter;
         private readonly IUserRepository _userRepository;
+        private readonly IGroupMemberImporter _groupMemberImporter;
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupMemberRepository _groupMemberRepository;
         private readonly IGroupPositionImporter _groupPositionImporter;
         private readonly IGroupPositionRepository _positionRepository;
         private readonly IGroupCatchRepository _groupCatchRepository;
-        public MockDataImporter(IUserImporter userImporter, ILogger<MockDataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter)
+        public DataImporter(IUserImporter userImporter, ILogger<DataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter, IGroupMemberImporter groupMemberImporter)
         {
+            _groupMemberImporter = groupMemberImporter;
             _userImporter = userImporter;
             _groupPositionImporter = groupPositionImporter;
             _logger = logger;
@@ -29,28 +31,25 @@ namespace DataImporter
             _groupCatchRepository = groupCatchRepository;
         }
         [AutomaticRetry(Attempts = 3, LogEvents = true)]
-        public async Task Import()
+        public virtual async Task Import()
         {
             try
             {
-                var userCountJob = _userRepository.GetCount();
-                var groupCountJob = _groupRepository.GetCount();
-                var groupMemberCountJob = _groupMemberRepository.GetCount();
-                var groupPositionCountJob = _positionRepository.GetCount();
-                var groupCatchCountJob = _groupCatchRepository.GetCount();
-                await Task.WhenAll(userCountJob, groupCountJob, groupMemberCountJob, groupPositionCountJob, groupCatchCountJob);
-                if (userCountJob.Result == 0)
+                var countJobList = new[] { _userRepository.GetCount(), _groupRepository.GetCount(), _groupMemberRepository.GetCount(), _positionRepository.GetCount(), _groupCatchRepository.GetCount() };
+                await Task.WhenAll(countJobList);
+
+                if (countJobList.Any(x => x.Result > 0))
                 {
-                    await _userImporter.Import();
+                    return;
                 }
-                if (groupCatchCountJob.Result == 0)
-                {
-                    await _groupImporter.Import();
-                }
-                if (groupPositionCountJob.Result == 0)
-                {
-                    await _groupPositionImporter.Import();
-                }
+
+                await _userImporter.Import();
+
+                await _groupImporter.Import();
+
+                await _groupPositionImporter.Import();
+
+                await _groupMemberImporter.Import();
             }
             catch (Exception e)
             {

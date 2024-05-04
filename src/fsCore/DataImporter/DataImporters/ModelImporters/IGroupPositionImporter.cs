@@ -1,7 +1,6 @@
 namespace DataImporter.ModelImporters
 {
-    internal interface IGroupPositionImporter
+    internal interface IGroupPositionImporter : IImporter
     {
-        Task Import();
     }
 }

@@ -17,7 +17,8 @@ namespace DataImporter
                     .AddScoped<IUserImporter, MockUserImporter>()
                     .AddScoped<IGroupImporter, MockGroupImporter>()
                     .AddScoped<IGroupPositionImporter, MockGroupPositionImporter>()
-                    .AddScoped<IDataImporter, MockDataImporter>();
+                    .AddScoped<IGroupMemberImporter, MockGroupMemberImporter>()
+                    .AddScoped<IDataImporter, DataImporter>();
             }
             else if (!useJsonFileImport)
             {

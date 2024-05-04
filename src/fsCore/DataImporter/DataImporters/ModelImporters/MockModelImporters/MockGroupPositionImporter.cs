@@ -18,14 +18,14 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            var allGroups = await _groupRepository.GetAll();
-            var listOfPositionsToCreate = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONS];
-            bool userSaved = false;
             int tryAmountCount = 0;
-            while (!userSaved)
+            try
             {
-                try
+                var allGroups = await _groupRepository.GetAll();
+                bool userSaved = false;
+                while (!userSaved)
                 {
+                    var listOfPositionsToCreate = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONS];
                     for (int x = 0; x < (int)NumberOfMockModelToCreate.POSITIONS; x += 2)
                     {
                         var tempGroup = allGroups?.ElementAt(x == 0 ? 0 : x / 2);
@@ -35,14 +35,14 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
                     userSaved = true;
                 }
-                catch (Exception e)
+            }
+            catch (Exception e)
+            {
+                tryAmountCount++;
+                _logger.LogError("Failed to create or save groups users: {0}", e);
+                if (tryAmountCount >= 5)
                 {
-                    tryAmountCount++;
-                    _logger.LogError("Failed to create or save groups users: {0}", e);
-                    if (tryAmountCount >= 5)
-                    {
-                        throw new InvalidOperationException("Cannot save mock groups");
-                    }
+                    throw new InvalidOperationException("Cannot save mock groups");
                 }
             }
         }
