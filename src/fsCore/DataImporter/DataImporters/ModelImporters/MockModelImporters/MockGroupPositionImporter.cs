@@ -16,6 +16,18 @@ namespace DataImporter.ModelImporters.MockModelImporters
             _groupRepository = groupRepository;
             _groupPositionRepository = groupPositionRepository;
         }
+        private static GroupPosition CreateUniqueGroupIdNameGroupPosition(ICollection<GroupPosition> groupPositions, Guid groupId)
+        {
+            var tempGroupPosition = MockGroupPositionBuilder.Build(groupId);
+            if (groupPositions.FirstOrDefault(x => x?.GroupId == tempGroupPosition.GroupId && x?.Name == tempGroupPosition.Name) is not null)
+            {
+                return CreateUniqueGroupIdNameGroupPosition(groupPositions, groupId);
+            }
+            else
+            {
+                return tempGroupPosition;
+            }
+        }
         public async Task Import()
         {
             int tryCount = 0;
@@ -30,13 +42,16 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     {
                         var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONSPERGROUP];
                         var tempGroup = allGroups.ElementAt(x);
-                        for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.POSITIONSPERGROUP; deepX++)
+                        for (int deepX = 0; deepX < currentPositionsList.Length; deepX++)
                         {
-                            currentPositionsList[deepX] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
+                            var tempPositionList = new List<GroupPosition>(listOfPositionsToCreate);
+                            tempPositionList.AddRange(currentPositionsList);
+                            currentPositionsList[deepX] = CreateUniqueGroupIdNameGroupPosition(tempPositionList, tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
                         }
                         listOfPositionsToCreate.AddRange(currentPositionsList);
                     }
                     var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
+                    return;
                 }
                 catch (Exception e)
                 {

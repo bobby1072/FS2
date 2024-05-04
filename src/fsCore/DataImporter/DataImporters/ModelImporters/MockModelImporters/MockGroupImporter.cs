@@ -16,6 +16,18 @@ namespace DataImporter.ModelImporters.MockModelImporters
             _groupRepository = groupRepository;
             _userRepository = userRepo;
         }
+        private static Group CreateUniqueGroupNameGroup(ICollection<Group> groups, Guid leaderId)
+        {
+            var tempGroup = MockGroupBuilder.Build(leaderId);
+            if (groups.FirstOrDefault(x => x?.Name == tempGroup.Name) is not null)
+            {
+                return CreateUniqueGroupNameGroup(groups, leaderId);
+            }
+            else
+            {
+                return tempGroup;
+            }
+        }
         public async Task Import()
         {
             int tryCount = 0;
@@ -30,13 +42,16 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     {
                         var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GROUPSPERUSERS];
                         var foundUser = allUsers.ElementAt(x);
-                        for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.GROUPSPERUSERS; deepX++)
+                        for (int deepX = 0; deepX < currentGroupList.Length; deepX++)
                         {
-                            currentGroupList[deepX] = MockGroupBuilder.Build(foundUser?.Id ?? throw new InvalidOperationException("Cannot get user id"));
+                            var tempCheckList = new List<Group>(listOfGroupsToCreate);
+                            tempCheckList.AddRange(currentGroupList);
+                            currentGroupList[deepX] = CreateUniqueGroupNameGroup(tempCheckList, foundUser?.Id ?? throw new InvalidOperationException("Cannot get user id"));
                         }
                         listOfGroupsToCreate.AddRange(currentGroupList);
                     }
                     var createdGroups = await _groupRepository.Create(listOfGroupsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
+                    return;
                 }
                 catch (Exception e)
                 {

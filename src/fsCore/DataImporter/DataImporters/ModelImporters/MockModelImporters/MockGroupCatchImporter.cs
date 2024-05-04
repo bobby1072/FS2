@@ -43,6 +43,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                         allGroupCatches.AddRange(currentGroupCatchList);
                     }
                     var createdGroupCatches = await _groupCatchRepository.Create(allGroupCatches) ?? throw new InvalidOperationException("Failed to create group catches");
+                    return;
                 }
                 catch (Exception e)
                 {

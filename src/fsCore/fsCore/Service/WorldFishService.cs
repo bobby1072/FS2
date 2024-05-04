@@ -13,7 +13,7 @@ namespace fsCore.Service
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 30 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 10 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()
         {
             var fileJob = File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));

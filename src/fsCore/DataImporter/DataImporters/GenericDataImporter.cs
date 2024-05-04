@@ -34,15 +34,13 @@ namespace DataImporter
             _groupCatchRepository = groupCatchRepository;
         }
         [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 2, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = new[] { 30 })]
+        [AutomaticRetry(Attempts = 2, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = new[] { 10 })]
         public virtual async Task Import()
         {
             try
             {
-                var countJobList = new[] { _userRepository.GetCount(), _groupRepository.GetCount(), _groupMemberRepository.GetCount(), _groupPositionRepository.GetCount(), _groupCatchRepository.GetCount() };
-                await Task.WhenAll(countJobList);
-
-                if (countJobList.Any(x => x.Result > 0))
+                var userAmount = await _userRepository.GetCount();
+                if (userAmount > 0)
                 {
                     return;
                 }
