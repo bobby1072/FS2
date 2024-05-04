@@ -4,18 +4,18 @@ namespace DataImporter.MockModelBuilders
 {
     internal static class MockGroupPositionBuilder
     {
-        private static readonly Random _random = new();
         public static GroupPosition Build(Guid groupId)
         {
+            var random = new Random();
             return new GroupPosition(
                 groupId,
-                Faker.Company.Name(),
+                Faker.Name.First(),
                 null,
-                _random.Next(0, 2) == 1,
-                _random.Next(0, 2) == 1,
-                _random.Next(0, 2) == 1,
-                _random.Next(0, 2) == 1,
-                _random.Next(0, 2) == 1
+                random.Next(0, 2) == 1,
+                random.Next(0, 2) == 1,
+                random.Next(0, 2) == 1,
+                random.Next(0, 2) == 1,
+                random.Next(0, 2) == 1
             );
         }
     }

@@ -16,7 +16,13 @@ namespace DataImporter
                 services
                     .AddScoped<IUserImporter, MockUserImporter>()
                     .AddScoped<IGroupImporter, MockGroupImporter>()
+                    .AddScoped<IGroupPositionImporter, MockGroupPositionImporter>()
                     .AddScoped<IDataImporter, MockDataImporter>();
+            }
+            else if (!useJsonFileImport)
+            {
+                services
+                    .AddScoped<IDataImporter, ProductionDataImporter>();
             }
             return services;
         }

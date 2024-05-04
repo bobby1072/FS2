@@ -12,6 +12,7 @@ namespace Common.DbInterfaces.Repository
         Task<Group?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null);
         Task<int> GetCount();
+        Task<ICollection<Group>?> GetAll(params string[] relationships);
         Task<ICollection<Group>?> SearchListedGroups(string groupNameString);
     }
 }

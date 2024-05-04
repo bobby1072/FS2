@@ -1,10 +1,9 @@
 using Common.DbInterfaces.Repository;
 using Common.Models;
 using DataImporter.MockModelBuilders;
-using DataImporter.ModelImporters.MockModelImporters;
 using Microsoft.Extensions.Logging;
 
-namespace DataImporter.ModelImporters
+namespace DataImporter.ModelImporters.MockModelImporters
 {
     internal class MockGroupImporter : IGroupImporter
     {

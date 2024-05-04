@@ -13,11 +13,13 @@ namespace DataImporter
         private readonly IUserRepository _userRepository;
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupMemberRepository _groupMemberRepository;
+        private readonly IGroupPositionImporter _groupPositionImporter;
         private readonly IGroupPositionRepository _positionRepository;
         private readonly IGroupCatchRepository _groupCatchRepository;
-        public MockDataImporter(IUserImporter userImporter, ILogger<MockDataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter)
+        public MockDataImporter(IUserImporter userImporter, ILogger<MockDataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter)
         {
             _userImporter = userImporter;
+            _groupPositionImporter = groupPositionImporter;
             _logger = logger;
             _groupImporter = groupImporter;
             _userRepository = userRepository;
@@ -31,15 +33,24 @@ namespace DataImporter
         {
             try
             {
-                var allCountJobsList = new[] { _groupCatchRepository.GetCount(), _groupMemberRepository.GetCount(), _groupRepository.GetCount(), _positionRepository.GetCount(), _userRepository.GetCount() };
-                var allCountJobs = await Task.WhenAll(allCountJobsList);
-                var completedJobs = allCountJobsList.Select(x => x.Result).ToArray();
-                if (completedJobs.Any(x => x > 0))
+                var userCountJob = _userRepository.GetCount();
+                var groupCountJob = _groupRepository.GetCount();
+                var groupMemberCountJob = _groupMemberRepository.GetCount();
+                var groupPositionCountJob = _positionRepository.GetCount();
+                var groupCatchCountJob = _groupCatchRepository.GetCount();
+                await Task.WhenAll(userCountJob, groupCountJob, groupMemberCountJob, groupPositionCountJob, groupCatchCountJob);
+                if (userCountJob.Result == 0)
                 {
-                    return;
+                    await _userImporter.Import();
                 }
-                await _userImporter.Import();
-                await _groupImporter.Import();
+                if (groupCatchCountJob.Result == 0)
+                {
+                    await _groupImporter.Import();
+                }
+                if (groupPositionCountJob.Result == 0)
+                {
+                    await _groupPositionImporter.Import();
+                }
             }
             catch (Exception e)
             {

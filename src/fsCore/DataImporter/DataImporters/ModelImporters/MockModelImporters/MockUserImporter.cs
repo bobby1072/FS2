@@ -1,7 +1,6 @@
 using Common.DbInterfaces.Repository;
 using Common.Models;
 using DataImporter.MockModelBuilders;
-using DataImporter.ModelImporters;
 using Microsoft.Extensions.Logging;
 
 namespace DataImporter.ModelImporters.MockModelImporters
