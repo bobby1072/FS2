@@ -18,25 +18,31 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            try
+            int tryCount = 0;
+            while (tryCount < 3)
             {
-                var allGroups = await _groupRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all groups");
-                var listOfPositionsToCreate = new List<GroupPosition>();
-                for (int x = 0; x < allGroups.Count; x++)
+
+                try
                 {
-                    var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONSPERGROUP];
-                    var tempGroup = allGroups.ElementAt(x);
-                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.POSITIONSPERGROUP; deepX++)
+                    var allGroups = await _groupRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all groups");
+                    var listOfPositionsToCreate = new List<GroupPosition>();
+                    for (int x = 0; x < allGroups.Count; x++)
                     {
-                        currentPositionsList[deepX] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
+                        var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONSPERGROUP];
+                        var tempGroup = allGroups.ElementAt(x);
+                        for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.POSITIONSPERGROUP; deepX++)
+                        {
+                            currentPositionsList[deepX] = MockGroupPositionBuilder.Build(tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
+                        }
+                        listOfPositionsToCreate.AddRange(currentPositionsList);
                     }
-                    listOfPositionsToCreate.AddRange(currentPositionsList);
+                    var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
                 }
-                var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to create or save groups users: {0}", e);
+                catch (Exception e)
+                {
+                    tryCount++;
+                    _logger.LogError("Failed to create or save groups users: {0}", e);
+                }
             }
         }
     }

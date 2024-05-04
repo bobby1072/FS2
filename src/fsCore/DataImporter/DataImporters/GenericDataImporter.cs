@@ -1,3 +1,4 @@
+using Common;
 using Common.DbInterfaces.Repository;
 using DataImporter.ModelImporters;
 using Hangfire;
@@ -15,7 +16,7 @@ namespace DataImporter
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupMemberRepository _groupMemberRepository;
         private readonly IGroupPositionImporter _groupPositionImporter;
-        private readonly IGroupPositionRepository _positionRepository;
+        private readonly IGroupPositionRepository _groupPositionRepository;
         private readonly IGroupCatchImporter _groupCatchImporter;
         private readonly IGroupCatchRepository _groupCatchRepository;
         public GenericDataImporter(IUserImporter userImporter, ILogger<GenericDataImporter> logger, IUserRepository userRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, IGroupPositionRepository positionRepository, IGroupCatchRepository groupCatchRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter, IGroupMemberImporter groupMemberImporter, IGroupCatchImporter groupCatchImporter)
@@ -29,15 +30,16 @@ namespace DataImporter
             _userRepository = userRepository;
             _groupRepository = groupRepository;
             _groupMemberRepository = groupMemberRepository;
-            _positionRepository = positionRepository;
+            _groupPositionRepository = positionRepository;
             _groupCatchRepository = groupCatchRepository;
         }
-        [AutomaticRetry(Attempts = 3, LogEvents = true)]
+        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [AutomaticRetry(Attempts = 2, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = new[] { 30 })]
         public virtual async Task Import()
         {
             try
             {
-                var countJobList = new[] { _userRepository.GetCount(), _groupRepository.GetCount(), _groupMemberRepository.GetCount(), _positionRepository.GetCount(), _groupCatchRepository.GetCount() };
+                var countJobList = new[] { _userRepository.GetCount(), _groupRepository.GetCount(), _groupMemberRepository.GetCount(), _groupPositionRepository.GetCount(), _groupCatchRepository.GetCount() };
                 await Task.WhenAll(countJobList);
 
                 if (countJobList.Any(x => x.Result > 0))
@@ -58,6 +60,7 @@ namespace DataImporter
             catch (Exception e)
             {
                 _logger.LogError("Failed to import mock data, the error was: {0}", e);
+                await Task.WhenAll(_userRepository.DeleteAll(), _groupRepository.DeleteAll(), _groupMemberRepository.DeleteAll(), _groupPositionRepository.DeleteAll(), _groupCatchRepository.DeleteAll());
             }
         }
     }

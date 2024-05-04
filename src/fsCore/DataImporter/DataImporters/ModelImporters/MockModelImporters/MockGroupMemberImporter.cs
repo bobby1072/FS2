@@ -37,28 +37,34 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            try
+            int tryCount = 0;
+            while (tryCount < 3)
             {
 
-                var allUser = _userRepository.GetAll();
-                var allGroups = _groupRepository.GetAll();
-                var allPositions = _groupPositionRepository.GetAll();
-                await Task.WhenAll(allUser, allGroups, allPositions);
-                var groupMembersToSave = new List<GroupMember>();
-                for (int x = 0; x < allPositions.Result?.Count; x++)
+                try
                 {
-                    var tempGroupMemberArray = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERSPERPOSITION];
-                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.MEMBERSPERPOSITION; deepX++)
+
+                    var allUser = _userRepository.GetAll();
+                    var allGroups = _groupRepository.GetAll();
+                    var allPositions = _groupPositionRepository.GetAll();
+                    await Task.WhenAll(allUser, allGroups, allPositions);
+                    var groupMembersToSave = new List<GroupMember>();
+                    for (int x = 0; x < allPositions.Result?.Count; x++)
                     {
-                        tempGroupMemberArray[deepX] = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
+                        var tempGroupMemberArray = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERSPERPOSITION];
+                        for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.MEMBERSPERPOSITION; deepX++)
+                        {
+                            tempGroupMemberArray[deepX] = AddGroupMembersToList(groupMembersToSave, allPositions?.Result ?? throw new InvalidOperationException("Couldn't retrieve positions"), allUser?.Result ?? throw new InvalidOperationException("Couldn't retrieve users"));
+                        }
+                        groupMembersToSave.AddRange(tempGroupMemberArray);
                     }
-                    groupMembersToSave.AddRange(tempGroupMemberArray);
+                    var createdGroupMembers = await _groupMemberRepository.Create(groupMembersToSave) ?? throw new InvalidOperationException("Failed to create groups");
                 }
-                var createdGroupMembers = await _groupMemberRepository.Create(groupMembersToSave) ?? throw new InvalidOperationException("Failed to create groups");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to create or save mock groups: {0}", e);
+                catch (Exception e)
+                {
+                    tryCount++;
+                    _logger.LogError("Failed to create or save mock groups: {0}", e);
+                }
             }
         }
     }

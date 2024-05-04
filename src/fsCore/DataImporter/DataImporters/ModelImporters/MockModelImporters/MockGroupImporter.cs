@@ -18,25 +18,31 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            try
+            int tryCount = 0;
+            while (tryCount < 3)
             {
-                var allUsers = await _userRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all users");
-                var listOfGroupsToCreate = new List<Group>();
-                for (int x = 0; x < allUsers.Count; x++)
+
+                try
                 {
-                    var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GROUPSPERUSERS];
-                    var foundUser = allUsers.ElementAt(x);
-                    for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.GROUPSPERUSERS; deepX++)
+                    var allUsers = await _userRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all users");
+                    var listOfGroupsToCreate = new List<Group>();
+                    for (int x = 0; x < allUsers.Count; x++)
                     {
-                        currentGroupList[deepX] = MockGroupBuilder.Build(foundUser?.Id ?? throw new InvalidOperationException("Cannot get user id"));
+                        var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GROUPSPERUSERS];
+                        var foundUser = allUsers.ElementAt(x);
+                        for (int deepX = 0; deepX < (int)NumberOfMockModelToCreate.GROUPSPERUSERS; deepX++)
+                        {
+                            currentGroupList[deepX] = MockGroupBuilder.Build(foundUser?.Id ?? throw new InvalidOperationException("Cannot get user id"));
+                        }
+                        listOfGroupsToCreate.AddRange(currentGroupList);
                     }
-                    listOfGroupsToCreate.AddRange(currentGroupList);
+                    var createdGroups = await _groupRepository.Create(listOfGroupsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
                 }
-                var createdGroups = await _groupRepository.Create(listOfGroupsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to create or save mock groups: {0}", e);
+                catch (Exception e)
+                {
+                    tryCount++;
+                    _logger.LogError("Failed to create or save mock groups: {0}", e);
+                }
             }
         }
     }

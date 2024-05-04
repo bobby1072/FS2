@@ -99,7 +99,10 @@ builder.Services
         ?.UseSimpleAssemblyNameTypeSerializer()
         ?.UseRecommendedSerializerSettings()
         ?.UsePostgreSqlStorage(dbConnectString))
-        ?.AddHangfireServer();
+        ?.AddHangfireServer(options =>
+        {
+            options.Queues = HangfireConstants.Queues.FullList;
+        });
 
 var app = builder.Build();
 

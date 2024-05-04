@@ -4,6 +4,8 @@ namespace Common.DbInterfaces.Repository
 {
     public interface IGroupPositionRepository
     {
+        Task DeleteAll();
+
         Task<int> GetCount();
         Task<ICollection<GroupPosition>?> Create(ICollection<GroupPosition> groupPositionToCreate);
         Task<ICollection<GroupPosition>?> Update(ICollection<GroupPosition> groupPositionToUpdate);

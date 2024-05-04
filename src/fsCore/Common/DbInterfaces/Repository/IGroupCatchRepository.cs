@@ -7,6 +7,7 @@ namespace Common.DbInterfaces.Repository
     {
 
         Task<int> GetCount();
+        Task DeleteAll();
         Task<ICollection<GroupCatch>?> Create(ICollection<GroupCatch> GroupCatchToCreate);
         Task<ICollection<GroupCatch>?> Update(ICollection<GroupCatch> GroupCatchToUpdate);
         Task<ICollection<GroupCatch>?> Delete(ICollection<GroupCatch> GroupCatchToDelete);

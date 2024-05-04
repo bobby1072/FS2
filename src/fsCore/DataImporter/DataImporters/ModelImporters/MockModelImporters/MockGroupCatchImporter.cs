@@ -21,29 +21,34 @@ namespace DataImporter.ModelImporters.MockModelImporters
 
         public async Task Import()
         {
-            try
+            int tryCount = 0;
+            while (tryCount < 3)
             {
-                var allMembers = _groupMemberRepository.GetAll();
-                var allGroups = _groupRepository.GetAll();
-                await Task.WhenAll(allMembers, allGroups);
-                var allGroupCatches = new List<GroupCatch>();
-                for (int i = 0; i < allGroups.Result?.Count; i++)
+                try
                 {
-                    var random = new Random();
-                    var currentGroupCatchList = new GroupCatch[random.Next(0, (int)NumberOfMockModelToCreate.MAXCATCHESPERGROUP)];
-                    var randomGroupMemberList = allMembers.Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id).ToArray();
-                    var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length));
-                    for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
+                    var allMembers = _groupMemberRepository.GetAll();
+                    var allGroups = _groupRepository.GetAll();
+                    await Task.WhenAll(allMembers, allGroups);
+                    var allGroupCatches = new List<GroupCatch>();
+                    for (int i = 0; i < allGroups.Result?.Count; i++)
                     {
-                        currentGroupCatchList[deepI] = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));
+                        var random = new Random();
+                        var currentGroupCatchList = new GroupCatch[random.Next(0, (int)NumberOfMockModelToCreate.MAXCATCHESPERGROUP)];
+                        var randomGroupMemberList = allMembers.Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id).ToArray();
+                        var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length));
+                        for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
+                        {
+                            currentGroupCatchList[deepI] = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));
+                        }
+                        allGroupCatches.AddRange(currentGroupCatchList);
                     }
-                    allGroupCatches.AddRange(currentGroupCatchList);
+                    var createdGroupCatches = await _groupCatchRepository.Create(allGroupCatches) ?? throw new InvalidOperationException("Failed to create group catches");
                 }
-                var createdGroupCatches = await _groupCatchRepository.Create(allGroupCatches) ?? throw new InvalidOperationException("Failed to create group catches");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to create or save mock groups: {0}", e);
+                catch (Exception e)
+                {
+                    tryCount++;
+                    _logger.LogError("Failed to create or save mock groups: {0}", e);
+                }
             }
         }
 

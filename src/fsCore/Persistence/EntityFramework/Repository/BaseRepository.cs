@@ -164,5 +164,12 @@ namespace Persistence.EntityFramework.Repository
             .ToArrayAsync()).Select(x => x.ToRuntime());
             return runtimeArray?.Count() > 0 ? runtimeArray?.OfType<TBase>().ToArray() : null;
         }
+        public virtual async Task DeleteAll()
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var set = dbContext.Set<TEnt>();
+            set.RemoveRange(set);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

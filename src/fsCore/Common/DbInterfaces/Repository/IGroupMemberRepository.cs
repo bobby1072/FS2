@@ -5,6 +5,8 @@ namespace Common.DbInterfaces.Repository
     public interface IGroupMemberRepository
     {
         Task<int> GetCount();
+        Task DeleteAll();
+
         Task<ICollection<GroupMember>?> Create(ICollection<GroupMember> groupMemberToCreate);
         Task<ICollection<GroupMember>?> Update(ICollection<GroupMember> groupMemberToUpdate);
         Task<ICollection<GroupMember>?> Delete(ICollection<GroupMember> groupMemberToDelete);

@@ -16,10 +16,11 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         public async Task Import()
         {
-            try
+            int tryCount = 0;
+            while (tryCount < 3)
             {
-                bool userSaved = false;
-                while (!userSaved)
+
+                try
                 {
                     var newUserArray = new User[(int)NumberOfMockModelToCreate.USERS];
                     for (int x = 0; x < newUserArray.Length; x++)
@@ -28,13 +29,12 @@ namespace DataImporter.ModelImporters.MockModelImporters
                         newUserArray[x] = tempUser;
                     }
                     var createdUsers = await _userRepository.Create(newUserArray) ?? throw new InvalidOperationException("Failed to create groups");
-                    userSaved = true;
                 }
-            }
-            catch (Exception e)
-            {
-                _logger.LogError("Failed to create or save mock users: {0}", e);
-
+                catch (Exception e)
+                {
+                    tryCount++;
+                    _logger.LogError("Failed to create or save mock users: {0}", e);
+                }
             }
         }
     }

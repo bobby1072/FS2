@@ -4,6 +4,8 @@ namespace Common.DbInterfaces.Repository
 {
     public interface IGroupRepository
     {
+        Task DeleteAll();
+
         Task<ICollection<Group>?> ManyGroupWithoutEmblem(Guid leaderId, ICollection<string>? relations = null);
         Task<ICollection<Group>?> Create(ICollection<Group> groupToCreate);
         Task<ICollection<Group>?> Update(ICollection<Group> groupToUpdate);

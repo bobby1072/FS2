@@ -4,6 +4,7 @@ namespace Common.DbInterfaces.Repository
 {
     public interface IWorldFishRepository
     {
+        Task DeleteAll();
         Task<ICollection<WorldFish>?> Create(ICollection<WorldFish> WorldFishToCreate);
         Task<ICollection<WorldFish>?> Delete(ICollection<WorldFish> WorldFishToDelete);
         Task<ICollection<WorldFish>?> GetAll(params string[] relationships);
