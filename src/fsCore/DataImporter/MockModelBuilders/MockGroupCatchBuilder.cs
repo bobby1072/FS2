@@ -16,7 +16,7 @@ namespace DataImporter.MockModelBuilders
                 _random.Next(0, 100),
                 _random.Next(-180, 180),
                 _random.Next(-90, 90),
-                null,
+                Faker.Lorem.Sentence(),
                 Guid.NewGuid(),
                 DateTime.UtcNow,
                 null,

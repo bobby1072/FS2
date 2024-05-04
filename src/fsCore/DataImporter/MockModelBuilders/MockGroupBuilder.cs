@@ -13,8 +13,8 @@ namespace DataImporter.MockModelBuilders
                 Faker.Lorem.Sentence(),
                 Guid.NewGuid(),
                 DateTime.UtcNow,
-                _random.Next(0, 1) == 1,
-                _random.Next(0, 1) == 1,
+                _random.Next(0, 2) == 1,
+                true,
                 leaderId
             );
         }

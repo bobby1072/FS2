@@ -1,6 +1,5 @@
-using DataImporter.DataImporters;
-using DataImporter.DataImporters.ModelImporters.MockModelImporters;
 using DataImporter.ModelImporters;
+using DataImporter.ModelImporters.MockModelImporters;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,8 +14,9 @@ namespace DataImporter
             if (environment == "Development" && !useJsonFileImport)
             {
                 services
-                    .AddTransient<IUserImporter, MockUserImporter>()
-                    .AddTransient<IDataImporter, MockDataImporter>();
+                    .AddScoped<IUserImporter, MockUserImporter>()
+                    .AddScoped<IGroupImporter, MockGroupImporter>()
+                    .AddScoped<IDataImporter, MockDataImporter>();
             }
             return services;
         }

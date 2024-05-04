@@ -11,11 +11,11 @@ namespace DataImporter.MockModelBuilders
                 groupId,
                 Faker.Company.Name(),
                 null,
-                _random.Next(0, 1) == 1,
-                _random.Next(0, 1) == 1,
-                _random.Next(0, 1) == 1,
-                _random.Next(0, 1) == 1,
-                _random.Next(0, 1) == 1
+                _random.Next(0, 2) == 1,
+                _random.Next(0, 2) == 1,
+                _random.Next(0, 2) == 1,
+                _random.Next(0, 2) == 1,
+                _random.Next(0, 2) == 1
             );
         }
     }

@@ -2,14 +2,17 @@ using Common.DbInterfaces.Repository;
 using Common.Models;
 using DataImporter.MockModelBuilders;
 using DataImporter.ModelImporters;
+using Microsoft.Extensions.Logging;
 
-namespace DataImporter.DataImporters.ModelImporters.MockModelImporters
+namespace DataImporter.ModelImporters.MockModelImporters
 {
     internal class MockUserImporter : IUserImporter
     {
         private readonly IUserRepository _userRepository;
-        public MockUserImporter(IUserRepository userRepo)
+        private readonly ILogger<MockUserImporter> _logger;
+        public MockUserImporter(IUserRepository userRepo, ILogger<MockUserImporter> logger)
         {
+            _logger = logger;
             _userRepository = userRepo;
         }
         public async Task Import()
@@ -20,17 +23,19 @@ namespace DataImporter.DataImporters.ModelImporters.MockModelImporters
             {
                 try
                 {
-                    var newUserArray = new User[10];
+                    var newUserArray = new User[(int)NumberOfMockModelToCreate.USERS];
                     for (int x = 0; x < newUserArray.Length; x++)
                     {
-                        newUserArray[x] = MockUserBuilder.Build();
+                        var tempUser = MockUserBuilder.Build();
+                        newUserArray[x] = tempUser;
                     }
-                    var submittedUsers = await _userRepository.Create(newUserArray);
+                    var createdUsers = await _userRepository.Create(newUserArray) ?? throw new InvalidOperationException("Failed to create groups");
                     userSaved = true;
                 }
                 catch (Exception e)
                 {
                     tryAmountCount++;
+                    _logger.LogError("Failed to create or save mock users: {0}", e);
                     if (tryAmountCount >= 5)
                     {
                         throw new InvalidOperationException("Cannot save mock users");

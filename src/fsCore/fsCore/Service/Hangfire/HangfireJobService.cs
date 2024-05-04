@@ -36,12 +36,11 @@ namespace fsCore.Service.Hangfire
         }
         public void RegisterWeeklyJobs()
         {
-
         }
         public void RegisterMonthlyJobs()
         {
         }
-        public void RegisterInitialBackgroundJobs()
+        public void RegisterStartupJobs()
         {
             _backgroundJobs.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
             _backgroundJobs.Enqueue<IDataImporter>(importer => importer.Import());

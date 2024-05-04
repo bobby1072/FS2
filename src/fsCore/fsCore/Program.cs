@@ -107,7 +107,7 @@ using (var scope = app.Services.CreateScope())
 {
     var hangfireService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
     hangfireService.RegisterRecurringJobs();
-    hangfireService.RegisterInitialBackgroundJobs();
+    hangfireService.RegisterStartupJobs();
 }
 if (app.Environment.IsDevelopment())
 {
