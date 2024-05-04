@@ -40,7 +40,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     var listOfGroupsToCreate = new List<Group>();
                     for (int x = 0; x < allUsers.Count; x++)
                     {
-                        var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GROUPSPERUSERS];
+                        var currentGroupList = new Group[(int)NumberOfMockModelToCreate.GroupsPerUser];
                         var foundUser = allUsers.ElementAt(x);
                         for (int deepX = 0; deepX < currentGroupList.Length; deepX++)
                         {

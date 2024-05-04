@@ -34,7 +34,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
 
                 try
                 {
-                    var newUserArray = new User[(int)NumberOfMockModelToCreate.USERS];
+                    var newUserArray = new User[(int)NumberOfMockModelToCreate.Users];
                     for (int x = 0; x < newUserArray.Length; x++)
                     {
                         var tempUser = CreateUniqueEmailUsernameUser(newUserArray);

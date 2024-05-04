@@ -40,7 +40,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     var listOfPositionsToCreate = new List<GroupPosition>();
                     for (int x = 0; x < allGroups.Count; x++)
                     {
-                        var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.POSITIONSPERGROUP];
+                        var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.PositionPerGroup];
                         var tempGroup = allGroups.ElementAt(x);
                         for (int deepX = 0; deepX < currentPositionsList.Length; deepX++)
                         {

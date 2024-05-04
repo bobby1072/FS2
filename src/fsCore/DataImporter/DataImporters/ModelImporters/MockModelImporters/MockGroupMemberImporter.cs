@@ -51,7 +51,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     var groupMembersToSave = new List<GroupMember>();
                     for (int x = 0; x < allPositions.Result?.Count; x++)
                     {
-                        var tempGroupMemberArray = new GroupMember[(int)NumberOfMockModelToCreate.MEMBERSPERPOSITION];
+                        var tempGroupMemberArray = new GroupMember[(int)NumberOfMockModelToCreate.MembersPerPosition];
                         for (int deepX = 0; deepX < tempGroupMemberArray.Length; deepX++)
                         {
                             var tempCheckArray = new List<GroupMember>(groupMembersToSave);
