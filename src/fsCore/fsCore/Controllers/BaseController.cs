@@ -14,7 +14,7 @@ namespace fsCore.Controllers
     {
         protected readonly ILogger _logger;
 
-        protected JwtSecurityToken? _getTokenData()
+        protected JwtSecurityToken? GetTokenData()
         {
             return ControllerContext.HttpContext.GetTokenData();
         }
@@ -22,13 +22,13 @@ namespace fsCore.Controllers
         {
             _logger = logger;
         }
-        protected User _getCurrentUser()
+        protected User GetCurrentUser()
         {
             var user = HttpContext.Session.GetString(RuntimeConstants.UserSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
             return parsedUser;
         }
-        protected UserWithGroupPermissionSet _getCurrentUserWithPermissions()
+        protected UserWithGroupPermissionSet GetCurrentUserWithPermissions()
         {
             var user = HttpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
             var parsedUser = JsonSerializer.Deserialize<UserWithGroupPermissionSet>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);

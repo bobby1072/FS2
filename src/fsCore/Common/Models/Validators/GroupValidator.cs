@@ -6,11 +6,11 @@ namespace Common.Models.Validators
     {
         public GroupValidator()
         {
-            RuleFor(x => x.Name).Must(_notJustBeWhiteSpace).WithMessage(ErrorConstants.GroupNameCorrectFormat);
-            RuleFor(x => x.Name).Must(_notJustHaveNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(NotJustBeWhiteSpace).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
 
-            RuleFor(x => x.Description).Must(_notJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupDescription);
-            RuleFor(x => x.Description).Must(_notJustBeWhiteSpace).WithMessage(ErrorConstants.InvalidGroupDescription);
+            RuleFor(x => x.Description).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupDescription);
+            RuleFor(x => x.Description).Must(NotJustBeWhiteSpace).WithMessage(ErrorConstants.InvalidGroupDescription);
         }
     }
 }

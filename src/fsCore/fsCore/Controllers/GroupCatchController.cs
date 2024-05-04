@@ -21,7 +21,7 @@ namespace fsCore.Controllers
         [HttpGet("DeleteGroupCatch")]
         public async Task<IActionResult> DeleteGroupCatch(Guid id)
         {
-            return Ok((await _groupCatchService.DeleteGroupCatch(id, _getCurrentUserWithPermissions())).Id);
+            return Ok((await _groupCatchService.DeleteGroupCatch(id, GetCurrentUserWithPermissions())).Id);
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -44,7 +44,7 @@ namespace fsCore.Controllers
                 Longitude = longitude,
                 WorldFishTaxocode = worldFishTaxocode
             };
-            var currentUser = _getCurrentUserWithPermissions();
+            var currentUser = GetCurrentUserWithPermissions();
             return Ok((await _groupCatchService.SaveGroupCatch(await groupCatch.ToGroupCatchAsync(currentUser.Id ?? throw new Exception()), currentUser)).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
@@ -54,7 +54,7 @@ namespace fsCore.Controllers
         public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
         {
             var (latLng, groupId) = input.BreakDown();
-            return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, GetCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -62,7 +62,7 @@ namespace fsCore.Controllers
         [HttpGet("GetFullCatchById")]
         public async Task<IActionResult> GetFullFishById(Guid catchId)
         {
-            return Ok(await _groupCatchService.GetFullCatchById(catchId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupCatchService.GetFullCatchById(catchId, GetCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -70,7 +70,7 @@ namespace fsCore.Controllers
         [HttpGet("GetCatchesInGroup")]
         public async Task<IActionResult> GetCatchesForGroup(Guid groupId)
         {
-            return Ok(await _groupCatchService.GetAllPartialCatchesForGroup(groupId, _getCurrentUserWithPermissions()));
+            return Ok(await _groupCatchService.GetAllPartialCatchesForGroup(groupId, GetCurrentUserWithPermissions()));
         }
     }
 }

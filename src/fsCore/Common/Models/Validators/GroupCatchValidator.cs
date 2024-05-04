@@ -6,13 +6,13 @@ namespace Common.Models.Validators
     {
         public GroupCatchValidator()
         {
-            RuleFor(x => x.Species).Must(_lettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidGroupCatchSpecies);
-            RuleFor(x => x.Description).Must(_notJustBeWhiteSpace).WithMessage(ErrorConstants.InvalidGroupCatch);
-            RuleFor(x => x.Description).Must(_notJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupCatch);
-            RuleFor(x => x.Latitude).Must(_LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
-            RuleFor(x => x.Longitude).Must(_LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
-            RuleFor(x => x.Length).Must(_numbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
-            RuleFor(x => x.Weight).Must(_numbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
+            RuleFor(x => x.Species).Must(LettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidGroupCatchSpecies);
+            RuleFor(x => x.Description).Must(NotJustBeWhiteSpace).WithMessage(ErrorConstants.InvalidGroupCatch);
+            RuleFor(x => x.Description).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupCatch);
+            RuleFor(x => x.Latitude).Must(LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
+            RuleFor(x => x.Longitude).Must(LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
+            RuleFor(x => x.Length).Must(NumbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
+            RuleFor(x => x.Weight).Must(NumbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
         }
 
     }

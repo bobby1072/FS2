@@ -21,7 +21,7 @@ namespace fsCore.Controllers
         [HttpGet("ChangeUsername")]
         public async Task<IActionResult> ChangeUserName(string newUsername)
         {
-            var user = _getCurrentUser();
+            var user = GetCurrentUser();
             user.Username = newUsername;
             return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id))).Id);
         }
@@ -40,7 +40,7 @@ namespace fsCore.Controllers
         [HttpGet("SelfWithGroupPermissions")]
         public async Task<IActionResult> GetUserWithPermissions()
         {
-            return Ok(RawUserPermission.FromUserWithPermissions(_getCurrentUserWithPermissions()));
+            return Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions()));
         }
     }
 }

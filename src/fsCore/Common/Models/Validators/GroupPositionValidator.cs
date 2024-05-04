@@ -6,7 +6,7 @@ namespace Common.Models.Validators
     {
         public GroupPositionValidator()
         {
-            RuleFor(x => x.Name).Must(_lettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidGroupPositionName);
+            RuleFor(x => x.Name).Must(LettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidGroupPositionName);
         }
     }
 }

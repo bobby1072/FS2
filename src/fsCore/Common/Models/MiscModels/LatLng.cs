@@ -23,8 +23,8 @@ namespace Common.Models.MiscModels
     {
         public LatLngValidator()
         {
-            RuleFor(x => x.Latitude).Must(_LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
-            RuleFor(x => x.Longitude).Must(_LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
+            RuleFor(x => x.Latitude).Must(LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
+            RuleFor(x => x.Longitude).Must(LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
         }
     }
 }
