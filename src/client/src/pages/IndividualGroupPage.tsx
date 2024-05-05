@@ -9,6 +9,7 @@ import {
   Button,
   Grid,
   Paper,
+  Switch,
   Typography,
 } from "@mui/material";
 import { Loading } from "../common/Loading";
@@ -35,7 +36,7 @@ import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { IGroupModel } from "../models/IGroupModel";
 import { CatchMarker } from "../components/CatchComponents/CatchMarker";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { LayersControl } from "react-leaflet";
+import { MapControlBox } from "../components/MapComponents/MapControlBox";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -268,6 +269,19 @@ const CatchesMap: React.FC<{
           center={latitude && longitude ? [latitude, longitude] : undefined}
           zoom={currentMapZoom}
         >
+          <MapControlBox>
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="center"
+              padding={0.5}
+              spacing={0.5}
+            >
+              <Grid item>
+                <Switch />
+              </Grid>
+            </Grid>
+          </MapControlBox>
           {catchToEdit && (
             <LocationFinder
               lat={latitude && longitude ? latitude : undefined}
@@ -286,19 +300,15 @@ const CatchesMap: React.FC<{
               PermissionFields.GroupCatch
             )) &&
             groupCatches && (
-              <LayersControl position="topright">
-                <LayersControl.Overlay name="Group catches" checked>
-                  <MarkerClusterGroup chunkedLoading>
-                    {groupCatches.map((pgc) => (
-                      <CatchMarker
-                        groupCatch={pgc}
-                        groupId={groupId!}
-                        useSnackBarOnSuccess
-                      />
-                    ))}
-                  </MarkerClusterGroup>
-                </LayersControl.Overlay>
-              </LayersControl>
+              <MarkerClusterGroup chunkedLoading>
+                {groupCatches.map((pgc) => (
+                  <CatchMarker
+                    groupCatch={pgc}
+                    groupId={groupId!}
+                    useSnackBarOnSuccess
+                  />
+                ))}
+              </MarkerClusterGroup>
             )}
         </GenerateMap>
       </Grid>

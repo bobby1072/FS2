@@ -3,7 +3,7 @@ import MUIDataTable, {
   MUIDataTableOptions,
 } from "mui-datatables";
 import { IGroupPositionModel } from "../../models/IGroupPositionModel";
-import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Tooltip } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { GroupPositionModal } from "./GroupPositionModal";
@@ -17,6 +17,8 @@ import {
   PermissionActions,
   useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface GroupPositionRowItem {
   name: string;
@@ -94,9 +96,9 @@ export const GroupPositionDataTable: React.FC<{
         display: selectedRows.includes("canManageGroup"),
         customBodyRender: (value) => {
           return value ? (
-            <Typography textAlign="center">Yes</Typography>
+            <CheckCircleIcon color="success" />
           ) : (
-            <Typography textAlign="center">No</Typography>
+            <CancelIcon color="error" />
           );
         },
       },
@@ -110,9 +112,9 @@ export const GroupPositionDataTable: React.FC<{
         display: selectedRows.includes("canManageCatches"),
         customBodyRender: (value) => {
           return value ? (
-            <Typography textAlign="center">Yes</Typography>
+            <CheckCircleIcon color="success" />
           ) : (
-            <Typography textAlign="center">No</Typography>
+            <CancelIcon color="error" />
           );
         },
       },
@@ -126,9 +128,9 @@ export const GroupPositionDataTable: React.FC<{
         display: selectedRows.includes("canManageMembers"),
         customBodyRender: (value) => {
           return value ? (
-            <Typography textAlign="center">Yes</Typography>
+            <CheckCircleIcon color="success" />
           ) : (
-            <Typography textAlign="center">No</Typography>
+            <CancelIcon color="error" />
           );
         },
       },
@@ -143,9 +145,9 @@ export const GroupPositionDataTable: React.FC<{
         display: selectedRows.includes("canReadMembers"),
         customBodyRender: (value) => {
           return value ? (
-            <Typography textAlign="center">Yes</Typography>
+            <CheckCircleIcon color="success" />
           ) : (
-            <Typography textAlign="center">No</Typography>
+            <CancelIcon color="error" />
           );
         },
       },
@@ -159,9 +161,9 @@ export const GroupPositionDataTable: React.FC<{
         display: selectedRows.includes("canReadCatches"),
         customBodyRender: (value) => {
           return value ? (
-            <Typography textAlign="center">Yes</Typography>
+            <CheckCircleIcon color="success" />
           ) : (
-            <Typography textAlign="center">No</Typography>
+            <CancelIcon color="error" />
           );
         },
       },
