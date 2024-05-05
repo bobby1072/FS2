@@ -47,15 +47,15 @@ namespace fsCore.Controllers
             var currentUser = GetCurrentUserWithPermissions();
             return Ok((await _groupCatchService.SaveGroupCatch(await groupCatch.ToGroupCatchAsync(currentUser.Id ?? throw new Exception()), currentUser)).Id);
         }
-        [ProducesDefaultResponseType(typeof(GroupCatch))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
-        [HttpPost("GetFullCatchByLatLng")]
-        public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
-        {
-            var (latLng, groupId) = input.BreakDown();
-            return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, GetCurrentUserWithPermissions()));
-        }
+        // [ProducesDefaultResponseType(typeof(GroupCatch))]
+        // [ProducesResponseType((int)HttpStatusCode.OK)]
+        // [RequiredUserWithGroupPermissions]
+        // [HttpPost("GetFullCatchByLatLng")]
+        // public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
+        // {
+        //     var (latLng, groupId) = input.BreakDown();
+        //     return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, GetCurrentUserWithPermissions()));
+        // }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]

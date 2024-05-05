@@ -18,7 +18,17 @@ namespace DataImporter.ModelImporters.MockModelImporters
             _groupRepository = groupRepository;
             _groupMemberRepository = groupMemberRepository;
         }
-
+        private static (double, double) GetCloseByLatLng(double lat, double lng)
+        {
+            var random = new Random();
+            var latOffset = lat + (random.Next(0, 2) == 1 ? -(2.0 + random.NextDouble() * (4.0 - 2.0)) : (2.0 + random.NextDouble() * (4.0 - 2.0)));
+            var lngOffset = lng + (random.Next(0, 2) == 1 ? -(2.0 + random.NextDouble() * (4.0 - 2.0)) : (2.0 + random.NextDouble() * (4.0 - 2.0)));
+            if (latOffset < -90 || latOffset > 90 || lngOffset < -180 || lngOffset > 180)
+            {
+                return GetCloseByLatLng(random.Next(-90, 90), random.Next(-180, 180));
+            }
+            return (latOffset, lngOffset);
+        }
         public async Task Import()
         {
             int tryCount = 0;
@@ -38,7 +48,14 @@ namespace DataImporter.ModelImporters.MockModelImporters
                         var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length - 1));
                         for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
                         {
-                            currentGroupCatchList[deepI] = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));
+                            var tempGroupCatch = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));
+                            if (deepI != 0)
+                            {
+                                var (lat, lng) = GetCloseByLatLng(currentGroupCatchList[deepI - 1].Latitude, currentGroupCatchList[deepI - 1].Longitude);
+                                tempGroupCatch.Latitude = lat;
+                                tempGroupCatch.Longitude = lng;
+                            }
+                            currentGroupCatchList[deepI] = tempGroupCatch;
                         }
                         allGroupCatches.AddRange(currentGroupCatchList);
                     }
@@ -51,6 +68,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     _logger.LogError("Failed to create or save mock groups: {0}", e);
                 }
             }
+            throw new InvalidOperationException("Failed to create mock users");
         }
 
     }

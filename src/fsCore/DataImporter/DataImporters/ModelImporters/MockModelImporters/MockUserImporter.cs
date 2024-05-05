@@ -49,6 +49,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
                     _logger.LogError("Failed to create or save mock users: {0}", e);
                 }
             }
+            throw new InvalidOperationException("Failed to create mock users");
         }
     }
 }
