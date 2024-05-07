@@ -99,11 +99,7 @@ export const AllGroupDisplayPage: React.FC = () => {
           spacing={3}
         >
           <Grid item width="100%">
-            <Typography
-              variant="h3"
-              sx={{ textDecoration: "underline" }}
-              fontSize={50}
-            >
+            <Typography variant="h3" fontSize={50}>
               All groups
             </Typography>
           </Grid>
@@ -141,13 +137,9 @@ export const AllGroupDisplayPage: React.FC = () => {
                 </Grid>
                 <Grid item width="30%" sx={{ padding: 1 }}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-disabled-label">
-                      Type of group
-                    </InputLabel>
+                    <InputLabel>Type of group</InputLabel>
                     <Select
                       fullWidth
-                      labelId="demo-simple-select-disabled-label"
-                      id="demo-simple-select-disabled"
                       value={groupViewChoice}
                       label="Type of group"
                       onChange={(e) => {
@@ -155,7 +147,7 @@ export const AllGroupDisplayPage: React.FC = () => {
                           groupStartIndex: 1,
                           groupSeeCount: 5,
                         });
-                        setGroupViewChoice(e.target.value as any);
+                        setGroupViewChoice(e.target.value as GroupQueryChoice);
                       }}
                     >
                       <MenuItem value={GroupQueryChoice.AllListed}>
@@ -268,7 +260,17 @@ export const AllGroupDisplayPage: React.FC = () => {
                   {isError.message}
                 </Alert>
               ) : (
-                <Loading />
+                <Grid
+                  container
+                  width="100%"
+                  minHeight="40vh"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Grid item width="100%">
+                    <Loading />
+                  </Grid>
+                </Grid>
               )}
             </Grid>
           )}

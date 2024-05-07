@@ -29,7 +29,13 @@ export const YesOrNoModal: React.FC<{
   title,
 }) => {
   return (
-    <StyledTopLevelDialog open onClose={closeModal}>
+    <StyledTopLevelDialog
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+      open
+      onClose={closeModal}
+    >
       <StyledDialogTitle>
         {title ? <Typography variant="h6">{title}</Typography> : null}
       </StyledDialogTitle>

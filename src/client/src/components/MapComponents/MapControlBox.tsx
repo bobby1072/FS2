@@ -48,7 +48,7 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
               width: "2%",
               height: "5%",
               top: 10,
-              right: 0,
+              right: -5,
               cursor: "default",
               zIndex: 5000,
             }}

@@ -120,7 +120,7 @@ export const CatchMarker: React.FC<{
           textAlign="center"
         >
           <Grid item>
-            <Typography variant="h5" sx={{ textDecoration: "underline" }}>
+            <Typography variant="h5">
               <strong>
                 {worldFish ? getPrettyWorldFishName(worldFish) : species}
               </strong>
