@@ -17,7 +17,7 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
             top: 10,
             right: 10,
             cursor: "default",
-            zIndex: 10000,
+            zIndex: 5000,
           }}
         >
           <Grid
@@ -50,7 +50,7 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
               top: 10,
               right: 0,
               cursor: "default",
-              zIndex: 10000,
+              zIndex: 5000,
             }}
           >
             <Grid

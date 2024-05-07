@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { IUserModel } from "../../models/IUserModel";
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   FormGroup,
@@ -21,6 +20,7 @@ import { UsersSearch } from "../../common/UsersSearch";
 import { PositionSearchBar } from "./PositionSearchBar";
 import { ApiException } from "../../common/ApiException";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import { StyledTopLevelDialog } from "../../common/StyledTopLevelDialog";
 
 const formSchema = z.object({
   id: z.string().optional(),
@@ -98,7 +98,13 @@ export const AddMemberModal: React.FC<{
     }
   }, [data, enqueueSnackbar, closeModal]);
   return (
-    <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
+    <StyledTopLevelDialog
+      open
+      onClose={closeModal}
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+    >
       <StyledDialogTitle>
         <Typography variant="h6">
           {defaultValue ? "Edit member" : "Create member"}
@@ -205,6 +211,6 @@ export const AddMemberModal: React.FC<{
           </Grid>
         </Grid>
       </DialogActions>
-    </Dialog>
+    </StyledTopLevelDialog>
   );
 };

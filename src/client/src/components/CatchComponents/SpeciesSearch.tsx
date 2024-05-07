@@ -14,7 +14,7 @@ import { IWorldFishModel } from "../../models/IWorldFishModel";
 import { IGroupCatchModel } from "../../models/IGroupCatchModel";
 
 export const SpeciesSearch: React.FC<{
-  setSpecies?: (vals: string) => void;
+  setSpecies?: (vals?: string) => void;
   setWorldFishTaxocode?: (vals?: string) => void;
   defaultValue?: IGroupCatchModel;
   speciesString?: string;
@@ -74,6 +74,7 @@ export const SpeciesSearch: React.FC<{
         <Autocomplete
           options={worldFishOptions.filter((x) => x.englishName)}
           getOptionLabel={getPrettyWorldFishName}
+          disablePortal
           renderOption={(props, option) => (
             <li {...props}>
               <Grid container direction="column">
@@ -91,7 +92,6 @@ export const SpeciesSearch: React.FC<{
           onInputChange={(e, value, reason) => {
             if (reason === "input" && e?.type === "change" && value) {
               setFishSearchTerm(value);
-              setSpecies?.(value);
             } else if (reason === "clear" || !value) {
               clearSpeciesSearch();
             }

@@ -170,7 +170,7 @@ export const SaveGroupCatchForm: React.FC<{
           <SpeciesSearch
             defaultValue={groupCatch}
             speciesString={species}
-            setSpecies={(value) => setValue("species", value)}
+            setSpecies={(value) => setValue("species", value ?? "")}
             setWorldFishTaxocode={(value) =>
               setValue("worldFishTaxocode", value)
             }

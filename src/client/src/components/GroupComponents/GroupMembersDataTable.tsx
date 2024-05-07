@@ -233,7 +233,9 @@ export const GroupMembersDataTable: React.FC<{
     customSearch: (searchQuery, row) => {
       return row.some((col) => {
         if (typeof col === "string") {
-          return col.toLowerCase().includes(searchQuery.toLowerCase());
+          return col
+            .toLocaleLowerCase()
+            .includes(searchQuery.toLocaleLowerCase());
         }
         return false;
       });
