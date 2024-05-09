@@ -13,7 +13,6 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
           sx={{
             position: "absolute",
             width: "20%",
-            height: "40%",
             top: 10,
             right: 10,
             cursor: "default",
@@ -55,8 +54,6 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
           >
             <Grid
               container
-              height="100%"
-              width="100%"
               justifyContent="center"
               alignItems="center"
               padding={0.1}

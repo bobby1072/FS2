@@ -26,11 +26,11 @@ export const formSchema = z.object({
   groupId: z.string(),
   species: z.string(),
   worldFishTaxocode: z.string().optional().nullable(),
-  weight: z.string().transform((x) => Number(x)),
-  length: z.string().transform((x) => Number(x)),
+  weight: z.string(),
+  length: z.string(),
   description: z.string().optional().nullable(),
-  latitude: z.string().transform((x) => Number(x)),
-  longitude: z.string().transform((x) => Number(x)),
+  latitude: z.string(),
+  longitude: z.string(),
   caughtAt: z
     .string()
     .datetime()
@@ -92,17 +92,27 @@ export const mapDefaultValuesToSaveCatchInput = (
     groupId,
     species: groupCatch.species,
     worldFishTaxocode: groupCatch.worldFishTaxocode,
-    weight: groupCatch.weight,
-    length: groupCatch.length,
+    weight: groupCatch.weight.toString(),
+    length: groupCatch.length.toString(),
     description: groupCatch.description,
-    latitude: groupCatch.latitude,
-    longitude: groupCatch.longitude,
+    latitude: groupCatch.latitude.toString(),
+    longitude: groupCatch.longitude.toString(),
     caughtAt: new Date(groupCatch.caughtAt),
     createdAt: groupCatch.createdAt,
     catchPhoto: groupCatch.catchPhoto?.toString(),
   };
 };
-
+const setNumberValue = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  setValue: (num: string) => void
+) => {
+  if (e.target.value === "") {
+    setValue(e.target.value);
+    return;
+  }
+  if (isNaN(Number(e.target.value))) return;
+  setValue(e.target.value);
+};
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
@@ -180,11 +190,16 @@ export const SaveGroupCatchForm: React.FC<{
           <TextField
             label="Weight"
             fullWidth
-            type="number"
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("weight", s, { shouldDirty: true })
+              );
+            }}
+            value={weight ?? ""}
             InputProps={{
               endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+              required: true,
             }}
-            {...register("weight", { required: true })}
             error={!!formErrors?.weight}
             helperText={formErrors?.weight?.message}
           />
@@ -193,10 +208,15 @@ export const SaveGroupCatchForm: React.FC<{
           <TextField
             label="Length"
             fullWidth
-            type="number"
-            {...register("length", { required: true })}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("length", s, { shouldDirty: true })
+              );
+            }}
+            value={length ?? ""}
             InputProps={{
               endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+              required: true,
             }}
             error={!!formErrors?.length}
             helperText={formErrors?.length?.message}
@@ -217,8 +237,12 @@ export const SaveGroupCatchForm: React.FC<{
             label="Latitude"
             fullWidth
             value={latitude ?? ""}
-            type="number"
-            {...register("latitude", { required: true })}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("latitude", s, { shouldDirty: true })
+              );
+            }}
+            InputProps={{ required: true }}
             error={!!formErrors?.latitude}
             helperText={formErrors?.latitude?.message}
           />
@@ -229,7 +253,12 @@ export const SaveGroupCatchForm: React.FC<{
             label="Longitude"
             value={longitude ?? ""}
             fullWidth
-            {...register("longitude", { required: true })}
+            InputProps={{ required: true }}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("longitude", s, { shouldDirty: true })
+              );
+            }}
             error={!!formErrors?.longitude}
             helperText={formErrors?.longitude?.message}
           />

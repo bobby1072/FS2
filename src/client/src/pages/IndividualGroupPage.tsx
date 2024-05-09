@@ -15,6 +15,8 @@ import {
   MenuItem,
   Paper,
   Select,
+  Slider,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Loading } from "../common/Loading";
@@ -44,6 +46,7 @@ import { CatchMarker } from "../components/CatchComponents/CatchMarker";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { MapControlBox } from "../components/MapComponents/MapControlBox";
 import { SpeciesSearch } from "../components/CatchComponents/SpeciesSearch";
+import { HeatmapLayerFactory } from "@vgrid/react-leaflet-heatmap-layer";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -226,9 +229,9 @@ const IndividualGroupPageInner: React.FC<{
               <Grid item width="100%">
                 <CatchesMap
                   catchToEdit={!!catchToEdit}
-                  latitude={latitude}
+                  latitude={Number(latitude)}
                   group={mainGroup}
-                  longitude={longitude}
+                  longitude={Number(longitude)}
                   setCurrentMapZoom={setCurrentMapZoom}
                   currentMapZoom={currentMapZoom}
                   formMethods={formMethods}
@@ -245,6 +248,7 @@ enum MapType {
   heatmap = "Heatmap",
   markerCluster = "Marker cluster",
 }
+const HeatmapLayer = HeatmapLayerFactory<[number, number, number]>();
 const CatchesMap: React.FC<{
   latitude: number;
   longitude: number;
@@ -270,6 +274,16 @@ const CatchesMap: React.FC<{
   const [mapType, setMapType] = useState<MapType | undefined>(
     MapType.markerCluster
   );
+  const filteredCatches = groupCatches?.filter(
+    (x) =>
+      !speciesFilter ||
+      x.worldFish?.englishName?.toLocaleLowerCase() ===
+        speciesFilter.toLocaleLowerCase()
+  );
+  const maxWeight = groupCatches
+    ? Math.max(...groupCatches.map((x) => x.weight))
+    : 0;
+
   return (
     <Grid
       container
@@ -298,38 +312,69 @@ const CatchesMap: React.FC<{
                 />
               </Grid>
               <Grid item width="80%">
-                <FormControl fullWidth>
-                  <InputLabel>Map type</InputLabel>
-                  <Select
-                    fullWidth
-                    MenuProps={{
-                      style: { zIndex: 5001 },
-                    }}
-                    value={mapType}
-                    endAdornment={
-                      mapType && (
-                        <InputAdornment position="end" sx={{ padding: 1 }}>
-                          <IconButton
-                            color="inherit"
-                            size="small"
-                            onClick={() => setMapType(undefined)}
-                          >
-                            <Close fontSize="inherit" />
-                          </IconButton>
-                        </InputAdornment>
-                      )
-                    }
-                    onChange={(v) => {
-                      setMapType(v.target.value as MapType);
-                    }}
+                {mapType ? (
+                  <TextField
+                    variant="outlined"
                     label="Map type"
-                  >
-                    <MenuItem value={MapType.heatmap}>Heatmap</MenuItem>
-                    <MenuItem value={MapType.markerCluster}>
-                      Marker cluster
-                    </MenuItem>
-                  </Select>
-                </FormControl>
+                    disabled
+                    fullWidth
+                    InputProps={{
+                      endAdornment: (
+                        <IconButton
+                          color="inherit"
+                          size="small"
+                          onClick={() => setMapType(undefined)}
+                        >
+                          <Close fontSize="inherit" />
+                        </IconButton>
+                      ),
+                    }}
+                    value={mapType.toString()}
+                  />
+                ) : (
+                  <FormControl fullWidth>
+                    <InputLabel>Map type</InputLabel>
+                    <Select
+                      fullWidth
+                      disabled={!!mapType}
+                      MenuProps={{
+                        style: { zIndex: 5001 },
+                      }}
+                      value={mapType}
+                      endAdornment={
+                        mapType && (
+                          <InputAdornment position="end" sx={{ padding: 1 }}>
+                            <IconButton
+                              color="inherit"
+                              size="small"
+                              onClick={() => setMapType(undefined)}
+                            >
+                              <Close fontSize="inherit" />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }
+                      onChange={(v) => {
+                        setMapType(v.target.value as MapType);
+                      }}
+                      label="Map type"
+                    >
+                      <MenuItem value={MapType.heatmap}>Heatmap</MenuItem>
+                      <MenuItem value={MapType.markerCluster}>
+                        Marker cluster
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                )}
+              </Grid>
+              <Grid item width="80%">
+                <Slider
+                  defaultValue={0}
+                  valueLabelDisplay="auto"
+                  max={maxWeight}
+                  min={0}
+                  title="Minimum weight"
+                />
               </Grid>
             </Grid>
           </MapControlBox>
@@ -339,8 +384,8 @@ const CatchesMap: React.FC<{
               lng={latitude && longitude ? longitude : undefined}
               setCurrentZoom={setCurrentMapZoom}
               setLatLng={({ lat, lng }) => {
-                formMethods.setValue("latitude", lat);
-                formMethods.setValue("longitude", lng);
+                formMethods.setValue("latitude", lat.toString());
+                formMethods.setValue("longitude", lng.toString());
               }}
             />
           )}
@@ -350,42 +395,42 @@ const CatchesMap: React.FC<{
               groupId!,
               PermissionFields.GroupCatch
             )) &&
-            groupCatches && (
+            filteredCatches && (
               <>
                 {mapType === MapType.markerCluster && (
                   <MarkerClusterGroup chunkedLoading>
-                    {groupCatches
-                      .filter(
-                        (x) =>
-                          !speciesFilter ||
-                          x.worldFish?.englishName?.toLocaleLowerCase() ===
-                            speciesFilter.toLocaleLowerCase()
-                      )
-                      .map((pgc) => (
-                        <CatchMarker
-                          groupCatch={pgc}
-                          groupId={groupId!}
-                          useSnackBarOnSuccess
-                        />
-                      ))}
+                    {filteredCatches.map((pgc) => (
+                      <CatchMarker
+                        groupCatch={pgc}
+                        groupId={groupId!}
+                        useSnackBarOnSuccess
+                      />
+                    ))}
                   </MarkerClusterGroup>
+                )}
+                {mapType === MapType.heatmap && (
+                  <HeatmapLayer
+                    points={filteredCatches.map((x) => [
+                      x.latitude,
+                      x.longitude,
+                      1,
+                    ])}
+                    fitBoundsOnLoad
+                    fitBoundsOnUpdate
+                    latitudeExtractor={(m) => m[0]}
+                    longitudeExtractor={(m) => m[1]}
+                    intensityExtractor={(m) => parseFloat(m[2].toString())}
+                  />
                 )}
                 {!mapType && (
                   <>
-                    {groupCatches
-                      .filter(
-                        (x) =>
-                          !speciesFilter ||
-                          x.worldFish?.englishName?.toLocaleLowerCase() ===
-                            speciesFilter.toLocaleLowerCase()
-                      )
-                      .map((pgc) => (
-                        <CatchMarker
-                          groupCatch={pgc}
-                          groupId={groupId!}
-                          useSnackBarOnSuccess
-                        />
-                      ))}
+                    {filteredCatches.map((pgc) => (
+                      <CatchMarker
+                        groupCatch={pgc}
+                        groupId={groupId!}
+                        useSnackBarOnSuccess
+                      />
+                    ))}
                   </>
                 )}
               </>

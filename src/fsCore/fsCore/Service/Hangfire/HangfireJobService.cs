@@ -19,12 +19,13 @@ namespace fsCore.Service.Hangfire
             _logger = logger;
             _recurringJobManager = recurringJobManager;
         }
-        public void RegisterRecurringJobs()
+        public void RegisterJobs()
         {
             RegisterHourlyJobs();
             RegisterDailyJobs();
             RegisterWeeklyJobs();
             RegisterMonthlyJobs();
+            RegisterStartupJobs();
         }
         public void RegisterHourlyJobs()
         {

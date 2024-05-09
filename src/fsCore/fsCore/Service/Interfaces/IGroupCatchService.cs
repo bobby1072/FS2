@@ -7,8 +7,6 @@ namespace fsCore.Service.Interfaces
     {
         Task<GroupCatch> DeleteGroupCatch(Guid id, UserWithGroupPermissionSet userWithGroupPermissionSet);
         Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet);
-        Task<GroupCatch> GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(LatLng latLng, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet);
-        // Task<ICollection<PartialGroupCatch>> GetCatchesInSquareRange(LatLng bottomLeftLatLong, LatLng topRightLatLong, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet);
         Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForGroup(Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet);
         Task<GroupCatch> GetFullCatchById(Guid catchId, UserWithGroupPermissionSet currentUser);
     }
