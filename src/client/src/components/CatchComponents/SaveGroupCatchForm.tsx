@@ -197,7 +197,7 @@ export const SaveGroupCatchForm: React.FC<{
             }}
             value={weight ?? ""}
             InputProps={{
-              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+              endAdornment: <InputAdornment position="end">lbs</InputAdornment>,
               required: true,
             }}
             error={!!formErrors?.weight}
