@@ -38,13 +38,13 @@ namespace DataImporter
                 }
 
                 await _userImporter.Import();
-                await Task.Delay(2500);
+                await Task.Delay(1500);
                 await _groupImporter.Import();
-                await Task.Delay(2500);
+                await Task.Delay(1500);
                 await _groupPositionImporter.Import();
-                await Task.Delay(2500);
+                await Task.Delay(1500);
                 await _groupMemberImporter.Import();
-                await Task.Delay(2500);
+                await Task.Delay(1500);
                 await _groupCatchImporter.Import();
             }
             catch (Exception e)

@@ -45,6 +45,10 @@ namespace DataImporter.ModelImporters.MockModelImporters
                         var random = new Random();
                         var currentGroupCatchList = new GroupCatch[random.Next(0, (int)NumberOfMockModelToCreate.MaxCatchesPerGroup)];
                         var randomGroupMemberList = allMembers.Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id).ToArray();
+                        if (randomGroupMemberList?.Length < 2)
+                        {
+                            continue;
+                        }
                         var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length - 1));
                         for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
                         {
