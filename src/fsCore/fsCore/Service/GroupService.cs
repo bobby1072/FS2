@@ -2,8 +2,10 @@ using System.Net;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
+using Common.Models.Validators;
 using Common.Permissions;
 using Common.Utils;
+using FluentValidation;
 using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
@@ -16,6 +18,8 @@ namespace fsCore.Service
         private static readonly Type _userType = typeof(User);
         private static readonly Type _groupPositionType = typeof(GroupPosition);
         private readonly IGroupPositionRepository _groupPositionRepo;
+        private static readonly GroupValidator _groupValidator = new();
+        private static readonly GroupPositionValidator _groupPositionValidator = new();
         public GroupService(IGroupRepository repository,
         IGroupMemberRepository groupMemberRepo,
         IGroupPositionRepository groupPositionRepo) : base(repository)
@@ -40,6 +44,7 @@ namespace fsCore.Service
         }
         public async Task<Group> SaveGroup(Group group, UserWithGroupPermissionSet currentUser)
         {
+            await _groupValidator.ValidateAndThrowAsync(group);
             if (group.Id is not null)
             {
                 var foundGroup = await _repo.GetGroupWithoutEmblem(group.Id ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound)) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
@@ -71,6 +76,7 @@ namespace fsCore.Service
         }
         public async Task<GroupPosition> SavePosition(GroupPosition position, UserWithGroupPermissionSet currentUser)
         {
+            await _groupPositionValidator.ValidateAndThrowAsync(position);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, position.GroupId))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);

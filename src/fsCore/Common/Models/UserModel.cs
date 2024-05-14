@@ -7,7 +7,6 @@ namespace Common.Models
 {
     public class UserWithoutEmail : BaseModel
     {
-        protected static readonly UserValidator Validator = new();
         [JsonPropertyName("id")]
         [LockedProperty]
         public Guid? Id { get; set; }
@@ -40,7 +39,6 @@ namespace Common.Models
             Email = email;
             Name = name;
             Username = username ?? CalculateDefaultUsername();
-            Validator.ValidateAndThrow(this);
         }
         public string CalculateDefaultUsername()
         {

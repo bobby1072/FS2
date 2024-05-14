@@ -2,13 +2,16 @@ using System.Net;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
+using Common.Models.Validators;
 using Common.Utils;
+using FluentValidation;
 using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
     internal class UserService : BaseService<User, IUserRepository>, IUserService
     {
+        private static readonly UserValidator _validator = new();
         public UserService(IUserRepository repository) : base(repository) { }
         public async Task<User> GetUser(User user)
         {
@@ -99,6 +102,7 @@ namespace fsCore.Service
         }
         public async Task<User> SaveUser(User user)
         {
+            await _validator.ValidateAndThrowAsync(user);
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
             if (foundUser != null)
             {
@@ -115,6 +119,7 @@ namespace fsCore.Service
                 return foundUser;
             }
             user.Username = await FindUniqueUsername(user);
+            await _validator.ValidateAndThrowAsync(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
         }
         public async Task<ICollection<UserWithoutEmail>> SearchUsers(string searchTerm)

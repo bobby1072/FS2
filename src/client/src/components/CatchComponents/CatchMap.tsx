@@ -28,11 +28,13 @@ import { LocationFinder } from "../MapComponents/LocationFinder";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { CatchMarker } from "./CatchMarker";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import { DatePicker } from "@mui/x-date-pickers";
 
 enum MapType {
   heatmap = "Heatmap",
   markerCluster = "Marker cluster",
 }
+const today = new Date();
 const HeatmapLayer = HeatmapLayerFactory<[number, number, number]>();
 export const CatchesMap: React.FC<{
   latitude: number;
@@ -56,19 +58,24 @@ export const CatchesMap: React.FC<{
   const { data: groupCatches, error: groupCatchesError } =
     useGetAllPartialCatchesForGroupQuery(groupId!);
   const [speciesFilter, setSpeciesFilter] = useState<string>();
-  const [{ mapType, minWeight }, setMapFilters] = useState<{
-    mapType: MapType | undefined;
+  const [{ mapType, minWeight, endDate, startDate }, setMapFilters] = useState<{
+    mapType?: MapType;
     minWeight: number;
+    startDate?: Date;
+    endDate?: Date;
   }>({
     mapType: MapType.markerCluster,
     minWeight: 0,
   });
+  //Needs checking line 77 and 78 throwing
   const filteredCatches = groupCatches?.filter(
     (x) =>
       (!speciesFilter ||
         x.worldFish?.englishName?.toLocaleLowerCase() ===
           speciesFilter.toLocaleLowerCase()) &&
-      x.weight >= minWeight
+      x.weight >= minWeight &&
+      (!startDate || new Date(x.caughtAt).getTime() >= startDate.getTime()) &&
+      (!endDate || new Date(x.caughtAt).getTime() <= endDate.getTime())
   );
   return (
     <Grid
@@ -83,7 +90,7 @@ export const CatchesMap: React.FC<{
           center={latitude && longitude ? [latitude, longitude] : undefined}
           zoom={currentMapZoom}
         >
-          {groupCatches && groupCatches.length > 0 && (
+          {!catchToEdit && groupCatches && groupCatches.length > 0 && (
             <MapControlBox>
               <Grid
                 container
@@ -114,6 +121,8 @@ export const CatchesMap: React.FC<{
                               setMapFilters({
                                 minWeight,
                                 mapType: undefined,
+                                endDate,
+                                startDate,
                               })
                             }
                           >
@@ -143,6 +152,8 @@ export const CatchesMap: React.FC<{
                                   setMapFilters({
                                     minWeight,
                                     mapType: undefined,
+                                    endDate,
+                                    startDate,
                                   })
                                 }
                               >
@@ -155,6 +166,8 @@ export const CatchesMap: React.FC<{
                           setMapFilters({
                             mapType: v.target.value as MapType,
                             minWeight,
+                            endDate,
+                            startDate,
                           });
                         }}
                         label="Map type"
@@ -183,9 +196,62 @@ export const CatchesMap: React.FC<{
                       setMapFilters({
                         mapType,
                         minWeight: Number(e.target.value),
+                        endDate,
+                        startDate,
                       })
                     }
                     value={minWeight}
+                  />
+                </Grid>
+                <Grid item width={"80%"}>
+                  <DatePicker
+                    value={startDate}
+                    onChange={(date) =>
+                      setMapFilters({
+                        mapType,
+                        minWeight,
+                        startDate: date ?? undefined,
+                        endDate,
+                      })
+                    }
+                    label="Start date"
+                    maxDate={endDate ?? today}
+                    slotProps={{
+                      popper: {
+                        disablePortal: true,
+                      },
+                      textField: {
+                        fullWidth: true,
+                        InputLabelProps: { shrink: true },
+                        onKeyDown: (e: any) => e.preventDefault(),
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item width={"80%"}>
+                  <DatePicker
+                    value={endDate}
+                    onChange={(date) =>
+                      setMapFilters({
+                        mapType,
+                        minWeight,
+                        startDate,
+                        endDate: date ?? undefined,
+                      })
+                    }
+                    label="End date"
+                    minDate={startDate}
+                    maxDate={today}
+                    slotProps={{
+                      popper: {
+                        disablePortal: true,
+                      },
+                      textField: {
+                        fullWidth: true,
+                        InputLabelProps: { shrink: true },
+                        onKeyDown: (e: any) => e.preventDefault(),
+                      },
+                    }}
                   />
                 </Grid>
               </Grid>
