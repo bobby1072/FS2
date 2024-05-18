@@ -16,7 +16,7 @@
     "@vgrid/react-leaflet-heatmap-layer": "^4.0.3",
     "axios": "1.6.2",
     "browser-image-compression": "^2.0.2",
-    "dayjs": "^1.11.10",
+    "date-fns": "^2.30.0",
     "leaflet": "^1.9.4",
     "mui-datatables": "4.3.0",
     "notistack": "3.0.1",

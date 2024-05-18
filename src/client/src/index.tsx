@@ -9,7 +9,7 @@ import {
   RouterProvider,
   createBrowserRouter,
 } from "react-router-dom";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
 import { UserManager } from "oidc-client-ts";
 import { Loading } from "./common/Loading";
@@ -66,15 +66,13 @@ const AppRoutes: RouteObject[] = [
       </Wrapper>
     ),
   },
-  ...AuthenticatedRoutes.map((option) => ({
-    path: option.link,
+  ...AuthenticatedRoutes.map(({ link, component }) => ({
+    path: link,
     element: (
       <Wrapper>
         <AuthenticatedRouteWrapper>
           <UserContextProvider>
-            <PermissionContextProvider>
-              <option.component />
-            </PermissionContextProvider>
+            <PermissionContextProvider>{component()}</PermissionContextProvider>
           </UserContextProvider>
         </AuthenticatedRouteWrapper>
       </Wrapper>
@@ -102,7 +100,7 @@ if (window.location.pathname === "/oidc-silent-renew") {
   root.render(
     <React.StrictMode>
       <ThemeProvider theme={fsTheme}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
           <QueryClientProvider client={queryClient}>
             <SnackbarProvider>
               <AppContextProvider>

@@ -196,7 +196,14 @@ export const CreateGroupForm: React.FC<{
           width="30%"
           sx={{ display: "flex", justifyContent: "flex-start" }}
         >
-          <Tooltip title="This means group catches are visible to everyone.">
+          <Tooltip
+            title="This means group catches are visible to everyone."
+            slotProps={{
+              popper: {
+                disablePortal: true,
+              },
+            }}
+          >
             <FormControlLabel
               control={
                 <Switch
@@ -214,7 +221,14 @@ export const CreateGroupForm: React.FC<{
           width="30%"
           sx={{ display: "flex", justifyContent: "flex-start" }}
         >
-          <Tooltip title="Public groups are free for everyone to look at. Private groups are invite only.">
+          <Tooltip
+            title="Public groups are free for everyone to look at. Private groups are invite only."
+            slotProps={{
+              popper: {
+                disablePortal: true,
+              },
+            }}
+          >
             <FormControlLabel
               control={
                 <Switch
@@ -232,7 +246,14 @@ export const CreateGroupForm: React.FC<{
           width="30%"
           sx={{ display: "flex", justifyContent: "flex-end" }}
         >
-          <Tooltip title="Listed groups are visible to everyone. Unlisted groups are never visible on the main page.">
+          <Tooltip
+            slotProps={{
+              popper: {
+                disablePortal: true,
+              },
+            }}
+            title="Listed groups are visible to everyone. Unlisted groups are never visible on the main page."
+          >
             <FormControlLabel
               control={
                 <Switch

@@ -20,7 +20,6 @@ import { faker } from "@faker-js/faker";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
 import { SpeciesSearch } from "./SpeciesSearch";
-
 export const formSchema = z.object({
   id: z.string().optional().nullable(),
   groupId: z.string(),

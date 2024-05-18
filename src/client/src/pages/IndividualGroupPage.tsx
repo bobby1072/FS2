@@ -30,7 +30,7 @@ import {
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IGroupModel } from "../models/IGroupModel";
-import { CatchesMap } from "../components/CatchComponents/CatchMap";
+import { GroupCatchesMap } from "../components/CatchComponents/GroupCatchesMap";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -211,7 +211,7 @@ const IndividualGroupPageInner: React.FC<{
               ) ||
               permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
               <Grid item width="100%">
-                <CatchesMap
+                <GroupCatchesMap
                   catchToEdit={!!catchToEdit}
                   latitude={Number(latitude)}
                   group={mainGroup}

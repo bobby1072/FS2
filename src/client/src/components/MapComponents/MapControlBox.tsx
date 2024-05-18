@@ -12,7 +12,7 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
         <Paper
           sx={{
             position: "absolute",
-            width: "20%",
+            width: "22%",
             top: 10,
             right: 10,
             cursor: "default",
@@ -34,9 +34,11 @@ export const MapControlBox: React.FC<{ children?: React.ReactNode }> = ({
                 <CancelIcon />
               </IconButton>
             </Grid>
-            <Grid item width="100%">
-              {children && children}
-            </Grid>
+            {children && (
+              <Grid item width="100%">
+                {children}
+              </Grid>
+            )}
           </Grid>
         </Paper>
       ) : (
