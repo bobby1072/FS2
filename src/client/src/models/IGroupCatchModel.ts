@@ -12,6 +12,7 @@ export interface IPartialGroupCatchModel {
   length: number;
   user: Omit<IUserModel, "email">;
   worldFish?: IWorldFishModel | null;
+  worldFishTaxocode?: string | null;
 }
 
 export interface IGroupCatchModel {
@@ -45,8 +46,10 @@ export class RuntimePartialGroupCatchModel
   public length: number;
   public user: Omit<IUserModel, "email">;
   public worldFish?: IWorldFishModel | null;
+  public worldFishTaxocode?: string | null;
   public constructor(rawPartialGroupCatchModel: IPartialGroupCatchModel) {
     this.id = rawPartialGroupCatchModel.id;
+    this.worldFishTaxocode = rawPartialGroupCatchModel.worldFishTaxocode;
     this.species = rawPartialGroupCatchModel.species;
     this.latitude = rawPartialGroupCatchModel.latitude;
     this.longitude = rawPartialGroupCatchModel.longitude;

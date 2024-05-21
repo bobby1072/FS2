@@ -72,7 +72,6 @@ export const GroupCatchesMap: React.FC<{
       minLength: 0,
     });
 
-  //Needs checking line 77 and 78 throwing
   const filteredCatches = groupCatches?.filter(
     (x) =>
       (!speciesFilter ||
