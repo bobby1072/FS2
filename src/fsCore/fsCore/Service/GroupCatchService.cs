@@ -3,7 +3,9 @@ using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Models.MiscModels;
+using Common.Models.Validators;
 using Common.Permissions;
+using FluentValidation;
 using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
@@ -12,6 +14,7 @@ namespace fsCore.Service
     {
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
+        private static readonly GroupCatchValidator _validator = new();
         public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService) : base(groupCatchRepository)
         {
             _worldFishRepository = worldFishRepo;
@@ -57,6 +60,7 @@ namespace fsCore.Service
         }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
+            await _validator.ValidateAndThrowAsync(groupCatch);
             if (groupCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);

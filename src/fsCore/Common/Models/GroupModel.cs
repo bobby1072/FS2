@@ -6,7 +6,6 @@ namespace Common.Models
 {
     public class Group : BaseModel
     {
-        private static readonly GroupValidator _validator = new();
         [LockedProperty]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
@@ -45,7 +44,6 @@ namespace Common.Models
             Listed = listed ?? false;
             Emblem = emblem;
             Description = description;
-            _validator.ValidateAndThrow(this);
         }
         public Group ApplyDefaults(Guid? leaderId)
         {

@@ -82,14 +82,12 @@ export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
           <Divider />
           <List>
             {AuthenticatedRoutes.filter((x) => x.showOnDrawer === true).map(
-              (details) => (
-                <ButtonBase href={details.link} sx={{ width: "100%" }}>
-                  <ListItem key={details.text} disablePadding>
+              ({ text, link, icon }) => (
+                <ButtonBase href={link} sx={{ width: "100%" }}>
+                  <ListItem key={text} disablePadding>
                     <ListItemButton>
-                      <ListItemIcon>
-                        <details.icon />
-                      </ListItemIcon>
-                      <ListItemText primary={details.text} />
+                      <ListItemIcon>{icon()}</ListItemIcon>
+                      <ListItemText primary={text} />
                     </ListItemButton>
                   </ListItem>
                 </ButtonBase>

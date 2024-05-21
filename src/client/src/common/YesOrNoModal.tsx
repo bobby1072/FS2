@@ -1,6 +1,5 @@
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   Grid,
@@ -10,6 +9,7 @@ import { StyledDialogTitle } from "./StyledDialogTitle";
 import { FieldErrors } from "react-hook-form";
 import { ApiException } from "./ApiException";
 import { ErrorComponent } from "./ErrorComponent";
+import { StyledTopLevelDialog } from "./StyledTopLevelDialog";
 
 export const YesOrNoModal: React.FC<{
   yesAction: () => void;
@@ -29,7 +29,13 @@ export const YesOrNoModal: React.FC<{
   title,
 }) => {
   return (
-    <Dialog open onClose={closeModal}>
+    <StyledTopLevelDialog
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+      open
+      onClose={closeModal}
+    >
       <StyledDialogTitle>
         {title ? <Typography variant="h6">{title}</Typography> : null}
       </StyledDialogTitle>
@@ -93,6 +99,6 @@ export const YesOrNoModal: React.FC<{
           </Grid>
         </Grid>
       </DialogActions>
-    </Dialog>
+    </StyledTopLevelDialog>
   );
 };

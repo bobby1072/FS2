@@ -2,19 +2,17 @@ using System.Net;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
+using Common.Models.Validators;
 using Common.Utils;
+using FluentValidation;
 using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
     internal class UserService : BaseService<User, IUserRepository>, IUserService
     {
+        private static readonly UserValidator _validator = new();
         public UserService(IUserRepository repository) : base(repository) { }
-        public async Task<User> GetUser(User user)
-        {
-            var foundUser = await _repo.GetOne(user);
-            return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
-        }
         public async Task<User> GetUser(Guid id)
         {
             var foundUser = await _repo.GetOne(id, typeof(User).GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception());
@@ -30,58 +28,6 @@ namespace fsCore.Service
             }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
             var foundUser = await _repo.GetOne(email, "email".ToPascalCase());
             return foundUser ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
-        }
-        public async Task<User> CreateUser(User user)
-        {
-            var foundUser = await _repo.GetOne(user);
-            if (foundUser != null)
-            {
-                throw new ApiException(ErrorConstants.UserAlreadyExists, HttpStatusCode.Conflict);
-            }
-            return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
-        }
-        public async Task<User> UpdateUser(User user)
-        {
-            var foundUser = await _repo.GetOne(user) ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
-            return (await _repo.Update(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
-        }
-        public async Task<User> DeleteUser(User user)
-        {
-            var foundUser = await _repo.GetOne(user) ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
-            return (await _repo.Delete(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
-        }
-        public async Task<bool> Exists(string email)
-        {
-            var userProperties = typeof(User).GetProperties();
-            var foundDetail = userProperties.FirstOrDefault(x =>
-            {
-                var worldFishPropertyType = x.GetType();
-                return x.Name == "email".ToPascalCase() && typeof(string) == x.PropertyType;
-            }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
-            var foundUser = await _repo.GetOne(email, "email".ToPascalCase());
-            return foundUser != null;
-
-        }
-        public async Task<bool> Exists(User user)
-        {
-            var foundUser = await _repo.GetOne(user);
-            return foundUser != null;
-        }
-        public async Task<bool> ExistsAndVerified(string email)
-        {
-            var userProperties = typeof(User).GetProperties();
-            var foundDetail = userProperties.FirstOrDefault(x =>
-            {
-                var worldFishPropertyType = x.GetType();
-                return x.Name == "email".ToPascalCase() && typeof(string) == x.PropertyType;
-            }) ?? throw new ApiException(ErrorConstants.FieldNotFound, HttpStatusCode.NotFound);
-            var foundUser = await _repo.GetOne(email, "email".ToPascalCase());
-            return foundUser != null && foundUser.EmailVerified;
-        }
-        public async Task<bool> ExistsAndVerified(User user)
-        {
-            var foundUser = await _repo.GetOne(user);
-            return foundUser != null && foundUser.EmailVerified;
         }
         public async Task<string> FindUniqueUsername(User user)
         {
@@ -99,6 +45,7 @@ namespace fsCore.Service
         }
         public async Task<User> SaveUser(User user)
         {
+            await _validator.ValidateAndThrowAsync(user);
             var foundUser = await _repo.GetOne(user.Email, "email".ToPascalCase());
             if (foundUser != null)
             {
@@ -115,6 +62,7 @@ namespace fsCore.Service
                 return foundUser;
             }
             user.Username = await FindUniqueUsername(user);
+            await _validator.ValidateAndThrowAsync(user);
             return (await _repo.Create(new List<User> { user }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CantCreateUser, HttpStatusCode.InternalServerError);
         }
         public async Task<ICollection<UserWithoutEmail>> SearchUsers(string searchTerm)

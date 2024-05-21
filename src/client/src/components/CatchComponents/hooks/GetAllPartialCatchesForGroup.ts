@@ -1,5 +1,8 @@
 import { useQuery } from "react-query";
-import { IPartialGroupCatchModel } from "../../../models/IGroupCatchModel";
+import {
+  IPartialGroupCatchModel,
+  RuntimePartialGroupCatchModel,
+} from "../../../models/IGroupCatchModel";
 import { ApiException } from "../../../common/ApiException";
 import Constants from "../../../common/Constants";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
@@ -20,5 +23,8 @@ export const useGetAllPartialCatchesForGroupQuery = (groupId: string) => {
       retry: (count) => count < 2,
     }
   );
-  return { ...queryResults };
+  return {
+    ...queryResults,
+    data: queryResults.data?.map((x) => new RuntimePartialGroupCatchModel(x)),
+  };
 };

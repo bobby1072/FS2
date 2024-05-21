@@ -109,8 +109,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var hangfireService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
-    hangfireService.RegisterRecurringJobs();
-    hangfireService.RegisterStartupJobs();
+    hangfireService.RegisterJobs();
 }
 if (app.Environment.IsDevelopment())
 {
@@ -126,8 +125,4 @@ app.UseDefaultMiddlewares();
 app.MapControllers();
 
 app.Run();
-
-
-
-
 public static partial class Program { };

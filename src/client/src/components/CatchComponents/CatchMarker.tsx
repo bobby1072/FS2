@@ -1,5 +1,5 @@
 import { Marker, Popup } from "react-leaflet";
-import { IPartialGroupCatchModel } from "../../models/IGroupCatchModel";
+import { RuntimePartialGroupCatchModel } from "../../models/IGroupCatchModel";
 import { Button, Grid, Typography } from "@mui/material";
 import { getPrettyWorldFishName } from "../../common/GetPrettyWorldFish";
 import { Icon } from "leaflet";
@@ -62,31 +62,9 @@ const DeleteButtonForMarker: React.FC<{
     </>
   );
 };
-// export const UpdateCatchButtonForMarker: React.FC<{
-//   setCatchToEdit: (gc: IGroupCatchModel) => void;
-//   catchId: string;
-// }> = ({ catchId, setCatchToEdit }) => {
-//   const { data, isLoading, mutate } = useGetFullCatchMutation();
-//   useEffect(() => {
-//     if (data) {
-//       setCatchToEdit(data);
-//     }
-//   }, [data, setCatchToEdit]);
-//   return (
-//     <Button
-//       variant="contained"
-//       color="primary"
-//       disabled={isLoading}
-//       onClick={() => {
-//         mutate(catchId);
-//       }}
-//     >
-//       <EditIcon />
-//     </Button>
-//   );
-// };
+
 export const CatchMarker: React.FC<{
-  groupCatch: IPartialGroupCatchModel;
+  groupCatch: RuntimePartialGroupCatchModel;
   useSnackBarOnSuccess?: boolean;
   // setCatchToEdit: (gc: IGroupCatchModel) => void;
   groupId: string;
@@ -120,7 +98,7 @@ export const CatchMarker: React.FC<{
           textAlign="center"
         >
           <Grid item>
-            <Typography variant="h5" sx={{ textDecoration: "underline" }}>
+            <Typography variant="h5">
               <strong>
                 {worldFish ? getPrettyWorldFishName(worldFish) : species}
               </strong>

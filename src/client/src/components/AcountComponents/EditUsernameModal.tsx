@@ -1,7 +1,6 @@
 import {
   Alert,
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   Grid,
@@ -12,6 +11,7 @@ import { StyledDialogTitle } from "../../common/StyledDialogTitle";
 import { useEffect, useState } from "react";
 import { useSaveUsernameMutation } from "./hooks/SaveUsername";
 import { useSnackbar } from "notistack";
+import { StyledTopLevelDialog } from "../../common/StyledTopLevelDialog";
 
 export const EditUsernameModal: React.FC<{
   closeModal: () => void;
@@ -27,7 +27,13 @@ export const EditUsernameModal: React.FC<{
     }
   }, [data, enqueueSnackbar, closeModal]);
   return (
-    <Dialog open fullWidth maxWidth="sm" scroll="paper" onClose={closeModal}>
+    <StyledTopLevelDialog
+      open
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+      onClose={closeModal}
+    >
       <StyledDialogTitle>
         <Typography variant="h6">Edit username</Typography>
       </StyledDialogTitle>
@@ -50,11 +56,11 @@ export const EditUsernameModal: React.FC<{
               fullWidth
             />
           </Grid>
-          {error && 
-          <Grid item>
-            <Alert severity="error">{error.message}</Alert>
-          </Grid>
-          }
+          {error && (
+            <Grid item>
+              <Alert severity="error">{error.message}</Alert>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
       <DialogActions>
@@ -97,6 +103,6 @@ export const EditUsernameModal: React.FC<{
           </Grid>
         </Grid>
       </DialogActions>
-    </Dialog>
+    </StyledTopLevelDialog>
   );
 };

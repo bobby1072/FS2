@@ -9,7 +9,25 @@ export interface TimePeriod {
   endDate: Date;
   totalDays: number;
 }
-
+export const getEarliestAndLatestDate = (dateList: Date[]) => {
+  const { earliestDate, latestDate } = dateList.reduce<{
+    earliestDate?: Date;
+    latestDate?: Date;
+  }>(
+    (a, b) => ({
+      earliestDate:
+        !a.earliestDate || a.earliestDate.getTime() > b.getTime()
+          ? b
+          : a.earliestDate,
+      latestDate:
+        !a.latestDate || a.latestDate.getTime() < b.getTime()
+          ? b
+          : a.latestDate,
+    }),
+    {}
+  );
+  return { earliestDate, latestDate };
+};
 const parseAndValidateDate = (
   date: Date | string,
   argumentName: string

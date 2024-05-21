@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string DateMustBeInThePast = "Date must be in the past";
         public const string NumbersMustBePositive = "These numbers must be positive";
         public const string InvalidLatitudeAndLongitude = "Invalid latitude and longitude";
         public const string InvalidGroupCatchSpecies = "Invalid species used in catch";

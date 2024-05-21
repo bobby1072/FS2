@@ -1,6 +1,5 @@
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   Grid,
@@ -12,6 +11,7 @@ import { IGroupModel } from "../../models/IGroupModel";
 import { useEffect, useState } from "react";
 import { useDeleteGroupMutation } from "./hooks/DeleteGroupMutation";
 import { useSnackbar } from "notistack";
+import { StyledTopLevelDialog } from "../../common/StyledTopLevelDialog";
 
 export const CreateGroupModal: React.FC<{
   closeModal: () => void;
@@ -31,7 +31,13 @@ export const CreateGroupModal: React.FC<{
     }
   }, [deletedGroupId, closeModal, enqueueSnackbar]);
   return (
-    <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
+    <StyledTopLevelDialog
+      open
+      onClose={closeModal}
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+    >
       <StyledDialogTitle>
         <Typography variant="h6">
           {group ? "Edit group" : "Create group"}
@@ -97,6 +103,6 @@ export const CreateGroupModal: React.FC<{
           </Grid>
         </Grid>
       </DialogActions>
-    </Dialog>
+    </StyledTopLevelDialog>
   );
 };

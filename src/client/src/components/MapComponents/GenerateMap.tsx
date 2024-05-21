@@ -8,9 +8,6 @@ const MapLayers: React.FC = () => {
       <BaseLayer checked name="OpenStreetMap">
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       </BaseLayer>
-      <BaseLayer name="Smooth Street Map">
-        <TileLayer url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png" />
-      </BaseLayer>
     </LayersControl>
   );
 };

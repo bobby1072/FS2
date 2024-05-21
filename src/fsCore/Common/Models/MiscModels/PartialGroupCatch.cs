@@ -20,7 +20,9 @@ namespace Common.Models.MiscModels
         public UserWithoutEmail User { get; set; }
         [JsonPropertyName("weight")]
         public double Weight { get; set; }
-        public PartialGroupCatch(string species, double latitude, double longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, double? weight, Guid id)
+        [JsonPropertyName("length")]
+        public double Length { get; set; }
+        public PartialGroupCatch(string species, double latitude, double longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, double weight, Guid id, double length)
         {
             Species = species;
             Latitude = latitude;
@@ -29,7 +31,8 @@ namespace Common.Models.MiscModels
             WorldFish = worldFish;
             CaughtAt = caughtAt;
             User = user;
-            Weight = weight ?? 0;
+            Weight = weight;
+            Length = length;
         }
     }
 }

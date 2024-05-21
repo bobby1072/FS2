@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { IGroupPositionModel } from "../../models/IGroupPositionModel";
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   FormControlLabel,
@@ -19,6 +18,7 @@ import { useSavePositionMutation } from "./hooks/SavePositionMutation";
 import { ApiException } from "../../common/ApiException";
 import { useSnackbar } from "notistack";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import { StyledTopLevelDialog } from "../../common/StyledTopLevelDialog";
 
 const formSchema = z.object({
   id: z.string().optional().nullable(),
@@ -116,7 +116,13 @@ export const GroupPositionModal: React.FC<{
   }, [mutationError]);
   const isSaveDisabled = !isDirty || isLoading;
   return (
-    <Dialog open onClose={closeModal} fullWidth maxWidth="sm" scroll="paper">
+    <StyledTopLevelDialog
+      open
+      onClose={closeModal}
+      fullWidth
+      maxWidth="sm"
+      scroll="paper"
+    >
       <StyledDialogTitle>
         <Typography variant="h6">
           {defaultValue ? "Edit position" : "Create position"}
@@ -244,6 +250,6 @@ export const GroupPositionModal: React.FC<{
           </Grid>
         </Grid>
       </DialogActions>
-    </Dialog>
+    </StyledTopLevelDialog>
   );
 };

@@ -13,7 +13,7 @@ namespace Common.Models.Validators
             RuleFor(x => x.Longitude).Must(LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
             RuleFor(x => x.Length).Must(NumbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
             RuleFor(x => x.Weight).Must(NumbersArePositive).WithMessage(ErrorConstants.NumbersMustBePositive);
+            RuleFor(x => x.CaughtAt).Must(DateInThePast).WithMessage(ErrorConstants.DateMustBeInThePast);
         }
-
     }
 }

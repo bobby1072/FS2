@@ -9,33 +9,27 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import {
   Alert,
-  Autocomplete,
   Button,
   FormGroup,
   Grid,
-  IconButton,
   InputAdornment,
   TextField,
   Typography,
 } from "@mui/material";
 import { faker } from "@faker-js/faker";
-import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
-import { IWorldFishModel } from "../../models/IWorldFishModel";
-import { Close } from "@mui/icons-material";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
-import { getPrettyWorldFishName } from "../../common/GetPrettyWorldFish";
-
+import { SpeciesSearch } from "./SpeciesSearch";
 export const formSchema = z.object({
   id: z.string().optional().nullable(),
   groupId: z.string(),
   species: z.string(),
   worldFishTaxocode: z.string().optional().nullable(),
-  weight: z.string().transform((x) => Number(x)),
-  length: z.string().transform((x) => Number(x)),
+  weight: z.string(),
+  length: z.string(),
   description: z.string().optional().nullable(),
-  latitude: z.string().transform((x) => Number(x)),
-  longitude: z.string().transform((x) => Number(x)),
+  latitude: z.string(),
+  longitude: z.string(),
   caughtAt: z
     .string()
     .datetime()
@@ -97,17 +91,27 @@ export const mapDefaultValuesToSaveCatchInput = (
     groupId,
     species: groupCatch.species,
     worldFishTaxocode: groupCatch.worldFishTaxocode,
-    weight: groupCatch.weight,
-    length: groupCatch.length,
+    weight: groupCatch.weight.toString(),
+    length: groupCatch.length.toString(),
     description: groupCatch.description,
-    latitude: groupCatch.latitude,
-    longitude: groupCatch.longitude,
+    latitude: groupCatch.latitude.toString(),
+    longitude: groupCatch.longitude.toString(),
     caughtAt: new Date(groupCatch.caughtAt),
     createdAt: groupCatch.createdAt,
     catchPhoto: groupCatch.catchPhoto?.toString(),
   };
 };
-
+const setNumberValue = (
+  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  setValue: (num: string) => void
+) => {
+  if (e.target.value === "") {
+    setValue(e.target.value);
+    return;
+  }
+  if (isNaN(Number(e.target.value))) return;
+  setValue(e.target.value);
+};
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
@@ -149,33 +153,10 @@ export const SaveGroupCatchForm: React.FC<{
       )
     );
   };
-  const [speciesLocked, setSpeciesLocked] = useState<boolean>(
-    groupCatch?.id ? true : false
-  );
-  const [worldFishOptions, setWorldFishOptions] = useState<IWorldFishModel[]>(
-    []
-  );
-  const [fishSearchTerm, setFishSearchTerm] = useState<string>("");
   const [allErrors, setAllErrors] = useState<ApiException | FieldErrors<any>>();
   useEffect(() => {
     setAllErrors(mutationError || formErrors);
   }, [mutationError, formErrors]);
-  const {
-    data: worldFishLike,
-    mutate: fireWorldFishLike,
-    isLoading: worldFishLikeLoading,
-  } = useWorldFishFindSomeLikeMutation();
-  const clearSpeciesSearch = () => {
-    setFishSearchTerm("");
-    setValue("species", "");
-    setWorldFishOptions([]);
-    setValue("worldFishTaxocode", undefined);
-  };
-  useEffect(() => {
-    if (fishSearchTerm?.length > 1) {
-      fireWorldFishLike({ fishAnyname: fishSearchTerm });
-    }
-  }, [fishSearchTerm, fireWorldFishLike]);
   useEffect(() => {
     if (savedCatchId && useSnackBarOnSuccess) {
       enqueueSnackbar(`New catch saved: ${savedCatchId}`, {
@@ -184,11 +165,6 @@ export const SaveGroupCatchForm: React.FC<{
       closeForm?.();
     }
   }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar, closeForm]);
-  useEffect(() => {
-    if (worldFishLike) {
-      setWorldFishOptions(worldFishLike);
-    }
-  }, [worldFishLike]);
   return (
     <form id="saveCatchFrom" onSubmit={handleSubmit(submitHandler)}>
       <Grid
@@ -200,100 +176,29 @@ export const SaveGroupCatchForm: React.FC<{
         alignItems="center"
       >
         <Grid item width="25%">
-          <FormGroup>
-            {speciesLocked ? (
-              <TextField
-                label="Species"
-                disabled
-                value={species}
-                variant="outlined"
-                InputProps={{
-                  endAdornment: (
-                    <IconButton
-                      color="inherit"
-                      size="small"
-                      onClick={() => {
-                        clearSpeciesSearch();
-                        setSpeciesLocked(false);
-                      }}
-                    >
-                      <Close fontSize="inherit" />
-                    </IconButton>
-                  ),
-                }}
-              />
-            ) : (
-              <Autocomplete
-                options={worldFishOptions.filter((x) => x.englishName)}
-                getOptionLabel={getPrettyWorldFishName}
-                renderOption={(props, option) => (
-                  <li {...props}>
-                    <Grid container direction="column">
-                      <Grid item>
-                        <Typography>
-                          <strong>{getPrettyWorldFishName(option)}</strong>
-                        </Typography>
-                      </Grid>
-                      <Grid item>
-                        <Typography fontSize={12}>
-                          {option.scientificName}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </li>
-                )}
-                onInputChange={(e, value, reason) => {
-                  if (reason === "input" && e?.type === "change" && value) {
-                    setFishSearchTerm(value);
-                    setValue("species", value);
-                  } else if (reason === "clear" || !value) {
-                    clearSpeciesSearch();
-                  }
-                }}
-                isOptionEqualToValue={(option, value) =>
-                  option.taxocode! === value.taxocode!
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label={"Species"}
-                    InputLabelProps={{ shrink: true }}
-                    size="medium"
-                  />
-                )}
-                noOptionsText={
-                  worldFishLikeLoading
-                    ? "Loading..."
-                    : worldFishLike
-                    ? "No results"
-                    : "Start typing to search"
-                }
-                onChange={(_, option) => {
-                  setValue("worldFishTaxocode", option?.taxocode.toString());
-                  const foundWorldFish = worldFishOptions.find(
-                    (x) => x.taxocode === option?.taxocode
-                  )?.englishName;
-                  if (foundWorldFish) {
-                    setValue("species", foundWorldFish);
-                  }
-                  setSpeciesLocked(true);
-                  setFishSearchTerm("");
-                  setWorldFishOptions([]);
-                }}
-              />
-            )}
-          </FormGroup>
+          <SpeciesSearch
+            defaultValue={groupCatch}
+            speciesString={species}
+            setSpecies={(value) => setValue("species", value ?? "")}
+            setWorldFishTaxocode={(value) =>
+              setValue("worldFishTaxocode", value)
+            }
+          />
         </Grid>
         <Grid item width="25%">
           <TextField
             label="Weight"
             fullWidth
-            type="number"
-            InputProps={{
-              endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("weight", s, { shouldDirty: true })
+              );
             }}
-            {...register("weight", { required: true })}
+            value={weight ?? ""}
+            InputProps={{
+              endAdornment: <InputAdornment position="end">lbs</InputAdornment>,
+              required: true,
+            }}
             error={!!formErrors?.weight}
             helperText={formErrors?.weight?.message}
           />
@@ -302,10 +207,15 @@ export const SaveGroupCatchForm: React.FC<{
           <TextField
             label="Length"
             fullWidth
-            type="number"
-            {...register("length", { required: true })}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("length", s, { shouldDirty: true })
+              );
+            }}
+            value={length ?? ""}
             InputProps={{
               endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+              required: true,
             }}
             error={!!formErrors?.length}
             helperText={formErrors?.length?.message}
@@ -326,8 +236,12 @@ export const SaveGroupCatchForm: React.FC<{
             label="Latitude"
             fullWidth
             value={latitude ?? ""}
-            type="number"
-            {...register("latitude", { required: true })}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("latitude", s, { shouldDirty: true })
+              );
+            }}
+            InputProps={{ required: true }}
             error={!!formErrors?.latitude}
             helperText={formErrors?.latitude?.message}
           />
@@ -338,7 +252,12 @@ export const SaveGroupCatchForm: React.FC<{
             label="Longitude"
             value={longitude ?? ""}
             fullWidth
-            {...register("longitude", { required: true })}
+            InputProps={{ required: true }}
+            onChange={(e) => {
+              setNumberValue(e, (s) =>
+                setValue("longitude", s, { shouldDirty: true })
+              );
+            }}
             error={!!formErrors?.longitude}
             helperText={formErrors?.longitude?.message}
           />
