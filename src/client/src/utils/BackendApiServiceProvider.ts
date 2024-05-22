@@ -111,6 +111,23 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
+  public static async GetUsersGroup(
+    accessToken: string,
+    startIndex: number,
+    count: number
+  ) {
+    const { data } = await this._httpClient
+      .get<IGroupModel[]>(
+        `Group/GetUsersGroups?startIndex=${startIndex}&count=${count}`,
+        {
+          headers: {
+            Authorization: this._formatAccessToken(accessToken),
+          },
+        }
+      )
+      .catch(this._generalErrorHandler);
+    return data;
+  }
   public static async SaveNewUsername(
     accessToken: string,
     newUsername: string

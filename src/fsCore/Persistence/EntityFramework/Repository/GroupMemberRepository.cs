@@ -13,5 +13,16 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupMemberEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<ICollection<GroupMember>?> GetFullMemberships(Guid userId, int count, int startIndex)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundEnts = await dbContext.GroupMember
+                .Include(x => x.Group)
+                .Where(x => x.UserId == userId)
+                .Skip(startIndex)
+                .Take(count)
+                .ToArrayAsync();
+            return foundEnts?.Length > 0 ? foundEnts.Select(x => x.ToRuntime()).ToArray() : null;
+        }
     }
 }

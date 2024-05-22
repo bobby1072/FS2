@@ -57,6 +57,7 @@ export const UsersSearch: React.FC<{
           setSearchTerm("");
         }
       }}
+      disablePortal
       noOptionsText={
         isLoading
           ? "Loading..."
@@ -71,6 +72,7 @@ export const UsersSearch: React.FC<{
           variant="outlined"
           label="Person"
           InputLabelProps={{ shrink: true }}
+          inputProps={{ ...params.inputProps }}
           size="medium"
         />
       )}

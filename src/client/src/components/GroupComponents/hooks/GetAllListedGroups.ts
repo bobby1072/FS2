@@ -24,6 +24,7 @@ export const useGetAllListedGroups = (startIndex: number, count: number) => {
 export enum GroupQueryChoice {
   AllListed,
   SelfLead,
+  UsersGroup,
 }
 export const useGetAllGroupsChoiceGroup = (
   startIndex: number,
@@ -48,6 +49,12 @@ export const useGetAllGroupsChoiceGroup = (
           );
         case GroupQueryChoice.SelfLead:
           return BackendApiServiceProvider.GetSelfGroups(
+            user.access_token,
+            startIndex,
+            count
+          );
+        case GroupQueryChoice.UsersGroup:
+          return BackendApiServiceProvider.GetUsersGroup(
             user.access_token,
             startIndex,
             count

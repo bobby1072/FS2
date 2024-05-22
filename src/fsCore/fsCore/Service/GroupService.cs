@@ -121,6 +121,23 @@ namespace fsCore.Service
             var allGroups = await _repo.GetMany(startIndex, count, currentUser.Id, _groupType.GetProperty("LeaderId".ToPascalCase())?.Name ?? throw new Exception(), _groupType.GetProperty("CreatedAt".ToPascalCase())?.Name ?? throw new Exception());
             return allGroups ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
         }
+        public async Task<ICollection<Group>> GetAllGroupsForUser(User currentUser, int startIndex, int count)
+        {
+            if (count > 5) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);
+            var allMemberships = await _groupMemberRepo.GetFullMemberships(currentUser.Id ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), count, startIndex);
+            var allGroups = allMemberships?.Select(x => x.Group).ToArray();
+            var nonNullGroupList = new Group[allGroups?.Length ?? 0];
+            for (int i = 0; i < allGroups?.Length; i++)
+            {
+                var group = allGroups?[i];
+                if (group is Group notNullGroup)
+                {
+                    nonNullGroupList[i] = notNullGroup;
+                }
+            }
+            if (nonNullGroupList.Length < 1) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            return nonNullGroupList;
+        }
         public async Task<Group> GetGroupWithoutEmblemForInternalUse(Guid groupId)
         {
             var foundGroup = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);

@@ -156,6 +156,9 @@ export const AllGroupDisplayPage: React.FC = () => {
                       <MenuItem value={GroupQueryChoice.SelfLead}>
                         My groups
                       </MenuItem>
+                      <MenuItem value={GroupQueryChoice.UsersGroup}>
+                        Groups I'm in
+                      </MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

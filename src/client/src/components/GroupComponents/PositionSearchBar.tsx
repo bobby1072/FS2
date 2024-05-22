@@ -42,6 +42,7 @@ export const PositionSearchBar: React.FC<{
       isOptionEqualToValue={(option, value) => option.id === value?.id}
       getOptionLabel={(option) => option.name}
       options={positions}
+      disablePortal
       renderInput={(params) => {
         return (
           <TextField

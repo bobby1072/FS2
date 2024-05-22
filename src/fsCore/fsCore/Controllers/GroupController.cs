@@ -113,6 +113,14 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetAllSelfLeadGroups(GetCurrentUser(), startIndex, count));
         }
+        [ProducesDefaultResponseType(typeof(ICollection<Group>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithGroupPermissions]
+        [HttpGet("GetUsersGroups")]
+        public async Task<IActionResult> GetUsersGroups(int startIndex, int count)
+        {
+            return Ok(await _groupService.GetAllGroupsForUser(GetCurrentUser(), startIndex, count));
+        }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
@@ -121,6 +129,7 @@ namespace fsCore.Controllers
         {
             return Ok((await _groupService.SaveGroupMember(groupMember, GetCurrentUserWithPermissions())).Id);
         }
+
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
