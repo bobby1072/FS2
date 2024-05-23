@@ -4,6 +4,7 @@ import { FieldErrors } from "react-hook-form";
 import { PageBase } from "./PageBase";
 import { ApiException } from "./ApiException";
 import ErrorIcon from "@mui/icons-material/Error";
+
 export const ErrorComponent: React.FC<{
   fullScreen?: boolean;
   error?: FieldErrors | ApiException;
@@ -38,7 +39,11 @@ export const ErrorComponent: React.FC<{
               severity="error"
               icon={<ErrorIcon color="inherit" fontSize="large" />}
             >
-              <Typography fontSize={fontSize ?? 30}>{error.message}</Typography>
+              <Typography fontSize={fontSize ?? 30}>
+                {error.message.includes("[object Object]")
+                  ? "Sorry, an error has occurred"
+                  : error.message}
+              </Typography>
             </Alert>
           </Grid>
         )}
@@ -79,7 +84,9 @@ export const ErrorComponent: React.FC<{
         <Grid item width={"100%"}>
           <Alert severity="error">
             <Typography fontSize={fontSize ?? undefined}>
-              {error.message}
+              {error.message.includes("[object Object]")
+                ? "Sorry, an error has occurred"
+                : error.message}
             </Typography>
           </Alert>
         </Grid>

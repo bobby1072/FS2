@@ -11,13 +11,44 @@ import {
   IGroupCatchModel,
   IPartialGroupCatchModel,
 } from "../models/IGroupCatchModel";
-
+interface ValidationErrorResponse {
+  type: string;
+  title: string;
+  status: number;
+  traceId: string;
+  errors: {
+    [key: string]: string[];
+  };
+}
+const isValidationErrorResponse = (
+  val: any
+): val is ValidationErrorResponse => {
+  return (
+    typeof val === "object" &&
+    val !== null &&
+    typeof val.type === "string" &&
+    typeof val.title === "string" &&
+    typeof val.status === "number" &&
+    typeof val.traceId === "string" &&
+    typeof val.errors === "object"
+  );
+};
+const handleApiValidationError = (e: ValidationErrorResponse) => {
+  return Object.values(e.errors).flat().join(" ");
+};
 export default abstract class BackendApiServiceProvider {
   private static _generalErrorHandler(e: any): PromiseLike<never> {
-    throw new ApiException(
-      e.response.data as string,
-      Number(e.response.status)
-    );
+    if (isValidationErrorResponse(e.response.data)) {
+      throw new ApiException(
+        handleApiValidationError(e.response.data),
+        Number(e.response.status)
+      );
+    } else {
+      throw new ApiException(
+        e.response.data as string,
+        Number(e.response.status)
+      );
+    }
   }
   private static _formatAccessToken(accessToken: string) {
     return `Bearer ${accessToken

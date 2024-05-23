@@ -1,4 +1,6 @@
 using System.Net;
+using System.Net.Mime;
+using System.Text;
 using Common;
 using Common.DbInterfaces.ErrorHandlers;
 using FluentValidation;
@@ -14,14 +16,24 @@ namespace fsCore.Middleware
             _postgresExceptionHandler = postgresExceptionHandler;
             _logger = logger;
         }
-        private async Task _routeErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
+        private string CreateValidationExceptionMessage(ValidationException validationException)
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < validationException.Errors.Count(); i++)
+            {
+                var error = validationException.Errors.ElementAt(i);
+                sb.Append($"{error.ErrorMessage}. ");
+            }
+            return sb.ToString();
+        }
+        private async Task RouteErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
         {
             try
             {
 
                 _logger.LogError(error, error.Message);
                 httpContext.Response.Clear();
-                httpContext.Response.ContentType = "text/plain";
+                httpContext.Response.ContentType = MediaTypeNames.Text.Plain;
                 if (error is ApiException apiException)
                 {
                     httpContext.Response.StatusCode = (int)apiException.StatusCode;
@@ -29,9 +41,8 @@ namespace fsCore.Middleware
                 }
                 else if (error is ValidationException validationException)
                 {
-                    var mainError = validationException.Errors.FirstOrDefault();
-                    httpContext.Response.StatusCode = mainError?.ErrorCode is not null && mainError.ErrorCode.All(char.IsNumber) ? int.Parse(mainError.ErrorCode) : (int)HttpStatusCode.BadRequest;
-                    await httpContext.Response.WriteAsync(mainError?.ErrorMessage ?? ErrorConstants.BadRequest);
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    await httpContext.Response.WriteAsync(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest);
                 }
                 else
                 {
@@ -57,7 +68,7 @@ namespace fsCore.Middleware
             }
             catch (Exception e)
             {
-                await _routeErrorHandler(e, httpContext);
+                await RouteErrorHandler(e, httpContext);
             }
         }
     }
