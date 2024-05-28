@@ -20,27 +20,27 @@ interface ValidationErrorResponse {
     [key: string]: string[];
   };
 }
-const isValidationErrorResponse = (
-  val: any
-): val is ValidationErrorResponse => {
-  return (
-    typeof val === "object" &&
-    val !== null &&
-    typeof val.type === "string" &&
-    typeof val.title === "string" &&
-    typeof val.status === "number" &&
-    typeof val.traceId === "string" &&
-    typeof val.errors === "object"
-  );
-};
-const handleApiValidationError = (e: ValidationErrorResponse) => {
-  return Object.values(e.errors).flat().join(" ");
-};
+
 export default abstract class BackendApiServiceProvider {
+  private static _handleApiValidationError = (e: ValidationErrorResponse) =>
+    Object.values(e.errors).flat().join(" ");
+  private static _isValidationErrorResponse(
+    val: any
+  ): val is ValidationErrorResponse {
+    return (
+      typeof val === "object" &&
+      val !== null &&
+      typeof val.type === "string" &&
+      typeof val.title === "string" &&
+      typeof val.status === "number" &&
+      typeof val.traceId === "string" &&
+      typeof val.errors === "object"
+    );
+  }
   private static _generalErrorHandler(e: any): PromiseLike<never> {
-    if (isValidationErrorResponse(e.response.data)) {
+    if (BackendApiServiceProvider._isValidationErrorResponse(e.response.data)) {
       throw new ApiException(
-        handleApiValidationError(e.response.data),
+        BackendApiServiceProvider._handleApiValidationError(e.response.data),
         Number(e.response.status)
       );
     } else {
