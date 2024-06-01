@@ -13,14 +13,15 @@ const MapLayers: React.FC = () => {
 };
 export const GenerateMap: React.FC<{
   children: React.ReactNode;
+  scrollWheelZoom?: boolean;
   center?: [number, number];
   zoom?: number;
-}> = ({ children, center, zoom }) => {
+}> = ({ children, center, zoom, scrollWheelZoom = true }) => {
   return (
     <MapContainer
       center={center ? center : [52.4912, -1.9348]}
       zoom={zoom ? zoom : 6}
-      scrollWheelZoom={true}
+      scrollWheelZoom={scrollWheelZoom}
       minZoom={3}
       maxBounds={[
         [-90, -180],

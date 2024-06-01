@@ -20,7 +20,8 @@ export const PartialGroupCatchLeaderBoard: React.FC<{ partialCatches?: RuntimePa
                 filter: true,
                 sort: false
             }
-        }, {
+        },
+        {
             name: "latitude",
             label: "Latitude",
             options: {
@@ -28,7 +29,8 @@ export const PartialGroupCatchLeaderBoard: React.FC<{ partialCatches?: RuntimePa
                 display: false,
                 sort: false
             }
-        }, {
+        },
+        {
             name: "longitude",
             label: "Longitude",
             options: {
@@ -37,7 +39,8 @@ export const PartialGroupCatchLeaderBoard: React.FC<{ partialCatches?: RuntimePa
 
                 sort: false
             }
-        }, {
+        },
+        {
             name: "caughtAt",
             label: "Caught At",
             options: {
@@ -48,7 +51,8 @@ export const PartialGroupCatchLeaderBoard: React.FC<{ partialCatches?: RuntimePa
                     </Typography>,
                 sort: false
             }
-        }, {
+        },
+        {
             name: "weight",
             label: "Weight",
             options: {
@@ -56,7 +60,8 @@ export const PartialGroupCatchLeaderBoard: React.FC<{ partialCatches?: RuntimePa
                 sort: false,
                 customBodyRender: (val) => <Typography>{val} lbs</Typography>
             }
-        }, {
+        },
+        {
             name: "length",
             label: "Length",
             options: {

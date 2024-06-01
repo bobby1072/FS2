@@ -60,7 +60,7 @@ const IndividualGroupPageInner: React.FC<{
 }> = ({ group: mainGroup }) => {
   const { id: groupId } = useParams<{ id: string }>();
   const { permissionManager } = useCurrentPermissionManager();
-  const { data: groupCatches, error: groupCatchesError } =
+  const { data: groupCatches, error: groupCatchesError, isLoading: groupCatchesLoading } =
     useGetAllPartialCatchesForGroupQuery(groupId!);
   const [currentMapZoom, setCurrentMapZoom] = useState<number>();
   const {
@@ -79,6 +79,13 @@ const IndividualGroupPageInner: React.FC<{
     PermissionActions.BelongsTo,
     groupId!
   );
+  const canReadCatches = (mainGroup.catchesPublic ||
+    permissionManager.Can(
+      PermissionActions.Read,
+      groupId!,
+      PermissionFields.GroupCatch
+    ) ||
+    permissionManager.Can(PermissionActions.BelongsTo, groupId!));
   const [catchToEdit, setCatchToEdit] = useState<boolean>();
   const formMethods = useForm<SaveCatchInput>({
     defaultValues: mapDefaultValuesToSaveCatchInput(
@@ -213,33 +220,25 @@ const IndividualGroupPageInner: React.FC<{
                 </Accordion>
               </Grid>
             )}
-            {groupCatches && (mainGroup.catchesPublic ||
-              permissionManager.Can(
-                PermissionActions.Read,
-                groupId!,
-                PermissionFields.GroupCatch
-              ) ||
-              permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
-                <Grid item width="100%">
-                  <GroupCatchesMap
-                    catchToEdit={!!catchToEdit}
-                    latitude={Number(latitude)}
-                    group={mainGroup}
-                    groupCatches={groupCatches}
-                    longitude={Number(longitude)}
-                    setCurrentMapZoom={setCurrentMapZoom}
-                    currentMapZoom={currentMapZoom}
-                    formMethods={formMethods}
-                  />
-                </Grid>
-              )}
-            {groupCatches && (mainGroup.catchesPublic ||
-              permissionManager.Can(
-                PermissionActions.Read,
-                groupId!,
-                PermissionFields.GroupCatch
-              ) ||
-              permissionManager.Can(PermissionActions.BelongsTo, groupId!)) &&
+            {groupCatchesLoading && canReadCatches &&
+              <Grid item width="80%" mt={10}>
+                <Loading />
+              </Grid>}
+            {groupCatches && canReadCatches && (
+              <Grid item width="100%">
+                <GroupCatchesMap
+                  catchToEdit={!!catchToEdit}
+                  latitude={Number(latitude)}
+                  group={mainGroup}
+                  groupCatches={groupCatches}
+                  longitude={Number(longitude)}
+                  setCurrentMapZoom={setCurrentMapZoom}
+                  currentMapZoom={currentMapZoom}
+                  formMethods={formMethods}
+                />
+              </Grid>
+            )}
+            {groupCatches && canReadCatches &&
               <Grid item width="100%">
                 <PartialGroupCatchLeaderBoard partialCatches={groupCatches} />
               </Grid>}

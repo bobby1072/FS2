@@ -60,39 +60,44 @@ export class RuntimePartialGroupCatchModel
     this.worldFish = rawPartialGroupCatchModel.worldFish;
   }
 }
-// export class RuntimeGroupCatchModel
-//   implements Omit<IGroupCatchModel, "caughtAt">
-// {
-//   public id: string;
-//   public groupId: string;
-//   public species: string;
-//   public worldFishTaxocode?: string | null;
-//   public worldFish?: IWorldFishModel | null;
-//   public weight: number;
-//   public length: number;
-//   public description?: string | null;
-//   public latitude: number;
-//   public longitude: number;
-//   public createdAt: string;
-//   public userId: string;
-//   public user?: IUserModel | null;
-//   public catchPhoto?: string | null;
-//   public caughtAt: Date;
-//   public constructor(rawGroupCatchModel: IGroupCatchModel) {
-//     this.id = rawGroupCatchModel.id;
-//     this.groupId = rawGroupCatchModel.groupId;
-//     this.species = rawGroupCatchModel.species;
-//     this.worldFishTaxocode = rawGroupCatchModel.worldFishTaxocode;
-//     this.worldFish = rawGroupCatchModel.worldFish;
-//     this.weight = rawGroupCatchModel.weight;
-//     this.length = rawGroupCatchModel.length;
-//     this.description = rawGroupCatchModel.description;
-//     this.latitude = rawGroupCatchModel.latitude;
-//     this.longitude = rawGroupCatchModel.longitude;
-//     this.caughtAt = new Date(rawGroupCatchModel.caughtAt);
-//     this.createdAt = rawGroupCatchModel.createdAt;
-//     this.userId = rawGroupCatchModel.userId;
-//     this.user = rawGroupCatchModel.user;
-//     this.catchPhoto = rawGroupCatchModel.catchPhoto;
-//   }
-// }
+export class RuntimeGroupCatchModel
+  implements Omit<IGroupCatchModel, "caughtAt" | "createdAt">
+{
+  public id: string;
+  public groupId: string;
+  public species: string;
+  public worldFishTaxocode?: string | null;
+  public worldFish?: IWorldFishModel | null;
+  public weight: number;
+  public length: number;
+  public description?: string | null;
+  public latitude: number;
+  public longitude: number;
+  public createdAt: Date;
+  public userId: string;
+  public user?: IUserModel | null;
+  public catchPhoto?: string | null;
+  public caughtAt: Date;
+  public group?: IGroupModel | null;
+  public constructor(rawGroupCatchModel: IGroupCatchModel) {
+    this.id = rawGroupCatchModel.id;
+    this.group = rawGroupCatchModel.group;
+    this.groupId = rawGroupCatchModel.groupId;
+    this.species = rawGroupCatchModel.species;
+    this.worldFishTaxocode = rawGroupCatchModel.worldFishTaxocode;
+    this.worldFish = rawGroupCatchModel.worldFish;
+    this.weight = rawGroupCatchModel.weight;
+    this.length = rawGroupCatchModel.length;
+    this.description = rawGroupCatchModel.description;
+    this.latitude = rawGroupCatchModel.latitude;
+    this.longitude = rawGroupCatchModel.longitude;
+    this.caughtAt = new Date(rawGroupCatchModel.caughtAt);
+    this.createdAt = new Date(rawGroupCatchModel.createdAt);
+    this.userId = rawGroupCatchModel.userId;
+    this.user = rawGroupCatchModel.user;
+    this.catchPhoto = rawGroupCatchModel.catchPhoto;
+  }
+  public GetPosition(): [number, number] {
+    return [this.latitude, this.longitude];
+  }
+}

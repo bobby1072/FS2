@@ -63,15 +63,13 @@ const DeleteButtonForMarker: React.FC<{
   );
 };
 
-export const CatchMarker: React.FC<{
+export const CatchMarkerForPartialCatch: React.FC<{
   groupCatch: RuntimePartialGroupCatchModel;
   useSnackBarOnSuccess?: boolean;
-  // setCatchToEdit: (gc: IGroupCatchModel) => void;
   groupId: string;
 }> = ({
   useSnackBarOnSuccess = false,
   groupId,
-  // setCatchToEdit,
   groupCatch: {
     latitude,
     longitude,
@@ -83,78 +81,82 @@ export const CatchMarker: React.FC<{
     weight,
   },
 }) => {
-  const { id: currentUserId } = useCurrentUser();
-  const { permissionManager } = useCurrentPermissionManager();
-  return (
-    <Marker position={[latitude, longitude]} icon={GenericIconMarker}>
-      <Popup>
-        <Grid
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          padding={0.5}
-          spacing={0.8}
-          textAlign="center"
-        >
-          <Grid item>
-            <Typography variant="h5">
-              <strong>
-                {worldFish ? getPrettyWorldFishName(worldFish) : species}
-              </strong>
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle2">
-              <strong>Caught by:</strong> {catchUsername}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle2">
-              <strong>Caught at:</strong>{" "}
-              {prettyDateWithTime(new Date(caughtAt))}
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle2">
-              <strong>Weighing:</strong> {weight} kg
-            </Typography>
-          </Grid>
-          <Grid item width="90%">
-            <Button variant="outlined" href={`/GroupCatch/${catchId}`}>
-              Go to full catch
-            </Button>
-          </Grid>
-          {(permissionManager.Can(
-            PermissionActions.Manage,
-            groupId,
-            PermissionFields.GroupCatch
-          ) ||
-            currentUserId === catchUserId) && (
-            <Grid item width="40%">
-              <Grid
-                container
-                justifyContent="center"
-                alignItems="center"
-                spacing={0.8}
-              >
-                <Grid item width="100%">
-                  <DeleteButtonForMarker
-                    catchId={catchId}
-                    useSnackBarOnSuccess={useSnackBarOnSuccess}
-                  />
-                </Grid>
-                {/* <Grid item width="50%">
-                  <UpdateCatchButtonForMarker
-                    catchId={catchId}
-                    setCatchToEdit={setCatchToEdit}
-                  />
-                </Grid> */}
-              </Grid>
+    const { id: currentUserId } = useCurrentUser();
+    const { permissionManager } = useCurrentPermissionManager();
+    return (
+      <CatchMarker position={[latitude, longitude]}>
+        <Popup>
+          <Grid
+            container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            padding={0.5}
+            spacing={0.8}
+            textAlign="center"
+          >
+            <Grid item>
+              <Typography variant="h5">
+                <strong>
+                  {worldFish ? getPrettyWorldFishName(worldFish) : species}
+                </strong>
+              </Typography>
             </Grid>
-          )}
-        </Grid>
-      </Popup>
-    </Marker>
-  );
-};
+            <Grid item>
+              <Typography variant="subtitle2">
+                <strong>Caught by:</strong> {catchUsername}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="subtitle2">
+                <strong>Caught at:</strong>{" "}
+                {prettyDateWithTime(new Date(caughtAt))}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Typography variant="subtitle2">
+                <strong>Weighing:</strong> {weight} kg
+              </Typography>
+            </Grid>
+            <Grid item width="90%">
+              <Button variant="outlined" href={`/GroupCatch/${catchId}`}>
+                Go to full catch
+              </Button>
+            </Grid>
+            {(permissionManager.Can(
+              PermissionActions.Manage,
+              groupId,
+              PermissionFields.GroupCatch
+            ) ||
+              currentUserId === catchUserId) && (
+                <Grid item width="40%">
+                  <Grid
+                    container
+                    justifyContent="center"
+                    alignItems="center"
+                    spacing={0.8}
+                  >
+                    <Grid item width="100%">
+                      <DeleteButtonForMarker
+                        catchId={catchId}
+                        useSnackBarOnSuccess={useSnackBarOnSuccess}
+                      />
+                    </Grid>
+
+                  </Grid>
+                </Grid>
+              )}
+          </Grid>
+        </Popup>
+      </CatchMarker>
+    );
+  };
+
+
+
+export const CatchMarker: React.FC<{ children?: React.ReactNode, position: [number, number] }> = ({ position: [latitude, longitude], children }) => {
+
+  return <Marker position={[latitude, longitude]} icon={GenericIconMarker}>
+    {children}
+  </Marker>
+}

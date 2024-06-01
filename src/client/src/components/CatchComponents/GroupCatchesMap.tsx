@@ -25,7 +25,7 @@ import { SpeciesSearch } from "./SpeciesSearch";
 import { Close } from "@mui/icons-material";
 import { LocationFinder } from "../MapComponents/LocationFinder";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { CatchMarker } from "./CatchMarker";
+import { CatchMarkerForPartialCatch } from "./CatchMarker";
 import { DatePicker } from "@mui/x-date-pickers";
 import { getEarliestAndLatestDate } from "../../utils/DateTime";
 import { RuntimePartialGroupCatchModel } from "../../models/IGroupCatchModel";
@@ -316,7 +316,7 @@ export const GroupCatchesMap: React.FC<{
                   {mapType === MapType.markerCluster && (
                     <MarkerClusterGroup chunkedLoading>
                       {filteredCatches.map((pgc) => (
-                        <CatchMarker
+                        <CatchMarkerForPartialCatch
                           groupCatch={pgc}
                           groupId={groupId!}
                           useSnackBarOnSuccess
@@ -341,7 +341,7 @@ export const GroupCatchesMap: React.FC<{
                   {!mapType && (
                     <>
                       {filteredCatches.map((pgc) => (
-                        <CatchMarker
+                        <CatchMarkerForPartialCatch
                           groupCatch={pgc}
                           groupId={groupId!}
                           useSnackBarOnSuccess

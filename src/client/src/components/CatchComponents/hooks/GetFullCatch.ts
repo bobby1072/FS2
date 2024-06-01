@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from "react-query";
 import { ApiException } from "../../../common/ApiException";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
-import { IGroupCatchModel } from "../../../models/IGroupCatchModel";
+import {
+  IGroupCatchModel,
+  RuntimeGroupCatchModel,
+} from "../../../models/IGroupCatchModel";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import Constants from "../../../common/Constants";
 
@@ -31,5 +34,10 @@ export const useGetFullCatchQuery = (catchId?: string) => {
       );
     }
   );
-  return { ...queryResults };
+  return {
+    ...queryResults,
+    data: queryResults?.data
+      ? new RuntimeGroupCatchModel(queryResults.data)
+      : undefined,
+  };
 };
