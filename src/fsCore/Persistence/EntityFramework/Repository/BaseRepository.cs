@@ -48,7 +48,7 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var foundOneQuerySet = dbContext.Set<TEnt>();
-            var primaryKey = _runtimeToEntity(baseUser).GetType().GetProperties().FirstOrDefault(x => x.GetCustomAttribute<KeyAttribute>() is not null) ?? throw new Exception();
+            var primaryKey = _entType.GetProperties().FirstOrDefault(x => x.GetCustomAttribute<KeyAttribute>() is not null) ?? throw new Exception();
             var baseValuePrimaryKey = primaryKey.GetValue(_runtimeToEntity(baseUser));
             var runtimeObj = await GetOne(baseValuePrimaryKey, primaryKey.Name, relationships);
             if (runtimeObj is TBase correctOBj)
@@ -153,6 +153,7 @@ namespace Persistence.EntityFramework.Repository
             return runtimeObjs?.Count() > 0 ? runtimeObjs.OfType<TBase>().ToArray() : null;
 
         }
+
         public virtual async Task<ICollection<TBase>?> GetMany(int startIndex, int count, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();

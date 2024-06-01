@@ -7,6 +7,10 @@ import {
 } from "../common/contexts/AbilitiesContext";
 import { ErrorComponent } from "../common/ErrorComponent";
 import { Loading } from "../common/Loading";
+import { PageBase } from "../common/PageBase";
+import { AppAndDraw } from "../common/AppBar/AppAndDraw";
+import { Grid, Paper, Typography } from "@mui/material";
+import { getPrettyWorldFishName } from "../common/GetPrettyWorldFish";
 
 export const IndividualCatchPage: React.FC = () => {
   const { id: catchId } = useParams<{ id: string }>();
@@ -19,6 +23,7 @@ export const IndividualCatchPage: React.FC = () => {
   if (catchLoading) return <Loading fullScreen />;
   else if (
     fullCatch &&
+    !fullCatch.group?.catchesPublic &&
     !permissionManager.Can(
       PermissionActions.Read,
       fullCatch.groupId,
@@ -34,5 +39,46 @@ export const IndividualCatchPage: React.FC = () => {
   } else if (catchError)
     return <ErrorComponent fullScreen error={catchError} />;
   else if (!fullCatch) return <ErrorComponent fullScreen />;
-  return null;
+  return (
+    <PageBase>
+      <AppAndDraw>
+        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+          <Grid item width={"80%"}>
+            <Paper elevation={2}>
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                padding={4}
+              >
+                <Grid item width={"100%"}>
+                  <Typography
+                    variant="h3"
+                    textAlign="center"
+                    fontSize={50}
+                    overflow="auto"
+                  >
+                    {fullCatch.worldFish
+                      ? getPrettyWorldFishName(fullCatch.worldFish)
+                      : fullCatch.species}
+                  </Typography>
+                </Grid>
+                <Grid item width={"100%"}>
+                  <Typography
+                    variant="body2"
+                    textAlign="center"
+                    fontSize={15}
+                    overflow="auto"
+                  >
+                    Caught by {fullCatch.user!.username}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Paper>
+          </Grid>
+        </Grid>
+      </AppAndDraw>
+    </PageBase>
+  );
 };

@@ -23,10 +23,11 @@ namespace fsCore.Service
         public async Task<GroupCatch> GetFullCatchById(Guid catchId, UserWithGroupPermissionSet currentUser)
         {
             var foundCatch = await _repo.GetOne(catchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
-            if (foundCatch.Group?.CatchesPublic != false && !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
+            if (foundCatch.Group?.CatchesPublic != true && !currentUser.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
+            foundCatch.User?.RemoveSensitive();
             return foundCatch;
         }
         public async Task<GroupCatch> DeleteGroupCatch(Guid id, UserWithGroupPermissionSet userWithGroupPermissionSet)
