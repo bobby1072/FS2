@@ -152,7 +152,32 @@ export const CatchMarkerForPartialCatch: React.FC<{
     );
   };
 
-
+export const SimpleLongLatCatchMarkerWithPopup: React.FC<{ position: [number, number] }> = ({ position: [lat, lng] }) => {
+  return <CatchMarker position={[lat, lng]}>
+    <Popup>
+      <Grid
+        container
+        direction="column"
+        justifyContent="center"
+        alignItems="center"
+        padding={0.5}
+        spacing={0.8}
+        textAlign="center"
+      >
+        <Grid item>
+          <Typography variant="subtitle2">
+            Latitude: {lat}
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Typography variant="subtitle2">
+            Longitude: {lng}
+          </Typography>
+        </Grid>
+      </Grid>
+    </Popup>
+  </CatchMarker>;
+}
 
 export const CatchMarker: React.FC<{ children?: React.ReactNode, position: [number, number] }> = ({ position: [latitude, longitude], children }) => {
 

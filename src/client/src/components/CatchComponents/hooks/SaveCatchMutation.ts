@@ -17,6 +17,7 @@ export const useSaveCatchMutation = () => {
       queryClient.refetchQueries(
         Constants.QueryKeys.GetAllPartialCatchesFroGroup
       );
+      queryClient.refetchQueries(Constants.QueryKeys.GetFullCatch);
     }
   }, [queryClient, mutationResults.data]);
   return { ...mutationResults };

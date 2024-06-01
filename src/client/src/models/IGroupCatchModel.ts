@@ -100,4 +100,11 @@ export class RuntimeGroupCatchModel
   public GetPosition(): [number, number] {
     return [this.latitude, this.longitude];
   }
+  public Serialise(): IGroupCatchModel {
+    return {
+      ...this,
+      createdAt: this.createdAt.toISOString(),
+      caughtAt: this.caughtAt.toISOString(),
+    };
+  }
 }
