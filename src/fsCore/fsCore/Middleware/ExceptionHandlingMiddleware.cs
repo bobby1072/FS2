@@ -16,7 +16,7 @@ namespace fsCore.Middleware
             _postgresExceptionHandler = postgresExceptionHandler;
             _logger = logger;
         }
-        private string CreateValidationExceptionMessage(ValidationException validationException)
+        private static string CreateValidationExceptionMessage(ValidationException validationException)
         {
             var sb = new StringBuilder();
             for (int i = 0; i < validationException.Errors.Count(); i++)

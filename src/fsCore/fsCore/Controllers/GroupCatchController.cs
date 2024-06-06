@@ -1,4 +1,5 @@
 using System.Net;
+using Common;
 using Common.Models;
 using Common.Models.MiscModels;
 using fsCore.Controllers.Attributes;
@@ -14,6 +15,14 @@ namespace fsCore.Controllers
         public GroupCatchController(ILogger<GroupCatchController> logger, IGroupCatchService groupCatchService) : base(logger)
         {
             _groupCatchService = groupCatchService;
+        }
+        [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUserWithGroupPermissions]
+        [HttpGet("GetPartialCatchesForUser")]
+        public async Task<IActionResult> GetPartialCatchesForUser(Guid userId)
+        {
+            return Ok(await _groupCatchService.GetAllPartialCatchesForUser(userId, GetCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -44,18 +53,9 @@ namespace fsCore.Controllers
                 Longitude = longitude,
                 WorldFishTaxocode = worldFishTaxocode
             };
-            var currentUser = GetCurrentUserWithPermissions();
+            var currentUser = GetCurrentUserWithPermissions() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
             return Ok((await _groupCatchService.SaveGroupCatch(await groupCatch.ToGroupCatchAsync(currentUser.Id ?? throw new Exception()), currentUser)).Id);
         }
-        // [ProducesDefaultResponseType(typeof(GroupCatch))]
-        // [ProducesResponseType((int)HttpStatusCode.OK)]
-        // [RequiredUserWithGroupPermissions]
-        // [HttpPost("GetFullCatchByLatLng")]
-        // public async Task<IActionResult> GetFullFish([FromBody] FullFishByLatLngInput input)
-        // {
-        //     var (latLng, groupId) = input.BreakDown();
-        //     return Ok(await _groupCatchService.GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(latLng, groupId, GetCurrentUserWithPermissions()));
-        // }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]

@@ -109,5 +109,23 @@ namespace fsCore.Service
                 return x;
             }).ToArray() ?? Array.Empty<PartialGroupCatch>();
         }
+        public async Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForUser(Guid userId, UserWithGroupPermissionSet currentUser)
+        {
+            var allPartialCatches = await _repo.GetAllPartialCatchesForUser(userId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (userId == currentUser.Id)
+            {
+                return allPartialCatches;
+            }
+            else
+            {
+                HashSet<Guid> groupIds = allPartialCatches.Select(x => x.GroupId).ToHashSet();
+                var foundGroups = await _groupService.GetGroupsWithoutEmblemForInternalUse(groupIds);
+                return allPartialCatches.Where(x => foundGroups.FirstOrDefault(y => y.CatchesPublic is true) is not null || currentUser.GroupPermissions.Can(PermissionConstants.Read, x.GroupId, nameof(GroupCatch))).Select(x =>
+                {
+                    x.User?.RemoveSensitive();
+                    return x;
+                }).ToArray();
+            }
+        }
     }
 }

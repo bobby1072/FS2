@@ -10,6 +10,7 @@ export interface IPartialGroupCatchModel {
   caughtAt: string;
   weight: number;
   length: number;
+  groupId: string;
   user: Omit<IUserModel, "email">;
   worldFish?: IWorldFishModel | null;
   worldFishTaxocode?: string | null;
@@ -43,6 +44,7 @@ export class RuntimePartialGroupCatchModel
   public longitude: number;
   public caughtAt: Date;
   public weight: number;
+  public groupId: string;
   public length: number;
   public user: Omit<IUserModel, "email">;
   public worldFish?: IWorldFishModel | null;
@@ -52,6 +54,7 @@ export class RuntimePartialGroupCatchModel
     this.worldFishTaxocode = rawPartialGroupCatchModel.worldFishTaxocode;
     this.species = rawPartialGroupCatchModel.species;
     this.latitude = rawPartialGroupCatchModel.latitude;
+    this.groupId = rawPartialGroupCatchModel.groupId;
     this.longitude = rawPartialGroupCatchModel.longitude;
     this.caughtAt = new Date(rawPartialGroupCatchModel.caughtAt);
     this.weight = rawPartialGroupCatchModel.weight;

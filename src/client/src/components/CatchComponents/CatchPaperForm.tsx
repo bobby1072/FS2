@@ -1,4 +1,6 @@
 import {
+  Accordion,
+  AccordionDetails,
   Box,
   Grid,
   IconButton,
@@ -6,6 +8,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Close } from "@mui/icons-material";
+
 import { RuntimeGroupCatchModel } from "../../models/IGroupCatchModel";
 import {
   formatHowLongAgoString,
@@ -37,13 +41,38 @@ export const CatchPaperForm: React.FC<{
       PermissionFields.GroupCatch
     );
   return editMode ? (
-    <Paper elevation={2}>
-      <SaveGroupCatchForm
-        useSnackBarOnSuccess
-        groupCatch={fullCatch.Serialise()}
-        closeForm={() => setEditMode(false)}
-      />
-    </Paper>
+    <Accordion expanded>
+      <AccordionDetails>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          direction={"column"}
+          spacing={0.2}
+        >
+          <Grid
+            item
+            width="100%"
+            sx={{ display: "flex", justifyContent: "flex-end" }}
+          >
+            <IconButton
+              color="default"
+              size="small"
+              onClick={() => setEditMode(false)}
+            >
+              <Close />
+            </IconButton>
+          </Grid>
+          <Grid item width="100%">
+            <SaveGroupCatchForm
+              useSnackBarOnSuccess
+              groupCatch={fullCatch.Serialise()}
+              closeForm={() => setEditMode(false)}
+            />
+          </Grid>
+        </Grid>
+      </AccordionDetails>
+    </Accordion>
   ) : (
     <Paper elevation={2}>
       <Grid

@@ -50,6 +50,15 @@ namespace Persistence.EntityFramework.Repository
                 .ToArrayAsync();
             return foundGroup?.Select(x => x.ToRuntime()).ToArray();
         }
+        public async Task<ICollection<Group>?> GetGroupWithoutEmblem(ICollection<Guid> groupId, ICollection<string>? relations = null)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
+                .Where(x => groupId.Contains(x.Id))
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
+                .ToArrayAsync();
+            return foundEnts?.Length > 0 ? foundEnts.Select(x => new Group(x.Name, null, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.CatchesPublic, x.LeaderId, x.Leader?.ToRuntime(), x.Positions?.Select(p => p.ToRuntime()).ToArray())).ToArray() : Array.Empty<Group>();
+        }
     }
 
 }

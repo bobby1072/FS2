@@ -24,7 +24,7 @@ namespace Persistence.EntityFramework.Repository
             var foundUsersLike = await context
                 .User
                 .Where(x => x.Username.ToLower().Contains(searchTerm.ToLower()))
-                .Take(10)
+                .Take(30)
                 .ToArrayAsync();
             return foundUsersLike?.Select(x => new UserWithoutEmail { EmailVerified = x.EmailVerified, Id = x.Id, Name = x.Name, Username = x.Username }).ToArray() ?? Array.Empty<UserWithoutEmail>();
         }
