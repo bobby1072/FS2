@@ -1,0 +1,26 @@
+using Common.DbInterfaces.Repository;
+using Common.Models;
+using Microsoft.EntityFrameworkCore;
+using Persistence.EntityFramework.Entity;
+
+namespace Persistence.EntityFramework.Repository
+{
+    internal class GroupCatchCommentRepository : BaseRepository<GroupCatchCommentEntity, GroupCatchComment>, IGroupCatchCommentRepository
+    {
+        public GroupCatchCommentRepository(IDbContextFactory<FsContext> dbContext) : base(dbContext)
+        {
+        }
+        protected override GroupCatchCommentEntity RuntimeToEntity(GroupCatchComment runtimeObj)
+        {
+            return GroupCatchCommentEntity.RuntimeToEntity(runtimeObj);
+        }
+        public async Task<ICollection<GroupCatchComment>?> GetAllForCatch(Guid catchId)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var comments = await dbContext.GroupCatchComment
+                .Where(c => c.GroupCatchId == catchId)
+                .ToArrayAsync();
+            return comments?.Select(x => x.ToRuntime()).ToArray();
+        }
+    }
+}

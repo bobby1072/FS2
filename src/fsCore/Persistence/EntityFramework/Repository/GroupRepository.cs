@@ -9,7 +9,7 @@ namespace Persistence.EntityFramework.Repository
     internal class GroupRepository : BaseRepository<GroupEntity, Group>, IGroupRepository
     {
         public GroupRepository(IDbContextFactory<FsContext> context) : base(context) { }
-        protected override GroupEntity _runtimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
+        protected override GroupEntity RuntimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
         public async Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();

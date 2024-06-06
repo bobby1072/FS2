@@ -5,7 +5,6 @@ namespace Persistence.EntityFramework
 {
     internal class FsContext : DbContext
     {
-        public FsContext(DbContextOptions options) : base(options) { }
         // protected override void OnModelCreating(ModelBuilder modelBuilder)
         // {
         //     modelBuilder.Entity<GroupEntity>()
@@ -29,8 +28,10 @@ namespace Persistence.EntityFramework
         //         .WithMany()
         //         .HasForeignKey(gm => gm.UserId);
         // }
+        public FsContext(DbContextOptions options) : base(options) { }
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
         public virtual DbSet<UserEntity> User { get; set; }
+        public virtual DbSet<GroupCatchCommentEntity> GroupCatchComment { get; set; }
         public virtual DbSet<GroupEntity> Group { get; set; }
         public virtual DbSet<GroupPositionEntity> Position { get; set; }
         public virtual DbSet<GroupMemberEntity> GroupMember { get; set; }

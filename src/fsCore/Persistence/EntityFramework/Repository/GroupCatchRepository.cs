@@ -11,7 +11,7 @@ namespace Persistence.EntityFramework.Repository
     internal class GroupCatchRepository : BaseRepository<GroupCatchEntity, GroupCatch>, IGroupCatchRepository
     {
         public GroupCatchRepository(IDbContextFactory<FsContext> context) : base(context) { }
-        protected override GroupCatchEntity _runtimeToEntity(GroupCatch runtimeObj)
+        protected override GroupCatchEntity RuntimeToEntity(GroupCatch runtimeObj)
         {
             return GroupCatchEntity.RuntimeToEntity(runtimeObj);
         }

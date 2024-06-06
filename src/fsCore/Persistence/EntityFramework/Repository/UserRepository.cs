@@ -8,7 +8,7 @@ namespace Persistence.EntityFramework.Repository
     internal class UserRepository : BaseRepository<UserEntity, User>, IUserRepository
     {
         public UserRepository(IDbContextFactory<FsContext> dbContextFactory) : base(dbContextFactory) { }
-        protected override UserEntity _runtimeToEntity(User runtimeObj)
+        protected override UserEntity RuntimeToEntity(User runtimeObj)
         {
             return UserEntity.RuntimeToEntity(runtimeObj);
         }

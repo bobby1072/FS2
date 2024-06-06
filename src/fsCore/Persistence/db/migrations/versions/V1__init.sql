@@ -68,3 +68,13 @@ CREATE TABLE public."group_catch" (
     CONSTRAINT group_catch_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT group_catch_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE public."group_catch_comment" (
+    id integer primary key generated always as identity,
+    group_catch_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP without time zone NOT NULL DEFAULT NOW(),
+    CONSTRAINT group_catch_comment_group_catch_id_fk FOREIGN KEY (group_catch_id) REFERENCES public."group_catch"(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_catch_comment_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
