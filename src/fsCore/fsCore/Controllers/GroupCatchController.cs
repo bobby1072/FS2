@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {
     [RequiredUser]
+    [RequiredUserWithGroupPermissions]
     public class GroupCatchController : BaseController
     {
         private readonly IGroupCatchService _groupCatchService;
@@ -16,9 +17,29 @@ namespace fsCore.Controllers
         {
             _groupCatchService = groupCatchService;
         }
+        [ProducesDefaultResponseType(typeof(int))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("CommentOnCatch")]
+        public async Task<IActionResult> CommentOnCatch([FromBody] GroupCatchCommentInput groupCatchComment)
+        {
+            return Ok((await _groupCatchService.CommentOnCatch(groupCatchComment.ToGroupCatchComment(), GetCurrentUserWithPermissions())).Id);
+        }
+        [ProducesDefaultResponseType(typeof(int))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("DeleteComment")]
+        public async Task<IActionResult> DeleteComment(int id)
+        {
+            return Ok((await _groupCatchService.DeleteComment(id, GetCurrentUserWithPermissions())).Id);
+        }
+        [ProducesDefaultResponseType(typeof(ICollection<GroupCatchComment>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpGet("GetCommentsForCatch")]
+        public async Task<IActionResult> GetCommentsForCatch(Guid catchId)
+        {
+            return Ok(await _groupCatchService.GetCommentsForCatch(catchId, GetCurrentUserWithPermissions()));
+        }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
         [HttpGet("GetPartialCatchesForUser")]
         public async Task<IActionResult> GetPartialCatchesForUser(Guid userId)
         {
@@ -26,7 +47,6 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
         [HttpGet("DeleteGroupCatch")]
         public async Task<IActionResult> DeleteGroupCatch(Guid id)
         {
@@ -34,7 +54,6 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
         [HttpPost("SaveGroupCatch")]
         public async Task<IActionResult> SaveGroupCatch([FromForm] Guid? id, [FromForm] Guid groupId, [FromForm] string species, [FromForm] double weight, [FromForm] double length, [FromForm] string? description, [FromForm] string caughtAt, [FromForm] IFormFile? catchPhoto, [FromForm] string? createdAt, [FromForm] double latitude, [FromForm] double longitude, [FromForm] string? worldFishTaxocode)
         {
@@ -58,7 +77,6 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(GroupCatch))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
         [HttpGet("GetFullCatchById")]
         public async Task<IActionResult> GetFullFishById(Guid catchId)
         {
@@ -66,7 +84,6 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ICollection<PartialGroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUserWithGroupPermissions]
         [HttpGet("GetCatchesInGroup")]
         public async Task<IActionResult> GetCatchesForGroup(Guid groupId)
         {

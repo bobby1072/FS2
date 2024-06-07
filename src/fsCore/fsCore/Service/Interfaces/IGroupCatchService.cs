@@ -12,5 +12,6 @@ namespace fsCore.Service.Interfaces
         Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForUser(Guid userId, UserWithGroupPermissionSet userWithGroupPermissionSet);
         Task<GroupCatchComment> CommentOnCatch(GroupCatchComment groupCatchComment, UserWithGroupPermissionSet userWithGroupPermissionSet);
         Task<GroupCatchComment> DeleteComment(int id, UserWithGroupPermissionSet userWithGroupPermissionSet);
+        Task<ICollection<GroupCatchComment>> GetCommentsForCatch(Guid catchId, UserWithGroupPermissionSet userWithGroupPermissionSet);
     }
 }

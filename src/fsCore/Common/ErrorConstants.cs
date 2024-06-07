@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string InvalidCatchComment = "Invalid comment";
         public const string GroupCatchCommentNotDeleted = "Failed to delete comment";
         public const string GroupCatchCommentNotSaved = "Failed to save comment";
         public const string GroupCatchCommentNotFound = "Group catch comment not found";

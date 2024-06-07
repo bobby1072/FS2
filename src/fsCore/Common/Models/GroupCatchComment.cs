@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using Common.Attributes;
 
 namespace Common.Models
 {
@@ -10,16 +12,28 @@ namespace Common.Models
             UserId = userId ?? UserId;
             return this;
         }
+        [LockedProperty]
+        [JsonPropertyName("id")]
         public int? Id { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("groupCatchId")]
         public Guid GroupCatchId { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
+        public User? User { get; set; }
+        [JsonPropertyName("comment")]
         public string Comment { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
+        [JsonPropertyName("taggedUsers")]
         public ICollection<GroupCatchCommentTaggedUsers>? TaggedUsers { get; set; }
-        public GroupCatchComment(int? id, Guid groupCatchId, Guid userId, string comment, DateTime createdAt, ICollection<GroupCatchCommentTaggedUsers>? taggedUsers = null)
+        public GroupCatchComment(int? id, Guid groupCatchId, Guid userId, string comment, DateTime createdAt, ICollection<GroupCatchCommentTaggedUsers>? taggedUsers = null, User? user = null)
         {
             Id = id;
             GroupCatchId = groupCatchId;
+            User = user;
             UserId = userId;
             Comment = comment;
             CreatedAt = createdAt;

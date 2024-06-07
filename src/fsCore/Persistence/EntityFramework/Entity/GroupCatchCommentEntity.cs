@@ -12,11 +12,13 @@ namespace Persistence.EntityFramework.Entity
         public string Comment { get; set; }
         public Guid GroupCatchId { get; set; }
         public Guid UserId { get; set; }
+        [ForeignKey(nameof(UserId))]
+        public UserEntity? User { get; set; }
         public DateTime CreatedAt { get; set; }
         public virtual ICollection<GroupCatchCommentTaggedUsersEntity>? TaggedUsers { get; set; }
         public override GroupCatchComment ToRuntime()
         {
-            return new GroupCatchComment(Id, GroupCatchId, UserId, Comment, CreatedAt, TaggedUsers?.Select(x => x.ToRuntime()).ToArray());
+            return new GroupCatchComment(Id, GroupCatchId, UserId, Comment, CreatedAt, TaggedUsers?.Select(x => x.ToRuntime()).ToArray(), User?.ToRuntime());
         }
         public static GroupCatchCommentEntity RuntimeToEntity(GroupCatchComment groupCatchComment)
         {

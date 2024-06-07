@@ -18,6 +18,7 @@ namespace fsCore.Service
         private readonly IGroupCatchCommentTaggedUsersRepository _taggedUsersRepo;
         private readonly IUserService _userService;
         private static readonly GroupCatchValidator _validator = new();
+        private static readonly GroupCatchCommentValidator _commentValidator = new();
         private readonly IGroupCatchCommentRepository _commentRepo;
         public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IGroupCatchCommentTaggedUsersRepository taggedUsersRepo) : base(groupCatchRepository)
         {
@@ -140,7 +141,7 @@ namespace fsCore.Service
             if (foundTags is not MatchCollection confirmedMatches || confirmedMatches.Count < 1) return Array.Empty<User>();
             if (confirmedMatches.Count > GroupCatchCommentUtils.MaximumTags) throw new ValidationException("Too many users tagged in comment");
             var taggedUserIds = new HashSet<Guid> { };
-            var uniqueTags = confirmedMatches.GroupBy(x => x.Value).Select(x => x.FirstOrDefault());
+            var uniqueTags = confirmedMatches.GroupBy(x => x.Value).Select(x => x.FirstOrDefault()).ToArray();
             foreach (var foundTag in uniqueTags)
             {
                 if (foundTag is null) continue;
@@ -149,11 +150,12 @@ namespace fsCore.Service
                 taggedUserIds.Add(taggedUserId);
             }
             var foundTaggedUsers = await _userService.GetUser(taggedUserIds) ?? throw new ValidationException("Invalid users tagged");
-            if (foundTaggedUsers.Count != uniqueTags.Count()) throw new ValidationException("Invalid tagged users");
+            if (foundTaggedUsers.Count != uniqueTags.Length) throw new ValidationException("Invalid tagged users");
             return foundTaggedUsers;
         }
         public async Task<GroupCatchComment> CommentOnCatch(GroupCatchComment groupCatchComment, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
+            await _commentValidator.ValidateAndThrowAsync(groupCatchComment);
             groupCatchComment = groupCatchComment.ApplyDefaults(userWithGroupPermissionSet.Id);
             var foundCatch = await _repo.GetOnePartial(groupCatchComment.GroupCatchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
             if (groupCatchComment.UserId != userWithGroupPermissionSet.Id || !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
@@ -192,6 +194,19 @@ namespace fsCore.Service
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
             return (await _commentRepo.Delete(new[] { foundComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotDeleted, HttpStatusCode.InternalServerError);
+        }
+        public async Task<ICollection<GroupCatchComment>> GetCommentsForCatch(Guid catchId, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        {
+            var foundCatch = await _repo.GetOnePartial(catchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return (await _commentRepo.GetAllForCatch(catchId))?.Select(x =>
+            {
+                x.User?.RemoveSensitive();
+                return x;
+            }).ToArray() ?? Array.Empty<GroupCatchComment>();
         }
     }
 }
