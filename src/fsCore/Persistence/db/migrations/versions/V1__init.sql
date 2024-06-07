@@ -78,3 +78,10 @@ CREATE TABLE public."group_catch_comment" (
     CONSTRAINT group_catch_comment_group_catch_id_fk FOREIGN KEY (group_catch_id) REFERENCES public."group_catch"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT group_catch_comment_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE public."group_catch_comment_tagged_users"(
+    group_catch_comment_id integer NOT NULL,
+    user_id UUID NOT NULL,
+    CONSTRAINT group_catch_comment_tagged_users_group_catch_comment_id_fk FOREIGN KEY (group_catch_comment_id) REFERENCES public."group_catch_comment"(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT group_catch_comment_tagged_users_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+);

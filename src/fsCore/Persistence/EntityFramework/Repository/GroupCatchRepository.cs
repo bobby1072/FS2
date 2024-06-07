@@ -15,6 +15,17 @@ namespace Persistence.EntityFramework.Repository
         {
             return GroupCatchEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<PartialGroupCatch?> GetOnePartial(Guid id)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var groupCatch = await dbContext.GroupCatch
+                .Include(gc => gc.User)
+                .Include(gc => gc.WorldFish)
+                .Select(c => new { c.Species, c.Latitude, c.Longitude, c.User, c.CaughtAt, c.WorldFish, c.Weight, c.Id, c.Length, c.GroupId })
+                .FirstOrDefaultAsync(gc => gc.Id == id);
+
+            return groupCatch is null ? null : new PartialGroupCatch(groupCatch.Species, groupCatch.Latitude, groupCatch.Longitude, groupCatch.WorldFish?.ToRuntime(), groupCatch.CaughtAt, groupCatch.User?.ToRuntime() ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), groupCatch.Weight, groupCatch.Id, groupCatch.Length, groupCatch.GroupId);
+        }
         public async Task<GroupCatch?> GetOne(Guid id)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();

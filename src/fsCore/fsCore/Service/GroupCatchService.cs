@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.RegularExpressions;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
@@ -14,10 +15,16 @@ namespace fsCore.Service
     {
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
+        private readonly IGroupCatchCommentTaggedUsersRepository _taggedUsersRepo;
+        private readonly IUserService _userService;
         private static readonly GroupCatchValidator _validator = new();
-        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService) : base(groupCatchRepository)
+        private readonly IGroupCatchCommentRepository _commentRepo;
+        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IGroupCatchCommentTaggedUsersRepository taggedUsersRepo) : base(groupCatchRepository)
         {
             _worldFishRepository = worldFishRepo;
+            _taggedUsersRepo = taggedUsersRepo;
+            _userService = userService;
+            _commentRepo = commentRepo;
             _groupService = groupService;
         }
         public async Task<GroupCatch> GetFullCatchById(Guid catchId, UserWithGroupPermissionSet currentUser)
@@ -126,6 +133,65 @@ namespace fsCore.Service
                     return x;
                 }).ToArray();
             }
+        }
+        private async Task<ICollection<User>> FindTaggedUsersFromComment(string comment)
+        {
+            var foundTags = GroupCatchCommentUtils.RegexPattern.Matches(comment);
+            if (foundTags is not MatchCollection confirmedMatches || confirmedMatches.Count < 1) return Array.Empty<User>();
+            if (confirmedMatches.Count > GroupCatchCommentUtils.MaximumTags) throw new ValidationException("Too many users tagged in comment");
+            var taggedUserIds = new HashSet<Guid> { };
+            var uniqueTags = confirmedMatches.GroupBy(x => x.Value).Select(x => x.FirstOrDefault());
+            foreach (var foundTag in uniqueTags)
+            {
+                if (foundTag is null) continue;
+                var fixedTag = foundTag.ToString()?.Replace("@", "") ?? throw new ValidationException("Invalid users tagged");
+                var taggedUserId = Guid.Parse(fixedTag);
+                taggedUserIds.Add(taggedUserId);
+            }
+            var foundTaggedUsers = await _userService.GetUser(taggedUserIds) ?? throw new ValidationException("Invalid users tagged");
+            if (foundTaggedUsers.Count != uniqueTags.Count()) throw new ValidationException("Invalid tagged users");
+            return foundTaggedUsers;
+        }
+        public async Task<GroupCatchComment> CommentOnCatch(GroupCatchComment groupCatchComment, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        {
+            groupCatchComment = groupCatchComment.ApplyDefaults(userWithGroupPermissionSet.Id);
+            var foundCatch = await _repo.GetOnePartial(groupCatchComment.GroupCatchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (groupCatchComment.UserId != userWithGroupPermissionSet.Id || !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            var taggedUsersJob = FindTaggedUsersFromComment(groupCatchComment.Comment);
+            if (groupCatchComment.Id is int foundId)
+            {
+                var foundComment = await _commentRepo.GetOne(foundId) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotFound, HttpStatusCode.NotFound);
+                if (groupCatchComment.ValidateAgainstOriginal(foundComment) is false)
+                {
+                    throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
+                }
+                var updateCommentJob = _commentRepo.Update(new[] { groupCatchComment });
+                var deleteTaggedUsersJob = _taggedUsersRepo.Delete(groupCatchComment.TaggedUsers?.ToArray() ?? Array.Empty<GroupCatchCommentTaggedUsers>());
+                await Task.WhenAll(updateCommentJob, deleteTaggedUsersJob, taggedUsersJob);
+                var taggedUsers = await taggedUsersJob;
+                await _taggedUsersRepo.Create(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(foundId, x.Id ?? throw new Exception())).ToArray());
+                return (await updateCommentJob)?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
+            }
+            else
+            {
+                var taggedUsers = await taggedUsersJob;
+                var createdComment = (await _commentRepo.Create(new[] { groupCatchComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
+                await _taggedUsersRepo.Create(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(createdComment.Id ?? throw new Exception(), x.Id ?? throw new Exception())).ToArray());
+                return createdComment;
+            }
+        }
+        public async Task<GroupCatchComment> DeleteComment(int id, UserWithGroupPermissionSet userWithGroupPermissionSet)
+        {
+            var foundComment = await _commentRepo.GetOne(id) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotFound, HttpStatusCode.NotFound);
+            var foundCatch = await _repo.GetOnePartial(foundComment.GroupCatchId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);
+            if (foundComment.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundCatch.GroupId, nameof(GroupCatch)))
+            {
+                throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
+            }
+            return (await _commentRepo.Delete(new[] { foundComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotDeleted, HttpStatusCode.InternalServerError);
         }
     }
 }

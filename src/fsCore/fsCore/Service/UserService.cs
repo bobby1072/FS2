@@ -13,6 +13,11 @@ namespace fsCore.Service
     {
         private static readonly UserValidator _validator = new();
         public UserService(IUserRepository repository) : base(repository) { }
+        public async Task<ICollection<User>> GetUser(ICollection<Guid> id)
+        {
+            var foundUsers = await _repo.GetUsers(id);
+            return foundUsers ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound);
+        }
         public async Task<User> GetUser(Guid id)
         {
             var foundUser = await _repo.GetOne(id, typeof(User).GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception());

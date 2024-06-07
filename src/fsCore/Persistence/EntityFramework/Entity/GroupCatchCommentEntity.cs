@@ -13,9 +13,10 @@ namespace Persistence.EntityFramework.Entity
         public Guid GroupCatchId { get; set; }
         public Guid UserId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public virtual ICollection<GroupCatchCommentTaggedUsersEntity>? TaggedUsers { get; set; }
         public override GroupCatchComment ToRuntime()
         {
-            return new GroupCatchComment(Id, GroupCatchId, UserId, Comment, CreatedAt);
+            return new GroupCatchComment(Id, GroupCatchId, UserId, Comment, CreatedAt, TaggedUsers?.Select(x => x.ToRuntime()).ToArray());
         }
         public static GroupCatchCommentEntity RuntimeToEntity(GroupCatchComment groupCatchComment)
         {
@@ -29,6 +30,25 @@ namespace Persistence.EntityFramework.Entity
             if (groupCatchComment.Id.HasValue)
                 ent.Id = groupCatchComment.Id.Value;
             return ent;
+        }
+    }
+    [Table("group_catch_comment_tagged_users", Schema = DbConstants.MainSchema)]
+    internal class GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUsers>
+    {
+        public GroupCatchCommentTaggedUsersEntity(int commentId, Guid userId)
+        {
+            CommentId = commentId;
+            UserId = userId;
+        }
+        public int CommentId { get; set; }
+        public Guid UserId { get; set; }
+        public override GroupCatchCommentTaggedUsers ToRuntime()
+        {
+            return new GroupCatchCommentTaggedUsers(CommentId, UserId);
+        }
+        public static GroupCatchCommentTaggedUsersEntity RuntimeToEntity(GroupCatchCommentTaggedUsers groupCatchCommentTaggedUsers)
+        {
+            return new GroupCatchCommentTaggedUsersEntity(groupCatchCommentTaggedUsers.CommentId, groupCatchCommentTaggedUsers.UserId);
         }
     }
 }

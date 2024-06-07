@@ -12,6 +12,12 @@ namespace Persistence.EntityFramework.Repository
         {
             return UserEntity.RuntimeToEntity(runtimeObj);
         }
+        public async Task<ICollection<User>> GetUsers(ICollection<Guid> ids)
+        {
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            var foundUsers = await context.User.Where(x => ids.Contains(x.Id)).ToArrayAsync();
+            return foundUsers.Select(x => x.ToRuntime()).ToArray();
+        }
         public async Task<bool> IsUserNameUnique(User runtimeObj)
         {
             await using var context = await DbContextFactory.CreateDbContextAsync();

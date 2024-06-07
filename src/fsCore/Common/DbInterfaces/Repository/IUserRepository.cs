@@ -5,6 +5,7 @@ namespace Common.DbInterfaces.Repository
     public interface IUserRepository
     {
         Task DeleteAll();
+        Task<ICollection<User>> GetUsers(ICollection<Guid> ids);
         Task<int> GetCount();
         Task<ICollection<UserWithoutEmail>> FindManyLikeWithSensitiveRemoved(string searchTerm);
         Task<bool> IsUserNameUnique(User runtimeObj);
