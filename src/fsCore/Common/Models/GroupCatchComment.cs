@@ -47,6 +47,13 @@ namespace Common.Models
             CommentId = commentId;
             UserId = userId;
         }
+        public GroupCatchCommentTaggedUsers(int id, int commentId, Guid userId)
+        {
+            Id = id;
+            CommentId = commentId;
+            UserId = userId;
+        }
+        public int? Id { get; set; }
         public int CommentId { get; set; }
         public Guid UserId { get; set; }
     }

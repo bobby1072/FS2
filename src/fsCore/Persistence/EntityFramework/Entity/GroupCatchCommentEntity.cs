@@ -37,20 +37,20 @@ namespace Persistence.EntityFramework.Entity
     [Table("group_catch_comment_tagged_users", Schema = DbConstants.MainSchema)]
     internal class GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUsers>
     {
-        public GroupCatchCommentTaggedUsersEntity(int commentId, Guid userId)
-        {
-            CommentId = commentId;
-            UserId = userId;
-        }
+        [Key]
+        public int Id { get; set; }
         public int CommentId { get; set; }
         public Guid UserId { get; set; }
         public override GroupCatchCommentTaggedUsers ToRuntime()
         {
-            return new GroupCatchCommentTaggedUsers(CommentId, UserId);
+            return new GroupCatchCommentTaggedUsers(Id, CommentId, UserId);
         }
         public static GroupCatchCommentTaggedUsersEntity RuntimeToEntity(GroupCatchCommentTaggedUsers groupCatchCommentTaggedUsers)
         {
-            return new GroupCatchCommentTaggedUsersEntity(groupCatchCommentTaggedUsers.CommentId, groupCatchCommentTaggedUsers.UserId);
+            var ent = new GroupCatchCommentTaggedUsersEntity { CommentId = groupCatchCommentTaggedUsers.CommentId, UserId = groupCatchCommentTaggedUsers.UserId };
+            if (groupCatchCommentTaggedUsers.Id.HasValue)
+                ent.Id = groupCatchCommentTaggedUsers.Id.Value;
+            return ent;
         }
     }
 }

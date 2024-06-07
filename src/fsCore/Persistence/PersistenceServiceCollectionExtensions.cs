@@ -34,7 +34,9 @@ namespace Persistence
                 .AddSingleton<IGroupRepository, GroupRepository>()
                 .AddSingleton<IGroupPositionRepository, GroupPositionRepository>()
                 .AddSingleton<IGroupMemberRepository, GroupMemberRepository>()
-                .AddSingleton<IGroupCatchRepository, GroupCatchRepository>();
+                .AddSingleton<IGroupCatchRepository, GroupCatchRepository>()
+                .AddSingleton<IGroupCatchCommentRepository, GroupCatchCommentRepository>()
+                .AddSingleton<IGroupCatchCommentTaggedUsersRepository, GroupCatchCommentTaggedUsersRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()
