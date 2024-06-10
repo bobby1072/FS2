@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { ApiException } from "../../../common/ApiException";
 import { useAuthentication } from "../../../common/contexts/AuthenticationContext";
 import {
@@ -7,19 +7,6 @@ import {
 } from "../../../models/IGroupCatchModel";
 import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider";
 import Constants from "../../../common/Constants";
-
-export const useGetFullCatchMutation = () => {
-  const { user } = useAuthentication();
-  if (!user) throw new Error("User is not authenticated");
-  const mutationResults = useMutation<IGroupCatchModel, ApiException, string>(
-    (catchId) =>
-      BackendApiServiceProvider.GetFullCatchById(catchId, user.access_token),
-    {
-      retry: (fc) => fc < 1,
-    }
-  );
-  return { ...mutationResults };
-};
 
 export const useGetFullCatchQuery = (catchId?: string) => {
   const { user } = useAuthentication();
