@@ -203,12 +203,7 @@ export const SaveGroupCatchForm: React.FC<{
     }
   }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar, closeForm]);
   return (
-    <form
-      id="saveCatchForm"
-      onSubmit={handleSubmit(submitHandler, (e, event) => {
-        console.log(e);
-      })}
-    >
+    <form id="saveCatchForm" onSubmit={handleSubmit(submitHandler)}>
       <Grid
         container
         spacing={2}

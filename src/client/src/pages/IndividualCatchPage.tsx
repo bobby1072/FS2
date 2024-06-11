@@ -13,6 +13,7 @@ import { Grid } from "@mui/material";
 import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { SimpleLongLatCatchMarkerWithPopup } from "../components/CatchComponents/CatchMarker";
 import { CatchPaperForm } from "../components/CatchComponents/CatchPaperForm";
+import { CatchCommentForm } from "../components/CatchComponents/CatchCommentForm";
 
 export const IndividualCatchPage: React.FC = () => {
   const { id: catchId } = useParams<{ id: string }>();
@@ -50,12 +51,19 @@ export const IndividualCatchPage: React.FC = () => {
             <CatchPaperForm fullCatch={fullCatch} />
           </Grid>
           <Grid item width={"100%"}>
-            <GenerateMap
-              center={catchPosition}
-            >
+            <GenerateMap center={catchPosition}>
               <SimpleLongLatCatchMarkerWithPopup position={catchPosition} />
             </GenerateMap>
           </Grid>
+          {permissionManager.Can(
+            PermissionActions.Read,
+            fullCatch.groupId,
+            PermissionFields.GroupCatch
+          ) && (
+            <Grid item width={"100%"}>
+              <CatchCommentForm groupCatchId={catchId!} />
+            </Grid>
+          )}
         </Grid>
       </AppAndDraw>
     </PageBase>

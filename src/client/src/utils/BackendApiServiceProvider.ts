@@ -12,6 +12,7 @@ import {
   IPartialGroupCatchModel,
 } from "../models/IGroupCatchModel";
 import { IGroupCatchCommentModel } from "../models/IGroupCatchComment";
+import { SaveCommentInput } from "../components/CatchComponents/CatchCommentForm";
 interface ValidationErrorResponse {
   type: string;
   title: string;
@@ -369,10 +370,13 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return Number(data);
   }
-  public static async SaveComment(comment: any, accesstoken: string) {
+  public static async SaveComment(
+    comment: SaveCommentInput,
+    accessToken: string
+  ) {
     const { data } = await this._httpClient
-      .post<string>("GroupCatch/SaveComment", comment, {
-        headers: { Authorization: this._formatAccessToken(accesstoken) },
+      .post<string>("GroupCatch/CommentOnCatch", comment, {
+        headers: { Authorization: this._formatAccessToken(accessToken) },
       })
       .catch(this._generalErrorHandler);
     return Number(data);
