@@ -8,11 +8,10 @@ import Constants from "../../../common/Constants";
 export const useSaveCommentMutation = () => {
   const { user } = useAuthentication();
   const queryClient = useQueryClient();
-  const mutationResults = useMutation<number, ApiException, any>((a) =>{
+  const mutationResults = useMutation<number, ApiException, any>((a) => {
     if (!user) throw new Error("User is not authenticated");
-    return BackendApiServiceProvider.SaveComment(a, user.access_token)
-    }
-  );
+    return BackendApiServiceProvider.SaveComment(a, user.access_token);
+  });
   useEffect(() => {
     if (mutationResults.data) {
       queryClient.refetchQueries(Constants.QueryKeys.GetCatchComments);

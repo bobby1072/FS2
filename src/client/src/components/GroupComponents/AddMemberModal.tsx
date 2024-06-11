@@ -23,7 +23,7 @@ import { ErrorComponent } from "../../common/ErrorComponent";
 import { StyledTopLevelDialog } from "../../common/StyledTopLevelDialog";
 
 const formSchema = z.object({
-  id: z.string().optional(),
+  id: z.string().uuid().optional().nullable(),
   groupId: z.string(),
   userId: z.string(),
   positionId: z.string(),

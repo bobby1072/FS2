@@ -26,8 +26,8 @@ import { ApiException } from "../../common/ApiException";
 import { SpeciesSearch } from "./SpeciesSearch";
 import { zodResolver } from "@hookform/resolvers/zod";
 export const formSchema = z.object({
-  id: z.string().optional().nullable(),
-  groupId: z.string(),
+  id: z.string().uuid().optional().nullable(),
+  groupId: z.string().uuid(),
   species: z.string(),
   worldFishTaxocode: z.string().optional().nullable(),
   weight: z.string().optional().nullable(),
@@ -129,6 +129,8 @@ const setNumberValue = (
   if (isNaN(Number(e.target.value))) return;
   setValue(e.target.value);
 };
+
+const today = new Date();
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
@@ -191,6 +193,7 @@ export const SaveGroupCatchForm: React.FC<{
   useEffect(() => {
     setAllErrors(mutationError || formErrors);
   }, [mutationError, formErrors]);
+
   useEffect(() => {
     if (savedCatchId && useSnackBarOnSuccess) {
       enqueueSnackbar(`New catch saved: ${savedCatchId}`, {
@@ -303,6 +306,7 @@ export const SaveGroupCatchForm: React.FC<{
             render={({ field }) => {
               return (
                 <DateTimePicker
+                  maxDateTime={today}
                   label="Caught at"
                   inputRef={field.ref}
                   value={field.value ? new Date(field.value) : undefined}
