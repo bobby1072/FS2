@@ -9,5 +9,7 @@ namespace Common.DbInterfaces.Repository
         Task<ICollection<GroupCatchComment>?> Delete(ICollection<GroupCatchComment> GroupCatchCommentToDelete);
         Task<ICollection<GroupCatchComment>?> GetAllForCatch(Guid catchId);
         Task<GroupCatchComment?> GetOne(int id);
+        Task<ICollection<GroupCatchCommentTaggedUsers>?> DeleteTaggedUsers(ICollection<int> commentIds);
+        Task<ICollection<GroupCatchCommentTaggedUsers>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUsers> GroupCatchCommentTaggedUsersToCreate);
     }
 }

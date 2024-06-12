@@ -15,15 +15,13 @@ namespace fsCore.Service
     {
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
-        private readonly IGroupCatchCommentTaggedUsersRepository _taggedUsersRepo;
         private readonly IUserService _userService;
         private static readonly GroupCatchValidator _validator = new();
         private static readonly GroupCatchCommentValidator _commentValidator = new();
         private readonly IGroupCatchCommentRepository _commentRepo;
-        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IGroupCatchCommentTaggedUsersRepository taggedUsersRepo) : base(groupCatchRepository)
+        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo) : base(groupCatchRepository)
         {
             _worldFishRepository = worldFishRepo;
-            _taggedUsersRepo = taggedUsersRepo;
             _userService = userService;
             _commentRepo = commentRepo;
             _groupService = groupService;
@@ -173,19 +171,19 @@ namespace fsCore.Service
                 var taggedUsersJob = FindTaggedUsersFromComment(groupCatchComment.Comment);
                 if (groupCatchComment.TaggedUsers?.Any() == true)
                 {
-                    var deleteTaggedUsersJob = _taggedUsersRepo.Delete(new[] { foundId });
+                    var deleteTaggedUsersJob = _commentRepo.DeleteTaggedUsers(new[] { foundId });
                     await Task.WhenAll(deleteTaggedUsersJob, taggedUsersJob);
                 }
                 var taggedUsers = await taggedUsersJob;
                 var updatedComment = (await _commentRepo.Update(new[] { groupCatchComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
-                if (taggedUsers.Any()) await _taggedUsersRepo.Create(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(foundId, x.Id ?? throw new Exception())).ToArray());
+                if (taggedUsers.Any()) await _commentRepo.CreateTaggedUsers(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(foundId, x.Id ?? throw new Exception())).ToArray());
                 return updatedComment;
             }
             else
             {
                 var taggedUsers = await FindTaggedUsersFromComment(groupCatchComment.Comment);
                 var createdComment = (await _commentRepo.Create(new[] { groupCatchComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
-                if (taggedUsers.Any()) await _taggedUsersRepo.Create(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(createdComment.Id ?? throw new Exception(), x.Id ?? throw new Exception())).ToArray());
+                if (taggedUsers.Any()) await _commentRepo.CreateTaggedUsers(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(createdComment.Id ?? throw new Exception(), x.Id ?? throw new Exception())).ToArray());
                 return createdComment;
             }
         }

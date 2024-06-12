@@ -51,7 +51,7 @@ export const IndividualCatchPage: React.FC = () => {
             <CatchPaperForm fullCatch={fullCatch} />
           </Grid>
           <Grid item width={"100%"}>
-            <GenerateMap center={catchPosition}>
+            <GenerateMap center={catchPosition} zoom={9}>
               <SimpleLongLatCatchMarkerWithPopup position={catchPosition} />
             </GenerateMap>
           </Grid>
