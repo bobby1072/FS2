@@ -31,6 +31,8 @@ import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { IGroupModel } from "../models/IGroupModel";
 import { GroupCatchesMap } from "../components/CatchComponents/GroupCatchesMap";
+import { PartialGroupCatchLeaderBoard } from "../components/CatchComponents/PartialGroupCatchLeaderBoard";
+import { useGetAllPartialCatchesForGroupQuery } from "../components/CatchComponents/hooks/GetAllPartialCatchesForGroup";
 
 export const IndividualGroupPage: React.FC = () => {
   const { id: groupId } = useParams<{ id: string }>();
@@ -58,7 +60,11 @@ const IndividualGroupPageInner: React.FC<{
 }> = ({ group: mainGroup }) => {
   const { id: groupId } = useParams<{ id: string }>();
   const { permissionManager } = useCurrentPermissionManager();
-  const [currentMapZoom, setCurrentMapZoom] = useState<number>();
+  const {
+    data: groupCatches,
+    error: groupCatchesError,
+    isLoading: groupCatchesLoading,
+  } = useGetAllPartialCatchesForGroupQuery(groupId!);
   const {
     name: groupName,
     emblem: groupEmblem,
@@ -71,6 +77,18 @@ const IndividualGroupPageInner: React.FC<{
     groupId!,
     PermissionFields.GroupMember
   );
+  const belongsToGroup = permissionManager.Can(
+    PermissionActions.BelongsTo,
+    groupId!
+  );
+  const canReadCatches =
+    mainGroup.catchesPublic ||
+    permissionManager.Can(
+      PermissionActions.Read,
+      groupId!,
+      PermissionFields.GroupCatch
+    ) ||
+    permissionManager.Can(PermissionActions.BelongsTo, groupId!);
   const [catchToEdit, setCatchToEdit] = useState<boolean>();
   const formMethods = useForm<SaveCatchInput>({
     defaultValues: mapDefaultValuesToSaveCatchInput(
@@ -161,13 +179,15 @@ const IndividualGroupPageInner: React.FC<{
                 />
               </Grid>
             )}
-            <Grid item width={canReadMembers ? "50%" : "100%"}>
-              <GroupPositionDataTable
-                positions={allPositions ?? []}
-                groupId={mainGroup.id!}
-              />
-            </Grid>
-            {permissionManager.Can(PermissionActions.BelongsTo, groupId!) && (
+            {belongsToGroup && (
+              <Grid item width={canReadMembers ? "50%" : "100%"}>
+                <GroupPositionDataTable
+                  positions={allPositions ?? []}
+                  groupId={mainGroup.id!}
+                />
+              </Grid>
+            )}
+            {belongsToGroup && (
               <Grid
                 item
                 width="100%"
@@ -203,23 +223,40 @@ const IndividualGroupPageInner: React.FC<{
                 </Accordion>
               </Grid>
             )}
-            {(mainGroup.catchesPublic ||
-              permissionManager.Can(
-                PermissionActions.Read,
-                groupId!,
-                PermissionFields.GroupCatch
-              ) ||
-              permissionManager.Can(PermissionActions.BelongsTo, groupId!)) && (
+            {groupCatchesLoading && canReadCatches && (
+              <Grid item width="80%" mt={10}>
+                <Loading />
+              </Grid>
+            )}
+            {groupCatches && canReadCatches && (
               <Grid item width="100%">
                 <GroupCatchesMap
                   catchToEdit={!!catchToEdit}
                   latitude={Number(latitude)}
                   group={mainGroup}
+                  groupCatches={groupCatches}
                   longitude={Number(longitude)}
-                  setCurrentMapZoom={setCurrentMapZoom}
-                  currentMapZoom={currentMapZoom}
+                  // setCurrentMapZoom={setCurrentMapZoom}
+                  // currentMapZoom={currentMapZoom}
                   formMethods={formMethods}
                 />
+              </Grid>
+            )}
+            {groupCatchesError && (
+              <Grid item width="100%">
+                <ErrorComponent error={groupCatchesError} />
+              </Grid>
+            )}
+            {groupCatches && groupCatches.length === 0 && (
+              <Grid item width="100%">
+                <ErrorComponent
+                  error={new Error("No catches saved for this group")}
+                />
+              </Grid>
+            )}
+            {groupCatches && groupCatches.length > 0 && canReadCatches && (
+              <Grid item width="100%">
+                <PartialGroupCatchLeaderBoard partialCatches={groupCatches} />
               </Grid>
             )}
           </Grid>

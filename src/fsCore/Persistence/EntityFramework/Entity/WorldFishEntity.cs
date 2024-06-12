@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
-    [Table("world_fish", Schema = DbConstants.MainSchema)]
+    [Table("world_fish", Schema = DbConstants.PublicSchema)]
     internal class WorldFishEntity : BaseEntity<WorldFish>
     {
         [Key]

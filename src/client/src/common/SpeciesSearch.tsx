@@ -7,11 +7,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { getPrettyWorldFishName } from "../../common/GetPrettyWorldFish";
 import { useEffect, useState } from "react";
-import { useWorldFishFindSomeLikeMutation } from "./hooks/WorldFishFindSomeLike";
-import { IWorldFishModel } from "../../models/IWorldFishModel";
-import { IGroupCatchModel } from "../../models/IGroupCatchModel";
+import { IGroupCatchModel } from "../models/IGroupCatchModel";
+import { useWorldFishFindSomeLikeMutation } from "../components/CatchComponents/hooks/WorldFishFindSomeLike";
+import { IWorldFishModel } from "../models/IWorldFishModel";
+import { getPrettyWorldFishName } from "./GetPrettyWorldFish";
 
 export const SpeciesSearch: React.FC<{
   setSpecies?: (vals?: string) => void;

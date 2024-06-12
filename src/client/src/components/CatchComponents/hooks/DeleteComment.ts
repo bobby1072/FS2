@@ -5,20 +5,18 @@ import BackendApiServiceProvider from "../../../utils/BackendApiServiceProvider"
 import { useEffect } from "react";
 import Constants from "../../../common/Constants";
 
-export const useSaveCatchMutation = () => {
+export const useDeleteCommentMutation = () => {
   const { user } = useAuthentication();
-  if (!user) throw new Error("User is not authenticated");
   const queryClient = useQueryClient();
-  const mutationResults = useMutation<string, ApiException, FormData>((gc) =>
-    BackendApiServiceProvider.SaveGroupCatch(gc, user.access_token)
+  const mutationResults = useMutation<number, ApiException, number>((a) => {
+    if (!user) throw new Error("User is not authenticated");
+    return BackendApiServiceProvider.DeleteComment(a, user.access_token)
+    }
   );
   useEffect(() => {
     if (mutationResults.data) {
-      queryClient.refetchQueries(
-        Constants.QueryKeys.GetAllPartialCatchesFroGroup
-      );
-      queryClient.refetchQueries(Constants.QueryKeys.GetFullCatch);
+      queryClient.refetchQueries(Constants.QueryKeys.GetCatchComments);
     }
-  }, [queryClient, mutationResults.data]);
+  }, [mutationResults.data, queryClient]);
   return { ...mutationResults };
 };

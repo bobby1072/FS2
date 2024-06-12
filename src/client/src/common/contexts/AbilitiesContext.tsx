@@ -41,7 +41,7 @@ export class PermissionManager {
   }
 }
 
-export const AppAbilityContext = createContext<
+const AppAbilityContext = createContext<
   { permissionManager: PermissionManager } | undefined
 >(undefined);
 

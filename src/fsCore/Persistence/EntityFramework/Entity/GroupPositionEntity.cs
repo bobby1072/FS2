@@ -4,7 +4,7 @@ using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
-    [Table("group_position", Schema = DbConstants.MainSchema)]
+    [Table("group_position", Schema = DbConstants.PublicSchema)]
     internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]

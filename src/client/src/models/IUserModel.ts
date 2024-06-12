@@ -2,7 +2,6 @@ import {
   PermissionActions,
   PermissionFields,
 } from "../common/contexts/AbilitiesContext";
-import { IGroupModel } from "./IGroupModel";
 
 export interface IUserModel {
   id?: string;

@@ -22,9 +22,12 @@ namespace Common.Models.MiscModels
         public double Weight { get; set; }
         [JsonPropertyName("length")]
         public double Length { get; set; }
-        public PartialGroupCatch(string species, double latitude, double longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, double weight, Guid id, double length)
+        [JsonPropertyName("groupId")]
+        public Guid GroupId { get; set; }
+        public PartialGroupCatch(string species, double latitude, double longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, double weight, Guid id, double length, Guid groupId)
         {
             Species = species;
+            GroupId = groupId;
             Latitude = latitude;
             Id = id;
             Longitude = longitude;

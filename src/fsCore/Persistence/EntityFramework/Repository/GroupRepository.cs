@@ -9,7 +9,7 @@ namespace Persistence.EntityFramework.Repository
     internal class GroupRepository : BaseRepository<GroupEntity, Group>, IGroupRepository
     {
         public GroupRepository(IDbContextFactory<FsContext> context) : base(context) { }
-        protected override GroupEntity _runtimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
+        protected override GroupEntity RuntimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
         public async Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
@@ -49,6 +49,15 @@ namespace Persistence.EntityFramework.Repository
                 .Take(5)
                 .ToArrayAsync();
             return foundGroup?.Select(x => x.ToRuntime()).ToArray();
+        }
+        public async Task<ICollection<Group>?> GetGroupWithoutEmblem(ICollection<Guid> groupId, ICollection<string>? relations = null)
+        {
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
+                .Where(x => groupId.Contains(x.Id))
+                .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
+                .ToArrayAsync();
+            return foundEnts?.Length > 0 ? foundEnts.Select(x => new Group(x.Name, null, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.CatchesPublic, x.LeaderId, x.Leader?.ToRuntime(), x.Positions?.Select(p => p.ToRuntime()).ToArray())).ToArray() : Array.Empty<Group>();
         }
     }
 

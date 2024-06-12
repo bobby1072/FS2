@@ -5,13 +5,13 @@ export const LocationFinder: React.FC<{
   lat?: number;
   lng?: number;
   setLatLng: (latLng: { lat: number; lng: number }) => void;
-  setCurrentZoom: (zoom: number) => void;
+  setCurrentZoom?: (zoom: number) => void;
 }> = ({ lat, lng, setLatLng, setCurrentZoom }) => {
   useMapEvents({
     click(e: any) {
       const { lat, lng } = e.latlng;
       setLatLng({ lat: lat.toFixed(6), lng: lng.toFixed(6) });
-      setCurrentZoom(e.target._zoom);
+      setCurrentZoom?.(e.target._zoom);
     },
   });
   if (lat && lng) {

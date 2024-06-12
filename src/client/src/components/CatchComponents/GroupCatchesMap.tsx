@@ -8,7 +8,6 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useGetAllPartialCatchesForGroupQuery } from "./hooks/GetAllPartialCatchesForGroup";
 import {
   PermissionActions,
   PermissionFields,
@@ -22,14 +21,14 @@ import { IGroupModel } from "../../models/IGroupModel";
 import { HeatmapLayerFactory } from "@vgrid/react-leaflet-heatmap-layer";
 import { GenerateMap } from "../MapComponents/GenerateMap";
 import { MapControlBox } from "../MapComponents/MapControlBox";
-import { SpeciesSearch } from "./SpeciesSearch";
 import { Close } from "@mui/icons-material";
 import { LocationFinder } from "../MapComponents/LocationFinder";
 import MarkerClusterGroup from "react-leaflet-cluster";
-import { CatchMarker } from "./CatchMarker";
-import { ErrorComponent } from "../../common/ErrorComponent";
+import { CatchMarkerForPartialCatch } from "./CatchMarker";
 import { DatePicker } from "@mui/x-date-pickers";
 import { getEarliestAndLatestDate } from "../../utils/DateTime";
+import { RuntimePartialGroupCatchModel } from "../../models/IGroupCatchModel";
+import { SpeciesSearch } from "../../common/SpeciesSearch";
 
 enum MapType {
   heatmap = "Heatmap",
@@ -40,24 +39,20 @@ const HeatmapLayer = HeatmapLayerFactory<[number, number, number]>();
 export const GroupCatchesMap: React.FC<{
   latitude: number;
   longitude: number;
-  currentMapZoom?: number;
   formMethods: UseFormReturn<SaveCatchInput>;
-  setCurrentMapZoom: (z: number) => void;
   catchToEdit: boolean;
   group: IGroupModel;
+  groupCatches: RuntimePartialGroupCatchModel[];
 }> = ({
   catchToEdit,
   group,
   latitude,
   longitude,
-  setCurrentMapZoom,
-  currentMapZoom,
   formMethods,
+  groupCatches,
 }) => {
   const { id: groupId } = useParams<{ id: string }>();
   const { permissionManager } = useCurrentPermissionManager();
-  const { data: groupCatches, error: groupCatchesError } =
-    useGetAllPartialCatchesForGroupQuery(groupId!);
   const [speciesFilter, setSpeciesFilter] = useState<string>();
   const [{ mapType, minWeight, endDate, startDate, minLength }, setMapFilters] =
     useState<{
@@ -96,7 +91,6 @@ export const GroupCatchesMap: React.FC<{
       <Grid item width="100%">
         <GenerateMap
           center={latitude && longitude ? [latitude, longitude] : undefined}
-          zoom={currentMapZoom}
         >
           {!catchToEdit && groupCatches && groupCatches.length > 0 && (
             <MapControlBox>
@@ -146,7 +140,6 @@ export const GroupCatchesMap: React.FC<{
                       <InputLabel>Map type</InputLabel>
                       <Select
                         fullWidth
-                        disabled={!!mapType}
                         MenuProps={{
                           style: { zIndex: 5001 },
                         }}
@@ -241,7 +234,7 @@ export const GroupCatchesMap: React.FC<{
                 </Grid>
                 <Grid item width={"95%"}>
                   <DatePicker
-                    value={startDate ?? earliestDate}
+                    value={startDate}
                     onChange={(date) =>
                       setMapFilters({
                         mapType,
@@ -268,7 +261,7 @@ export const GroupCatchesMap: React.FC<{
                 </Grid>
                 <Grid item width={"95%"}>
                   <DatePicker
-                    value={endDate ?? latestDate}
+                    value={endDate}
                     onChange={(date) =>
                       setMapFilters({
                         mapType,
@@ -300,7 +293,7 @@ export const GroupCatchesMap: React.FC<{
             <LocationFinder
               lat={latitude && longitude ? latitude : undefined}
               lng={latitude && longitude ? longitude : undefined}
-              setCurrentZoom={setCurrentMapZoom}
+              // setCurrentZoom={setCurrentMapZoom}
               setLatLng={({ lat, lng }) => {
                 formMethods.setValue("latitude", lat.toString());
                 formMethods.setValue("longitude", lng.toString());
@@ -318,7 +311,7 @@ export const GroupCatchesMap: React.FC<{
                 {mapType === MapType.markerCluster && (
                   <MarkerClusterGroup chunkedLoading>
                     {filteredCatches.map((pgc) => (
-                      <CatchMarker
+                      <CatchMarkerForPartialCatch
                         groupCatch={pgc}
                         groupId={groupId!}
                         useSnackBarOnSuccess
@@ -343,7 +336,7 @@ export const GroupCatchesMap: React.FC<{
                 {!mapType && (
                   <>
                     {filteredCatches.map((pgc) => (
-                      <CatchMarker
+                      <CatchMarkerForPartialCatch
                         groupCatch={pgc}
                         groupId={groupId!}
                         useSnackBarOnSuccess
@@ -355,18 +348,6 @@ export const GroupCatchesMap: React.FC<{
             )}
         </GenerateMap>
       </Grid>
-      {groupCatchesError && (
-        <Grid item width="100%">
-          <ErrorComponent error={groupCatchesError} />
-        </Grid>
-      )}
-      {groupCatches && groupCatches.length === 0 && (
-        <Grid item width="100%">
-          <ErrorComponent
-            error={new Error("No catches saved for this group")}
-          />
-        </Grid>
-      )}
     </Grid>
   );
 };

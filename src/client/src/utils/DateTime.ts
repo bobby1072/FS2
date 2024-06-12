@@ -542,3 +542,28 @@ export const formatLastEditedDate = (date: Date) => {
 
   return prettyDateWithYear(date);
 };
+
+export const formatHowLongAgoString = (date: Date) => {
+  const today = new Date();
+  if (today.getTime() < date.getTime()) return "";
+  else if (today.getFullYear() - date.getFullYear() >= 1) {
+    return "Over a year ago";
+  } else if (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate()
+  ) {
+    return "Today";
+  } else if (
+    date.getFullYear() === today.getFullYear() &&
+    date.getMonth() === today.getMonth() &&
+    date.getDate() === today.getDate() - 1
+  ) {
+    return "Yesterday";
+  } else if (date.getMonth() !== today.getMonth()) {
+    const monthDiff = today.getMonth() - date.getMonth();
+    return ` ${monthDiff === 1 ? "last month" : monthDiff + "months ago"} `;
+  } else {
+    return `${today.getDate() - date.getDate()} days ago`;
+  }
+};

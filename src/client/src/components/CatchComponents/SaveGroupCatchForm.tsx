@@ -3,14 +3,18 @@ import imageCompression from "browser-image-compression";
 import { base64StringToJpegFile } from "../../utils/StringUtils";
 import { IGroupCatchModel } from "../../models/IGroupCatchModel";
 import { useSaveCatchMutation } from "./hooks/SaveCatchMutation";
-import { Controller, FieldErrors, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  FieldErrors,
+  useForm,
+  useFormContext,
+} from "react-hook-form";
 import { useSnackbar } from "notistack";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import {
   Alert,
   Button,
-  FormGroup,
   Grid,
   InputAdornment,
   TextField,
@@ -19,21 +23,19 @@ import {
 import { faker } from "@faker-js/faker";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
-import { SpeciesSearch } from "./SpeciesSearch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SpeciesSearch } from "../../common/SpeciesSearch";
 export const formSchema = z.object({
-  id: z.string().optional().nullable(),
-  groupId: z.string(),
+  id: z.string().uuid().optional().nullable(),
+  groupId: z.string().uuid(),
   species: z.string(),
   worldFishTaxocode: z.string().optional().nullable(),
-  weight: z.string(),
-  length: z.string(),
+  weight: z.string().optional().nullable(),
+  length: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   latitude: z.string(),
   longitude: z.string(),
-  caughtAt: z
-    .string()
-    .datetime()
-    .transform((x) => new Date(x)),
+  caughtAt: z.string().datetime(),
   createdAt: z.string().datetime().optional().nullable(),
   catchPhoto: z.string().optional().nullable(),
 });
@@ -46,13 +48,13 @@ const mapValuesToFormData = async (
   formData.append("groupId", values.groupId);
   formData.append("species", values.species);
   formData.append("worldFishTaxocode", values.worldFishTaxocode ?? "");
-  formData.append("weight", values.weight.toString());
-  formData.append("length", values.length.toString());
+  formData.append("weight", values.weight!.toString());
+  formData.append("length", values.length!.toString());
   formData.append("description", values.description ?? "");
   formData.append("latitude", values.latitude.toString());
   formData.append("longitude", values.longitude.toString());
   formData.append("caughtAt", new Date(values.caughtAt).toISOString());
-  formData.append("caughtAt", values.createdAt ?? "");
+  formData.append("createdAt", values.createdAt ?? "");
   if (newCatchPhoto) {
     formData.append(
       "catchPhoto",
@@ -79,10 +81,25 @@ const mapValuesToFormData = async (
   }
   return formData;
 };
-
+const useFormContextOrFresh = (defaultValues?: IGroupCatchModel) => {
+  const form = useForm<SaveCatchInput>({
+    defaultValues: mapDefaultValuesToSaveCatchInput(
+      defaultValues?.groupId ?? "",
+      defaultValues
+    ),
+    resolver: zodResolver(formSchema),
+  });
+  try {
+    const formContext = useFormContext<SaveCatchInput>();
+    if (formContext) return formContext;
+    return form;
+  } catch (e) {
+    return form;
+  }
+};
 export type SaveCatchInput = z.infer<typeof formSchema>;
 export const mapDefaultValuesToSaveCatchInput = (
-  groupId: string,
+  groupId?: string,
   groupCatch?: IGroupCatchModel
 ): Partial<SaveCatchInput> => {
   if (!groupCatch) return { groupId };
@@ -96,7 +113,7 @@ export const mapDefaultValuesToSaveCatchInput = (
     description: groupCatch.description,
     latitude: groupCatch.latitude.toString(),
     longitude: groupCatch.longitude.toString(),
-    caughtAt: new Date(groupCatch.caughtAt),
+    caughtAt: groupCatch.caughtAt,
     createdAt: groupCatch.createdAt,
     catchPhoto: groupCatch.catchPhoto?.toString(),
   };
@@ -112,6 +129,8 @@ const setNumberValue = (
   if (isNaN(Number(e.target.value))) return;
   setValue(e.target.value);
 };
+
+const today = new Date();
 export const SaveGroupCatchForm: React.FC<{
   useSnackBarOnSuccess?: boolean;
   groupCatch?: IGroupCatchModel;
@@ -119,7 +138,7 @@ export const SaveGroupCatchForm: React.FC<{
   closeForm?: () => void;
 }> = ({
   groupCatch,
-  useSnackBarOnSuccess,
+  useSnackBarOnSuccess = false,
   closeForm,
   showMapInfoMessage = false,
 }) => {
@@ -133,22 +152,39 @@ export const SaveGroupCatchForm: React.FC<{
   const {
     handleSubmit,
     control,
-    register,
     setValue,
     watch,
     formState: { errors: formErrors, isDirty: isFormDirty },
-  } = useFormContext<SaveCatchInput>();
+  } = useFormContextOrFresh(groupCatch);
   const { enqueueSnackbar } = useSnackbar();
   const [addedCatchPhoto, setAddedCatchPhoto] = useState<string | File>();
+  const [looseDescriptionState, setLooseDescriptionState] = useState<
+    string | undefined
+  >(groupCatch?.description ?? undefined);
+  const [looseWeightState, setLooseWeightState] = useState<string | undefined>(
+    groupCatch?.weight.toString()
+  );
+  const [looseLengthState, setLooseLengthState] = useState<string | undefined>(
+    groupCatch?.length.toString()
+  );
   const allFieldValues = watch();
-  const { catchPhoto, species, weight, length, latitude, longitude, caughtAt } =
-    allFieldValues;
-  const isDirty = isFormDirty || catchPhoto !== groupCatch?.catchPhoto;
+  const { species, latitude, longitude, caughtAt } = allFieldValues;
+  const isDirty =
+    isFormDirty ||
+    (looseWeightState?.toString() !== groupCatch?.weight.toString() &&
+      looseLengthState) ||
+    (looseWeightState?.toString() !== groupCatch?.length.toString() &&
+      looseLengthState);
   const submitHandler = async (values: SaveCatchInput) => {
     resetMutation();
     saveCatchMutation(
       await mapValuesToFormData(
-        values,
+        {
+          ...values,
+          description: looseDescriptionState,
+          weight: looseWeightState!,
+          length: looseLengthState!,
+        },
         typeof addedCatchPhoto === "string" ? undefined : addedCatchPhoto
       )
     );
@@ -157,6 +193,7 @@ export const SaveGroupCatchForm: React.FC<{
   useEffect(() => {
     setAllErrors(mutationError || formErrors);
   }, [mutationError, formErrors]);
+
   useEffect(() => {
     if (savedCatchId && useSnackBarOnSuccess) {
       enqueueSnackbar(`New catch saved: ${savedCatchId}`, {
@@ -166,7 +203,7 @@ export const SaveGroupCatchForm: React.FC<{
     }
   }, [savedCatchId, useSnackBarOnSuccess, enqueueSnackbar, closeForm]);
   return (
-    <form id="saveCatchFrom" onSubmit={handleSubmit(submitHandler)}>
+    <form id="saveCatchForm" onSubmit={handleSubmit(submitHandler)}>
       <Grid
         container
         spacing={2}
@@ -179,9 +216,11 @@ export const SaveGroupCatchForm: React.FC<{
           <SpeciesSearch
             defaultValue={groupCatch}
             speciesString={species}
-            setSpecies={(value) => setValue("species", value ?? "")}
+            setSpecies={(value) =>
+              setValue("species", value ?? "", { shouldDirty: true })
+            }
             setWorldFishTaxocode={(value) =>
-              setValue("worldFishTaxocode", value)
+              setValue("worldFishTaxocode", value, { shouldDirty: true })
             }
           />
         </Grid>
@@ -190,17 +229,13 @@ export const SaveGroupCatchForm: React.FC<{
             label="Weight"
             fullWidth
             onChange={(e) => {
-              setNumberValue(e, (s) =>
-                setValue("weight", s, { shouldDirty: true })
-              );
+              setNumberValue(e, (s) => setLooseWeightState(s));
             }}
-            value={weight ?? ""}
+            value={looseWeightState ?? ""}
             InputProps={{
               endAdornment: <InputAdornment position="end">lbs</InputAdornment>,
               required: true,
             }}
-            error={!!formErrors?.weight}
-            helperText={formErrors?.weight?.message}
           />
         </Grid>
         <Grid item width="25%">
@@ -208,17 +243,13 @@ export const SaveGroupCatchForm: React.FC<{
             label="Length"
             fullWidth
             onChange={(e) => {
-              setNumberValue(e, (s) =>
-                setValue("length", s, { shouldDirty: true })
-              );
+              setNumberValue(e, (s) => setLooseLengthState(s));
             }}
-            value={length ?? ""}
+            value={looseLengthState ?? ""}
             InputProps={{
               endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               required: true,
             }}
-            error={!!formErrors?.length}
-            helperText={formErrors?.length?.message}
           />
         </Grid>
         <Grid item width="25%">
@@ -226,9 +257,10 @@ export const SaveGroupCatchForm: React.FC<{
             label="Description"
             fullWidth
             multiline
-            {...register("description")}
-            error={!!formErrors?.description}
-            helperText={formErrors?.description?.message}
+            value={looseDescriptionState ?? ""}
+            onChange={(e) => {
+              setLooseDescriptionState(e.target.value);
+            }}
           />
         </Grid>
         <Grid item width="25%">
@@ -263,32 +295,30 @@ export const SaveGroupCatchForm: React.FC<{
           />
         </Grid>
         <Grid item width="25%">
-          <FormGroup>
-            <Controller
-              control={control}
-              name="caughtAt"
-              render={({ field }) => {
-                return (
-                  <DateTimePicker
-                    label="Caught at"
-                    inputRef={field.ref}
-                    value={field.value ? new Date(field.value) : undefined}
-                    onChange={(date) => {
-                      field.onChange(date?.toISOString());
-                    }}
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        required: true,
-                        InputLabelProps: { shrink: true },
-                        onKeyDown: (e: any) => e.preventDefault(),
-                      },
-                    }}
-                  />
-                );
-              }}
-            />
-          </FormGroup>
+          <Controller
+            control={control}
+            name="caughtAt"
+            render={({ field }) => {
+              return (
+                <DateTimePicker
+                  maxDateTime={today}
+                  label="Caught at"
+                  inputRef={field.ref}
+                  value={field.value ? new Date(field.value) : undefined}
+                  onChange={(date) => {
+                    field.onChange(date?.toISOString());
+                  }}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      InputLabelProps: { shrink: true },
+                      onKeyDown: (e: any) => e.preventDefault(),
+                    },
+                  }}
+                />
+              );
+            }}
+          />
         </Grid>
         <Grid
           item
@@ -317,10 +347,9 @@ export const SaveGroupCatchForm: React.FC<{
             disabled={
               !isDirty ||
               isSavingCatch ||
-              Object.values(formErrors).some((x) => !!x) ||
               !species ||
-              !weight ||
-              !length ||
+              !looseWeightState ||
+              !looseLengthState ||
               !latitude ||
               !longitude ||
               !caughtAt
@@ -334,15 +363,18 @@ export const SaveGroupCatchForm: React.FC<{
             <ErrorComponent error={allErrors} />
           </Grid>
         )}
-        {!Object.values(formErrors).some((x) => !!x) && showMapInfoMessage && (
-          <Grid item width="100%">
-            <Alert severity="info">
-              <Typography>
-                Click on the map to set the latitude and longitude
-              </Typography>
-            </Alert>
-          </Grid>
-        )}
+        {!isSavingCatch &&
+          allErrors &&
+          !Object.values(allErrors).some((x) => !!x) &&
+          showMapInfoMessage && (
+            <Grid item width="100%">
+              <Alert severity="info">
+                <Typography>
+                  Click on the map to set the latitude and longitude
+                </Typography>
+              </Alert>
+            </Grid>
+          )}
       </Grid>
     </form>
   );

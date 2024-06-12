@@ -26,7 +26,7 @@ const formSchema = z.object({
   catchesPublic: z.boolean(),
   leaderId: z.string().optional().nullable(),
   emblem: z.string().optional().nullable(),
-  id: z.string().optional().nullable(),
+  id: z.string().uuid().optional().nullable(),
   createdAt: z.string().datetime().optional().nullable(),
 });
 const mapValuesToFormData = async (

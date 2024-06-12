@@ -11,6 +11,8 @@ import {
   IGroupCatchModel,
   IPartialGroupCatchModel,
 } from "../models/IGroupCatchModel";
+import { IGroupCatchCommentModel } from "../models/IGroupCatchComment";
+import { SaveCommentInput } from "../components/CatchComponents/CatchCommentForm";
 interface ValidationErrorResponse {
   type: string;
   title: string;
@@ -348,5 +350,35 @@ export default abstract class BackendApiServiceProvider {
       })
       .catch(this._generalErrorHandler);
     return data;
+  }
+  public static async GetCatchComments(catchId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<IGroupCatchCommentModel[]>(
+        `GroupCatch/GetCommentsForCatch?catchId=${catchId}`,
+        {
+          headers: { Authorization: this._formatAccessToken(accessToken) },
+        }
+      )
+      .catch(this._generalErrorHandler);
+    return data;
+  }
+  public static async DeleteComment(id: number, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<string>(`GroupCatch/DeleteComment?id=${id}`, {
+        headers: { Authorization: this._formatAccessToken(accessToken) },
+      })
+      .catch(this._generalErrorHandler);
+    return Number(data);
+  }
+  public static async SaveComment(
+    comment: SaveCommentInput,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .post<string>("GroupCatch/CommentOnCatch", comment, {
+        headers: { Authorization: this._formatAccessToken(accessToken) },
+      })
+      .catch(this._generalErrorHandler);
+    return Number(data);
   }
 }

@@ -143,6 +143,12 @@ namespace fsCore.Service
             var foundGroup = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return foundGroup;
         }
+        public async Task<ICollection<Group>> GetGroupsWithoutEmblemForInternalUse(ICollection<Guid> groupId)
+        {
+            var foundGroups = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            return foundGroups;
+        }
+
         public async Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Positions", "Leader" }) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
@@ -164,14 +170,7 @@ namespace fsCore.Service
             }
             var foundMembers = await _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
             var finalMembersList = foundMembers?.ToArray() ?? Array.Empty<GroupMember>();
-            for (var i = 0; i < finalMembersList.Length; i++)
-            {
-                var member = finalMembersList[i];
-                if (member.User?.Email != currentUser.Email)
-                {
-                    member.User?.RemoveSensitive();
-                }
-            }
+            finalMembersList.RemoveSensitive();
             return finalMembersList;
         }
         public async Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser)

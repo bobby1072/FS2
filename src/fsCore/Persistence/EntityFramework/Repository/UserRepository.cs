@@ -8,9 +8,15 @@ namespace Persistence.EntityFramework.Repository
     internal class UserRepository : BaseRepository<UserEntity, User>, IUserRepository
     {
         public UserRepository(IDbContextFactory<FsContext> dbContextFactory) : base(dbContextFactory) { }
-        protected override UserEntity _runtimeToEntity(User runtimeObj)
+        protected override UserEntity RuntimeToEntity(User runtimeObj)
         {
             return UserEntity.RuntimeToEntity(runtimeObj);
+        }
+        public async Task<ICollection<User>> GetUsers(ICollection<Guid> ids)
+        {
+            await using var context = await DbContextFactory.CreateDbContextAsync();
+            var foundUsers = await context.User.Where(x => ids.Contains(x.Id)).ToArrayAsync();
+            return foundUsers.Select(x => x.ToRuntime()).ToArray();
         }
         public async Task<bool> IsUserNameUnique(User runtimeObj)
         {
@@ -24,7 +30,7 @@ namespace Persistence.EntityFramework.Repository
             var foundUsersLike = await context
                 .User
                 .Where(x => x.Username.ToLower().Contains(searchTerm.ToLower()))
-                .Take(10)
+                .Take(30)
                 .ToArrayAsync();
             return foundUsersLike?.Select(x => new UserWithoutEmail { EmailVerified = x.EmailVerified, Id = x.Id, Name = x.Name, Username = x.Username }).ToArray() ?? Array.Empty<UserWithoutEmail>();
         }

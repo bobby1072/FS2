@@ -6,7 +6,7 @@ namespace Persistence.EntityFramework.Repository
 {
     internal class WorldFishRepository : BaseRepository<WorldFishEntity, WorldFish>, IWorldFishRepository
     {
-        protected override WorldFishEntity _runtimeToEntity(WorldFish runtimeObj)
+        protected override WorldFishEntity RuntimeToEntity(WorldFish runtimeObj)
         {
             return WorldFishEntity.RuntimeToEntity(runtimeObj);
         }
