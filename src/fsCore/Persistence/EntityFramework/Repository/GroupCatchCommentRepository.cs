@@ -18,9 +18,10 @@ namespace Persistence.EntityFramework.Repository
         {
             await using var dbContext = await DbContextFactory.CreateDbContextAsync();
             var comments = await dbContext.GroupCatchComment
-                .Include(c => c.TaggedUsers)
                 .Include(c => c.User)
-                .Where(c => c.GroupCatchId == catchId)
+                .Include(c => c.TaggedUsers)!
+                .ThenInclude(c => c.User)
+                .Where(c => c.CatchId == catchId)
                 .ToArrayAsync();
             return comments?.Select(x => x.ToRuntime()).ToArray();
         }

@@ -5,29 +5,17 @@ namespace Persistence.EntityFramework
 {
     internal class FsContext : DbContext
     {
-        // protected override void OnModelCreating(ModelBuilder modelBuilder)
-        // {
-        //     modelBuilder.Entity<GroupEntity>()
-        //         .HasOne(g => g.Leader)
-        //         .WithMany()
-        //         .HasForeignKey(g => g.LeaderId);
-        //     modelBuilder.Entity<GroupEntity>()
-        //         .HasMany(g => g.Members)
-        //         .WithOne(gm => gm.Group)
-        //         .HasForeignKey(gm => gm.GroupId);
-        //     modelBuilder.Entity<GroupEntity>()
-        //         .HasMany(g => g.Positions)
-        //         .WithOne(gp => gp.Group)
-        //         .HasForeignKey(gp => gp.GroupId);
-        //     modelBuilder.Entity<GroupEntity>()
-        //         .HasMany(g => g.Catches)
-        //         .WithOne(gc => gc.Group)
-        //         .HasForeignKey(gc => gc.GroupId);
-        //     modelBuilder.Entity<GroupMemberEntity>()
-        //         .HasOne(gm => gm.User)
-        //         .WithMany()
-        //         .HasForeignKey(gm => gm.UserId);
-        // }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<GroupCatchCommentEntity>()
+                .HasMany(c => c.TaggedUsers)
+                .WithOne()
+                .HasForeignKey(tu => tu.CommentId);
+            modelBuilder.Entity<GroupCatchCommentTaggedUsersEntity>()
+                .HasOne(tu => tu.User)
+                .WithOne()
+                .HasForeignKey<GroupCatchCommentTaggedUsersEntity>(tu => tu.UserId);
+        }
         public FsContext(DbContextOptions options) : base(options) { }
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
         public virtual DbSet<GroupCatchCommentTaggedUsersEntity> CommentTaggedUsers { get; set; }

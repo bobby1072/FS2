@@ -4,6 +4,7 @@ export interface IGroupCatchCommentTaggedUsersModel {
   id?: number;
   commentId: number;
   userId: string;
+  user?: Omit<IUserModel, "email">;
 }
 
 export interface IGroupCatchCommentModel {

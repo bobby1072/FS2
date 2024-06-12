@@ -14,6 +14,7 @@ import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { SimpleLongLatCatchMarkerWithPopup } from "../components/CatchComponents/CatchMarker";
 import { CatchPaperForm } from "../components/CatchComponents/CatchPaperForm";
 import { CatchCommentForm } from "../components/CatchComponents/CatchCommentForm";
+import { CatchCommentSection } from "../components/CatchComponents/CatchCommentSection";
 
 export const IndividualCatchPage: React.FC = () => {
   const { id: catchId } = useParams<{ id: string }>();
@@ -23,6 +24,7 @@ export const IndividualCatchPage: React.FC = () => {
     error: catchError,
   } = useGetFullCatchQuery(catchId);
   const { permissionManager } = useCurrentPermissionManager();
+
   if (catchLoading) return <Loading fullScreen />;
   else if (
     fullCatch &&
@@ -61,7 +63,7 @@ export const IndividualCatchPage: React.FC = () => {
             PermissionFields.GroupCatch
           ) && (
             <Grid item width={"100%"}>
-              <CatchCommentForm groupCatchId={catchId!} />
+              <CatchCommentSection groupCatchId={catchId!} />
             </Grid>
           )}
         </Grid>

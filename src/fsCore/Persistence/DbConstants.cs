@@ -2,7 +2,7 @@
 {
     internal static class DbConstants
     {
-        public const string MainSchema = "public";
+        public const string PublicSchema = "public";
 
         internal static class ErrorCodesAndMessages
         {

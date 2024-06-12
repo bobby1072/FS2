@@ -10,6 +10,7 @@ import { useSearchUsers } from "../../common/hooks/SearchUsers";
 import { useEffect, useState } from "react";
 import { IUserModel } from "../../models/IUserModel";
 import { ErrorComponent } from "../../common/ErrorComponent";
+import GroupCatchCommentTagsUtils from "./GroupCatchCommentTagsUtils";
 const inputStyle = {
   control: {
     backgroundColor: "#fff",
@@ -138,7 +139,13 @@ export const CatchCommentForm: React.FC<{
     <form
       id="catchCommentForm"
       onSubmit={handleSubmit((v) => {
-        saveComment(v);
+        saveComment({
+          ...v,
+          comment:
+            GroupCatchCommentTagsUtils.ConvertRawTagStringToFormattedTagString(
+              v.comment
+            ),
+        });
       })}
     >
       <Grid

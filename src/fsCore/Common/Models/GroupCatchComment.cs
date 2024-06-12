@@ -47,7 +47,7 @@ namespace Common.Models
             CommentId = commentId;
             UserId = userId;
         }
-        public GroupCatchCommentTaggedUsers(int id, int commentId, Guid userId)
+        public GroupCatchCommentTaggedUsers(int id, int commentId, Guid userId, User? user = null)
         {
             Id = id;
             CommentId = commentId;
@@ -56,6 +56,7 @@ namespace Common.Models
         public int? Id { get; set; }
         public int CommentId { get; set; }
         public Guid UserId { get; set; }
+        public User? User { get; set; }
     }
     public static partial class GroupCatchCommentUtils
     {
