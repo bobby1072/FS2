@@ -170,14 +170,7 @@ namespace fsCore.Service
             }
             var foundMembers = await _groupMemberRepo.GetMany(groupId, _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "User" });
             var finalMembersList = foundMembers?.ToArray() ?? Array.Empty<GroupMember>();
-            for (var i = 0; i < finalMembersList.Length; i++)
-            {
-                var member = finalMembersList[i];
-                if (member.User?.Email != currentUser.Email)
-                {
-                    member.User?.RemoveSensitive();
-                }
-            }
+            finalMembersList.RemoveSensitive();
             return finalMembersList;
         }
         public async Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser)

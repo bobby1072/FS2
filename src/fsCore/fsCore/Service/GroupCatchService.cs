@@ -173,7 +173,7 @@ namespace fsCore.Service
                 var taggedUsersJob = FindTaggedUsersFromComment(groupCatchComment.Comment);
                 if (groupCatchComment.TaggedUsers?.Any() == true)
                 {
-                    var deleteTaggedUsersJob = _taggedUsersRepo.Delete(groupCatchComment.TaggedUsers?.ToArray() ?? Array.Empty<GroupCatchCommentTaggedUsers>());
+                    var deleteTaggedUsersJob = _taggedUsersRepo.Delete(new[] { foundId });
                     await Task.WhenAll(deleteTaggedUsersJob, taggedUsersJob);
                 }
                 var taggedUsers = await taggedUsersJob;
@@ -206,11 +206,9 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _commentRepo.GetAllForCatch(catchId))?.Select(x =>
-            {
-                x.User?.RemoveSensitive();
-                return x;
-            }).ToArray() ?? Array.Empty<GroupCatchComment>();
+            var foundComments = await _commentRepo.GetAllForCatch(catchId) ?? Array.Empty<GroupCatchComment>();
+            foundComments.RemoveSensitive();
+            return foundComments;
         }
     }
 }

@@ -52,6 +52,7 @@ namespace Common.Models
             Id = id;
             CommentId = commentId;
             UserId = userId;
+            User = user;
         }
         public int? Id { get; set; }
         public int CommentId { get; set; }

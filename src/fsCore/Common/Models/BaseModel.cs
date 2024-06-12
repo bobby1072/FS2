@@ -43,14 +43,33 @@ namespace Common.Models
         }
         public virtual void RemoveSensitive()
         {
-            var allProperties = this.GetType().GetProperties();
+            var allProperties = GetType().GetProperties();
             for (var i = 0; i < allProperties.Length; i++)
             {
                 var property = allProperties[i];
-                if (property?.GetCustomAttribute<SensitiveProperty>() is not null)
+                var foundProp = property.GetValue(this);
+                if (foundProp is BaseModel deepBaseModel)
+                {
+                    deepBaseModel.RemoveSensitive();
+                }
+                else if (foundProp is IEnumerable<BaseModel> deepBaseModels)
+                {
+                    deepBaseModels.RemoveSensitive();
+                }
+                else if (property?.GetCustomAttribute<SensitiveProperty>() is not null)
                 {
                     property.SetValue(this, null);
                 }
+            }
+        }
+    }
+    public static class BaseModelExtensionMethods
+    {
+        public static void RemoveSensitive<TModel>(this TModel model) where TModel : IEnumerable<BaseModel>
+        {
+            for (int i = 0; i < model.Count(); i++)
+            {
+                model.ElementAt(i).RemoveSensitive();
             }
         }
     }
