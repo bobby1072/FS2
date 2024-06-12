@@ -65,7 +65,6 @@ const IndividualGroupPageInner: React.FC<{
     error: groupCatchesError,
     isLoading: groupCatchesLoading,
   } = useGetAllPartialCatchesForGroupQuery(groupId!);
-  const [currentMapZoom, setCurrentMapZoom] = useState<number>();
   const {
     name: groupName,
     emblem: groupEmblem,
@@ -237,8 +236,8 @@ const IndividualGroupPageInner: React.FC<{
                   group={mainGroup}
                   groupCatches={groupCatches}
                   longitude={Number(longitude)}
-                  setCurrentMapZoom={setCurrentMapZoom}
-                  currentMapZoom={currentMapZoom}
+                  // setCurrentMapZoom={setCurrentMapZoom}
+                  // currentMapZoom={currentMapZoom}
                   formMethods={formMethods}
                 />
               </Grid>

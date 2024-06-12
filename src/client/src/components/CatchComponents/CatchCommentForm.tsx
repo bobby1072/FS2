@@ -84,7 +84,7 @@ const mapDefaultValues = (
     comment: comment.comment,
     groupCatchId: comment.groupCatchId,
     userId: comment.userId,
-    createdAt: comment.createdAt,
+    createdAt: new Date(comment.createdAt),
   };
 };
 export const CatchCommentForm: React.FC<{
@@ -183,7 +183,6 @@ export const CatchCommentForm: React.FC<{
             <Mention
               trigger={"@"}
               isLoading={foundUsersLoading}
-              appendSpaceOnAdd
               displayTransform={(_, display) => `@${display}`}
               style={{ backgroundColor: "#EBEBEB" }}
               data={options.map((x) => ({ id: x.id!, display: x.username }))}

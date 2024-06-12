@@ -13,7 +13,6 @@ import { Grid } from "@mui/material";
 import { GenerateMap } from "../components/MapComponents/GenerateMap";
 import { SimpleLongLatCatchMarkerWithPopup } from "../components/CatchComponents/CatchMarker";
 import { CatchPaperForm } from "../components/CatchComponents/CatchPaperForm";
-import { CatchCommentForm } from "../components/CatchComponents/CatchCommentForm";
 import { CatchCommentSection } from "../components/CatchComponents/CatchCommentSection";
 
 export const IndividualCatchPage: React.FC = () => {
@@ -24,7 +23,6 @@ export const IndividualCatchPage: React.FC = () => {
     error: catchError,
   } = useGetFullCatchQuery(catchId);
   const { permissionManager } = useCurrentPermissionManager();
-
   if (catchLoading) return <Loading fullScreen />;
   else if (
     fullCatch &&
@@ -48,7 +46,7 @@ export const IndividualCatchPage: React.FC = () => {
   return (
     <PageBase>
       <AppAndDraw>
-        <Grid container justifyContent="center" alignItems="center" spacing={2}>
+        <Grid container justifyContent="center" alignItems="center" spacing={4}>
           <Grid item width={"80%"}>
             <CatchPaperForm fullCatch={fullCatch} />
           </Grid>
@@ -63,7 +61,10 @@ export const IndividualCatchPage: React.FC = () => {
             PermissionFields.GroupCatch
           ) && (
             <Grid item width={"100%"}>
-              <CatchCommentSection groupCatchId={catchId!} />
+              <CatchCommentSection
+                groupId={fullCatch.groupId}
+                groupCatchId={catchId!}
+              />
             </Grid>
           )}
         </Grid>

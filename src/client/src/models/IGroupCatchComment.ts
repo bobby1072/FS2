@@ -13,6 +13,6 @@ export interface IGroupCatchCommentModel {
   userId: string;
   user?: Omit<IUserModel, "email">;
   comment: string;
-  createdAt: Date;
+  createdAt: string;
   taggedUsers?: IGroupCatchCommentTaggedUsersModel[];
 }

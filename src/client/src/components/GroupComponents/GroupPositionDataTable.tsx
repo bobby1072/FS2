@@ -198,6 +198,7 @@ export const GroupPositionDataTable: React.FC<{
               <Grid item>
                 <IconButton
                   color="primary"
+                  disabled={deletingPosition}
                   onClick={() => {
                     setPositionToDeleteId(id);
                   }}

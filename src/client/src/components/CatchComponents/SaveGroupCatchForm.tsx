@@ -23,8 +23,8 @@ import {
 import { faker } from "@faker-js/faker";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
-import { SpeciesSearch } from "./SpeciesSearch";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { SpeciesSearch } from "../../common/SpeciesSearch";
 export const formSchema = z.object({
   id: z.string().uuid().optional().nullable(),
   groupId: z.string().uuid(),

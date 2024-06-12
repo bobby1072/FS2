@@ -118,9 +118,9 @@ export const GroupMembersDataTable: React.FC<{
             <Grid container spacing={1} alignItems="center">
               <Grid item xs={5} md={1} sm={3}>
                 <Avatar
-                  size={"30"}
                   email={value.email}
                   initials={value.email ? undefined : value.initials}
+                  size={"30"}
                   round={"4px"}
                 />
               </Grid>
@@ -187,6 +187,7 @@ export const GroupMembersDataTable: React.FC<{
               <Grid item>
                 <IconButton
                   color="primary"
+                  disabled={deletingMember}
                   onClick={() => {
                     setMemberToDeleteId(id);
                   }}

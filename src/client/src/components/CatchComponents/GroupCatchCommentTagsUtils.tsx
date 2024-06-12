@@ -36,7 +36,7 @@ export default abstract class GroupCatchCommentTagsUtils {
                 variant={"filled"}
                 label={
                   <Link
-                    to={`/viewperson/${personNeededToPlatedIn.id}`}
+                    to={`/Account/${personNeededToPlatedIn.userId}`}
                     component={RouterLink}
                   >
                     @{personNeededToPlatedIn.user?.username}
