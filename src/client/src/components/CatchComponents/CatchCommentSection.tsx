@@ -5,15 +5,26 @@ import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
 import { GroupCatchCommentItem } from "./GroupCatchCommentItem";
 import { useDeleteCommentMutation } from "./hooks/DeleteComment";
+import { useSnackbar } from "notistack";
+import { useEffect } from "react";
 
 export const CatchCommentSection: React.FC<{
   groupCatchId: string;
   groupId: string;
-}> = ({ groupCatchId, groupId }) => {
+  useSnackBar?: boolean;
+}> = ({ groupCatchId, groupId, useSnackBar = false }) => {
   const { data: catchComments, error: catchCommentsError } =
     useGetCatchCommentsQuery(groupCatchId);
-  const { isLoading: isDeleting, mutate: deleteComment } =
-    useDeleteCommentMutation();
+  const {
+    isLoading: isDeleting,
+    mutate: deleteComment,
+    data: deletedCommentId,
+  } = useDeleteCommentMutation();
+  const { enqueueSnackbar } = useSnackbar();
+  useEffect(() => {
+    if (useSnackBar && deletedCommentId)
+      enqueueSnackbar("Comment deleted", { variant: "success" });
+  }, [deletedCommentId, enqueueSnackbar, useSnackBar]);
   return (
     <Paper elevation={2}>
       <Grid container overflow={"auto"}>

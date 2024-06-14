@@ -14,6 +14,7 @@ enum QueryKeys {
   GetFullCatch = "get-full-catch",
   GetCatchComments = "get-catch-comments",
   GetUser = "get-user",
+  GetCatchesForUser = "get-catches-for-user",
 }
 export default abstract class Constants {
   public static readonly QueryKeys: typeof QueryKeys = QueryKeys;

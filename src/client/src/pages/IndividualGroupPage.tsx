@@ -233,12 +233,10 @@ const IndividualGroupPageInner: React.FC<{
                 <GroupCatchesMap
                   catchToEdit={!!catchToEdit}
                   latitude={Number(latitude)}
-                  group={mainGroup}
                   groupCatches={groupCatches}
                   longitude={Number(longitude)}
-                  // setCurrentMapZoom={setCurrentMapZoom}
-                  // currentMapZoom={currentMapZoom}
-                  formMethods={formMethods}
+                  setLat={(lat) => formMethods.setValue("latitude", lat)}
+                  setLng={(lng) => formMethods.setValue("longitude", lng)}
                 />
               </Grid>
             )}
