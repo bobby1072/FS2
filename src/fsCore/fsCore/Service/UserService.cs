@@ -13,6 +13,15 @@ namespace fsCore.Service
     {
         private static readonly UserValidator _validator = new();
         public UserService(IUserRepository repository) : base(repository) { }
+        public async Task<User> GetUser(Guid id, UserWithGroupPermissionSet currentUser)
+        {
+            var foundUser = await GetUser(id);
+            if (currentUser.Id != foundUser.Id)
+            {
+                foundUser.RemoveSensitive();
+            }
+            return foundUser;
+        }
         public async Task<ICollection<User>> GetUser(ICollection<Guid> id)
         {
             var foundUsers = await _repo.GetUsers(id);

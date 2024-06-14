@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSnackbar } from "notistack";
 import { useSaveMemberMutation } from "./hooks/SaveMemberMutation";
 import { useEffect, useState } from "react";
-import { IUserModel } from "../../models/IUserModel";
+import { IUserWithoutEmailModel } from "../../models/IUserModel";
 import {
   Button,
   DialogActions,
@@ -81,7 +81,7 @@ export const AddMemberModal: React.FC<{
     IGroupPositionModel | undefined
   >(positions.find((x) => x.id === defaultValue?.positionId) ?? undefined);
   const [chosenUser, setChosenUser] = useState<
-    Omit<IUserModel, "email"> | undefined
+    IUserWithoutEmailModel | undefined
   >(defaultValue?.user as any);
   const { positionId, userId } = watch();
   const isSaveDisabled = !isDirty || isLoading || !positionId || !userId;

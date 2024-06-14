@@ -20,3 +20,5 @@ export interface IUserWithPermissionsRawModel extends IUserModel {
     }[];
   };
 }
+
+export interface IUserWithoutEmailModel extends Omit<IUserModel, "email"> {}

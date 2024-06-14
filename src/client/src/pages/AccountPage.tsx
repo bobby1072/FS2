@@ -6,6 +6,102 @@ import { AppAndDraw } from "../common/AppBar/AppAndDraw";
 import EditIcon from "@mui/icons-material/Edit";
 import { useState } from "react";
 import { EditUsernameModal } from "../components/AcountComponents/EditUsernameModal";
+import { useParams } from "react-router-dom";
+import { useGetUserQuery } from "../components/AcountComponents/hooks/GetUser";
+import { Loading } from "../common/Loading";
+import { ErrorComponent } from "../common/ErrorComponent";
+
+export const IndividualAccountPage: React.FC = () => {
+  const { id: userId } = useParams<{ id: string }>();
+  const {
+    data: foundUser,
+    isLoading: userLoading,
+    error: userError,
+  } = useGetUserQuery(userId!);
+  const { id: selfId } = useCurrentUser();
+  const [editUsernameModal, setEditUsernameModal] = useState<boolean>(false);
+  const isSelfPage = selfId === userId;
+  if (userLoading) return <Loading fullScreen />;
+  else if (userError) return <ErrorComponent error={userError} fullScreen />;
+  else if (!foundUser) return <ErrorComponent fullScreen />;
+  const initials = foundUser.name
+    ?.split(" ")
+    .map((x) => x[0])
+    .join("");
+  return (
+    <PageBase>
+      <AppAndDraw>
+        <Grid
+          container
+          justifyContent="center"
+          alignItems="center"
+          direction="column"
+          textAlign="center"
+        >
+          <Grid item sx={{ mb: 3 }}>
+            <Typography variant="h3" fontSize={50}>
+              Account
+            </Typography>
+          </Grid>
+          <Paper elevation={2} sx={{ padding: 6 }}>
+            <Grid item>
+              {isSelfPage ? (
+                <Avatar email={foundUser.email!} />
+              ) : (
+                <Avatar initials={initials} />
+              )}
+            </Grid>
+            <Grid item>
+              <Typography fontSize={30}>{foundUser.name}</Typography>
+            </Grid>
+            <Grid item width="100%">
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                direction="row"
+                spacing={0.1}
+              >
+                <Grid item>
+                  <Typography fontSize={23}>
+                    <strong>Username: </strong>
+                    {foundUser.username}
+                  </Typography>
+                </Grid>
+                {isSelfPage && (
+                  <Grid item>
+                    <IconButton
+                      onClick={() => {
+                        setEditUsernameModal(true);
+                      }}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                  </Grid>
+                )}
+              </Grid>
+            </Grid>
+            {isSelfPage && (
+              <Grid item>
+                <Typography fontSize={20}>
+                  <strong>Email: </strong>
+                  {foundUser.email}
+                </Typography>
+              </Grid>
+            )}
+          </Paper>
+        </Grid>
+      </AppAndDraw>
+      {editUsernameModal && (
+        <EditUsernameModal
+          closeModal={() => setEditUsernameModal(false)}
+          currentUsername={foundUser.username!}
+        />
+      )}
+    </PageBase>
+  );
+};
 
 export const AccountPage: React.FC = () => {
   const { email, name: givenName, username } = useCurrentUser();

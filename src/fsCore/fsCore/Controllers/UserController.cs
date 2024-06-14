@@ -24,6 +24,14 @@ namespace fsCore.Controllers
             user.Username = newUsername;
             return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id))).Id);
         }
+        [ProducesDefaultResponseType(typeof(User))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser]
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetOneUser(Guid userId)
+        {
+            return Ok(await _userService.GetUser(userId, GetCurrentUserWithPermissions()));
+        }
         [ProducesDefaultResponseType(typeof(UserWithoutEmail[]))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUser]
@@ -41,5 +49,6 @@ namespace fsCore.Controllers
         {
             return Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions()));
         }
+
     }
 }

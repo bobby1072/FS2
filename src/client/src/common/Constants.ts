@@ -1,6 +1,6 @@
 enum QueryKeys {
   ClientConfig = "client-config",
-  GetUser = "get-user",
+  GetSelf = "get-self",
   GetUserConstantRefresh = "get-user-constant-refresh",
   GetGroupCount = "get-group-count",
   GetSelfGroups = "get-self-groups",
@@ -13,6 +13,7 @@ enum QueryKeys {
   GetAllPartialCatchesFroGroup = "get-all-partial-catches-for-group",
   GetFullCatch = "get-full-catch",
   GetCatchComments = "get-catch-comments",
+  GetUser = "get-user",
 }
 export default abstract class Constants {
   public static readonly QueryKeys: typeof QueryKeys = QueryKeys;

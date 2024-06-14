@@ -1,5 +1,5 @@
 import { IGroupModel } from "./IGroupModel";
-import { IUserModel } from "./IUserModel";
+import { IUserModel, IUserWithoutEmailModel } from "./IUserModel";
 import { IWorldFishModel } from "./IWorldFishModel";
 
 export interface IPartialGroupCatchModel {
@@ -11,7 +11,7 @@ export interface IPartialGroupCatchModel {
   weight: number;
   length: number;
   groupId: string;
-  user: Omit<IUserModel, "email">;
+  user: IUserWithoutEmailModel;
   worldFish?: IWorldFishModel | null;
   worldFishTaxocode?: string | null;
 }
@@ -46,7 +46,7 @@ export class RuntimePartialGroupCatchModel
   public weight: number;
   public groupId: string;
   public length: number;
-  public user: Omit<IUserModel, "email">;
+  public user: IUserWithoutEmailModel;
   public worldFish?: IWorldFishModel | null;
   public worldFishTaxocode?: string | null;
   public constructor(rawPartialGroupCatchModel: IPartialGroupCatchModel) {
