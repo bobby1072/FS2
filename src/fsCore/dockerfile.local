@@ -1,0 +1,37 @@
+FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
+
+RUN apk add --no-cache icu-libs
+RUN apk add --no-cache icu-data-full
+
+RUN adduser --uid 10000 runner --disabled-password
+USER 10000
+
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS publish
+ARG CONF=Release
+
+WORKDIR /src
+
+COPY src/fsCore/Common/*.csproj ./fsCore/Common/
+COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
+COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
+COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
+
+RUN dotnet restore fsCore/fsCore/fsCore.csproj 
+
+COPY src/fsCore/Common/ ./fsCore/Common/
+COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
+COPY src/fsCore/fsCore/ ./fsCore/fsCore/
+COPY src/fsCore/Persistence/ ./fsCore/Persistence/
+
+WORKDIR /src/fsCore/fsCore
+ARG CONF=Release
+RUN dotnet publish fsCore.csproj -c ${CONF} -o /app
+
+FROM base AS final
+ARG CONF=Release
+WORKDIR /app
+COPY --from=publish /app .
+
+ENTRYPOINT ["dotnet", "fsCore.dll"]
