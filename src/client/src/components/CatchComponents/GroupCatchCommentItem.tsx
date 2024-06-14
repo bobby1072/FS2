@@ -13,34 +13,34 @@ import {
   PermissionFields,
   useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
-import { useDeleteCommentMutation } from "./hooks/DeleteComment";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useCurrentUser } from "../../common/contexts/UserContext";
-import { ErrorComponent } from "../../common/ErrorComponent";
 import GroupCatchCommentTagsUtils from "./GroupCatchCommentTagsUtils";
+import { formattedDate } from "../../utils/DateTime";
 
 export const GroupCatchCommentItem: React.FC<{
   groupCatchComment: IGroupCatchCommentModel;
   groupId: string;
-}> = ({ groupCatchComment, groupId }) => {
+  onDelete?: {
+    deleteFunc: (id: number) => void;
+    deleteLoading: boolean;
+  };
+}> = ({ groupCatchComment, groupId, onDelete }) => {
   const { permissionManager } = useCurrentPermissionManager();
-  const {
-    error: deleteError,
-    isLoading: isDeleting,
-    mutate: deleteComment,
-  } = useDeleteCommentMutation();
   const { id: currentUserId } = useCurrentUser();
   const canDeleteComment =
-    permissionManager.Can(
+    onDelete &&
+    (permissionManager.Can(
       PermissionActions.Manage,
       groupId,
       PermissionFields.GroupCatch
-    ) || groupCatchComment.userId === currentUserId;
+    ) ||
+      groupCatchComment.userId === currentUserId);
   return (
     <Paper elevation={2}>
       <Grid
         container
-        spacing={3}
+        spacing={1.3}
         padding={1.4}
         justifyContent={"center"}
         alignItems={"center"}
@@ -59,9 +59,10 @@ export const GroupCatchCommentItem: React.FC<{
             Posted:{" "}
             <Chip
               color="default"
-              label={new Date(groupCatchComment.createdAt)
-                .toDateString()
-                .substring(0, 10)}
+              label={formattedDate(
+                new Date(groupCatchComment.createdAt),
+                "dd/mm/yyyy"
+              )}
             />
           </Typography>
         </Grid>
@@ -76,19 +77,14 @@ export const GroupCatchCommentItem: React.FC<{
               <IconButton
                 size="small"
                 color="primary"
-                disabled={isDeleting}
+                disabled={onDelete.deleteLoading}
                 onClick={() => {
-                  deleteComment(groupCatchComment.id!);
+                  onDelete.deleteFunc(groupCatchComment.id!);
                 }}
               >
                 <DeleteIcon />
               </IconButton>
             </Tooltip>
-          </Grid>
-        )}
-        {deleteError && (
-          <Grid item width={"100%"}>
-            <ErrorComponent error={deleteError} />
           </Grid>
         )}
       </Grid>

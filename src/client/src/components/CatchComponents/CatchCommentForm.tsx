@@ -113,8 +113,14 @@ export const CatchCommentForm: React.FC<{
     data: savedCommentId,
     isLoading: savedCommentIdLoading,
     mutate: saveComment,
+    error: saveCommentError,
   } = useSaveCommentMutation();
   const [personSearchTerm, setPersonSearchTerm] = useState("");
+  useEffect(() => {
+    if (saveCommentError) {
+      formReset();
+    }
+  }, [saveCommentError, formReset]);
   useEffect(() => {
     if (savedCommentId) {
       formReset();
@@ -192,6 +198,11 @@ export const CatchCommentForm: React.FC<{
         {formErrors && Object.values(formErrors).some((x) => !!x) && (
           <Grid item width={"100%"}>
             <ErrorComponent error={formErrors} />
+          </Grid>
+        )}
+        {saveCommentError && (
+          <Grid item width={"100%"}>
+            <ErrorComponent error={saveCommentError} />
           </Grid>
         )}
         <Grid item width={"100%"} display={"flex"} justifyContent={"flex-end"}>

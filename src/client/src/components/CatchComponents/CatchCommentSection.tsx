@@ -4,6 +4,7 @@ import { CatchCommentForm } from "./CatchCommentForm";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import { ApiException } from "../../common/ApiException";
 import { GroupCatchCommentItem } from "./GroupCatchCommentItem";
+import { useDeleteCommentMutation } from "./hooks/DeleteComment";
 
 export const CatchCommentSection: React.FC<{
   groupCatchId: string;
@@ -11,6 +12,8 @@ export const CatchCommentSection: React.FC<{
 }> = ({ groupCatchId, groupId }) => {
   const { data: catchComments, error: catchCommentsError } =
     useGetCatchCommentsQuery(groupCatchId);
+  const { isLoading: isDeleting, mutate: deleteComment } =
+    useDeleteCommentMutation();
   return (
     <Paper elevation={2}>
       <Grid container overflow={"auto"}>
@@ -18,7 +21,7 @@ export const CatchCommentSection: React.FC<{
           <Grid item width="100%" mt={2}>
             <Grid
               container
-              maxHeight={"50vh"}
+              maxHeight={"40vh"}
               overflow={"auto"}
               spacing={3.5}
               padding={1.7}
@@ -28,6 +31,10 @@ export const CatchCommentSection: React.FC<{
                   <GroupCatchCommentItem
                     groupId={groupId}
                     groupCatchComment={c}
+                    onDelete={{
+                      deleteFunc: deleteComment,
+                      deleteLoading: isDeleting,
+                    }}
                   />
                 </Grid>
               ))}
@@ -35,7 +42,7 @@ export const CatchCommentSection: React.FC<{
           </Grid>
         )}
         <Grid item width="100%">
-          <Grid container spacing={2} padding={0.5}>
+          <Grid container spacing={2} padding={1}>
             {catchCommentsError && (
               <Grid item width="100%">
                 <ErrorComponent
