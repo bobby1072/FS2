@@ -62,6 +62,7 @@ export const IndividualCatchPage: React.FC = () => {
           ) && (
             <Grid item width={"100%"}>
               <CatchCommentSection
+                useSnackBar
                 groupId={fullCatch.groupId}
                 groupCatchId={catchId!}
               />

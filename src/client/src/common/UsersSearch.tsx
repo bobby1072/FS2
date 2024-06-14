@@ -1,17 +1,17 @@
 import { Autocomplete, IconButton, TextField } from "@mui/material";
-import { IUserModel } from "../models/IUserModel";
+import { IUserWithoutEmailModel } from "../models/IUserModel";
 import { useSearchUsers } from "./hooks/SearchUsers";
 import { Close } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 
 export const UsersSearch: React.FC<{
   filter?: (
-    value: Omit<IUserModel, "email">,
+    value: IUserWithoutEmailModel,
     index: number,
-    array: Omit<IUserModel, "email">[]
+    array: IUserWithoutEmailModel[]
   ) => boolean;
-  value?: Omit<IUserModel, "email">;
-  onChange: (value?: Omit<IUserModel, "email">) => void;
+  value?: IUserWithoutEmailModel;
+  onChange: (value?: IUserWithoutEmailModel) => void;
 }> = ({ filter = () => true, value, onChange }) => {
   const { data, isLoading, mutate, reset } = useSearchUsers();
   const [searchTerm, setSearchTerm] = useState("");

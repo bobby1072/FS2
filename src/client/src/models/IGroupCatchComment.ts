@@ -1,17 +1,17 @@
-import { IUserModel } from "./IUserModel";
+import { IUserWithoutEmailModel } from "./IUserModel";
 
 export interface IGroupCatchCommentTaggedUsersModel {
   id?: number;
   commentId: number;
   userId: string;
-  user?: Omit<IUserModel, "email">;
+  user?: IUserWithoutEmailModel;
 }
 
 export interface IGroupCatchCommentModel {
   id?: number;
   groupCatchId: string;
   userId: string;
-  user?: Omit<IUserModel, "email">;
+  user?: IUserWithoutEmailModel;
   comment: string;
   createdAt: string;
   taggedUsers?: IGroupCatchCommentTaggedUsersModel[];

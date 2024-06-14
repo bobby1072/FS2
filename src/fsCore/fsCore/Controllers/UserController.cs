@@ -21,8 +21,15 @@ namespace fsCore.Controllers
         public async Task<IActionResult> ChangeUserName(string newUsername)
         {
             var user = GetCurrentUser();
-            user.Username = newUsername;
-            return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, user.Username, user.Id))).Id);
+            return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, newUsername, user.Id))).Id);
+        }
+        [ProducesDefaultResponseType(typeof(User))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [RequiredUser]
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetOneUser(Guid userId)
+        {
+            return Ok(await _userService.GetUser(userId, GetCurrentUserWithPermissions()));
         }
         [ProducesDefaultResponseType(typeof(UserWithoutEmail[]))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -34,12 +41,13 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(RawUserPermission))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
-        [RequiredUser]
+        [RequiredUser(true)]
         [RequiredUserWithGroupPermissions(true)]
         [HttpGet("SelfWithGroupPermissions")]
         public async Task<IActionResult> GetUserWithPermissions()
         {
             return Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions()));
         }
+
     }
 }

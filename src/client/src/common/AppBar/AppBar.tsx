@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
 // import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
+import { useCurrentUser } from "../contexts/UserContext";
 // const Search = styled("div")(({ theme }) => ({
 //   position: "relative",
 //   borderRadius: theme.shape.borderRadius,
@@ -51,6 +52,7 @@ export const MainAppBar: React.FC<{
   setDrawOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ drawOpen, setDrawOpen }) => {
   const menuId = "primary-search-account-menu";
+  const { id: userId } = useCurrentUser();
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -91,7 +93,7 @@ export const MainAppBar: React.FC<{
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              href="/Account"
+              href={`/Account/${userId}`}
               color="inherit"
             >
               <AccountCircle />

@@ -126,7 +126,7 @@ namespace fsCore.Service
             {
                 HashSet<Guid> groupIds = allPartialCatches.Select(x => x.GroupId).ToHashSet();
                 var foundGroups = await _groupService.GetGroupsWithoutEmblemForInternalUse(groupIds);
-                return allPartialCatches.Where(x => foundGroups.FirstOrDefault(y => y.CatchesPublic is true) is not null || currentUser.GroupPermissions.Can(PermissionConstants.Read, x.GroupId, nameof(GroupCatch))).Select(x =>
+                return allPartialCatches.Where(x => foundGroups.FirstOrDefault(y => y.Id == x.GroupId)?.CatchesPublic is true || currentUser.GroupPermissions.Can(PermissionConstants.Read, x.GroupId, nameof(GroupCatch))).Select(x =>
                 {
                     x.User?.RemoveSensitive();
                     return x;

@@ -1,6 +1,10 @@
 import axios, { AxiosInstance } from "axios";
 import { IClientConfigResponse } from "../models/IClientConfigResponse";
-import { IUserModel, IUserWithPermissionsRawModel } from "../models/IUserModel";
+import {
+  IUserModel,
+  IUserWithPermissionsRawModel,
+  IUserWithoutEmailModel,
+} from "../models/IUserModel";
 import { IGroupModel } from "../models/IGroupModel";
 import { ApiException } from "../common/ApiException";
 import { SaveGroupPositionInput } from "../components/GroupComponents/GroupPositionModal";
@@ -104,7 +108,7 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
-  public static async GetUser(accessToken: string): Promise<IUserModel> {
+  public static async GetSelf(accessToken: string): Promise<IUserModel> {
     const { data } = await this._httpClient
       .get<IUserModel>("User/Self", {
         headers: {
@@ -235,7 +239,7 @@ export default abstract class BackendApiServiceProvider {
   }
   public static async SearchUsers(searchTerm: string, accessToken: string) {
     const { data } = await this._httpClient
-      .get<Omit<IUserModel, "email">[]>(
+      .get<IUserWithoutEmailModel[]>(
         `User/SearchUsers?searchTerm=${searchTerm}`,
         {
           headers: {
@@ -380,5 +384,30 @@ export default abstract class BackendApiServiceProvider {
       })
       .catch(this._generalErrorHandler);
     return Number(data);
+  }
+  public static async GetUser(userId: string, accessToken: string) {
+    const { data } = await this._httpClient
+      .get<IUserWithoutEmailModel & { email?: string | null }>(
+        `User/GetUser?userId=${userId}`,
+        {
+          headers: { Authorization: this._formatAccessToken(accessToken) },
+        }
+      )
+      .catch(this._generalErrorHandler);
+    return data;
+  }
+  public static async GetPartialCatchesForUser(
+    userId: string,
+    accessToken: string
+  ) {
+    const { data } = await this._httpClient
+      .get<IPartialGroupCatchModel[]>(
+        `GroupCatch/GetPartialCatchesForUser?userId=${userId}`,
+        {
+          headers: { Authorization: this._formatAccessToken(accessToken) },
+        }
+      )
+      .catch(this._generalErrorHandler);
+    return data;
   }
 }

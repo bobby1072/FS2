@@ -1,4 +1,10 @@
-import React, { ReactNode, createContext, useContext } from "react";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { IUserWithPermissionsRawModel } from "../../models/IUserModel";
 import { useGetUserWithPermissionsQuery } from "../hooks/GetUserQuery";
 import { Loading } from "../Loading";
@@ -26,9 +32,16 @@ export const useCurrentUser = () => {
 export const UserContextProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { data: userPerms, isLoading } = useGetUserWithPermissionsQuery();
-  if (isLoading && !userPerms) return <Loading fullScreen />;
+  const [userPermState, setUserPermState] =
+    useState<IUserWithPermissionsRawModel>();
+  const { data, isLoading } = useGetUserWithPermissionsQuery();
+  useEffect(() => {
+    setUserPermState(data);
+  }, [data]);
+  if (isLoading && !userPermState) return <Loading fullScreen />;
   return (
-    <UserContext.Provider value={userPerms}>{children}</UserContext.Provider>
+    <UserContext.Provider value={userPermState}>
+      {children}
+    </UserContext.Provider>
   );
 };

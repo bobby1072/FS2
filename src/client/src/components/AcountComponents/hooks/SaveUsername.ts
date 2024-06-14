@@ -20,7 +20,7 @@ export const useSaveUsernameMutation = () => {
   );
   useEffect(() => {
     if (mutationResult.data) {
-      queryClient.refetchQueries(Constants.QueryKeys.GetUser);
+      queryClient.refetchQueries(Constants.QueryKeys.GetSelf);
     }
   }, [mutationResult.data, queryClient]);
   return { ...mutationResult };

@@ -4,7 +4,7 @@ services:
   fsapi:
     build:
       context: .
-      dockerfile: src/fsCore/dockerfile
+      dockerfile: src/fsCore/dockerfile.local
     ports:
       - 5234:80
     environment:

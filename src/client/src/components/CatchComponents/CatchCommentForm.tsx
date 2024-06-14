@@ -8,7 +8,7 @@ import { useSaveCommentMutation } from "./hooks/SaveComment";
 import { Mention, MentionsInput } from "react-mentions";
 import { useSearchUsers } from "../../common/hooks/SearchUsers";
 import { useEffect, useState } from "react";
-import { IUserModel } from "../../models/IUserModel";
+import { IUserWithoutEmailModel } from "../../models/IUserModel";
 import { ErrorComponent } from "../../common/ErrorComponent";
 import GroupCatchCommentTagsUtils from "./GroupCatchCommentTagsUtils";
 const inputStyle = {
@@ -102,7 +102,7 @@ export const CatchCommentForm: React.FC<{
     defaultValues: mapDefaultValues(userId!, groupCatchId, comment),
     resolver: zodResolver(commentSchema),
   });
-  const [options, setOptions] = useState<Omit<IUserModel, "email">[]>([]);
+  const [options, setOptions] = useState<IUserWithoutEmailModel[]>([]);
   const {
     data: foundUsers,
     isLoading: foundUsersLoading,
@@ -113,8 +113,14 @@ export const CatchCommentForm: React.FC<{
     data: savedCommentId,
     isLoading: savedCommentIdLoading,
     mutate: saveComment,
+    error: saveCommentError,
   } = useSaveCommentMutation();
   const [personSearchTerm, setPersonSearchTerm] = useState("");
+  useEffect(() => {
+    if (saveCommentError) {
+      formReset();
+    }
+  }, [saveCommentError, formReset]);
   useEffect(() => {
     if (savedCommentId) {
       formReset();
@@ -192,6 +198,11 @@ export const CatchCommentForm: React.FC<{
         {formErrors && Object.values(formErrors).some((x) => !!x) && (
           <Grid item width={"100%"}>
             <ErrorComponent error={formErrors} />
+          </Grid>
+        )}
+        {saveCommentError && (
+          <Grid item width={"100%"}>
+            <ErrorComponent error={saveCommentError} />
           </Grid>
         )}
         <Grid item width={"100%"} display={"flex"} justifyContent={"flex-end"}>

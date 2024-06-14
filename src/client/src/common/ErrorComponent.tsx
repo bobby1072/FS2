@@ -16,8 +16,6 @@ export const ErrorComponent: React.FC<{
         container
         justifyContent="center"
         alignItems="center"
-        direction="column"
-        spacing={4}
         textAlign="center"
         sx={{ minHeight: "103vh" }}
       >
@@ -66,10 +64,8 @@ export const ErrorComponent: React.FC<{
       container
       justifyContent="center"
       alignItems="center"
-      direction="column"
       width="100%"
       textAlign="center"
-      spacing={2}
     >
       {!error && (
         <Grid item width={"100%"}>

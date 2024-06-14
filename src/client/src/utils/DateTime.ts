@@ -423,7 +423,13 @@ export const isWeekendDay = (date: Date): boolean => {
     getISODayOfWeek(date) === DayOfWeek.Sunday
   );
 };
-
+export const formattedDate = (date: Date, format: "dd/mm/yyyy"): string => {
+  if (format === "dd/mm/yyyy") {
+    return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+  } else {
+    return date.toISOString().substring(0, 10);
+  }
+};
 export const getDateStringsInRange = (start: Date, end: Date) => {
   // Difference in ms divided by ms/day to get days. Add 1 to get inclusive date range
   const numberOfDaysInRange =

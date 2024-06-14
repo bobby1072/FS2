@@ -1,7 +1,7 @@
 import { AccountCircle } from "@mui/icons-material";
 import { AllGroupDisplayPage } from "../pages/GroupsPage";
 import GroupsIcon from "@mui/icons-material/Groups";
-import { AccountPage } from "../pages/AccountPage";
+import { IndividualAccountPage } from "../pages/AccountPage";
 import { IndividualGroupPage } from "../pages/IndividualGroupPage";
 import { IndividualCatchPage } from "../pages/IndividualCatchPage";
 
@@ -35,9 +35,9 @@ export const AuthenticatedRoutes: {
   },
   {
     text: "Account page",
-    link: "/Account",
+    link: "/Account/:id",
     showOnDrawer: false,
-    component: () => <AccountPage />,
+    component: () => <IndividualAccountPage />,
     icon: () => <AccountCircle />,
   },
 ];
