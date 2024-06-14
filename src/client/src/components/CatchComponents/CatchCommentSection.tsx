@@ -23,7 +23,7 @@ export const CatchCommentSection: React.FC<{
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     if (useSnackBar && deletedCommentId)
-      enqueueSnackbar("Comment deleted", { variant: "success" });
+      enqueueSnackbar("Comment deleted", { variant: "error" });
   }, [deletedCommentId, enqueueSnackbar, useSnackBar]);
   return (
     <Paper elevation={2}>
