@@ -19,12 +19,14 @@ import {
   PermissionActions,
   useCurrentPermissionManager,
 } from "../../common/contexts/AbilitiesContext";
+import { useNavigate } from "react-router-dom";
 export const GroupTab: React.FC<{
   group: IGroupModel;
   openModal: () => void;
 }> = ({ group, openModal }) => {
   const { permissionManager } = useCurrentPermissionManager();
   const [viewId, setViewId] = useState<boolean>(false);
+  const navigate = useNavigate();
   return (
     <Paper elevation={2}>
       <Grid
@@ -112,7 +114,13 @@ export const GroupTab: React.FC<{
         {(group.public ||
           permissionManager.Can(PermissionActions.BelongsTo, group.id!)) && (
           <Grid item>
-            <Button href={`/Group/${group.id}`} variant="contained">
+            <Button
+              // href={`/Group/${group.id}`}
+              onClick={() => {
+                navigate(`/Group/${group.id}`);
+              }}
+              variant="contained"
+            >
               See more
             </Button>
           </Grid>
