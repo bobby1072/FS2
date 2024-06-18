@@ -8,6 +8,8 @@ export default defineConfig({
   },
   build: {
     outDir: "build",
+    minify: false,
+    cssMinify: false,
   },
   plugins: [react(), svgrPlugin()],
   define: {

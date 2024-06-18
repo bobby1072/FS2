@@ -16,7 +16,7 @@
     "@testing-library/user-event": "13.5.0",
     "@vgrid/react-leaflet-heatmap-layer": "^4.0.3",
     "@vitejs/plugin-react-swc": "^3.7.0",
-    "axios": "1.6.2",
+    "axios": "1.7.2",
     "browser-image-compression": "^2.0.2",
     "date-fns": "^2.30.0",
     "leaflet": "^1.9.4",
