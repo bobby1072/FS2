@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using System.Text.Json;
 using DataImporter;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -117,12 +118,53 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseCors("corsapp");
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 app.UseRouting();
+// app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 app.UseDefaultMiddlewares();
 app.MapControllers();
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapFallbackToFile("index.html");
+});
+app.UseStaticFiles();
+app.UseSpa(spa =>
+{
+    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+    {
+        OnPrepareResponse = context =>
+        {
+            var headers = context.Context.Response.GetTypedHeaders();
+            if (context.File.Name.EndsWith(".html"))
+            {
+                headers.CacheControl = new CacheControlHeaderValue
+                {
+                    NoCache = true,
+                    NoStore = true,
+                    MustRevalidate = true,
+                    MaxAge = TimeSpan.Zero
+                };
+            }
+            else
+            {
+                headers.CacheControl = new CacheControlHeaderValue
+                {
+                    Public = true,
+                    Private = false,
+                    NoCache = false,
+                    NoStore = false,
+                    MaxAge = TimeSpan.FromDays(365)
+                };
+            }
+        }
+    };
+});
 
 app.Run();
 public static partial class Program { };

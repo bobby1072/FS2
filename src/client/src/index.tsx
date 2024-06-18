@@ -3,16 +3,10 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import { App } from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
-import {
-  Navigate,
-  RouteObject,
-  RouterProvider,
-  createBrowserRouter,
-} from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AuthenticatedRoutes } from "./common/AutheticatedRoutes";
 import { UserManager } from "oidc-client-ts";
-import { Loading } from "./common/Loading";
 import { LandingPage } from "./pages/LandingPage";
 import { AppContextProvider } from "./common/contexts/AppContext";
 import { useAuthentication } from "./common/contexts/AuthenticationContext";
@@ -37,7 +31,7 @@ const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <App>{children}</App>
 );
 
-const AppRoutes: RouteObject[] = [
+const AppRoutes = [
   {
     path: "/",
     element: (
@@ -66,7 +60,7 @@ const AppRoutes: RouteObject[] = [
       </Wrapper>
     ),
   },
-  ...AuthenticatedRoutes.map(({ link, component }) => ({
+  ...AuthenticatedRoutes?.map(({ link, component }) => ({
     path: link,
     element: (
       <Wrapper>
@@ -92,8 +86,6 @@ if (window.location.pathname === "/oidc-silent-renew") {
     console.error(error);
   });
 } else {
-  const router = createBrowserRouter(AppRoutes);
-
   const container = document.getElementById("root");
   const root = createRoot(container!);
 
@@ -104,10 +96,13 @@ if (window.location.pathname === "/oidc-silent-renew") {
           <QueryClientProvider client={queryClient}>
             <SnackbarProvider>
               <AppContextProvider>
-                <RouterProvider
-                  router={router}
-                  fallbackElement={<Loading fullScreen={true} />}
-                />
+                <BrowserRouter>
+                  <Routes>
+                    {AppRoutes?.map((r) => (
+                      <Route element={r.element} path={r.path} />
+                    ))}
+                  </Routes>
+                </BrowserRouter>
               </AppContextProvider>
             </SnackbarProvider>
           </QueryClientProvider>
