@@ -62,7 +62,7 @@ export default abstract class BackendApiServiceProvider {
       .replaceAll("bearer ", "")}`;
   }
   private static _httpClient: AxiosInstance = axios.create({
-    baseURL: __DEV__ === "development" ? "http://localhost:5234/api" : "api",
+    baseURL: import.meta.env.VITE_BASE_URL,
     withCredentials: true,
   });
   public static async GetClientConfig() {

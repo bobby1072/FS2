@@ -1,1 +1,1 @@
-declare const __DEV__: string;
+declare const REACT_APP_BASE_URL: string;

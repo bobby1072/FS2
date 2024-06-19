@@ -19,9 +19,10 @@ yarn-error.log*
 bin
 obj
 debug.log
-
+src/client/.env
 bin
 obj
+.env
 token.json
 console-example-internal.log
 
