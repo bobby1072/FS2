@@ -123,10 +123,11 @@ export const CatchMarkerForPartialCatch: React.FC<{
           <Grid item width="90%">
             <Button
               variant="outlined"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 navigate(`/GroupCatch/${catchId}`);
               }}
-              // href={`/GroupCatch/${catchId}`}
+              href={`/GroupCatch/${catchId}`}
             >
               Go to full catch
             </Button>

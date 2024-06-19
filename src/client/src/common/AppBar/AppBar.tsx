@@ -94,10 +94,11 @@ export const MainAppBar: React.FC<{
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 navigate(`/Account/${userId}`);
               }}
-              // href={`/Account/${userId}`}
+              href={`/Account/${userId}`}
               color="inherit"
             >
               <AccountCircle />

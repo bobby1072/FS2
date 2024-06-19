@@ -24,9 +24,9 @@ var dbConnectString = config.GetConnectionString("DefaultConnection");
 var clientId = config["ClientConfig:AuthorityClientId"];
 var issuerHost = config["JWT_ISSUER_HOST"];
 var authAudience = config["JWT_AUDIENCE"];
+var useStaticFiles = config["UseStaticFiles"];
 
-
-if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
+if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
@@ -123,48 +123,54 @@ else
     app.UseHttpsRedirection();
 }
 app.UseRouting();
-// app.UseResponseCompression();
+app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSession();
 app.UseDefaultMiddlewares();
 app.MapControllers();
+#pragma warning disable ASP0014 // Suggest using top level route registrations
 app.UseEndpoints(endpoint =>
 {
     endpoint.MapFallbackToFile("index.html");
 });
-app.UseStaticFiles();
-app.UseSpa(spa =>
+#pragma warning restore ASP0014 // Suggest using top level route registrations
+if (bool.Parse(useStaticFiles) is true)
 {
-    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+
+    app.UseStaticFiles();
+    app.UseSpa(spa =>
     {
-        OnPrepareResponse = context =>
+        spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
         {
-            var headers = context.Context.Response.GetTypedHeaders();
-            if (context.File.Name.EndsWith(".html"))
+            OnPrepareResponse = context =>
             {
-                headers.CacheControl = new CacheControlHeaderValue
+                var headers = context.Context.Response.GetTypedHeaders();
+                if (context.File.Name.EndsWith(".html"))
                 {
-                    NoCache = true,
-                    NoStore = true,
-                    MustRevalidate = true,
-                    MaxAge = TimeSpan.Zero
-                };
-            }
-            else
-            {
-                headers.CacheControl = new CacheControlHeaderValue
+                    headers.CacheControl = new CacheControlHeaderValue
+                    {
+                        NoCache = true,
+                        NoStore = true,
+                        MustRevalidate = true,
+                        MaxAge = TimeSpan.Zero
+                    };
+                }
+                else
                 {
-                    Public = true,
-                    Private = false,
-                    NoCache = false,
-                    NoStore = false,
-                    MaxAge = TimeSpan.FromDays(365)
-                };
+                    headers.CacheControl = new CacheControlHeaderValue
+                    {
+                        Public = true,
+                        Private = false,
+                        NoCache = false,
+                        NoStore = false,
+                        MaxAge = TimeSpan.FromDays(365)
+                    };
+                }
             }
-        }
-    };
-});
+        };
+    });
+}
 
 app.Run();
 public static partial class Program { };

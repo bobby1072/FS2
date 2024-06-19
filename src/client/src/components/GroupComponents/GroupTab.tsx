@@ -115,8 +115,9 @@ export const GroupTab: React.FC<{
           permissionManager.Can(PermissionActions.BelongsTo, group.id!)) && (
           <Grid item>
             <Button
-              // href={`/Group/${group.id}`}
-              onClick={() => {
+              href={`/Group/${group.id}`}
+              onClick={(e) => {
+                e.preventDefault();
                 navigate(`/Group/${group.id}`);
               }}
               variant="contained"

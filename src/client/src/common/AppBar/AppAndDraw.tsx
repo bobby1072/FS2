@@ -85,7 +85,9 @@ export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
             {AuthenticatedRoutes.filter((x) => x.showOnDrawer === true).map(
               ({ text, link, icon }) => (
                 <ButtonBase
-                  onClick={() => {
+                  href={link}
+                  onClick={(e) => {
+                    e.preventDefault();
                     navigate(link);
                   }}
                   sx={{ width: "100%" }}

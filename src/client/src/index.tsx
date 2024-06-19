@@ -77,7 +77,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
-      retry: (count) => (count >= 2 ? false : true),
+      retry: (count) => (count >= 1 ? false : true),
     },
   },
 });
