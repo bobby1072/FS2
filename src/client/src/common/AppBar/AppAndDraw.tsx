@@ -15,6 +15,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { MainAppBar } from "./AppBar";
 import { AuthenticatedRoutes } from "../AutheticatedRoutes";
 import { ButtonBase } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 300;
 
@@ -51,7 +52,7 @@ export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
 }) => {
   const theme = useTheme();
   const [drawOpen, setDrawOpen] = React.useState(false);
-
+  const navigate = useNavigate();
   return (
     <>
       <MainAppBar {...{ drawOpen, setDrawOpen }} />
@@ -83,7 +84,12 @@ export const AppAndDraw: React.FC<{ children?: React.ReactNode }> = ({
           <List>
             {AuthenticatedRoutes.filter((x) => x.showOnDrawer === true).map(
               ({ text, link, icon }) => (
-                <ButtonBase href={link} sx={{ width: "100%" }}>
+                <ButtonBase
+                  onClick={() => {
+                    navigate(link);
+                  }}
+                  sx={{ width: "100%" }}
+                >
                   <ListItem key={text} disablePadding>
                     <ListItemButton>
                       <ListItemIcon>{icon()}</ListItemIcon>

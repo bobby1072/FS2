@@ -11,7 +11,7 @@ pnp
 .env.test.local
 .env.production.local
 .vs/
-
+tempBuild/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -19,14 +19,17 @@ yarn-error.log*
 bin
 obj
 debug.log
-
+src/client/.env
 bin
 obj
+.env
 token.json
 console-example-internal.log
 
 *.csproj.user
 .idea/
+
+wwwroot
 
 
 

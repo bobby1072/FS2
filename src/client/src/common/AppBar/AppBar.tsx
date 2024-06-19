@@ -8,6 +8,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 // import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useCurrentUser } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 // const Search = styled("div")(({ theme }) => ({
 //   position: "relative",
 //   borderRadius: theme.shape.borderRadius,
@@ -53,7 +54,7 @@ export const MainAppBar: React.FC<{
 }> = ({ drawOpen, setDrawOpen }) => {
   const menuId = "primary-search-account-menu";
   const { id: userId } = useCurrentUser();
-
+  const navigate = useNavigate();
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -93,7 +94,10 @@ export const MainAppBar: React.FC<{
               aria-label="account of current user"
               aria-controls={menuId}
               aria-haspopup="true"
-              href={`/Account/${userId}`}
+              onClick={() => {
+                navigate(`/Account/${userId}`);
+              }}
+              // href={`/Account/${userId}`}
               color="inherit"
             >
               <AccountCircle />

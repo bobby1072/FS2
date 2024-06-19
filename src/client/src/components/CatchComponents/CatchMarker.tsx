@@ -16,7 +16,8 @@ import { useDeleteCatchMutation } from "./hooks/DeleteCatch";
 import { useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import { YesOrNoModal } from "../../common/YesOrNoModal";
-export const GenericIconMarker = new Icon({
+import { useNavigate } from "react-router-dom";
+const GenericIconMarker = new Icon({
   iconUrl: markerPhoto,
   iconSize: [35, 35],
 });
@@ -81,107 +82,117 @@ export const CatchMarkerForPartialCatch: React.FC<{
     weight,
   },
 }) => {
-    const { id: currentUserId } = useCurrentUser();
-    const { permissionManager } = useCurrentPermissionManager();
-    return (
-      <CatchMarker position={[latitude, longitude]}>
-        <Popup>
-          <Grid
-            container
-            direction="column"
-            justifyContent="center"
-            alignItems="center"
-            padding={0.5}
-            spacing={0.8}
-            textAlign="center"
-          >
-            <Grid item>
-              <Typography variant="h5">
-                <strong>
-                  {worldFish ? getPrettyWorldFishName(worldFish) : species}
-                </strong>
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">
-                <strong>Caught by:</strong> {catchUsername}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">
-                <strong>Caught at:</strong>{" "}
-                {prettyDateWithTime(new Date(caughtAt))}
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Typography variant="subtitle2">
-                <strong>Weighing:</strong> {weight} kg
-              </Typography>
-            </Grid>
-            <Grid item width="90%">
-              <Button variant="outlined" href={`/GroupCatch/${catchId}`}>
-                Go to full catch
-              </Button>
-            </Grid>
-            {(permissionManager.Can(
-              PermissionActions.Manage,
-              groupId,
-              PermissionFields.GroupCatch
-            ) ||
-              currentUserId === catchUserId) && (
-                <Grid item width="40%">
-                  <Grid
-                    container
-                    justifyContent="center"
-                    alignItems="center"
-                    spacing={0.8}
-                  >
-                    <Grid item width="100%">
-                      <DeleteButtonForMarker
-                        catchId={catchId}
-                        useSnackBarOnSuccess={useSnackBarOnSuccess}
-                      />
-                    </Grid>
-
-                  </Grid>
-                </Grid>
-              )}
+  const { id: currentUserId } = useCurrentUser();
+  const { permissionManager } = useCurrentPermissionManager();
+  const navigate = useNavigate();
+  return (
+    <CatchMarker position={[latitude, longitude]}>
+      <Popup>
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          padding={0.5}
+          spacing={0.8}
+          textAlign="center"
+        >
+          <Grid item>
+            <Typography variant="h5">
+              <strong>
+                {worldFish ? getPrettyWorldFishName(worldFish) : species}
+              </strong>
+            </Typography>
           </Grid>
-        </Popup>
-      </CatchMarker>
-    );
-  };
-
-export const SimpleLongLatCatchMarkerWithPopup: React.FC<{ position: [number, number] }> = ({ position: [lat, lng] }) => {
-  return <CatchMarker position={[lat, lng]}>
-    <Popup>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        padding={0.5}
-        spacing={0.8}
-        textAlign="center"
-      >
-        <Grid item>
-          <Typography variant="subtitle2">
-            Latitude: {lat}
-          </Typography>
+          <Grid item>
+            <Typography variant="subtitle2">
+              <strong>Caught by:</strong> {catchUsername}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle2">
+              <strong>Caught at:</strong>{" "}
+              {prettyDateWithTime(new Date(caughtAt))}
+            </Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle2">
+              <strong>Weighing:</strong> {weight} kg
+            </Typography>
+          </Grid>
+          <Grid item width="90%">
+            <Button
+              variant="outlined"
+              onClick={() => {
+                navigate(`/GroupCatch/${catchId}`);
+              }}
+              // href={`/GroupCatch/${catchId}`}
+            >
+              Go to full catch
+            </Button>
+          </Grid>
+          {(permissionManager.Can(
+            PermissionActions.Manage,
+            groupId,
+            PermissionFields.GroupCatch
+          ) ||
+            currentUserId === catchUserId) && (
+            <Grid item width="40%">
+              <Grid
+                container
+                justifyContent="center"
+                alignItems="center"
+                spacing={0.8}
+              >
+                <Grid item width="100%">
+                  <DeleteButtonForMarker
+                    catchId={catchId}
+                    useSnackBarOnSuccess={useSnackBarOnSuccess}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
-        <Grid item>
-          <Typography variant="subtitle2">
-            Longitude: {lng}
-          </Typography>
+      </Popup>
+    </CatchMarker>
+  );
+};
+
+export const SimpleLongLatCatchMarkerWithPopup: React.FC<{
+  position: [number, number];
+}> = ({ position: [lat, lng] }) => {
+  return (
+    <CatchMarker position={[lat, lng]}>
+      <Popup>
+        <Grid
+          container
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
+          padding={0.5}
+          spacing={0.8}
+          textAlign="center"
+        >
+          <Grid item>
+            <Typography variant="subtitle2">Latitude: {lat}</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="subtitle2">Longitude: {lng}</Typography>
+          </Grid>
         </Grid>
-      </Grid>
-    </Popup>
-  </CatchMarker>;
-}
+      </Popup>
+    </CatchMarker>
+  );
+};
 
-export const CatchMarker: React.FC<{ children?: React.ReactNode, position: [number, number] }> = ({ position: [latitude, longitude], children }) => {
-
-  return <Marker position={[latitude, longitude]} icon={GenericIconMarker}>
-    {children}
-  </Marker>
-}
+export const CatchMarker: React.FC<{
+  children?: React.ReactNode;
+  position: [number, number];
+}> = ({ position: [latitude, longitude], children }) => {
+  return (
+    <Marker position={[latitude, longitude]} icon={GenericIconMarker}>
+      {children}
+    </Marker>
+  );
+};
