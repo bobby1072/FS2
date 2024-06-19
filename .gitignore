@@ -11,7 +11,7 @@ pnp
 .env.test.local
 .env.production.local
 .vs/
-
+tempBuild/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
