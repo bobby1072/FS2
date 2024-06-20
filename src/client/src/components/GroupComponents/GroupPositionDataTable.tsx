@@ -95,10 +95,18 @@ export const GroupPositionDataTable: React.FC<{
         sort: false,
         display: selectedRows.includes("canManageGroup"),
         customBodyRender: (value) => {
-          return value ? (
-            <CheckCircleIcon color="success" />
-          ) : (
-            <CancelIcon color="error" />
+          return (
+            <Tooltip
+              title={
+                "This permissions means you can edit the group details such as the name and emblem and add/delete positions"
+              }
+            >
+              {value ? (
+                <CheckCircleIcon color="success" />
+              ) : (
+                <CancelIcon color="error" />
+              )}
+            </Tooltip>
           );
         },
       },
@@ -111,10 +119,18 @@ export const GroupPositionDataTable: React.FC<{
         sort: false,
         display: selectedRows.includes("canManageCatches"),
         customBodyRender: (value) => {
-          return value ? (
-            <CheckCircleIcon color="success" />
-          ) : (
-            <CancelIcon color="error" />
+          return (
+            <Tooltip
+              title={
+                "This permission means you can delete/edit catches in the group and delete comments on catches"
+              }
+            >
+              {value ? (
+                <CheckCircleIcon color="success" />
+              ) : (
+                <CancelIcon color="error" />
+              )}
+            </Tooltip>
           );
         },
       },
@@ -127,10 +143,14 @@ export const GroupPositionDataTable: React.FC<{
         sort: false,
         display: selectedRows.includes("canManageMembers"),
         customBodyRender: (value) => {
-          return value ? (
-            <CheckCircleIcon color="success" />
-          ) : (
-            <CancelIcon color="error" />
+          return (
+            <Tooltip title={"This permission means you can add/delete members"}>
+              {value ? (
+                <CheckCircleIcon color="success" />
+              ) : (
+                <CancelIcon color="error" />
+              )}
+            </Tooltip>
           );
         },
       },
@@ -144,10 +164,14 @@ export const GroupPositionDataTable: React.FC<{
         sort: false,
         display: selectedRows.includes("canReadMembers"),
         customBodyRender: (value) => {
-          return value ? (
-            <CheckCircleIcon color="success" />
-          ) : (
-            <CancelIcon color="error" />
+          return (
+            <Tooltip title={"This permission means you can view group members"}>
+              {value ? (
+                <CheckCircleIcon color="success" />
+              ) : (
+                <CancelIcon color="error" />
+              )}
+            </Tooltip>
           );
         },
       },
@@ -160,10 +184,18 @@ export const GroupPositionDataTable: React.FC<{
         sort: false,
         display: selectedRows.includes("canReadCatches"),
         customBodyRender: (value) => {
-          return value ? (
-            <CheckCircleIcon color="success" />
-          ) : (
-            <CancelIcon color="error" />
+          return (
+            <Tooltip
+              title={
+                "This permission means you can add/view/comment on group catches"
+              }
+            >
+              {value ? (
+                <CheckCircleIcon color="success" />
+              ) : (
+                <CancelIcon color="error" />
+              )}
+            </Tooltip>
           );
         },
       },

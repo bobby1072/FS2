@@ -45,7 +45,7 @@ namespace fsCore.Service
             }
             else
             {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, foundCatch.GroupId))
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
@@ -74,7 +74,7 @@ namespace fsCore.Service
             }
             else
             {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, groupCatch.GroupId))
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupCatch.GroupId, nameof(GroupCatch)))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }

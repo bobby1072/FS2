@@ -68,7 +68,7 @@ namespace fsCore.Service
         public async Task<Group> DeleteGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroup))
+            if (foundGroup.LeaderId != currentUser.Id)
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
