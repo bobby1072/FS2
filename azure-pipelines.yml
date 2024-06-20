@@ -1,24 +1,20 @@
 variables:
-  - name: DOCKER_BUILDKIT
-    value: "1"
   - name: isMain
     value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   - name: isVersionTag
     value: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/v')]
-  - name: COMPOSE_DOCKER_CLI_BUILD
-    value: "1"
-  # - name: core-dockerRepository
-  #   value: 282082958009.dkr.ecr.eu-west-2.amazonaws.com/forms4health-aireframe-mapping-service
+  - name: core-dockerRepository
+    value: bobby1072/fs2_docker_image
 
 trigger:
   branches:
     include:
       - main
 
-pr:
-  branches:
-    include:
-      - "*"
+# pr:
+#   branches:
+#     include:
+#       - "*"
 
 pool:
   vmImage: "ubuntu-latest"
@@ -46,6 +42,9 @@ stages:
               customCommand: "run check-types"
               workingDir: $(Build.SourcesDirectory)/src/client
 
+          - powershell: ./add_build_env_frontend.ps1
+            displayName: "Add build environment"
+
           - task: Npm@1
             displayName: "Build"
             inputs:
@@ -58,7 +57,7 @@ stages:
             artifact: client
 
   - stage: Publish
-    condition: and(succeeded(), eq(variables.isVersionTag, true))
+    condition: and(succeeded(), eq(variables.isVersionTag, true), eq(variables.isMain, true))
     jobs:
       - job: push_core_image
         steps:
@@ -76,23 +75,31 @@ stages:
                 echo "##vso[task.setvariable variable=ImageTag]$TAG"
               workingDirectory: "$(Build.SourcesDirectory)"
 
-          # - task: Docker@2
-          #   displayName: Build Core Image
-          #   inputs:
-          #     command: build
-          #     repository: $(core-dockerRepository)
-          #     tags: |
-          #       latest
-          #       $(ImageTag)
-          #     Dockerfile: "$(Build.SourcesDirectory)/src/fsCore/dockerfile"
-          #     buildContext: "$(Build.SourcesDirectory)"
-          #     arguments: --build-arg CLIENT_PATH=src/client/build/
+          - task: Docker@2
+            displayName: Login to Docker Hub
+            inputs:
+              command: login
+              containerRegistry: DockerHub
+              username: $(dockerHubUsername)
+              password: $(dockerHubPassword)
 
-          # - task: Docker@2
-          #   displayName: Push Core Image
-          #   inputs:
-          #     command: push
-          #     repository: $(core-dockerRepository)
-          #     tags: |
-          #       latest
-          #       $(ImageTag)
+          - task: Docker@2
+            displayName: Build Core Image
+            inputs:
+              command: build
+              repository: $(core-dockerRepository)
+              tags: |
+                latest
+                $(ImageTag)
+              Dockerfile: "$(Build.SourcesDirectory)/src/fsCore/dockerfile"
+              buildContext: "$(Build.SourcesDirectory)"
+              arguments: --build-arg WEB_APP_CLIENT_PATH=src/client/build/
+
+          - task: Docker@2
+            displayName: Push Core Image
+            inputs:
+              command: push
+              repository: $(core-dockerRepository)
+              tags: |
+                latest
+                $(ImageTag)
