@@ -42,7 +42,7 @@ stages:
               customCommand: "run check-types"
               workingDir: $(Build.SourcesDirectory)/src/client
 
-          - powershell: ./add_build_env_frontend.ps1
+          - powershell: $(Build.SourcesDirectory)/build-scripts/add_build_env_frontend.ps1
             displayName: "Add build environment"
 
           - task: Npm@1
