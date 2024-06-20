@@ -6,7 +6,8 @@ namespace Common.Models.Validators
     {
         public GroupValidator()
         {
-            RuleFor(x => x.Name).Must(NotJustBeWhiteSpace).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).NotEmpty().WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(NotHaveNonAlphanumerics).WithMessage(ErrorConstants.GroupNameCorrectFormat);
             RuleFor(x => x.Name).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
 
             RuleFor(x => x.Description).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.InvalidGroupDescription);

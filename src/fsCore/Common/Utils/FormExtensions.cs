@@ -6,16 +6,30 @@ namespace Common.Utils
 {
     public static class FormExtensions
     {
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, double maxSize = 5)
+        {
+            if (((double)file.Length / 1000000) > maxSize)
+            {
+                await using var compressStream = file.OpenReadStream();
+                using var image = await Image.LoadAsync(compressStream);
+                await image.SaveAsync(compressStream, new JpegEncoder { Quality = 50 });
+                return Convert.FromBase64String(image.ToBase64String(JpegFormat.Instance).TrimBase64String());
+            }
+            await using var basicStream = new MemoryStream();
+            await file.CopyToAsync(basicStream);
+            return basicStream.ToArray();
+        }
+
         public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, int? width = null, int? height = null, double? maxSize = null)
         {
             if (width is null && height is null && maxSize is null)
             {
-                await using var memoryStream = new MemoryStream();
-                await file.CopyToAsync(memoryStream);
-                return memoryStream.ToArray();
+                await using var basicStream = new MemoryStream();
+                await file.CopyToAsync(basicStream);
+                return basicStream.ToArray();
             }
-            await using var stream = file.OpenReadStream();
-            using var image = await Image.LoadAsync(stream);
+            await using var compressStream = file.OpenReadStream();
+            using var image = await Image.LoadAsync(compressStream);
             if (width is int foundWidth && height is int foundHeight)
             {
                 image.Mutate(x => x.Resize(foundWidth, foundHeight));
@@ -30,7 +44,7 @@ namespace Common.Utils
             }
             if (((double)file.Length / 1000000) > maxSize)
             {
-                await image.SaveAsync(stream, new JpegEncoder { Quality = 50 });
+                await image.SaveAsync(compressStream, new JpegEncoder { Quality = 50 });
             }
             return Convert.FromBase64String(image.ToBase64String(JpegFormat.Instance).TrimBase64String());
         }

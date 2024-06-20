@@ -14,7 +14,11 @@ namespace Common
         public const string InvalidGroupCatch = "Invalid catch";
         public const string CouldntSaveCatch = "Couldn't save group catch";
         public const string InvalidGroupPositionName = "Invalid group position name. No punctuation or numbers allowed";
+        public const string InvalidLength = "Invalid length";
+        public const string InvalidWeight = "Invalid weight";
+        public const string DateCaughtMustBeInThePast = "Date caught must be in the past";
         public const string BadRequest = "Bad request";
+        public const string InvalidDescription = "Invalid description";
         public const string InvalidGroupDescription = "Invalid group description";
         public const string UsernameInvalid = "Username invalid";
         public const string GroupNameCorrectFormat = "Group name invalid";

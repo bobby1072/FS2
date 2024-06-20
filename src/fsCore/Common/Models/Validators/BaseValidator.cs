@@ -14,7 +14,6 @@ namespace Common.Models.Validators
             return lng >= -180 && lng <= 180;
         }
         protected static bool DateInThePast(DateTime date) => date < DateTime.UtcNow;
-        protected static bool NotHaveWhitespaceOrBeEmpty(string input) => !string.IsNullOrWhiteSpace(input) && !input.Contains(' ');
         protected static bool NotHaveNonAlphanumerics(string input) => input.All(char.IsLetterOrDigit);
         protected static bool NotHaveInvalidEmail(string input) => input.IsValidEmail();
         protected static bool NotJustBeWhiteSpace(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsWhiteSpace);
