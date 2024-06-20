@@ -1,14 +1,12 @@
 using System.Text.Json.Serialization;
 using Common.Attributes;
-using Common.Models.Validators;
-using FluentValidation;
 namespace Common.Models
 {
     public class GroupPosition : BaseModel
     {
         [LockedProperty]
         [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
+        public int? Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
@@ -27,7 +25,7 @@ namespace Common.Models
         public GroupPosition(
             Guid groupId,
             string name,
-            Guid? id = null,
+            int? id = null,
             bool canManageGroup = false,
             bool canReadCatches = true,
             bool canManageCatches = false,

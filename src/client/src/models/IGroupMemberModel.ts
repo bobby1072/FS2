@@ -13,6 +13,6 @@ export interface IGroupMemberModel {
     emailVerified: boolean;
     name?: string | null;
   } | null;
-  positionId: string;
+  positionId: number;
   position?: IGroupPositionModel | null;
 }

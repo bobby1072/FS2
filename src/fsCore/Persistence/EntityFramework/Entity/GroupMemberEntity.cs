@@ -15,7 +15,7 @@ namespace Persistence.EntityFramework.Entity
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
-        public Guid PositionId { get; set; }
+        public int PositionId { get; set; }
         [ForeignKey(nameof(PositionId))]
         public GroupPositionEntity? Position { get; set; }
         public override GroupMember ToRuntime()

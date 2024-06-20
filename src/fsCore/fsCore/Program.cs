@@ -53,7 +53,7 @@ builder.Services
     .AddSqlPersistence(config);
 
 builder.Services
-    .AddDataImporter(config);
+    .AddDataImporter(config, environment);
 
 builder.Services
     .AddAuthorization()
@@ -129,12 +129,12 @@ app.UseAuthorization();
 app.UseSession();
 app.UseDefaultMiddlewares();
 app.MapControllers();
-#pragma warning disable ASP0014 // Suggest using top level route registrations
+#pragma warning disable ASP0014
 app.UseEndpoints(endpoint =>
 {
     endpoint.MapFallbackToFile("index.html");
 });
-#pragma warning restore ASP0014 // Suggest using top level route registrations
+#pragma warning restore ASP0014 
 if (bool.Parse(useStaticFiles) is true)
 {
 

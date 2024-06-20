@@ -206,7 +206,7 @@ export default abstract class BackendApiServiceProvider {
     accessToken: string
   ) {
     const { data } = await this._httpClient
-      .post<string>("Group/SavePosition", position, {
+      .post<number>("Group/SavePosition", position, {
         headers: {
           Authorization: this._formatAccessToken(accessToken),
         },

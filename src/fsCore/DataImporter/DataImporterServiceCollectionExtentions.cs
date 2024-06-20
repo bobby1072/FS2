@@ -1,17 +1,19 @@
 using DataImporter.ModelImporters;
 using DataImporter.ModelImporters.MockModelImporters;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace DataImporter
 {
     public static class DataImporterServiceCollectionExtensions
     {
-        public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
-            var environment = configuration["EnvironmentName"] ?? throw new InvalidOperationException("Missing env var");
+            var isDev = environment.IsDevelopment();
             var useJsonFileImport = bool.Parse(configuration["DataImporter:UseJsonFile"] ?? "false");
-            if (environment == "Development" && !useJsonFileImport)
+            if (isDev && !useJsonFileImport)
             {
                 services
                     .AddScoped<IUserImporter, MockUserImporter>()
