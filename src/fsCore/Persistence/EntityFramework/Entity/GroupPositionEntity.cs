@@ -8,7 +8,7 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; init; }
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
@@ -24,18 +24,34 @@ namespace Persistence.EntityFramework.Entity
         }
         public static GroupPositionEntity RuntimeToEntity(GroupPosition position)
         {
-            var ent = new GroupPositionEntity
+            if (position.Id is int foundId)
             {
-                Id = position.Id ?? Guid.NewGuid(),
-                GroupId = position.GroupId,
-                Name = position.Name,
-                CanManageCatches = position.CanManageCatches,
-                CanManageGroup = position.CanManageGroup,
-                CanManageMembers = position.CanManageMembers,
-                CanReadCatches = position.CanReadCatches,
-                CanReadMembers = position.CanReadMembers
-            };
-            return ent;
+
+                return new GroupPositionEntity
+                {
+                    Id = foundId,
+                    GroupId = position.GroupId,
+                    Name = position.Name,
+                    CanManageCatches = position.CanManageCatches,
+                    CanManageGroup = position.CanManageGroup,
+                    CanManageMembers = position.CanManageMembers,
+                    CanReadCatches = position.CanReadCatches,
+                    CanReadMembers = position.CanReadMembers
+                };
+            }
+            else
+            {
+                return new GroupPositionEntity
+                {
+                    GroupId = position.GroupId,
+                    Name = position.Name,
+                    CanManageCatches = position.CanManageCatches,
+                    CanManageGroup = position.CanManageGroup,
+                    CanManageMembers = position.CanManageMembers,
+                    CanReadCatches = position.CanReadCatches,
+                    CanReadMembers = position.CanReadMembers
+                };
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ CREATE TABLE public."group" (
 );
 
 CREATE TABLE public.group_position (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_id UUID NOT NULL,
     name TEXT NOT NULL,
     can_manage_group BOOLEAN NOT NULL DEFAULT FALSE,
@@ -45,7 +45,7 @@ CREATE TABLE public.group_member (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     group_id UUID NOT NULL,
     user_id UUID NOT NULL,
-    position_id UUID NOT NULL,
+    position_id INTEGER NOT NULL,
     CONSTRAINT group_member_unique UNIQUE (group_id, user_id),
     CONSTRAINT group_member_position_id_fk FOREIGN KEY (position_id) REFERENCES public.group_position(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT group_member_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,

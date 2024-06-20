@@ -19,10 +19,10 @@ namespace Common.Models
         [JsonPropertyName("user")]
         public User? User { get; set; }
         [JsonPropertyName("positionId")]
-        public Guid PositionId { get; set; }
+        public int PositionId { get; set; }
         [JsonPropertyName("position")]
         public GroupPosition? Position { get; set; }
-        public GroupMember(Guid groupId, Guid positionId, Guid userId, Guid? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
+        public GroupMember(Guid groupId, int positionId, Guid userId, Guid? id = null, User? user = null, Group? group = null, GroupPosition? position = null)
         {
             Id = id;
             PositionId = positionId;

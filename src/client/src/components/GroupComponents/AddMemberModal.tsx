@@ -26,7 +26,7 @@ const formSchema = z.object({
   id: z.string().uuid().optional().nullable(),
   groupId: z.string(),
   userId: z.string(),
-  positionId: z.string(),
+  positionId: z.number(),
 });
 
 export type SaveGroupMemberInput = z.infer<typeof formSchema>;
@@ -113,10 +113,15 @@ export const AddMemberModal: React.FC<{
       <DialogContent dividers>
         <form
           id="addGroupMemberForm"
-          onSubmit={handleSubmit((value) => {
-            reset();
-            mutate(value);
-          })}
+          onSubmit={handleSubmit(
+            (value) => {
+              reset();
+              mutate(value);
+            },
+            (e) => {
+              console.log(e.userId);
+            }
+          )}
         >
           <Grid
             container

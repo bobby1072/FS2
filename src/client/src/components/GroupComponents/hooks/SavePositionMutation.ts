@@ -13,7 +13,7 @@ export const useSavePositionMutation = () => {
     throw new Error("User not found");
   }
   const mutationResults = useMutation<
-    string,
+    number,
     ApiException,
     SaveGroupPositionInput
   >((gp) => BackendApiServiceProvider.SaveGroupPosition(gp, user.access_token));
