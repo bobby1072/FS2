@@ -9,7 +9,7 @@ using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    internal class UserService : BaseService<User, IUserRepository>, IUserService
+    public class UserService : BaseService<User, IUserRepository>, IUserService
     {
         private static readonly UserValidator _validator = new();
         public UserService(IUserRepository repository) : base(repository) { }

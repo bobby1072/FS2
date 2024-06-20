@@ -11,7 +11,7 @@ using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    internal class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
+    public class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
     {
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;

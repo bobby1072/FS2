@@ -10,7 +10,7 @@ using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    internal class GroupService : BaseService<Group, IGroupRepository>, IGroupService
+    public class GroupService : BaseService<Group, IGroupRepository>, IGroupService
     {
         private readonly IGroupMemberRepository _groupMemberRepo;
         private static readonly Type _groupMemberType = typeof(GroupMember);
