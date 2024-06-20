@@ -66,7 +66,7 @@ const mapValuesToFormData = async (
             type: "image/jpeg",
           }
         ),
-        { maxSizeMB: 2 }
+        { maxSizeMB: 1 }
       )
     );
   } else if (values.catchPhoto) {
@@ -76,7 +76,7 @@ const mapValuesToFormData = async (
     );
     formData.append(
       "catchPhoto",
-      await imageCompression(file, { maxSizeMB: 2 })
+      await imageCompression(file, { maxSizeMB: 1 })
     );
   }
   return formData;

@@ -1,13 +1,7 @@
 param (
-    [switch] $debug = $false,
-    [switch] $buildFront = $false
+    [switch] $debug = $false
 )
 $ErrorActionPreference = "Stop"
-
-if($buildFront){
-    npm install --prefix src/client
-    npm run build --prefix src/client
-}
 
 if($debug -eq $false)
 {

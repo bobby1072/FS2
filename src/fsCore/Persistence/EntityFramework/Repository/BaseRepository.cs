@@ -28,7 +28,6 @@ namespace Persistence.EntityFramework.Repository
         {
             if (relationships is null) return set;
             var newQuery = set;
-            //Needs investigation
             var foundRelationProperties = _entType.GetProperties().Where(x => relationships?.Contains(x.Name.Replace("Entity", "")) == true).ToArray();
             for (var i = 0; i < foundRelationProperties.Length; i++)
             {

@@ -18,7 +18,7 @@ namespace fsCore.Controllers.ControllerModels
         {
             return new Group(
                 Name,
-                Emblem is not null ? await Emblem.CompressImageIntoByteArray() : null,
+                Emblem is not null ? await Emblem.ToByteArrayAsync(720, 576, 0.5) : null,
                 Description,
                 Id is not null ? Id : null,
                 CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,

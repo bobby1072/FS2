@@ -56,7 +56,7 @@ const mapValuesToFormData = async (
             type: "image/jpeg",
           }
         ),
-        { maxSizeMB: 1, initialQuality: 0.5 }
+        { maxSizeMB: 0.5, initialQuality: 0.5 }
       )
     );
   } else if (values.emblem) {
@@ -66,7 +66,7 @@ const mapValuesToFormData = async (
     );
     formData.append(
       "emblem",
-      await imageCompression(file, { maxSizeMB: 1, initialQuality: 0.5 })
+      await imageCompression(file, { maxSizeMB: 0.5, initialQuality: 0.5 })
     );
   }
   return formData;
