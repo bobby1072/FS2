@@ -1,0 +1,103 @@
+variables:
+  - name: DOCKER_BUILDKIT
+    value: "1"
+  - name: isMain
+    value: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  - name: isVersionTag
+    value: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/v')]
+  - name: COMPOSE_DOCKER_CLI_BUILD
+    value: "1"
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - "*"
+
+pool:
+  vmImage: "ubuntu-latest"
+
+stages:
+  - stage: Build
+    jobs:
+      - job: Build_frontend
+        displayName: "Build frontend"
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: 20.x
+          - task: Npm@1
+            displayName: "NPM install"
+            inputs:
+              command: "custom"
+              customCommand: "ci"
+              workingDir: $(Build.SourcesDirectory)/src/client
+
+          - task: Npm@1
+            displayName: "Check types"
+            inputs:
+              commands: "custom"
+              customCommand: "run check-types"
+              workingDir: $(Build.SourcesDirectory)/src/client
+
+          - task: Npm@1
+            displayName: "Build"
+            inputs:
+              command: "custom"
+              customCommand: "run build"
+              workingDir: $(Build.SourcesDirectory)/src/client
+
+          - publish: "$(Build.SourcesDirectory)/src/client/build"
+            displayName: "Publish client files"
+            artifact: client
+
+  - stage: Publish
+    condition: and(succeeded(), eq(variables.isVersionTag, true))
+    jobs:
+      - job: push_core_image
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: client
+              path: $(Build.SourcesDirectory)/src/client/build
+
+          - task: AWSShellScript@1
+            inputs:
+              awsCredentials: "AWS AireLogic - ECR"
+              regionName: "eu-west-2"
+              scriptType: "inline"
+              inlineScript: aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin 282082958009.dkr.ecr.eu-west-2.amazonaws.com
+
+          - task: Bash@3
+            displayName: Get Image Tag
+            inputs:
+              targetType: "inline"
+              script: |
+                TAG=$(git tag -l v* --sort=-creatordate | head -n 1)
+                echo "##vso[task.setvariable variable=ImageTag]$TAG"
+              workingDirectory: "$(Build.SourcesDirectory)"
+
+          - task: Docker@2
+            displayName: Build Core Image
+            inputs:
+              command: build
+              repository: $(core-dockerRepository)
+              tags: |
+                latest
+                $(ImageTag)
+              Dockerfile: "$(Build.SourcesDirectory)/src/fsCore/dockerfile"
+              buildContext: "$(Build.SourcesDirectory)"
+              arguments: --build-arg CLIENT_PATH=src/client/build/
+
+          - task: Docker@2
+            displayName: Push Core Image
+            inputs:
+              command: push
+              repository: $(core-dockerRepository)
+              tags: |
+                latest
+                $(ImageTag)
