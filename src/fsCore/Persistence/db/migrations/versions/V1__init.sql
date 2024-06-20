@@ -42,7 +42,7 @@ CREATE TABLE public.group_position (
 );
 
 CREATE TABLE public.group_member (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     group_id UUID NOT NULL,
     user_id UUID NOT NULL,
     position_id INTEGER NOT NULL,

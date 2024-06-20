@@ -8,7 +8,7 @@ namespace Persistence.EntityFramework.Entity
     internal class GroupMemberEntity : BaseEntity<GroupMember>
     {
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public Guid GroupId { get; set; }
         [ForeignKey(nameof(GroupId))]
         public GroupEntity? Group { get; set; }
@@ -24,14 +24,26 @@ namespace Persistence.EntityFramework.Entity
         }
         public static GroupMemberEntity RuntimeToEntity(GroupMember groupMember)
         {
-            var ent = new GroupMemberEntity
+            if (groupMember.Id is int foundInt)
             {
-                Id = groupMember.Id ?? Guid.NewGuid(),
-                GroupId = groupMember.GroupId,
-                PositionId = groupMember.PositionId,
-                UserId = groupMember.UserId
-            };
-            return ent;
+
+                return new GroupMemberEntity
+                {
+                    Id = foundInt,
+                    GroupId = groupMember.GroupId,
+                    PositionId = groupMember.PositionId,
+                    UserId = groupMember.UserId
+                };
+            }
+            else
+            {
+                return new GroupMemberEntity
+                {
+                    GroupId = groupMember.GroupId,
+                    PositionId = groupMember.PositionId,
+                    UserId = groupMember.UserId
+                };
+            }
         }
     }
 }

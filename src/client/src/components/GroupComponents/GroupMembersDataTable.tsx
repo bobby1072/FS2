@@ -66,7 +66,7 @@ const mapBaseDataToRowItems = (
       name: localMember.user?.name ?? "",
       username: localMember.user?.username ?? "",
       position: position?.name,
-      id: localMember.id ?? "",
+      id: localMember.id?.toString()!,
       potentialAvatar: {
         initials: initials,
         email: localMember.user?.email ?? undefined,

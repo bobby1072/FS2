@@ -6,8 +6,8 @@ namespace fsCore.Service.Interfaces
     {
         Task<ICollection<Group>> GetAllGroupsForUser(User currentUser, int startIndex, int count);
         Task<ICollection<Group>> SearchAllListedGroups(string groupNameString);
-        Task<GroupPosition> DeletePosition(Guid positionId, UserWithGroupPermissionSet currentUser);
-        Task<GroupMember> DeleteGroupMember(Guid groupMemberId, UserWithGroupPermissionSet currentUser);
+        Task<GroupPosition> DeletePosition(int positionId, UserWithGroupPermissionSet currentUser);
+        Task<GroupMember> DeleteGroupMember(int groupMemberId, UserWithGroupPermissionSet currentUser);
         Task<GroupMember> SaveGroupMember(GroupMember groupMember, UserWithGroupPermissionSet currentUser);
         Task<Group> GetGroupWithPositions(Guid groupId, UserWithGroupPermissionSet currentUser);
         Task<ICollection<Group>> GetAllListedGroups(int startIndex, int count);

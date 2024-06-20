@@ -73,7 +73,7 @@ namespace fsCore.Controllers
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions(true)]
         [HttpGet("DeletePosition")]
-        public async Task<IActionResult> DeletePosition(Guid positionId)
+        public async Task<IActionResult> DeletePosition(int positionId)
         {
             return Ok(await _groupService.DeletePosition(positionId, GetCurrentUserWithPermissions()));
         }
@@ -121,7 +121,7 @@ namespace fsCore.Controllers
         {
             return Ok(await _groupService.GetAllGroupsForUser(GetCurrentUser(), startIndex, count));
         }
-        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
         [HttpPost("SaveGroupMember")]
@@ -130,11 +130,11 @@ namespace fsCore.Controllers
             return Ok((await _groupService.SaveGroupMember(groupMember, GetCurrentUserWithPermissions())).Id);
         }
 
-        [ProducesDefaultResponseType(typeof(Guid))]
+        [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions]
         [HttpGet("DeleteGroupMember")]
-        public async Task<IActionResult> DeleteGroupMember(Guid groupMemberId)
+        public async Task<IActionResult> DeleteGroupMember(int groupMemberId)
         {
             return Ok((await _groupService.DeleteGroupMember(groupMemberId, GetCurrentUserWithPermissions())).Id);
         }

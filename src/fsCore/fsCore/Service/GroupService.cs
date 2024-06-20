@@ -96,7 +96,7 @@ namespace fsCore.Service
 
             }
         }
-        public async Task<GroupPosition> DeletePosition(Guid positionId, UserWithGroupPermissionSet currentUser)
+        public async Task<GroupPosition> DeletePosition(int positionId, UserWithGroupPermissionSet currentUser)
         {
             var position = await _groupPositionRepo.GetOne(positionId, _groupPositionType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupPositionsFound, HttpStatusCode.NotFound);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, position.GroupId))
@@ -193,10 +193,10 @@ namespace fsCore.Service
                 return (await _groupMemberRepo.Update(new[] { groupMember }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveGroup, HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<GroupMember> DeleteGroupMember(Guid groupMemberId, UserWithGroupPermissionSet currentUser)
+        public async Task<GroupMember> DeleteGroupMember(int groupMemberId, UserWithGroupPermissionSet currentUser)
         {
             var foundGroupMember = await _groupMemberRepo.GetOne(groupMemberId, "id".ToPascalCase()) ?? throw new ApiException(ErrorConstants.NoGroupMembersFound, HttpStatusCode.NotFound);
-            if (groupMemberId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroupMember.GroupId!, nameof(GroupMember)))
+            if (foundGroupMember.UserId != currentUser.Id && !currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundGroupMember.GroupId!, nameof(GroupMember)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }

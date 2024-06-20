@@ -10,10 +10,10 @@ export const useDeletePositionMutation = () => {
   const queryClient = useQueryClient();
   if (!user) throw new Error("User not found");
   const mutationResults = useMutation<
-    string,
+    number,
     ApiException,
     {
-      positionId: string;
+      positionId: number;
     }
   >((p) =>
     BackendApiServiceProvider.DeletePosition(p.positionId, user.access_token)

@@ -2,7 +2,7 @@ import { IGroupModel } from "./IGroupModel";
 import { IGroupPositionModel } from "./IGroupPositionModel";
 
 export interface IGroupMemberModel {
-  id?: string;
+  id?: number | null;
   groupId: string;
   group?: IGroupModel | null;
   userId: string;

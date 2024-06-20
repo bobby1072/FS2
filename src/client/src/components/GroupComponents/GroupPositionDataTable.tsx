@@ -34,7 +34,7 @@ const mapBaseDataToRowItems = (rawData: IGroupPositionModel[]) => {
   for (let i = 0; i < rawData.length; i++) {
     const localItem = rawData[i];
     rowItems.push({
-      id: localItem.id!,
+      id: localItem.id?.toString()!,
       name: localItem.name,
       canManageGroup: localItem.canManageGroup,
       canReadCatches: localItem.canReadCatches,
@@ -285,7 +285,7 @@ export const GroupPositionDataTable: React.FC<{
           yesAction={() => {
             reset();
             deletePositionFunc({
-              positionId: positionToDeleteId,
+              positionId: Number(positionToDeleteId),
             });
           }}
           saveDisabled={deletingPosition}
