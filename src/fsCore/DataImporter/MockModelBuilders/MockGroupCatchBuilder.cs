@@ -3,7 +3,7 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class MockGroupCatchBuilder
+    public static class MockGroupCatchBuilder
     {
         private static Func<DateTime> RandomDayFunc()
         {

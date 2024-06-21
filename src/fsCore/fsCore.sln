@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{E9E7AA88-EB6E-4C6A-A7C6-A256D8629742}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataImporter", "DataImporter\DataImporter.csproj", "{B2D8D1EB-0A34-4264-B158-7228D0425DB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImporter", "DataImporter\DataImporter.csproj", "{B2D8D1EB-0A34-4264-B158-7228D0425DB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsCore.Test", "fsCore.test\fsCore.Test.csproj", "{76060408-979E-4BDF-A16E-10783B79056D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{B2D8D1EB-0A34-4264-B158-7228D0425DB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2D8D1EB-0A34-4264-B158-7228D0425DB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2D8D1EB-0A34-4264-B158-7228D0425DB2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76060408-979E-4BDF-A16E-10783B79056D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76060408-979E-4BDF-A16E-10783B79056D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76060408-979E-4BDF-A16E-10783B79056D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76060408-979E-4BDF-A16E-10783B79056D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

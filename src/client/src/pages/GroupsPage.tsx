@@ -25,8 +25,6 @@ import { CreateGroupModal } from "../components/GroupComponents/CreateGroupModal
 import { useGetGroupCount } from "../components/GroupComponents/hooks/GetGroupCount";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { useQueryClient } from "react-query";
-import Constants from "../common/Constants";
 import { IGroupModel } from "../models/IGroupModel";
 import { ApiException } from "../common/ApiException";
 
@@ -78,14 +76,12 @@ export const AllGroupDisplayPage: React.FC = () => {
       setCurrentGroupsToSee(searchedForListedGroups);
     }
   }, [searchedForListedGroups]);
-  const queryClient = useQueryClient();
   const [createNewGroupModal, setCreateNewGroupModal] = useState<
     boolean | IGroupModel
   >(false);
   useEffect(() => {
-    queryClient.removeQueries(Constants.QueryKeys.GetGroupsWithChoice);
     listedGroupsRefetch();
-  }, [groupStartIndex, queryClient, listedGroupsRefetch, groupViewChoice]);
+  }, [groupStartIndex, listedGroupsRefetch, groupViewChoice]);
   const isError = listedGroupsError || countError || searchedGroupError;
   const isLoading = searchedGroupLoading || isListedGroupsLoading;
   return (
@@ -124,9 +120,6 @@ export const AllGroupDisplayPage: React.FC = () => {
                             groupSeeCount: 5,
                           });
                         } else {
-                          queryClient.removeQueries(
-                            Constants.QueryKeys.GetGroupsWithChoice
-                          );
                           listedGroupsRefetch();
                         }
                       } else {

@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class MockUserBuilder
+    public static class MockUserBuilder
     {
         public static User Build()
         {
@@ -10,8 +10,13 @@ namespace DataImporter.MockModelBuilders
                 Faker.Internet.Email(),
                 true,
                 Faker.Name.FullName(),
-                Faker.Internet.UserName()
+                Faker.Internet.UserName(),
+                Guid.NewGuid()
                 );
         }
+    }
+    public static class MockUserWithPerrmissionsBuilder
+    {
+        public static UserWithGroupPermissionSet Build(User? user) => new(user ?? MockUserBuilder.Build());
     }
 }

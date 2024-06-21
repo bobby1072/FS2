@@ -9,7 +9,7 @@ using Hangfire;
 
 namespace fsCore.Service
 {
-    internal class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
+    public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {
         public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
         [Queue(HangfireConstants.Queues.StartUpJobs)]

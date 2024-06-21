@@ -8,6 +8,7 @@ import {
   Grid,
   Switch,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { StyledDialogTitle } from "../../common/StyledDialogTitle";
@@ -146,64 +147,90 @@ export const GroupPositionModal: React.FC<{
               />
             </Grid>
             <Grid item width="50%">
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...register("canManageGroup", { required: true })}
-                    checked={canManageGroup}
-                    defaultChecked={canManageGroup}
-                  />
+              <Tooltip
+                title={
+                  "This permissions means you can edit the group details such as the name and emblem and add/delete positions"
                 }
-                label="can manage group"
-              />
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...register("canManageGroup", { required: true })}
+                      checked={canManageGroup}
+                      defaultChecked={canManageGroup}
+                    />
+                  }
+                  label="can manage group"
+                />
+              </Tooltip>
             </Grid>
             <Grid item width="50%">
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...register("canManageCatches", { required: true })}
-                    checked={canManageCatches}
-                    defaultChecked={canManageCatches}
-                  />
+              <Tooltip
+                title={
+                  "This permission means you can delete/edit catches in the group and delete comments on catches"
                 }
-                label="can manage catches"
-              />
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...register("canManageCatches", { required: true })}
+                      checked={canManageCatches}
+                      defaultChecked={canManageCatches}
+                    />
+                  }
+                  label="can manage catches"
+                />
+              </Tooltip>
             </Grid>
             <Grid item width="50%">
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...register("canManageMembers", { required: true })}
-                    checked={canManageMembers}
-                    defaultChecked={canManageMembers}
-                  />
-                }
-                label="can manage members"
-              />
+              <Tooltip
+                title={"This permission means you can add/delete members"}
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...register("canManageMembers", { required: true })}
+                      checked={canManageMembers}
+                      defaultChecked={canManageMembers}
+                    />
+                  }
+                  label="can manage members"
+                />
+              </Tooltip>
             </Grid>
             <Grid item width="50%">
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...register("canReadMembers", { required: true })}
-                    checked={canReadMembers}
-                    defaultChecked={canReadMembers}
-                  />
-                }
-                label="can read members"
-              />
+              <Tooltip
+                title={"This permission means you can view group members"}
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...register("canReadMembers", { required: true })}
+                      checked={canReadMembers}
+                      defaultChecked={canReadMembers}
+                    />
+                  }
+                  label="can read members"
+                />
+              </Tooltip>
             </Grid>
             <Grid item>
-              <FormControlLabel
-                control={
-                  <Switch
-                    {...register("canReadCatches", { required: true })}
-                    checked={canReadCatches}
-                    defaultChecked={canReadCatches}
-                  />
+              <Tooltip
+                title={
+                  "This permission means you can add/view/comment on group catches"
                 }
-                label="can read catches"
-              />
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...register("canReadCatches", { required: true })}
+                      checked={canReadCatches}
+                      defaultChecked={canReadCatches}
+                    />
+                  }
+                  label="can read catches"
+                />
+              </Tooltip>
             </Grid>
             <Grid item width={"100%"}>
               <ErrorComponent error={allErrors} />

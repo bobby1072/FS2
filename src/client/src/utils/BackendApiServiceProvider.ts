@@ -229,7 +229,7 @@ export default abstract class BackendApiServiceProvider {
     accessToken: string
   ) {
     const { data } = await this._httpClient
-      .post<string>("Group/SaveGroupMember", groupMember, {
+      .post<number>("Group/SaveGroupMember", groupMember, {
         headers: {
           Authorization: this._formatAccessToken(accessToken),
         },
@@ -263,9 +263,9 @@ export default abstract class BackendApiServiceProvider {
       .catch(this._generalErrorHandler);
     return data;
   }
-  public static async DeletePosition(positionId: string, accessToken: string) {
+  public static async DeletePosition(positionId: number, accessToken: string) {
     const { data } = await this._httpClient
-      .get<string>(`Group/DeletePosition?positionId=${positionId}`, {
+      .get<number>(`Group/DeletePosition?positionId=${positionId}`, {
         headers: {
           Authorization: this._formatAccessToken(accessToken),
         },

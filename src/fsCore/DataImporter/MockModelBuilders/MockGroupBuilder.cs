@@ -2,7 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace DataImporter.MockModelBuilders
 {
-    internal static class MockGroupBuilder
+    public static class MockGroupBuilder
     {
         public static Common.Models.Group Build(Guid leaderId)
         {

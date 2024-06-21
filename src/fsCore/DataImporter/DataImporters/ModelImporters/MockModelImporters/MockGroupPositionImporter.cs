@@ -18,7 +18,7 @@ namespace DataImporter.ModelImporters.MockModelImporters
         }
         private static GroupPosition CreateUniqueGroupIdNameGroupPosition(ICollection<GroupPosition> groupPositions, Guid groupId)
         {
-            var tempGroupPosition = MockGroupPositionBuilder.Build(groupId);
+            var tempGroupPosition = MockGroupPositionBuilder.Build(groupId, null, null, null, null, null, null);
             if (groupPositions.FirstOrDefault(x => x?.GroupId == tempGroupPosition.GroupId && x?.Name == tempGroupPosition.Name) is not null)
             {
                 return CreateUniqueGroupIdNameGroupPosition(groupPositions, groupId);

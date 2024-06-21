@@ -32,7 +32,7 @@ namespace fsCore.Controllers.ControllerModels
                 Description,
                 Id,
                 CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
-                CatchPhoto is not null ? await CatchPhoto.ToByteArrayAsync() : null,
+                CatchPhoto is not null ? await CatchPhoto.ToByteArrayAsync(1) : null,
                 null,
                 null,
                 WorldFishTaxocode,

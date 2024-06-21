@@ -12,6 +12,7 @@ using Persistence;
 using System.Text.Json;
 using DataImporter;
 using Microsoft.Net.Http.Headers;
+using Common.Models.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -48,6 +49,9 @@ builder.Services
     .AddSwaggerGen()
     .AddControllers()
     .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+
+builder.Services
+    .AddModelValidators();
 
 builder.Services
     .AddSqlPersistence(config);

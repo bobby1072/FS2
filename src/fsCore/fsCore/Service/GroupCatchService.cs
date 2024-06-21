@@ -11,16 +11,18 @@ using fsCore.Service.Interfaces;
 
 namespace fsCore.Service
 {
-    internal class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
+    public class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
     {
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
         private readonly IUserService _userService;
-        private static readonly GroupCatchValidator _validator = new();
-        private static readonly GroupCatchCommentValidator _commentValidator = new();
+        private readonly IValidator<GroupCatch> _catchValidator;
+        private readonly IValidator<GroupCatchComment> _commentValidator;
         private readonly IGroupCatchCommentRepository _commentRepo;
-        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo) : base(groupCatchRepository)
+        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IValidator<GroupCatchComment> commentValidator, IValidator<GroupCatch> catchValidator) : base(groupCatchRepository)
         {
+            _catchValidator = catchValidator;
+            _commentValidator = commentValidator;
             _worldFishRepository = worldFishRepo;
             _userService = userService;
             _commentRepo = commentRepo;
@@ -45,7 +47,7 @@ namespace fsCore.Service
             }
             else
             {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, foundCatch.GroupId))
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, foundCatch.GroupId, nameof(GroupCatch)))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
@@ -67,14 +69,14 @@ namespace fsCore.Service
         }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
-            await _validator.ValidateAndThrowAsync(groupCatch);
+            await _catchValidator.ValidateAndThrowAsync(groupCatch);
             if (groupCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
             else
             {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.BelongsTo, groupCatch.GroupId))
+                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupCatch.GroupId, nameof(GroupCatch)))
                 {
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
