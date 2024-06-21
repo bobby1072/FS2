@@ -9,4 +9,4 @@ if (Test-Path ".\src\client\.env") {
 }
 
 New-Item -ItemType File -Path ".\src\client\.env" -Force
-Set-Content -Path ".\src\client\.env" -Value $backendUrl
+Set-Content -Path ".\src\client\.env" -Value "VITE_BASE_URL = '$backendUrl'"
