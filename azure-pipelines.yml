@@ -22,6 +22,17 @@ pool:
 stages:
   - stage: Build
     jobs:
+      - job: backend_unit_tests
+        steps:
+          - task: UseDotNet@2
+            displayName: "Install .NET SDK"
+            inputs:
+              packageType: "sdk"
+              version: "7.0.x"
+
+          - powershell: ./build-scripts/backend.ps1
+            displayName: "Run .NET Unit Tests"
+
       - job: Build_frontend
         displayName: "Build frontend"
         steps:

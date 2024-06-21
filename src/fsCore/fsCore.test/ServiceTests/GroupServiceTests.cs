@@ -1,43 +1,51 @@
+using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
-using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
 using fsCore.Service;
 using fsCore.Service.Interfaces;
 using Moq;
 
-namespace fsCore.Tests.ServiceTests
+namespace fsCore.Test.ServiceTests
 {
     public class GroupServiceTests
     {
         private readonly Mock<IGroupRepository> _mockGroupRepository;
         private readonly Mock<IGroupMemberRepository> _mockGroupMemberRepository;
         private readonly Mock<IGroupPositionRepository> _mockGroupPositionRepository;
-        private readonly Mock<GroupValidator> _mockGroupValidator;
-        private readonly Mock<GroupPositionValidator> _mockGroupPositionValidator;
+        private readonly IValidator<Group> _mockGroupValidator;
+        private readonly IValidator<GroupPosition> _mockGroupPositionValidator;
         private readonly IGroupService _groupService;
         public GroupServiceTests()
         {
             _mockGroupMemberRepository = new Mock<IGroupMemberRepository>();
             _mockGroupPositionRepository = new Mock<IGroupPositionRepository>();
             _mockGroupRepository = new Mock<IGroupRepository>();
-            _mockGroupValidator = new Mock<GroupValidator>();
-            _mockGroupPositionValidator = new Mock<GroupPositionValidator>();
-            _mockGroupValidator.Setup(x => x.ValidateAndThrowAsync(It.IsAny<Group>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-            _mockGroupPositionValidator.Setup(x => x.ValidateAndThrowAsync(It.IsAny<GroupPosition>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
-            _groupService = new GroupService(_mockGroupRepository.Object, _mockGroupMemberRepository.Object, _mockGroupPositionRepository.Object, _mockGroupValidator.Object, _mockGroupPositionValidator.Object);
+            _mockGroupValidator = new MockGroupValidator();
+            _mockGroupPositionValidator = new MockGroupPositionValidator();
+            _groupService = new GroupService(_mockGroupRepository.Object, _mockGroupMemberRepository.Object, _mockGroupPositionRepository.Object, _mockGroupValidator, _mockGroupPositionValidator);
         }
-        public class GroupLeaderOrCanManageGroupMemberCanEditGroupClassData : TheoryData<UserWithGroupPermissionSet, Group>
+        internal class MockGroupPositionValidator : AbstractValidator<GroupPosition>, IValidator<GroupPosition>
+        {
+            public MockGroupPositionValidator() { }
+        }
+        internal class MockGroupValidator : AbstractValidator<Group>, IValidator<Group>
+        {
+            public MockGroupValidator() { }
+        }
+        internal class GroupLeaderOrCanManageGroupMemberCanEditGroupClassData : TheoryData<UserWithGroupPermissionSet, Group>
         {
             public GroupLeaderOrCanManageGroupMemberCanEditGroupClassData()
             {
-                var leaderUser = MockUserWithPerrmissionsBuilder.Build(null);
+                var leaderUser = MockUserWithPermissionsBuilder.Build(null);
                 var group = MockGroupBuilder.Build(leaderUser.Id ?? Guid.Empty);
                 leaderUser.BuildPermissions(group);
                 var position = MockGroupPositionBuilder.Build(group.Id ?? Guid.Empty, true, null, null, null, null, 1);
-                var memberUser = MockUserWithPerrmissionsBuilder.Build(null);
+                var memberUser = MockUserWithPermissionsBuilder.Build(null);
                 var member = MockGroupMemberBuilder.Build(group.Id ?? Guid.Empty, memberUser.Id ?? Guid.Empty, position.Id ?? 1);
+                member.Position = position;
+                member.Group = group;
                 memberUser.BuildPermissions(member);
                 Add(leaderUser, group);
                 Add(memberUser, group);
@@ -45,9 +53,40 @@ namespace fsCore.Tests.ServiceTests
         }
         [Theory]
         [ClassData(typeof(GroupLeaderOrCanManageGroupMemberCanEditGroupClassData))]
-        public async void GroupLeaderOrCanManageGroupMemberCanEditGroup(UserWithGroupPermissionSet user, Group group)
+        public async Task GroupLeaderOrCanManageGroupMemberCanEditGroup(UserWithGroupPermissionSet user, Group group)
         {
-
+            _mockGroupRepository.Setup(x => x.GetGroupWithoutEmblem(group.Id ?? Guid.Empty, It.IsAny<ICollection<string>>())).ReturnsAsync(group);
+            var editedGroup = group.JsonClone();
+            editedGroup.Name = "New name for test";
+            _mockGroupRepository.Setup(x => x.Update(new[] { editedGroup })).ReturnsAsync(new[] { editedGroup });
+            await _groupService.SaveGroup(editedGroup, user);
+            _mockGroupRepository.Verify(x => x.Update(new[] { editedGroup }), Times.Once);
+        }
+        internal class NonAuthorisedUserCantEditOrDeleteGroupClassData : TheoryData<UserWithGroupPermissionSet, Group>
+        {
+            public NonAuthorisedUserCantEditOrDeleteGroupClassData()
+            {
+                var nonGroupUser = MockUserWithPermissionsBuilder.Build(null);
+                var group = MockGroupBuilder.Build(Guid.NewGuid());
+                var position = MockGroupPositionBuilder.Build(group.Id ?? Guid.Empty, false, null, null, null, null, 1);
+                var memberUserWithoutPermission = MockUserWithPermissionsBuilder.Build(null);
+                var member = MockGroupMemberBuilder.Build(group.Id ?? Guid.Empty, memberUserWithoutPermission.Id ?? Guid.Empty, position.Id ?? 1);
+                member.Position = position;
+                member.Group = group;
+                memberUserWithoutPermission.BuildPermissions(member);
+                Add(nonGroupUser, group);
+                Add(memberUserWithoutPermission, group);
+            }
+        }
+        [Theory]
+        [ClassData(typeof(NonAuthorisedUserCantEditOrDeleteGroupClassData))]
+        public async Task NonAuthorisedUserCantEditOrDeleteGroup(UserWithGroupPermissionSet currentUser, Group group)
+        {
+            _mockGroupRepository.Setup(x => x.GetGroupWithoutEmblem(group.Id ?? Guid.Empty, It.IsAny<ICollection<string>>())).ReturnsAsync(group);
+            var editedGroup = group.JsonClone();
+            editedGroup.Name = "New name for test";
+            var foundException = await Assert.ThrowsAsync<ApiException>(() => _groupService.SaveGroup(editedGroup, currentUser));
+            Assert.Equal(ErrorConstants.DontHavePermission, foundException.Message);
         }
     }
 }
