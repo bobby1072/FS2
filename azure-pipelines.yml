@@ -57,7 +57,7 @@ stages:
             artifact: client
 
   - stage: Publish
-    condition: and(succeeded(), eq(variables.isVersionTag, true), eq(variables.isMain, true))
+    condition: and(succeeded(), eq(variables.isVersionTag, true))
     jobs:
       - job: push_core_image
         steps:
