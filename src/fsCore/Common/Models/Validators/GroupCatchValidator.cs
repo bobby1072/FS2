@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class GroupCatchValidator : BaseValidator<GroupCatch>
+    public class GroupCatchValidator : BaseValidator<GroupCatch>, IValidator<GroupCatch>
     {
         public GroupCatchValidator()
         {

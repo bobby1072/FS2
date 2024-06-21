@@ -2,7 +2,6 @@ using System.Net;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
-using Common.Models.Validators;
 using Common.Permissions;
 using Common.Utils;
 using FluentValidation;
@@ -18,12 +17,14 @@ namespace fsCore.Service
         private static readonly Type _userType = typeof(User);
         private static readonly Type _groupPositionType = typeof(GroupPosition);
         private readonly IGroupPositionRepository _groupPositionRepo;
-        private static readonly GroupValidator _groupValidator = new();
-        private static readonly GroupPositionValidator _groupPositionValidator = new();
+        private readonly IValidator<Group> _groupValidator;
+        private readonly IValidator<GroupPosition> _groupPositionValidator;
         public GroupService(IGroupRepository repository,
         IGroupMemberRepository groupMemberRepo,
-        IGroupPositionRepository groupPositionRepo) : base(repository)
+        IGroupPositionRepository groupPositionRepo, IValidator<Group> groupValidator, IValidator<GroupPosition> positionValidator) : base(repository)
         {
+            _groupValidator = groupValidator;
+            _groupPositionValidator = positionValidator;
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
         }
@@ -113,7 +114,7 @@ namespace fsCore.Service
             var allMembers = (await allMembersTask) ?? Array.Empty<GroupMember>();
             var allGroups = (await allGroupsTask) ?? Array.Empty<Group>();
             var finalGroupArray = allMembers.Select(x => x.Group).Union(allGroups).Where(x => x is not null).ToHashSet();
-            return (finalGroupArray ?? new HashSet<Group>(), allMembers ?? Array.Empty<GroupMember>());
+            return (finalGroupArray?.OfType<Group>().ToArray() ?? Array.Empty<Group>(), allMembers ?? Array.Empty<GroupMember>());
         }
         public async Task<ICollection<Group>> GetAllSelfLeadGroups(User currentUser, int startIndex, int count)
         {

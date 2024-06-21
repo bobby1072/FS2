@@ -2,7 +2,6 @@ using System.Net;
 using Common;
 using Common.DbInterfaces.Repository;
 using Common.Models;
-using Common.Models.Validators;
 using Common.Utils;
 using FluentValidation;
 using fsCore.Service.Interfaces;
@@ -11,8 +10,11 @@ namespace fsCore.Service
 {
     public class UserService : BaseService<User, IUserRepository>, IUserService
     {
-        private static readonly UserValidator _validator = new();
-        public UserService(IUserRepository repository) : base(repository) { }
+        private readonly IValidator<User> _validator;
+        public UserService(IUserRepository repository, IValidator<User> userValidator) : base(repository)
+        {
+            _validator = userValidator;
+        }
         public async Task<User> GetUser(Guid id, UserWithGroupPermissionSet currentUser)
         {
             var foundUser = await GetUser(id);

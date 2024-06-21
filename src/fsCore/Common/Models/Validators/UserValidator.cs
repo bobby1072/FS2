@@ -1,7 +1,7 @@
 using FluentValidation;
 namespace Common.Models.Validators
 {
-    public class UserValidator : BaseValidator<User>
+    public class UserValidator : BaseValidator<User>, IValidator<User>
     {
         public UserValidator()
         {

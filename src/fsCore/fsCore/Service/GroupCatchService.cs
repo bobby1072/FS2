@@ -16,11 +16,13 @@ namespace fsCore.Service
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
         private readonly IUserService _userService;
-        private static readonly GroupCatchValidator _validator = new();
-        private static readonly GroupCatchCommentValidator _commentValidator = new();
+        private readonly IValidator<GroupCatch> _catchValidator;
+        private readonly IValidator<GroupCatchComment> _commentValidator;
         private readonly IGroupCatchCommentRepository _commentRepo;
-        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo) : base(groupCatchRepository)
+        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IValidator<GroupCatchComment> commentValidator, IValidator<GroupCatch> catchValidator) : base(groupCatchRepository)
         {
+            _catchValidator = catchValidator;
+            _commentValidator = commentValidator;
             _worldFishRepository = worldFishRepo;
             _userService = userService;
             _commentRepo = commentRepo;
@@ -67,7 +69,7 @@ namespace fsCore.Service
         }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
-            await _validator.ValidateAndThrowAsync(groupCatch);
+            await _catchValidator.ValidateAndThrowAsync(groupCatch);
             if (groupCatch.UserId != userWithGroupPermissionSet.Id && !userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, groupCatch.GroupId, nameof(GroupCatch)))
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);

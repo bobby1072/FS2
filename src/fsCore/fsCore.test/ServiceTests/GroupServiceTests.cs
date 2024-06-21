@@ -1,6 +1,8 @@
 using Common.DbInterfaces.Repository;
 using Common.Models;
+using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
+using FluentValidation;
 using fsCore.Service;
 using fsCore.Service.Interfaces;
 using Moq;
@@ -12,13 +14,19 @@ namespace fsCore.Tests.ServiceTests
         private readonly Mock<IGroupRepository> _mockGroupRepository;
         private readonly Mock<IGroupMemberRepository> _mockGroupMemberRepository;
         private readonly Mock<IGroupPositionRepository> _mockGroupPositionRepository;
+        private readonly Mock<GroupValidator> _mockGroupValidator;
+        private readonly Mock<GroupPositionValidator> _mockGroupPositionValidator;
         private readonly IGroupService _groupService;
         public GroupServiceTests()
         {
             _mockGroupMemberRepository = new Mock<IGroupMemberRepository>();
             _mockGroupPositionRepository = new Mock<IGroupPositionRepository>();
             _mockGroupRepository = new Mock<IGroupRepository>();
-            _groupService = new GroupService(_mockGroupRepository.Object, _mockGroupMemberRepository.Object, _mockGroupPositionRepository.Object);
+            _mockGroupValidator = new Mock<GroupValidator>();
+            _mockGroupPositionValidator = new Mock<GroupPositionValidator>();
+            _mockGroupValidator.Setup(x => x.ValidateAndThrowAsync(It.IsAny<Group>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            _mockGroupPositionValidator.Setup(x => x.ValidateAndThrowAsync(It.IsAny<GroupPosition>(), It.IsAny<CancellationToken>())).Returns(Task.CompletedTask);
+            _groupService = new GroupService(_mockGroupRepository.Object, _mockGroupMemberRepository.Object, _mockGroupPositionRepository.Object, _mockGroupValidator.Object, _mockGroupPositionValidator.Object);
         }
         public class GroupLeaderOrCanManageGroupMemberCanEditGroupClassData : TheoryData<UserWithGroupPermissionSet, Group>
         {
@@ -37,8 +45,9 @@ namespace fsCore.Tests.ServiceTests
         }
         [Theory]
         [ClassData(typeof(GroupLeaderOrCanManageGroupMemberCanEditGroupClassData))]
-        public async void GroupLeaderOrCanManageGroupMemberCanEditGroup()
+        public async void GroupLeaderOrCanManageGroupMemberCanEditGroup(UserWithGroupPermissionSet user, Group group)
         {
+
         }
     }
 }
