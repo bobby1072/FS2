@@ -30,7 +30,7 @@ stages:
               packageType: "sdk"
               version: "7.0.x"
 
-          - powershell: ./build-scripts/backend.ps1
+          - powershell: ./build-scripts/backend_unit_tests.ps1
             displayName: "Run .NET Unit Tests"
 
       - job: Build_frontend
