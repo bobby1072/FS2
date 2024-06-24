@@ -7,7 +7,7 @@ using fsCore.Service;
 using fsCore.Service.Interfaces;
 using Moq;
 
-namespace fsCore.Test.ServiceTests
+namespace fsCore.test.ServiceTests
 {
     public class GroupServiceTests
     {
