@@ -53,7 +53,7 @@ namespace fsCore.Test.ServiceTests
         }
         [Theory]
         [ClassData(typeof(GroupLeaderOrCanManageGroupMemberCanEditGroupClassData))]
-        public async Task GroupLeaderOrCanManageGroupMemberCanEditGroup(UserWithGroupPermissionSet user, Group group)
+        public async Task GroupLeaderOrCanManageGroupMemberCanEditGroupAndSaveAndDeletePositions(UserWithGroupPermissionSet user, Group group)
         {
             _mockGroupRepository.Setup(x => x.GetGroupWithoutEmblem(group.Id ?? Guid.Empty, It.IsAny<ICollection<string>>())).ReturnsAsync(group);
             var editedGroup = group.JsonClone();
@@ -61,6 +61,11 @@ namespace fsCore.Test.ServiceTests
             _mockGroupRepository.Setup(x => x.Update(new[] { editedGroup })).ReturnsAsync(new[] { editedGroup });
             await _groupService.SaveGroup(editedGroup, user);
             _mockGroupRepository.Verify(x => x.Update(new[] { editedGroup }), Times.Once);
+            var newPosition = MockGroupPositionBuilder.Build(group.Id ?? Guid.Empty, null, null, null, null, null, null);
+            newPosition.Id = null;
+            _mockGroupPositionRepository.Setup(x => x.Create(It.IsAny<ICollection<GroupPosition>>())).ReturnsAsync(new[] { newPosition });
+            await _groupService.SavePosition(newPosition, user);
+            _mockGroupPositionRepository.Verify(x => x.Create(It.IsAny<ICollection<GroupPosition>>()), Times.Once);
         }
         internal class NonAuthorisedUserCantEditOrDeleteGroupClassData : TheoryData<UserWithGroupPermissionSet, Group>
         {
@@ -87,6 +92,9 @@ namespace fsCore.Test.ServiceTests
             editedGroup.Name = "New name for test";
             var foundException = await Assert.ThrowsAsync<ApiException>(() => _groupService.SaveGroup(editedGroup, currentUser));
             Assert.Equal(ErrorConstants.DontHavePermission, foundException.Message);
+            var foundDeleteException = await Assert.ThrowsAsync<ApiException>(() => _groupService.DeleteGroup(group.Id ?? Guid.Empty, currentUser));
+            Assert.Equal(ErrorConstants.DontHavePermission, foundDeleteException.Message);
         }
+
     }
 }

@@ -68,7 +68,7 @@ namespace fsCore.Service
         }
         public async Task<Group> DeleteGroup(Guid groupId, UserWithGroupPermissionSet currentUser)
         {
-            var foundGroup = await _repo.GetOne(groupId, _groupType.GetProperty("id".ToPascalCase())?.Name ?? throw new Exception()) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var foundGroup = await _repo.GetGroupWithoutEmblem(groupId) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (foundGroup.LeaderId != currentUser.Id)
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
@@ -125,17 +125,8 @@ namespace fsCore.Service
         public async Task<ICollection<Group>> GetAllGroupsForUser(User currentUser, int startIndex, int count)
         {
             if (count > 5) throw new ApiException(ErrorConstants.TooManyRecordsRequested, HttpStatusCode.BadRequest);
-            var allMemberships = await _groupMemberRepo.GetFullMemberships(currentUser.Id ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), count, startIndex);
-            var allGroups = allMemberships?.Select(x => x.Group).ToArray();
-            var nonNullGroupList = new Group[allGroups?.Length ?? 0];
-            for (int i = 0; i < allGroups?.Length; i++)
-            {
-                var group = allGroups?[i];
-                if (group is Group notNullGroup)
-                {
-                    nonNullGroupList[i] = notNullGroup;
-                }
-            }
+            var allMemberships = await _groupMemberRepo.GetFullMemberships(currentUser.Id ?? throw new ApiException(ErrorConstants.NoUserFound, HttpStatusCode.NotFound), count, startIndex) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
+            var nonNullGroupList = allMemberships.Select(x => x.Group).OfType<Group>().ToArray();
             if (nonNullGroupList.Length < 1) throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             return nonNullGroupList;
         }
