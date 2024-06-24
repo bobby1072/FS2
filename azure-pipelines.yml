@@ -31,6 +31,13 @@ stages:
               packageType: "sdk"
               version: "7.0.x"
 
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: "test"
+              projects: "src/fsCore/fsCore.sln"
+              arguments: "-c Release"
+            displayName: "Run .NET Unit Tests"
+
           - powershell: ./build-scripts/backend_unit_tests.ps1
             displayName: "Run .NET Unit Tests"
 
