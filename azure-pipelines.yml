@@ -38,9 +38,6 @@ stages:
               arguments: "-c Release"
             displayName: "Run .NET Unit Tests"
 
-          - powershell: ./build-scripts/backend_unit_tests.ps1
-            displayName: "Run .NET Unit Tests"
-
       - job: build_frontend
         displayName: "Build frontend"
         steps:
