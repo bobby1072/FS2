@@ -62,6 +62,13 @@ stages:
             displayName: "Add build environment"
 
           - task: Npm@1
+            displayName: "Test"
+            inputs:
+              command: "custom"
+              customCommand: "test --watchAll=false --coverage --ci"
+              workingDir: $(Build.SourcesDirectory)/src/Client
+
+          - task: Npm@1
             displayName: "Build"
             inputs:
               command: "custom"
@@ -69,6 +76,7 @@ stages:
               workingDir: $(Build.SourcesDirectory)/src/client
 
           - publish: "$(Build.SourcesDirectory)/src/client/build"
+            condition: eq(variables.isMain, true)
             displayName: "Publish client files"
             artifact: client
 
