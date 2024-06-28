@@ -12,8 +12,10 @@ vi.mock("react-router-dom", async () => ({
   },
 }));
 
-vi.mock("./common/contexts/AbilitiesContext", () => {
+vi.mock("./common/contexts/AbilitiesContext", async () => {
   return {
+    ...(await vi.importActual<any>("./common/contexts/AbilitiesContext")),
+
     useCurrentPermissionManager: vi.fn().mockReturnValue({
       permissionManager: {
         Can: vi.fn().mockReturnValue(true),
@@ -21,12 +23,14 @@ vi.mock("./common/contexts/AbilitiesContext", () => {
     }),
   };
 });
-vi.mock("./common/contexts/AuthenticationContext", () => {
+vi.mock("./common/contexts/AuthenticationContext", async () => {
   return {
+    ...(await vi.importActual<any>("./common/contexts/AuthenticationContext")),
     useAuthentication: vi.fn().mockReturnValue({ isLoggedIn: true }),
   };
 });
 
-vi.mock("./common/contexts/UserContext", () => ({
+vi.mock("./common/contexts/UserContext", async () => ({
+  ...(await vi.importActual<any>("./common/contexts/UserContext")),
   useCurrentUser: vi.fn().mockReturnValue({ id: "1" }),
 }));
