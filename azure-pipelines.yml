@@ -22,7 +22,23 @@ pool:
 stages:
   - stage: Build
     jobs:
-      - job: Build_frontend
+      - job: build_backend
+        displayName: "Build backend"
+        steps:
+          - task: UseDotNet@2
+            displayName: "Install .NET SDK"
+            inputs:
+              packageType: "sdk"
+              version: "7.0.x"
+
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: "test"
+              projects: "src/fsCore/fsCore.sln"
+              arguments: "-c Release"
+            displayName: "Run .NET Unit Tests"
+
+      - job: build_frontend
         displayName: "Build frontend"
         steps:
           - task: NodeTool@0
@@ -46,6 +62,13 @@ stages:
             displayName: "Add build environment"
 
           - task: Npm@1
+            displayName: "Test"
+            inputs:
+              command: "custom"
+              customCommand: "test --watchAll=false --coverage --ci"
+              workingDir: $(Build.SourcesDirectory)/src/client
+
+          - task: Npm@1
             displayName: "Build"
             inputs:
               command: "custom"
@@ -53,6 +76,7 @@ stages:
               workingDir: $(Build.SourcesDirectory)/src/client
 
           - publish: "$(Build.SourcesDirectory)/src/client/build"
+            condition: eq(variables.isMain, true)
             displayName: "Publish client files"
             artifact: client
 
