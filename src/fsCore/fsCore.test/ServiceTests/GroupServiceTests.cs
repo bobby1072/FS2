@@ -26,14 +26,8 @@ namespace fsCore.test.ServiceTests
             _mockGroupPositionValidator = new MockGroupPositionValidator();
             _groupService = new GroupService(_mockGroupRepository.Object, _mockGroupMemberRepository.Object, _mockGroupPositionRepository.Object, _mockGroupValidator, _mockGroupPositionValidator);
         }
-        internal class MockGroupPositionValidator : AbstractValidator<GroupPosition>, IValidator<GroupPosition>
-        {
-            public MockGroupPositionValidator() { }
-        }
-        internal class MockGroupValidator : AbstractValidator<Group>, IValidator<Group>
-        {
-            public MockGroupValidator() { }
-        }
+        internal class MockGroupPositionValidator : AbstractValidator<GroupPosition>, IValidator<GroupPosition> { }
+        internal class MockGroupValidator : AbstractValidator<Group>, IValidator<Group> { }
         internal class Group_Leader_Or_Can_Manage_Group_Member_Class_Data : TheoryData<UserWithGroupPermissionSet, Group>
         {
             public Group_Leader_Or_Can_Manage_Group_Member_Class_Data()

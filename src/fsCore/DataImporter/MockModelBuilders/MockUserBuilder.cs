@@ -17,6 +17,6 @@ namespace DataImporter.MockModelBuilders
     }
     public static class MockUserWithPermissionsBuilder
     {
-        public static UserWithGroupPermissionSet Build(User? user) => new(user ?? MockUserBuilder.Build());
+        public static UserWithGroupPermissionSet Build(User? user = null) => new(user ?? MockUserBuilder.Build());
     }
 }

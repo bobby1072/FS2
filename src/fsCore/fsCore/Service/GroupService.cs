@@ -14,7 +14,6 @@ namespace fsCore.Service
         private readonly IGroupMemberRepository _groupMemberRepo;
         private static readonly Type _groupMemberType = typeof(GroupMember);
         private static readonly Type _groupType = typeof(Group);
-        private static readonly Type _userType = typeof(User);
         private static readonly Type _groupPositionType = typeof(GroupPosition);
         private readonly IGroupPositionRepository _groupPositionRepo;
         private readonly IValidator<Group> _groupValidator;
