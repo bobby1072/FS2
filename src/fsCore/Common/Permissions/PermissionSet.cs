@@ -4,6 +4,7 @@ namespace Common.Permissions
 {
     public class Permission<T>
     {
+
         [JsonConstructor]
         public Permission() { }
         [JsonPropertyName("action")]

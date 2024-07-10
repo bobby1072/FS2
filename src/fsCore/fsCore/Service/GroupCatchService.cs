@@ -74,13 +74,6 @@ namespace fsCore.Service
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            else
-            {
-                if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Read, groupCatch.GroupId, nameof(GroupCatch)))
-                {
-                    throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
-                }
-            }
             if (groupCatch.Id is Guid foundId)
             {
                 var foundGroupCatch = await _repo.GetOne(foundId) ?? throw new ApiException(ErrorConstants.NoFishFound, HttpStatusCode.NotFound);

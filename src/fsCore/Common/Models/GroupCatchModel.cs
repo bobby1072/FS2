@@ -42,6 +42,8 @@ namespace Common.Models
         public string? WorldFishTaxocode { get; set; }
         [JsonPropertyName("worldFish")]
         public WorldFish? WorldFish { get; set; }
+        [JsonConstructor]
+        public GroupCatch() { }
         public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user, string? worldFishTaxocode, WorldFish? worldFish)
         {
             Id = id;
