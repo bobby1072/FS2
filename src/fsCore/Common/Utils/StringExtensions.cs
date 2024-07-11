@@ -36,7 +36,7 @@ namespace Common.Utils
                 MailAddress mailAddress = new MailAddress(email);
                 return true;
             }
-            catch (FormatException)
+            catch (Exception)
             {
                 return false;
             }
