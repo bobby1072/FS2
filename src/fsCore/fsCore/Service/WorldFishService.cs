@@ -1,11 +1,11 @@
 using System.Net;
 using System.Text.Json;
 using Common;
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using fsCore.Service.Interfaces;
 using Hangfire;
+using Persistence.EntityFramework.Abstract.Repository;
 
 namespace fsCore.Service
 {

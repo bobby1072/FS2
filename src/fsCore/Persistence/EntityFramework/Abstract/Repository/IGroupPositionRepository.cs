@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace Common.DbInterfaces.Repository
+namespace Persistence.EntityFramework.Abstract.Repository
 {
     public interface IGroupPositionRepository
     {

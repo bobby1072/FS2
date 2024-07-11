@@ -1,13 +1,13 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using Common;
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Models.MiscModels;
 using Common.Models.Validators;
 using Common.Permissions;
 using FluentValidation;
 using fsCore.Service.Interfaces;
+using Persistence.EntityFramework.Abstract.Repository;
 
 namespace fsCore.Service
 {

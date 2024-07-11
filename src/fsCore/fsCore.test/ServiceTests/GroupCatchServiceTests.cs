@@ -1,4 +1,3 @@
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common;
 using DataImporter.MockModelBuilders;
@@ -8,6 +7,7 @@ using Faker;
 using fsCore.Service.Interfaces;
 using Moq;
 using Common.Utils;
+using Persistence.EntityFramework.Abstract.Repository;
 
 namespace fsCore.test.ServiceTests
 {

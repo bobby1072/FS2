@@ -1,7 +1,7 @@
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Utils;
 using Microsoft.EntityFrameworkCore;
+using Persistence.EntityFramework.Abstract.Repository;
 using Persistence.EntityFramework.Entity;
 
 namespace Persistence.EntityFramework.Repository

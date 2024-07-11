@@ -1,4 +1,4 @@
-namespace Common.DbInterfaces.ErrorHandlers
+namespace Persistence.EntityFramework.Abstract.ErrorHandler
 {
     public interface INpgExceptionHandler
     {

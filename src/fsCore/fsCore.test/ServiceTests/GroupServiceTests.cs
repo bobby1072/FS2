@@ -1,12 +1,11 @@
 using Common;
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
 using fsCore.Service;
 using fsCore.Service.Interfaces;
 using Moq;
-
+using Persistence.EntityFramework.Abstract.Repository;
 namespace fsCore.test.ServiceTests
 {
     public class GroupServiceTests

@@ -1,7 +1,7 @@
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using DataImporter.MockModelBuilders;
 using Microsoft.Extensions.Logging;
+using Persistence.EntityFramework.Abstract.Repository;
 
 namespace DataImporter.ModelImporters.MockModelImporters
 {

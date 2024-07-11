@@ -1,11 +1,11 @@
 using System.Net;
 using Common;
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Permissions;
 using Common.Utils;
 using FluentValidation;
 using fsCore.Service.Interfaces;
+using Persistence.EntityFramework.Abstract.Repository;
 
 namespace fsCore.Service
 {

@@ -44,7 +44,6 @@ builder.Services
     .AddResponseCompression()
     .AddLogging()
     .AddHttpClient()
-    .AddLogging()
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddControllers()

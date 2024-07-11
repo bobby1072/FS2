@@ -1,6 +1,6 @@
 using System.Net;
-using Common.DbInterfaces.ErrorHandlers;
 using Microsoft.EntityFrameworkCore;
+using Persistence.EntityFramework.Abstract.ErrorHandler;
 
 namespace Persistence
 {

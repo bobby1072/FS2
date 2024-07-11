@@ -2,9 +2,8 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using Common;
-using Common.DbInterfaces.ErrorHandlers;
 using FluentValidation;
-
+using Persistence.EntityFramework.Abstract.ErrorHandler;
 namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware
