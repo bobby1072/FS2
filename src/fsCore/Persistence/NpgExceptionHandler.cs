@@ -1,13 +1,11 @@
 using System.Net;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityFramework.Abstract.ErrorHandler;
 
 namespace Persistence
 {
-    public class NpgExceptionHandler : INpgExceptionHandler
+    public static class NpgExceptionHandler
     {
-        public NpgExceptionHandler() { }
-        public async Task<(int, string)?> HandleException<T>(T exception) where T : Exception
+        public static (int, string)? HandleException<T>(T exception) where T : Exception
         {
             if (exception is DbUpdateException npgException)
             {
