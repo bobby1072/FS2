@@ -71,10 +71,7 @@ namespace fsCore.test.ServiceTests.ValidatorTests
         public void User_Validator_Should_Validate_Correctly(User user, bool expected)
         {
             var result = _validator.Validate(user);
-            if (expected != result.IsValid)
-            {
-                Console.Write("expected, result.IsValidexpected, result.IsValidexpected, result.IsValid");
-            }
+
             Assert.Equal(expected, result.IsValid);
         }
     }
