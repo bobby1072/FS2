@@ -1,9 +1,7 @@
 using Common;
 using Common.Authentication;
-using fsCore.Service;
 using fsCore.Middleware;
-using fsCore.Service.Hangfire;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +11,7 @@ using System.Text.Json;
 using DataImporter;
 using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
+using fsCore.Service.Concrete;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -44,7 +43,6 @@ builder.Services
     .AddResponseCompression()
     .AddLogging()
     .AddHttpClient()
-    .AddLogging()
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddControllers()

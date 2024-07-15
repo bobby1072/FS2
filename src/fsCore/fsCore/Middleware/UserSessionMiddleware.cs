@@ -2,9 +2,9 @@ using System.Net;
 using System.Text.Json;
 using Common;
 using Common.Models;
-using fsCore.Service;
 using fsCore.Controllers.Attributes;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
+using fsCore.Service.Abstract;
 
 namespace fsCore.Middleware
 {

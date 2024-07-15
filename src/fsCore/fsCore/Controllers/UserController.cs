@@ -2,7 +2,7 @@ using System.Net;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Microsoft.AspNetCore.Mvc;
 
 namespace fsCore.Controllers
@@ -44,9 +44,9 @@ namespace fsCore.Controllers
         [RequiredUser(true)]
         [RequiredUserWithGroupPermissions(true)]
         [HttpGet("SelfWithGroupPermissions")]
-        public async Task<IActionResult> GetUserWithPermissions()
+        public Task<IActionResult> GetUserWithPermissions()
         {
-            return Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions()));
+            return Task.FromResult((IActionResult)Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions())));
         }
 
     }

@@ -88,7 +88,7 @@ namespace Common.Models
             }
             GroupPermissions
                 .AddCan(PermissionConstants.BelongsTo, member.Group);
-            if (member.Group.Id == Id)
+            if (member.Group.LeaderId == Id)
             {
                 GroupPermissions
                     .AddCan(PermissionConstants.Manage, member.Group)

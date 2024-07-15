@@ -1,9 +1,8 @@
 using Common;
-using Common.DbInterfaces.Repository;
-using DataImporter.ModelImporters;
+using DataImporter.DataImporters.ModelImporters.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
-
+using Persistence.EntityFramework.Abstract.Repository;
 namespace DataImporter
 {
     internal class GenericDataImporter : IDataImporter
@@ -49,8 +48,9 @@ namespace DataImporter
             }
             catch (Exception e)
             {
-                _logger.LogError("Failed to import mock data, the error was: {0}", e);
+                _logger.LogError("Failed to import mock data, the error was: {E}", e);
                 await _userRepository.DeleteAll();
+                throw new ApiException(e);
             }
         }
     }

@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using Common.Attributes;
-using Common.Models.Validators;
-using FluentValidation;
+
 namespace Common.Models
 {
     public class Group : BaseModel

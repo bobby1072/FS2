@@ -2,18 +2,15 @@ using System.Net;
 using System.Net.Mime;
 using System.Text;
 using Common;
-using Common.DbInterfaces.ErrorHandlers;
 using FluentValidation;
-
+using Persistence;
 namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware
     {
         private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-        private readonly INpgExceptionHandler _postgresExceptionHandler;
-        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger, INpgExceptionHandler postgresExceptionHandler) : base(next)
+        public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger) : base(next)
         {
-            _postgresExceptionHandler = postgresExceptionHandler;
             _logger = logger;
         }
         private static string CreateValidationExceptionMessage(ValidationException validationException)
@@ -46,7 +43,7 @@ namespace fsCore.Middleware
                 }
                 else
                 {
-                    var foundPostgresExceptionResults = await _postgresExceptionHandler.HandleException(error);
+                    var foundPostgresExceptionResults = NpgExceptionHandler.HandleException(error);
                     if (foundPostgresExceptionResults is null)
                     {
                         httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
@@ -58,7 +55,7 @@ namespace fsCore.Middleware
                     await httpContext.Response.WriteAsync(message);
                 }
             }
-            catch (Exception _) { }
+            catch (Exception) { }
         }
         public async Task InvokeAsync(HttpContext httpContext)
         {

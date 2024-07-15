@@ -11,7 +11,14 @@ export enum PermissionFields {
   GroupCatch = "GroupCatch",
   GroupMember = "GroupMember",
 }
-export class PermissionManager {
+export interface IPermissionManager {
+  Can: (
+    action: PermissionActions,
+    subject: string,
+    fields?: PermissionFields | null
+  ) => boolean;
+}
+export class PermissionManager implements IPermissionManager {
   private _permissions: IUserWithPermissionsRawModel["groupPermissions"]["abilities"] =
     [];
   public constructor(
@@ -42,7 +49,7 @@ export class PermissionManager {
 }
 
 const AppAbilityContext = createContext<
-  { permissionManager: PermissionManager } | undefined
+  { permissionManager: IPermissionManager } | undefined
 >(undefined);
 
 export const useCurrentPermissionManager = () => {

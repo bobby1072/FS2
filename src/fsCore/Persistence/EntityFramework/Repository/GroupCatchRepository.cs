@@ -1,9 +1,9 @@
 using System.Net;
 using Common;
-using Common.DbInterfaces.Repository;
 using Common.Models;
 using Common.Models.MiscModels;
 using Microsoft.EntityFrameworkCore;
+using Persistence.EntityFramework.Abstract.Repository;
 using Persistence.EntityFramework.Entity;
 
 namespace Persistence.EntityFramework.Repository

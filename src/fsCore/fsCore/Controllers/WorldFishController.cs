@@ -1,7 +1,7 @@
 using System.Net;
 using Common;
 using Common.Models;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
