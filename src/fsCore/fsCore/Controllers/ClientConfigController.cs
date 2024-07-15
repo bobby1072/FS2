@@ -15,13 +15,13 @@ namespace fsCore.Controllers
         }
         [ProducesDefaultResponseType(typeof(ClientConfigurationResponse))]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public Task<IActionResult> Get()
         {
-            return Ok(new ClientConfigurationResponse(
+            return Task.FromResult((IActionResult)Ok(new ClientConfigurationResponse(
                 _clientConfigSettings.ApiHost,
                 _clientConfigSettings.AuthorityHost,
                 _clientConfigSettings.AuthorityClientId,
-                _clientConfigSettings.Scope));
+                _clientConfigSettings.Scope)));
         }
     }
 

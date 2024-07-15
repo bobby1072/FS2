@@ -4,10 +4,10 @@ using Common.Models;
 using Common.Permissions;
 using Common.Utils;
 using FluentValidation;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.Service
+namespace fsCore.Service.Concrete
 {
     public class GroupService : BaseService<Group, IGroupRepository>, IGroupService
     {
@@ -110,8 +110,8 @@ namespace fsCore.Service
             var allMembersTask = _groupMemberRepo.GetMany(currentUser.Id, _groupMemberType.GetProperty("userId".ToPascalCase())?.Name ?? throw new Exception(), new string[] { "Group", "Position" });
             var allGroupsTask = _repo.ManyGroupWithoutEmblem(currentUser.Id ?? throw new Exception());
             await Task.WhenAll(allMembersTask, allGroupsTask);
-            var allMembers = (await allMembersTask) ?? Array.Empty<GroupMember>();
-            var allGroups = (await allGroupsTask) ?? Array.Empty<Group>();
+            var allMembers = await allMembersTask ?? Array.Empty<GroupMember>();
+            var allGroups = await allGroupsTask ?? Array.Empty<Group>();
             var finalGroupArray = allMembers.Select(x => x.Group).Union(allGroups).Where(x => x is not null).ToHashSet();
             return (finalGroupArray?.OfType<Group>().ToArray() ?? Array.Empty<Group>(), allMembers ?? Array.Empty<GroupMember>());
         }

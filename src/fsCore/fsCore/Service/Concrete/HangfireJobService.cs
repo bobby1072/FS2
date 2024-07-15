@@ -1,8 +1,9 @@
 using DataImporter;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
+using fsCore.Service.Abstract;
 using Hangfire;
 
-namespace fsCore.Service.Hangfire
+namespace fsCore.Service.Concrete
 {
     public class HangfireJobService : IHangfireJobsService
     {

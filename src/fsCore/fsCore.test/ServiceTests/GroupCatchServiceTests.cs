@@ -2,9 +2,9 @@ using Common.Models;
 using Common;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
-using fsCore.Service;
+using fsCore.Service.Concrete;
 using Faker;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Moq;
 using Common.Utils;
 using Persistence.EntityFramework.Abstract.Repository;
@@ -43,6 +43,7 @@ namespace fsCore.test.ServiceTests
                 authorisedLeader.BuildPermissions(new[] { group });
                 Add(authorisedLeader, group);
                 var positionToDeleteCatches = MockGroupPositionBuilder.Build((Guid)group.Id!, null, true, true, false, false, null);
+                positionToDeleteCatches.Id = 1;
                 var authorisedMemberUser = MockUserWithPermissionsBuilder.Build();
                 var authorisedMember = MockGroupMemberBuilder.Build((Guid)group.Id, (Guid)authorisedMemberUser.Id!, (int)positionToDeleteCatches.Id!);
                 authorisedMember.Group = group;
@@ -60,7 +61,7 @@ namespace fsCore.test.ServiceTests
             var newCatch = originalCatch.JsonClone();
             newCatch.Description = "New test description";
             newCatch.CaughtAt = DateTimeUtils.RandomPastDate()();
-            _groupCatchRepository.Setup(x => x.Update(It.IsAny<ICollection<GroupCatch>>())).ReturnsAsync(new [] { newCatch});
+            _groupCatchRepository.Setup(x => x.Update(It.IsAny<ICollection<GroupCatch>>())).ReturnsAsync(new[] { newCatch });
             await _groupCatchService.SaveGroupCatch(newCatch, user);
             _groupCatchRepository.Verify(x => x.Update(It.IsAny<ICollection<GroupCatch>>()), Times.Once);
         }

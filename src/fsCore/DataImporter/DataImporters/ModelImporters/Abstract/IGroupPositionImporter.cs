@@ -1,4 +1,4 @@
-namespace DataImporter.ModelImporters
+namespace DataImporter.DataImporters.ModelImporters.Abstract
 {
     internal interface IGroupPositionImporter : IImporter
     {

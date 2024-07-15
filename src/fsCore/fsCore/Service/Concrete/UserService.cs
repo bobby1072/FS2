@@ -3,10 +3,10 @@ using Common;
 using Common.Models;
 using Common.Utils;
 using FluentValidation;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.Service
+namespace fsCore.Service.Concrete
 {
     public class UserService : BaseService<User, IUserRepository>, IUserService
     {

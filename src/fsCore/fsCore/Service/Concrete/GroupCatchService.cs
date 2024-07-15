@@ -6,10 +6,10 @@ using Common.Models.MiscModels;
 using Common.Models.Validators;
 using Common.Permissions;
 using FluentValidation;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.Service
+namespace fsCore.Service.Concrete
 {
     public class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
     {

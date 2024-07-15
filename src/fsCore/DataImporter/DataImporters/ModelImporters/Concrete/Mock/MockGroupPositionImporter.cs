@@ -1,9 +1,10 @@
 using Common.Models;
+using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.MockModelBuilders;
 using Microsoft.Extensions.Logging;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace DataImporter.ModelImporters.MockModelImporters
+namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
     internal class MockGroupPositionImporter : IGroupPositionImporter
     {

@@ -14,7 +14,8 @@ namespace Common.Models.Validators
             RuleFor(x => x.Longitude).Must(LngWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);
             RuleFor(x => x.Length).Must(NumbersArePositive).WithMessage(ErrorConstants.InvalidLength);
             RuleFor(x => x.Weight).Must(NumbersArePositive).WithMessage(ErrorConstants.InvalidWeight);
-            RuleFor(x => x.CaughtAt).Must(DateInThePast).WithMessage(ErrorConstants.DateCaughtMustBeInThePast);
+            RuleFor(x => x.CaughtAt).Must(DateInThePastOrNow).WithMessage(ErrorConstants.DateCaughtMustBeInThePast);
+            RuleFor(x => x.CreatedAt).Must(DateInThePastOrNow).WithMessage(ErrorConstants.DateCaughtMustBeInThePast);
         }
     }
 }

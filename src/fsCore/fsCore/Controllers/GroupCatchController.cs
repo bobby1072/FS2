@@ -4,7 +4,7 @@ using Common.Models;
 using Common.Models.MiscModels;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {

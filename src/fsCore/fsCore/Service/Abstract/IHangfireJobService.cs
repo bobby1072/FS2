@@ -1,4 +1,4 @@
-namespace fsCore.Service.Hangfire
+namespace fsCore.Service.Abstract
 {
     public interface IHangfireJobsService
     {

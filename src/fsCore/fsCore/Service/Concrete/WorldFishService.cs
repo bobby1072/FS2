@@ -3,11 +3,11 @@ using System.Text.Json;
 using Common;
 using Common.Models;
 using Common.Utils;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 using Hangfire;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.Service
+namespace fsCore.Service.Concrete
 {
     public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
     {

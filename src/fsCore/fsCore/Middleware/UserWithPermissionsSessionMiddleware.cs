@@ -3,7 +3,7 @@ using System.Text.Json;
 using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
-using fsCore.Service.Interfaces;
+using fsCore.Service.Abstract;
 
 namespace fsCore.Middleware
 {

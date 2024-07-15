@@ -1,4 +1,4 @@
-namespace DataImporter.ModelImporters.MockModelImporters
+namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
     internal enum NumberOfMockModelToCreate
     {
