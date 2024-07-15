@@ -7,7 +7,7 @@ namespace Common.Models.Validators
         public GroupValidator()
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage(ErrorConstants.GroupNameCorrectFormat);
-            RuleFor(x => x.Name).Must(x => x.Length <= 50).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(x => x?.Length <= 50).WithMessage(ErrorConstants.GroupNameCorrectFormat);
             RuleFor(x => x.Name).Must(NotHaveNonAlphanumerics).WithMessage(ErrorConstants.GroupNameCorrectFormat);
             RuleFor(x => x.Name).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
 

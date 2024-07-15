@@ -64,14 +64,10 @@ namespace fsCore.test.ValidatorTests.ModelValidators
         }
         [Theory]
         [ClassData(typeof(Group_Class_Data))]
-        public async Task Group_Validator_Should_Validate_Correctly(Group group, bool expected, string testRef)
+        public void Group_Validator_Should_Validate_Correctly(Group group, bool expected, string testRef)
         {
             var result = _validator.Validate(group);
 
-            if (expected != result.IsValid)
-            {
-                Console.Write(testRef);
-            }
             Assert.Equal(expected, result.IsValid);
         }
     }
