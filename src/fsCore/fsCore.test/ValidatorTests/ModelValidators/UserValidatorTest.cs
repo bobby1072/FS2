@@ -1,11 +1,11 @@
 using Common.Models;
 using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
-namespace fsCore.test.ServiceTests.ValidatorTests
+namespace fsCore.test.ValidatorTests.ModelValidators
 {
     public class UserValidatorTest
     {
-        private UserValidator _validator;
+        private readonly UserValidator _validator;
         public UserValidatorTest()
         {
             _validator = new UserValidator();

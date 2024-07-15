@@ -11,7 +11,7 @@ namespace DataImporter.MockModelBuilders
             return new GroupPosition(
                 groupId,
                 Regex.Replace(Faker.Name.First(), "^a-zA-Z0-9", ""),
-                id ?? random.Next(1, 100),
+                id,
                 canManageGroup ?? random.Next(0, 2) == 1,
                 canReadCatches ?? random.Next(0, 2) == 1,
                 canManageCatches ?? random.Next(0, 2) == 1,
