@@ -42,8 +42,7 @@ namespace fsCore.test.ServiceTests
                 var group = MockGroupBuilder.Build((Guid)authorisedLeader.Id!);
                 authorisedLeader.BuildPermissions(new[] { group });
                 Add(authorisedLeader, group);
-                var positionToDeleteCatches = MockGroupPositionBuilder.Build((Guid)group.Id!, null, true, true, false, false, null);
-                positionToDeleteCatches.Id = 1;
+                var positionToDeleteCatches = MockGroupPositionBuilder.Build((Guid)group.Id!, null, true, true, false, false, 1);
                 var authorisedMemberUser = MockUserWithPermissionsBuilder.Build();
                 var authorisedMember = MockGroupMemberBuilder.Build((Guid)group.Id, (Guid)authorisedMemberUser.Id!, (int)positionToDeleteCatches.Id!);
                 authorisedMember.Group = group;
