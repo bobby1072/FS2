@@ -37,6 +37,16 @@ stages:
               projects: "src/fsCore/fsCore.sln"
               arguments: "-c Release"
             displayName: "Run .NET Unit Tests"
+          - task: Docker@2
+            displayName: Testing whether Build Core Image
+            inputs:
+              command: build
+              # repository: $(core-dockerRepository)
+              # tags: |
+              #   latest
+              #   $(ImageTag)
+              Dockerfile: "$(Build.SourcesDirectory)/src/fsCore/dockerfile.azurebuild"
+              buildContext: "$(Build.SourcesDirectory)"
 
       - job: build_frontend
         displayName: "Build frontend"

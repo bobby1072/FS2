@@ -1,9 +1,9 @@
 using DataImporter;
-using fsCore.Service.Abstract;
-using fsCore.Service.Abstract;
+using fsCore.Services.Abstract;
 using Hangfire;
+using Microsoft.Extensions.Logging;
 
-namespace fsCore.Service.Concrete
+namespace fsCore.Services.Concrete
 {
     public class HangfireJobService : IHangfireJobsService
     {

@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImporter", "DataImporte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsCore.test", "fsCore.test\fsCore.test.csproj", "{76060408-979E-4BDF-A16E-10783B79056D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{D0D13E32-6246-4273-B859-4EE914C92F67}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{76060408-979E-4BDF-A16E-10783B79056D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76060408-979E-4BDF-A16E-10783B79056D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76060408-979E-4BDF-A16E-10783B79056D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0D13E32-6246-4273-B859-4EE914C92F67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0D13E32-6246-4273-B859-4EE914C92F67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0D13E32-6246-4273-B859-4EE914C92F67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0D13E32-6246-4273-B859-4EE914C92F67}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

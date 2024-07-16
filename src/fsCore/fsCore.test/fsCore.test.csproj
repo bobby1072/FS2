@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <Folder Include="ValidatorTests\" />
+    <Folder Include="ServiceTests\" />
   </ItemGroup>
 
 </Project>

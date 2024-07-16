@@ -1,7 +1,7 @@
 using Common.Models;
-using fsCore.Service.Concrete;
+using fsCore.Services.Concrete;
 
-namespace fsCore.Service.Abstract
+namespace fsCore.Services.Abstract
 {
     public interface IUserInfoClient
     {

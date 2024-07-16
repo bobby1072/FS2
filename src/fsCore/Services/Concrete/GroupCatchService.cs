@@ -3,13 +3,12 @@ using System.Text.RegularExpressions;
 using Common;
 using Common.Models;
 using Common.Models.MiscModels;
-using Common.Models.Validators;
 using Common.Permissions;
 using FluentValidation;
-using fsCore.Service.Abstract;
+using fsCore.Services.Abstract;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.Service.Concrete
+namespace fsCore.Services.Concrete
 {
     public class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
     {
