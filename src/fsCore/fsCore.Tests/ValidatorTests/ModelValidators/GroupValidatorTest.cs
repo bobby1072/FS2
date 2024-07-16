@@ -2,7 +2,7 @@ using DataImporter.MockModelBuilders;
 using Common.Models;
 using Common.Models.Validators;
 
-namespace fsCore.test.ValidatorTests.ModelValidators
+namespace fsCore.Tests.ValidatorTests.ModelValidators
 {
     public class GroupValidatorTest
     {

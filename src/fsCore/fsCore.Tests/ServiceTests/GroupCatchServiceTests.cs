@@ -9,7 +9,7 @@ using Moq;
 using Common.Utils;
 using Persistence.EntityFramework.Abstract.Repository;
 
-namespace fsCore.test.ServiceTests
+namespace fsCore.Tests.ServiceTests
 {
     public class GroupCatchServiceTests
     {
