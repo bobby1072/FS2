@@ -3,7 +3,7 @@ using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Controllers.ControllerModels;
-using fsCore.Service.Abstract;
+using fsCore.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
 namespace fsCore.Controllers
 {

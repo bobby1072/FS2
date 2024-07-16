@@ -2,8 +2,8 @@ using Common;
 using Common.Models;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
-using fsCore.Service.Concrete;
-using fsCore.Service.Abstract;
+using fsCore.Services.Concrete;
+using fsCore.Services.Abstract;
 using Moq;
 using Persistence.EntityFramework.Abstract.Repository;
 namespace fsCore.test.ServiceTests

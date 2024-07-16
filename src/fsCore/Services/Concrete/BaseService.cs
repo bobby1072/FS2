@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace fsCore.Service.Concrete
+namespace fsCore.Services.Concrete
 {
     public abstract class BaseService<TBase, IRepo> where TBase : BaseModel
     {

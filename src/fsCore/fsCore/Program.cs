@@ -1,7 +1,7 @@
 using Common;
 using Common.Authentication;
 using fsCore.Middleware;
-using fsCore.Service.Abstract;
+using fsCore.Services.Abstract;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,7 +11,8 @@ using System.Text.Json;
 using DataImporter;
 using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
-using fsCore.Service.Concrete;
+using fsCore.Services.Concrete;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -86,15 +87,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services
-    .AddHttpClient<IUserInfoClient, UserInfoClient>();
-
-builder.Services
-    .AddScoped<IWorldFishService, WorldFishService>()
-    .AddScoped<IUserService, UserService>()
-    .AddScoped<IGroupService, GroupService>()
-    .AddScoped<IGroupCatchService, GroupCatchService>()
-    .AddScoped<IHangfireJobsService, HangfireJobService>();
+builder.Services.AddBusinessServiceExtensions();
 
 builder.Services
     .AddHangfire(configuration => configuration?
