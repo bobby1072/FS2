@@ -11,7 +11,6 @@ using System.Text.Json;
 using DataImporter;
 using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
-using fsCore.Services.Concrete;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +30,8 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
+
+builder.Services.AddSignalR();
 
 builder.Services
     .AddSession(options =>
@@ -92,10 +93,10 @@ builder.Services.AddBusinessServiceExtensions();
 builder.Services
     .AddHangfire(configuration => configuration?
         .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-        ?.UseSimpleAssemblyNameTypeSerializer()
-        ?.UseRecommendedSerializerSettings()
-        ?.UsePostgreSqlStorage(dbConnectString))
-        ?.AddHangfireServer(options =>
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(x => x.UseNpgsqlConnection(dbConnectString)))
+        .AddHangfireServer(options =>
         {
             options.Queues = HangfireConstants.Queues.FullList;
         });

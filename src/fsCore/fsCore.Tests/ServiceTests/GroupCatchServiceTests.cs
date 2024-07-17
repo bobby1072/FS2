@@ -3,7 +3,6 @@ using Common;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
 using fsCore.Services.Concrete;
-using Faker;
 using fsCore.Services.Abstract;
 using Moq;
 using Common.Utils;
