@@ -4,13 +4,14 @@ using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Services.Abstract;
+using Services.Abstract;
 
 namespace fsCore.Middleware
 {
     internal class UserWithPermissionsSessionMiddleware : BaseMiddleware
     {
         public UserWithPermissionsSessionMiddleware(RequestDelegate next) : base(next) { }
-        public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService)
+        public async Task InvokeAsync(HttpContext httpContext, IGroupService groupService, ICachingService cachingService)
         {
             var endpointData = httpContext.GetEndpoint();
             if (endpointData?.Metadata.GetMetadata<RequiredUserWithGroupPermissions>() is RequiredUserWithGroupPermissions foundAttribute)
@@ -24,7 +25,7 @@ namespace fsCore.Middleware
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
                     newUserWithPermissions.BuildPermissions(groups);
                     newUserWithPermissions.BuildPermissions(members);
-                    httpContext.Session.SetString(RuntimeConstants.UserWithPermissionsSession, JsonSerializer.Serialize(newUserWithPermissions));
+                    await cachingService.SetObject(newUserWithPermissions.Id?.ToString() ?? throw new InvalidDataException("Cannot find id"), newUserWithPermissions);
                 }
             }
             await _next(httpContext);
