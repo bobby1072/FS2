@@ -16,16 +16,16 @@ namespace fsCore.Middleware
             var endpointData = httpContext.GetEndpoint();
             if (endpointData?.Metadata.GetMetadata<RequiredUserWithGroupPermissions>() is RequiredUserWithGroupPermissions foundAttribute)
             {
-                var foundUserWithPermissions = httpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession);
+                var foundUserWithPermissions = GetUserWithPermissionsFromCache(cachingService, httpContext);
                 if (foundAttribute.UpdateAlways || foundUserWithPermissions is null)
                 {
-                    var user = httpContext.Session.GetString(RuntimeConstants.UserSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                    var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
+                    var parsedUser = await GetUserFromCache(cachingService, httpContext) ?? throw new InvalidOperationException("RequireUserAttribute needed");
                     var (groups, members) = await groupService.GetAllGroupsAndMembershipsForUser(parsedUser);
                     var newUserWithPermissions = new UserWithGroupPermissionSet(parsedUser);
                     newUserWithPermissions.BuildPermissions(groups);
                     newUserWithPermissions.BuildPermissions(members);
-                    await cachingService.SetObject(newUserWithPermissions.Id?.ToString() ?? throw new InvalidDataException("Cannot find id"), newUserWithPermissions);
+                    var token = httpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+                    await cachingService.SetObject($"{UserWithGroupPermissionSet.CacheKeyPrefix}{token}", newUserWithPermissions);
                 }
             }
             await _next(httpContext);

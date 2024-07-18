@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Common.Authentication;
+using Services.Abstract;
 
 namespace fsCore.Controllers
 {
@@ -9,7 +10,7 @@ namespace fsCore.Controllers
     public class ClientConfigController : BaseController
     {
         private readonly ClientConfigSettings _clientConfigSettings;
-        public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings, ILogger<ClientConfigController> logger) : base(logger)
+        public ClientConfigController(IOptions<ClientConfigSettings> clientConfigSettings, ICachingService cachingService, ILogger<ClientConfigController> logger) : base(logger, cachingService)
         {
             _clientConfigSettings = clientConfigSettings?.Value ?? throw new ArgumentNullException(nameof(clientConfigSettings));
         }
