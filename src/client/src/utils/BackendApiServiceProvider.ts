@@ -66,7 +66,6 @@ export default abstract class BackendApiServiceProvider {
       import.meta.env.MODE === "development"
         ? "http://localhost:5234/api"
         : import.meta.env.VITE_BASE_URL,
-    withCredentials: true,
   });
   public static async GetClientConfig() {
     const { data } = await this._httpClient
