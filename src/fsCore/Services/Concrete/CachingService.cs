@@ -31,6 +31,24 @@ namespace Services.Concrete
                 return default;
             }
         }
+        public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive)
+        {
+            return await SetObject(key, value, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds((int)timeToLive)
+            });
+        }
+        public async Task<string?> TrySetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive)
+        {
+            try
+            {
+                return await SetObject(key, value, timeToLive);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         public async Task<string> SetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null)
         {
             var serializedValue = JsonSerializer.Serialize(value);
@@ -54,5 +72,13 @@ namespace Services.Concrete
             }
 
         }
+    }
+    public enum CacheObjectTimeToLiveInSeconds
+    {
+        OneMinute = 60,
+        FiveMinutes = 300,
+        TenMinutes = 600,
+        ThirtyMinutes = 1800,
+        OneHour = 3600
     }
 }

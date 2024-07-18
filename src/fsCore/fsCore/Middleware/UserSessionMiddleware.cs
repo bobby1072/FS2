@@ -4,6 +4,7 @@ using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Services.Abstract;
 using Services.Abstract;
+using Services.Concrete;
 
 namespace fsCore.Middleware
 {
@@ -21,12 +22,12 @@ namespace fsCore.Middleware
                 {
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userExistence);
+                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userExistence, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
                 else if (existingUserSession is not null && foundAttribute.UpdateAlways)
                 {
                     var userFound = await userService.GetUser(existingUserSession?.Id ?? throw new InvalidDataException("Cannot deserialize user"));
-                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound);
+                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
             await _next(httpContext);

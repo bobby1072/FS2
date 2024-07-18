@@ -1,10 +1,10 @@
 using System.Net;
-using System.Text.Json;
 using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Services.Abstract;
 using Services.Abstract;
+using Services.Concrete;
 
 namespace fsCore.Middleware
 {
@@ -25,7 +25,7 @@ namespace fsCore.Middleware
                     newUserWithPermissions.BuildPermissions(groups);
                     newUserWithPermissions.BuildPermissions(members);
                     var token = httpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                    await cachingService.SetObject($"{UserWithGroupPermissionSet.CacheKeyPrefix}{token}", newUserWithPermissions);
+                    await cachingService.SetObject($"{UserWithGroupPermissionSet.CacheKeyPrefix}{token}", newUserWithPermissions, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
             await _next(httpContext);

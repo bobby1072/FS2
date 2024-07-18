@@ -5,7 +5,7 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("group", Schema = DbConstants.PublicSchema)]
-    internal class GroupEntity : BaseEntity<Group>
+    internal record GroupEntity : BaseEntity<Group>
     {
         [Key]
         public Guid Id { get; set; }
