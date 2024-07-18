@@ -21,10 +21,10 @@ var config = builder.Configuration;
 var environment = builder.Environment;
 
 var dbConnectString = config.GetConnectionString("DefaultConnection");
-var clientId = config["ClientConfig:AuthorityClientId"];
-var issuerHost = config["JWT_ISSUER_HOST"];
-var authAudience = config["JWT_AUDIENCE"];
-var useStaticFiles = config["UseStaticFiles"];
+var clientId = config.GetSection("ClientConfig").GetSection("AuthorityClientId")?.Value;
+var issuerHost = config.GetSection("JWT_ISSUER_HOST")?.Value;
+var authAudience = config.GetSection("JWT_AUDIENCE")?.Value;
+var useStaticFiles = config.GetSection("UseStaticFiles")?.Value;
 
 if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
 {
@@ -34,12 +34,6 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
 builder.Services.AddSignalR();
 
 builder.Services
-    .AddSession(options =>
-    {
-        options.IdleTimeout = TimeSpan.FromMinutes(30);
-        options.Cookie.HttpOnly = true;
-        options.Cookie.IsEssential = true;
-    })
     .AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
@@ -122,7 +116,6 @@ app.UseRouting();
 app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 app.UseDefaultMiddlewares();
 app.MapControllers();
 #pragma warning disable ASP0014
