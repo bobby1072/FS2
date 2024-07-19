@@ -27,7 +27,7 @@ COPY src/fsCore/Common/ ./fsCore/Common/
 COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/ ./fsCore/fsCore/
 COPY src/fsCore/Persistence/ ./fsCore/Persistence/
-COPY src/fsCore/Services/*.csproj ./fsCore/Services/
+COPY src/fsCore/Services/ ./fsCore/Services/
 
 WORKDIR /src/fsCore/fsCore
 ARG CONF=Release
