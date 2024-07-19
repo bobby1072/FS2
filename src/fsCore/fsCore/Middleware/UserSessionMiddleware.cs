@@ -26,7 +26,7 @@ namespace fsCore.Middleware
                 }
                 else if (existingUserSession is not null && foundAttribute.UpdateAlways)
                 {
-                    var userFound = await userService.GetUser(existingUserSession?.Id ?? throw new InvalidDataException("Cannot deserialize user"));
+                    var userFound = await userService.GetUser((Guid)existingUserSession.Id!);
                     await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }

@@ -1,11 +1,8 @@
-﻿using Common;
-using Common.Models;
+﻿using Common.Models;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Text.Json;
 
 namespace fsCore.Controllers
 {
@@ -15,6 +12,11 @@ namespace fsCore.Controllers
     {
         protected readonly ILogger _logger;
         protected ICachingService _cachingService;
+        protected BaseController(ILogger logger, ICachingService cachingService)
+        {
+            _logger = logger;
+            _cachingService = cachingService;
+        }
         protected JwtSecurityToken? GetTokenData()
         {
             return ControllerContext.HttpContext.GetTokenData();
@@ -22,11 +24,6 @@ namespace fsCore.Controllers
         private string GetTokenString()
         {
             return ControllerContext.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
-        }
-        public BaseController(ILogger logger, ICachingService cachingService)
-        {
-            _logger = logger;
-            _cachingService = cachingService;
         }
         protected async Task<User> GetCurrentUserAsync()
         {

@@ -14,7 +14,7 @@ namespace Persistence.EntityFramework.Repository
         protected abstract TEnt RuntimeToEntity(TBase runtimeObj);
         private readonly Type _entType = typeof(TEnt);
         public readonly IDbContextFactory<FsContext> DbContextFactory;
-        public BaseRepository(IDbContextFactory<FsContext> dbContextFactory)
+        protected BaseRepository(IDbContextFactory<FsContext> dbContextFactory)
         {
             DbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
         }
