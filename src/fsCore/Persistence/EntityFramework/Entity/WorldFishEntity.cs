@@ -4,7 +4,7 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("world_fish", Schema = DbConstants.PublicSchema)]
-    internal class WorldFishEntity : BaseEntity<WorldFish>
+    internal record WorldFishEntity : BaseEntity<WorldFish>
     {
         [Key]
         public string Taxocode { get; set; }

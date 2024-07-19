@@ -239,7 +239,7 @@ export const AllGroupDisplayPage: React.FC = () => {
           {currentGroupsToSee && !isLoading && !isError ? (
             <>
               {currentGroupsToSee.map((x) => (
-                <Grid item width="60%" key={x.id}>
+                <Grid item width="85%" key={x.id}>
                   <GroupTab
                     group={x}
                     openModal={() => {

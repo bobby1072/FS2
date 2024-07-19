@@ -20,13 +20,10 @@ namespace fsCore.Controllers.Attributes
 
             if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
-                var user = context.HttpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession);
-                if (user is null)
+                if (context.HttpContext.Request.Headers.Authorization.FirstOrDefault() is null)
                 {
-                    context.Result = new UnauthorizedResult();
-                    return;
+                    throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 }
-                var _ = JsonSerializer.Deserialize<UserWithGroupPermissionSet>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
                 return;
             }
             context.Result = new UnauthorizedResult();

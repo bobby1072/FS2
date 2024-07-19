@@ -1,33 +1,33 @@
 using System.Net;
-using System.Text.Json;
 using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
 using fsCore.Services.Abstract;
-using fsCore.Services.Abstract;
+using Services.Abstract;
+using Services.Concrete;
 
 namespace fsCore.Middleware
 {
     internal class UserSessionMiddleware : BaseMiddleware
     {
         public UserSessionMiddleware(RequestDelegate next) : base(next) { }
-        public async Task InvokeAsync(HttpContext httpContext, IUserService userService, IUserInfoClient userInfoClient)
+        public async Task InvokeAsync(HttpContext httpContext, IUserService userService, IUserInfoClient userInfoClient, ICachingService cacheService)
         {
             var endpoint = httpContext.GetEndpoint();
             if (endpoint?.Metadata.GetMetadata<RequiredUser>() is RequiredUser foundAttribute)
             {
-                var token = httpContext.Request.Headers.Authorization.First() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                var existingUserSession = httpContext.Session.GetString(RuntimeConstants.UserSession);
+                var token = httpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
+                var existingUserSession = await GetUserFromCache(cacheService, httpContext);
                 if (existingUserSession is null)
                 {
                     var tokenUser = await userInfoClient.GetUserInfoReturnUser(token);
                     var userExistence = await userService.CheckUserExistsAndCreateIfNot(tokenUser);
-                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userExistence));
+                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userExistence, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
                 else if (existingUserSession is not null && foundAttribute.UpdateAlways)
                 {
-                    var userFound = await userService.GetUser(JsonSerializer.Deserialize<User>(existingUserSession)?.Id ?? throw new Exception());
-                    httpContext.Session.SetString(RuntimeConstants.UserSession, JsonSerializer.Serialize(userFound));
+                    var userFound = await userService.GetUser(existingUserSession?.Id ?? throw new InvalidDataException("Cannot deserialize user"));
+                    await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
             await _next(httpContext);

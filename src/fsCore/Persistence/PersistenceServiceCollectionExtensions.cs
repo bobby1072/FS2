@@ -16,7 +16,7 @@ namespace Persistence
         public static IServiceCollection AddSqlPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            var migrationStartVersion = configuration["Migration:StartVersion"];
+            var migrationStartVersion = configuration.GetSection("Migration").GetSection("StartVersion")?.Value;
             if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(migrationStartVersion))
             {
                 throw new Exception(ErrorConstants.MissingEnvVars);
