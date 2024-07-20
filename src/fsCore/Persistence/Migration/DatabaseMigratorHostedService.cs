@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace Persistence.Migrations
+namespace Persistence.Migration
 {
     public class DatabaseMigratorHostedService: IHostedService
     {

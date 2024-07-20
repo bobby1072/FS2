@@ -3,7 +3,7 @@ using EvolveDb.Migration;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace Persistence.Migrations
+namespace Persistence.Migration
 {
     public class DatabaseMigrations: IMigrator
     {

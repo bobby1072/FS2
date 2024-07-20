@@ -2,7 +2,7 @@ using Common.Models;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.MockModelBuilders;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
 namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
     internal class MockUserImporter : IUserImporter

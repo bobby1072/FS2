@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
-namespace Persistence.Migrations;
+namespace Persistence.Migration;
 
 public class DatabaseMigratorHealthCheck : IHealthCheck
 {

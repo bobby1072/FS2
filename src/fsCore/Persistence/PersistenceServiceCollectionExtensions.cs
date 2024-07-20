@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Common;
 using Npgsql;
 using Microsoft.Extensions.Logging;
-using Persistence.Migrations;
+using Persistence.Migration;
 using Persistence.EntityFramework;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityFramework.Repository;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Concrete;
+using Persistence.EntityFramework.Repository.Abstract;
 
 namespace Persistence
 {

@@ -5,7 +5,7 @@ using Common.Permissions;
 using Common.Utils;
 using FluentValidation;
 using fsCore.Services.Abstract;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
 
 namespace fsCore.Services.Concrete
 {

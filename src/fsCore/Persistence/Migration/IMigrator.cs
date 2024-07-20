@@ -1,4 +1,4 @@
-﻿namespace Persistence.Migrations
+﻿namespace Persistence.Migration
 {
     public interface IMigrator
     {

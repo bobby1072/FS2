@@ -6,7 +6,7 @@ using fsCore.Services.Concrete;
 using fsCore.Services.Abstract;
 using Moq;
 using Common.Utils;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
 
 namespace fsCore.Tests.ServiceTests
 {

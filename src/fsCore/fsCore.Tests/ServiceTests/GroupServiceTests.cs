@@ -5,7 +5,7 @@ using FluentValidation;
 using fsCore.Services.Concrete;
 using fsCore.Services.Abstract;
 using Moq;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
 namespace fsCore.Tests.ServiceTests
 {
     public class GroupServiceTests

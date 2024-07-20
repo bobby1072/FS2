@@ -1,10 +1,10 @@
 using Common;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityFramework.Abstract.Repository;
 using Persistence.EntityFramework.Entity;
+using Persistence.EntityFramework.Repository.Abstract;
 
-namespace Persistence.EntityFramework.Repository
+namespace Persistence.EntityFramework.Repository.Concrete
 {
     internal class GroupMemberRepository : BaseRepository<GroupMemberEntity, GroupMember>, IGroupMemberRepository
     {

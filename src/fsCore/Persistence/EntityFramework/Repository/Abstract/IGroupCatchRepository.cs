@@ -1,7 +1,7 @@
 using Common.Models;
 using Common.Models.MiscModels;
 
-namespace Persistence.EntityFramework.Abstract.Repository
+namespace Persistence.EntityFramework.Repository.Abstract
 {
     public interface IGroupCatchRepository
     {
