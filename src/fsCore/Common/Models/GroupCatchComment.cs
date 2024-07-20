@@ -54,9 +54,16 @@ namespace Common.Models
             UserId = userId;
             User = user;
         }
+        [JsonPropertyName("id")]
+        [LockedProperty]
         public int? Id { get; set; }
+        [JsonPropertyName("commentId")]
+        [LockedProperty]
         public int CommentId { get; set; }
+        [JsonPropertyName("userId")]
+        [LockedProperty]
         public Guid UserId { get; set; }
+        [JsonPropertyName("user")]
         public User? User { get; set; }
     }
     public static partial class GroupCatchCommentUtils
