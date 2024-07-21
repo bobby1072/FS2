@@ -6,8 +6,8 @@ namespace Common.Models.Validators
     {
         public GroupCatchValidator()
         {
-            RuleFor(x => x.Species).NotEmpty().WithMessage(ErrorConstants.InvalidGroupCatchSpecies);
-            RuleFor(x => x.Species).Must(LettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidGroupCatchSpecies);
+            RuleFor(x => x.Species).NotEmpty().WithMessage(ErrorConstants.InvalidSpeciesInCatch);
+            RuleFor(x => x.Species).Must(LettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidSpeciesInCatch);
             RuleFor(x => x.Description).Must(NotJustBeWhiteSpace).WithMessage(ErrorConstants.InvalidDescription);
             RuleFor(x => x.Description).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.InvalidDescription);
             RuleFor(x => x.Latitude).Must(LatWithInRange).WithMessage(ErrorConstants.InvalidLatitudeAndLongitude);

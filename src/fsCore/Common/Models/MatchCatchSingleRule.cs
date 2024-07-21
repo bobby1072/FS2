@@ -11,7 +11,7 @@ namespace Common.Models
         public Guid Id { get; set; }
         [LockedProperty]
         [JsonPropertyName("ruleType")]
-        public abstract MatchCatchRuleType RuleType { get; }
+        public abstract string RuleType { get; }
         protected MatchCatchSingleRule(Guid? id = null)
         {
             Id = id is Guid foundId ? foundId : Guid.NewGuid();
