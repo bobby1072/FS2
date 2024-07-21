@@ -31,17 +31,6 @@ namespace Services.Concrete
                 return default;
             }
         }
-        public async Task<string?> TrySetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
-        {
-            try
-            {
-                return await SetObject(key, value, timeToLive);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
         public async Task<string?> TrySetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class
         {
             try

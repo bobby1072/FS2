@@ -1,29 +1,20 @@
-using Common.Attributes;
 using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class SpecificSpeciesMatchCatchRule : MatchCatchSingleRule
+    public class SpecificSpeciesLiveMatchCatchRule : LiveMatchCatchSingleRule
     {
-        [LockedProperty]
-        [JsonPropertyName("ruleType")]
-        public override string RuleType { get; } = nameof(SpecificSpeciesMatchCatchRule);
         [JsonPropertyName("worldFish")]
         public IList<WorldFish> WorldFish { get; set; } = new List<WorldFish>();
         [JsonPropertyName("speciesName")]
         public IList<string> SpeciesNames { get; set; } = new List<string>();
-
-        public SpecificSpeciesMatchCatchRule(IList<string> speciesName, IList<WorldFish> worldFish, Guid? id = null) : base(id)
+        public SpecificSpeciesLiveMatchCatchRule(IList<string> speciesName, IList<WorldFish> worldFish, Guid? id = null) : base(id)
         {
             SpeciesNames = speciesName;
             WorldFish = worldFish;
         }
-        public SpecificSpeciesMatchCatchRule(string speciesName, Guid? id = null) : base(id)
-        {
-            SpeciesNames.Add(speciesName);
-        }
         [JsonConstructor]
-        public SpecificSpeciesMatchCatchRule() : base()
+        public SpecificSpeciesLiveMatchCatchRule() : base()
         {
         }
         public override string BuildRuleDescription()
@@ -56,17 +47,17 @@ namespace Common.Models
             //     }
             // }
         }
-        public override IList<(Func<MatchCatch, bool>, string)> BuildRuleValidatorFunctions() => new List<(Func<MatchCatch, bool>, string)>
+        public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions() => new List<LiveMatchCatchSingleRuleValidatorFunction>
         {
-            (IsSpecificSpecies, $"Catch is {(SpeciesNames.Count > 1 ? "":"")} in the rules"),
+            new (IsSpecificSpecies, $"Catch is {(SpeciesNames.Count > 1 ? "not included in specified species list":"not the species specified in the")} in the rules"),
         };
-        private bool IsSpecificSpecies(MatchCatch matchCatch)
+        private bool IsSpecificSpecies(LiveMatchCatch matchCatch)
         {
             if (WorldFish.Any())
             {
-                if (matchCatch.WorldFish is WorldFish matchWorldFish)
+                if (matchCatch.WorldFishTaxocode is not null)
                 {
-                    return WorldFish.Any(x => x.Taxocode == matchWorldFish.Taxocode);
+                    return WorldFish.Any(x => x.Taxocode == matchCatch.WorldFishTaxocode);
                 }
                 else
                 {

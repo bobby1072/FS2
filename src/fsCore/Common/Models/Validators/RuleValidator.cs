@@ -2,14 +2,14 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class RuleValidator : AbstractValidator<MatchCatch>, IValidator<MatchCatch>
+    public class RuleValidator : AbstractValidator<LiveMatchCatch>, IValidator<LiveMatchCatch>
     {
-        public RuleValidator(ICollection<(Func<MatchCatch, bool>, string)> Rules)
+        public RuleValidator(ICollection<LiveMatchCatchSingleRuleValidatorFunction> rules)
         {
-            for (int i = 0; i < Rules.Count; i++)
+            for (int i = 0; i < rules.Count; i++)
             {
-                var (ruleFunc, errorMessage) = Rules.ElementAt(i);
-                RuleFor(x => x).Must(ruleFunc).WithMessage(errorMessage);
+                var validatorFunction = rules.ElementAt(i);
+                RuleFor(x => x).Must(validatorFunction.ValidatorFunction).WithMessage(validatorFunction.ErrorMessage);
             }
         }
     }

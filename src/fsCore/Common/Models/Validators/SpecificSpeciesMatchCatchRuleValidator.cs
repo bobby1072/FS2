@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class SpecificSpeciesMatchCatchRuleValidator : BaseValidator<SpecificSpeciesMatchCatchRule>, IValidator<SpecificSpeciesMatchCatchRule>
+    public class SpecificSpeciesMatchCatchRuleValidator : BaseValidator<SpecificSpeciesLiveMatchCatchRule>, IValidator<SpecificSpeciesLiveMatchCatchRule>
     {
         public SpecificSpeciesMatchCatchRuleValidator()
         {
@@ -19,7 +19,7 @@ namespace Common.Models.Validators
         {
             return speciesNames.All(LettersAndWhiteSpaceOnly);
         }
-        private static bool WorldFishListReflectsSpeciesNameList(SpecificSpeciesMatchCatchRule rule)
+        private static bool WorldFishListReflectsSpeciesNameList(SpecificSpeciesLiveMatchCatchRule rule)
         {
             if (rule.WorldFish.Count == 0) return true;
             return rule.WorldFish.Select(x => x.EnglishName).SequenceEqual(rule.SpeciesNames);

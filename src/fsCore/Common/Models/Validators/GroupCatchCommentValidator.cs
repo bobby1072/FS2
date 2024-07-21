@@ -7,6 +7,7 @@ namespace Common.Models.Validators
         public GroupCatchCommentValidator()
         {
             RuleFor(x => x.Comment).NotEmpty().WithMessage(ErrorConstants.InvalidCatchComment);
+            RuleFor(x => x.Comment.Length > 250).NotEmpty().WithMessage(ErrorConstants.InvalidCatchComment);
         }
     }
 }

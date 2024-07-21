@@ -13,7 +13,7 @@ namespace Common.Models.Validators
                 .AddSingleton<IValidator<Group>, GroupValidator>()
                 .AddSingleton<IValidator<GroupPosition>, GroupPositionValidator>()
                 .AddSingleton<IValidator<User>, UserValidator>()
-                .AddSingleton<IValidator<SpecificSpeciesMatchCatchRule>, SpecificSpeciesMatchCatchRuleValidator>();
+                .AddSingleton<IValidator<SpecificSpeciesLiveMatchCatchRule>, SpecificSpeciesMatchCatchRuleValidator>();
             return services;
         }
     }
