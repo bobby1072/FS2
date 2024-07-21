@@ -1,24 +1,23 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
-using Common.Attributes;
+using Common.Utils;
 namespace Common.Models
 {
-    public class LiveMatch : BaseModel
+    public class LiveMatchCacheType
     {
-        [LockedProperty]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
         [JsonPropertyName("matchName")]
         public string MatchName { get; set; }
-        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("matchRules")]
-        public LiveMatchRules MatchRules { get; set; }
+        public LiveMatchRulesCacheType MatchRules { get; set; }
         [JsonPropertyName("matchStatus")]
         public LiveMatchStatus MatchStatus { get; set; }
         [JsonPropertyName("matchWinStrategy")]
-        public LiveMatchWinStrategy MatchWinStrategy { get; set; }
-        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, Guid? id = null)
+        public object MatchWinStrategy { get; set; }
+        public LiveMatchCacheType(Guid groupId, string matchName, LiveMatchRulesCacheType matchRules, LiveMatchStatus matchStatus, object winStrategy, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             GroupId = groupId;
@@ -27,6 +26,12 @@ namespace Common.Models
             MatchStatus = matchStatus;
             MatchWinStrategy = winStrategy;
         }
-        public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Id);
+        [JsonConstructor]
+        public LiveMatchCacheType() { }
+        public LiveMatch ToRuntimeType()
+        {
+            var parsedWinStrategy = AssemblyUtils.ParseToChildOf<LiveMatchWinStrategy>(JsonSerializer.Serialize(MatchWinStrategy));
+            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, parsedWinStrategy, Id);
+        }
     }
 }

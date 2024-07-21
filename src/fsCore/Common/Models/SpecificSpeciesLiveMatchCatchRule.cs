@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class SpecificSpeciesLiveMatchCatchRule : LiveMatchCatchSingleRule
+    public class SpecificSpeciesLiveMatchCatchRule : LiveMatchSingleRule
     {
         [JsonPropertyName("worldFish")]
         public IList<WorldFish> WorldFish { get; set; } = new List<WorldFish>();

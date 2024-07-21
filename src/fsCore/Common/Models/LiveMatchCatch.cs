@@ -37,7 +37,7 @@ namespace Common.Models
         public bool CountsInMatch { get; set; }
         [JsonConstructor]
         public LiveMatchCatch() { }
-        public LiveMatchCatch(Guid userId, Guid matchId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, bool? countsInMatch, Guid? id, DateTime? createdAt, byte[]? catchPhoto, User? user, string? worldFishTaxocode, WorldFish? worldFish)
+        public LiveMatchCatch(Guid userId, Guid matchId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, bool? countsInMatch, Guid? id, DateTime? createdAt, string? worldFishTaxocode)
         {
             Id = id ?? Guid.NewGuid();
             MatchId = matchId;

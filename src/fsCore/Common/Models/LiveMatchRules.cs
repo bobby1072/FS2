@@ -13,8 +13,8 @@ namespace Common.Models
         [JsonPropertyName("matchId")]
         public Guid MatchId { get; set; }
         [JsonPropertyName("rules")]
-        public IList<LiveMatchCatchSingleRule> Rules { get; set; } = new List<LiveMatchCatchSingleRule>();
-        public LiveMatchRules(Guid matchId, IList<LiveMatchCatchSingleRule> rules, Guid? id = null)
+        public IList<LiveMatchSingleRule> Rules { get; set; } = new List<LiveMatchSingleRule>();
+        public LiveMatchRules(Guid matchId, IList<LiveMatchSingleRule> rules, Guid? id = null)
         {
             MatchId = matchId;
             Rules = rules;
@@ -25,8 +25,9 @@ namespace Common.Models
         public IValidator<LiveMatchCatch> BuildMatchRulesValidator()
         {
             var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions()).ToArray();
-            return new RuleValidator(allSingleRuleValidatorFuncs);
+            return new DynamicLiveMatchRuleValidator(allSingleRuleValidatorFuncs);
         }
+        public LiveMatchRulesCacheType ToCacheType() => new(MatchId, Rules.Select(x => (object)x).ToList(), Id);
     }
 
 }

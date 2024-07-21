@@ -6,11 +6,11 @@ using Services.Abstract;
 
 namespace Services.Concrete
 {
-    public class CachingService : ICachingService
+    public class DistributedCachingService : ICachingService
     {
         private readonly IDistributedCache _distributedCache;
-        private readonly ILogger<CachingService> _logger;
-        public CachingService(IDistributedCache distributedCache, ILogger<CachingService> logger)
+        private readonly ILogger<DistributedCachingService> _logger;
+        public DistributedCachingService(IDistributedCache distributedCache, ILogger<DistributedCachingService> logger)
         {
             _distributedCache = distributedCache;
             _logger = logger;
