@@ -6,6 +6,7 @@ using Common.Utils;
 using fsCore.Services.Abstract;
 using Hangfire;
 using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
 
 namespace fsCore.Services.Concrete
 {

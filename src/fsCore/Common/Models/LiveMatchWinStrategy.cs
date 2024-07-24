@@ -6,10 +6,10 @@ namespace Common.Models
     {
         [JsonIgnore]
         protected Type _thisType => GetType();
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("strategyType")]
         public string StrategyType => _thisType.Name;
         protected LiveMatchWinStrategy(Guid? id = null)

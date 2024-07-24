@@ -24,14 +24,14 @@ namespace Common.Models
             {
                 try
                 {
-                    var objConstructor = childType.GetConstructors().FirstOrDefault(x => x.GetCustomAttribute<AssemblyConstructor>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
+                    var objConstructor = childType.GetConstructors().FirstOrDefault(x => x.GetCustomAttribute<AssemblyConstructorAttribute>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
                     var parsedObj = objConstructor.Invoke(new object[] { obj });
                     if (parsedObj is not null)
                     {
                         return (parsedObj as T)!;
                     }
                 }
-                catch (Exception) { }
+                catch { }
             }
             throw new InvalidCastException($"Cannot cast object");
         }
@@ -45,7 +45,7 @@ namespace Common.Models
             for (var i = 0; i < allPropertiesToCheck.Length; i++)
             {
                 var property = allPropertiesToCheck[i];
-                if (property?.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
+                if (property?.GetCustomAttribute<LockedPropertyAttribute>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
                 {
                     return false;
                 }
@@ -86,7 +86,7 @@ namespace Common.Models
                 {
                     deepBaseModels.RemoveSensitive();
                 }
-                else if (property?.GetCustomAttribute<SensitiveProperty>() is not null)
+                else if (property?.GetCustomAttribute<SensitivePropertyAttribute>() is not null)
                 {
                     property.SetValue(this, null);
                 }
@@ -113,11 +113,6 @@ namespace Common.Models
         public string Manufacturer { get; set; }
         [JsonPropertyName("year")]
         public int Year { get; set; }
-        // public TestBaseModelVehicle(string manufacturer, int year)
-        // {
-        //     Manufacturer = manufacturer;
-        //     Year = year;
-        // }
     }
     /// <summary>
     /// <para>STRICTLY TEST PURPOSES ONLY</para>
@@ -125,14 +120,11 @@ namespace Common.Models
     /// </summary>
     public class TestBaseModelCar : TestBaseModelVehicle
     {
-        public TestBaseModelCar() { }
         [JsonPropertyName("driveSystem")]
         public string DriveSystem { get; set; }
-        // public TestBaseModelCar(string manufacturer, int year, string driveSystem) : base(manufacturer, year)
-        // {
-        //     DriveSystem = driveSystem;
-        // }
-        [AssemblyConstructor]
+        [JsonConstructor]
+        public TestBaseModelCar() { }
+        [AssemblyConstructorAttribute]
         public TestBaseModelCar(object? obj)
         {
             if (obj is null)
@@ -162,14 +154,11 @@ namespace Common.Models
     /// </summary>
     public class TestBaseModelTruck : TestBaseModelVehicle
     {
-        public TestBaseModelTruck() { }
         [JsonPropertyName("cargoType")]
         public string CargoType { get; set; }
-        // public TestBaseModelTruck(string manufacturer, int year, string cargoType) : base(manufacturer, year)
-        // {
-        //     CargoType = cargoType;
-        // }
-        [AssemblyConstructor]
+        [JsonConstructor]
+        public TestBaseModelTruck() { }
+        [AssemblyConstructorAttribute]
         public TestBaseModelTruck(object? obj)
         {
             if (obj is null)

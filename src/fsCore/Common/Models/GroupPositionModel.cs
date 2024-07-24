@@ -4,10 +4,10 @@ namespace Common.Models
 {
     public class GroupPosition : BaseModel
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public int? Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("name")]

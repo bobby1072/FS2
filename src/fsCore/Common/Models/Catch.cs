@@ -4,13 +4,13 @@ namespace Common.Models
 {
     public abstract class Catch : BaseModel
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("species")]
         public string Species { get; set; }
         [JsonPropertyName("weight")]
@@ -19,7 +19,7 @@ namespace Common.Models
         public double Length { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("caughtAt")]

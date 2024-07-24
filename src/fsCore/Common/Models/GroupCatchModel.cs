@@ -5,7 +5,7 @@ namespace Common.Models
 {
     public class GroupCatch : Catch
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]

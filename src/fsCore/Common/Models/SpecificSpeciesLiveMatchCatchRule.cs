@@ -15,7 +15,7 @@ namespace Common.Models
             SpeciesNames = speciesName;
             WorldFish = worldFish;
         }
-        [AssemblyConstructor]
+        [AssemblyConstructorAttribute]
         public SpecificSpeciesLiveMatchCatchRule(object? obj)
         {
             if (obj is null)

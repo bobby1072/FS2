@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class DynamicLiveMatchRuleValidator : LiveMatchCatchValidator
+    public class DynamicLiveMatchCatchRuleValidator : LiveMatchCatchValidator
     {
-        public DynamicLiveMatchRuleValidator(ICollection<LiveMatchCatchSingleRuleValidatorFunction> rules) : base()
+        public DynamicLiveMatchCatchRuleValidator(ICollection<LiveMatchCatchSingleRuleValidatorFunction> rules) : base()
         {
             for (int i = 0; i < rules.Count; i++)
             {

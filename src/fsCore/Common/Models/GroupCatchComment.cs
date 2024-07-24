@@ -12,19 +12,19 @@ namespace Common.Models
             UserId = userId ?? UserId;
             return this;
         }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public int? Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("groupCatchId")]
         public Guid GroupCatchId { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("userId")]
         public Guid UserId { get; set; }
         public User? User { get; set; }
         [JsonPropertyName("comment")]
         public string Comment { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("taggedUsers")]
@@ -55,13 +55,13 @@ namespace Common.Models
             User = user;
         }
         [JsonPropertyName("id")]
-        [LockedProperty]
+        [LockedPropertyAttribute]
         public int? Id { get; set; }
         [JsonPropertyName("commentId")]
-        [LockedProperty]
+        [LockedPropertyAttribute]
         public int CommentId { get; set; }
         [JsonPropertyName("userId")]
-        [LockedProperty]
+        [LockedPropertyAttribute]
         public Guid UserId { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }

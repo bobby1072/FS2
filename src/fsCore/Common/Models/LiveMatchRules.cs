@@ -6,10 +6,10 @@ namespace Common.Models
 {
     public class LiveMatchRules : BaseModel
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("matchId")]
         public Guid MatchId { get; set; }
         [JsonPropertyName("rules")]
@@ -25,7 +25,7 @@ namespace Common.Models
         public IValidator<LiveMatchCatch> BuildMatchRulesValidator()
         {
             var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions()).ToArray();
-            return new DynamicLiveMatchRuleValidator(allSingleRuleValidatorFuncs);
+            return new DynamicLiveMatchCatchRuleValidator(allSingleRuleValidatorFuncs);
         }
         public LiveMatchRulesCacheType ToCacheType() => new(MatchId, Rules.Select(x => (object)x).ToList(), Id);
     }

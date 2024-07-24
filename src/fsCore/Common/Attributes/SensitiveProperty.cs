@@ -1,7 +1,7 @@
 namespace Common.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public class SensitiveProperty : Attribute
+    public class SensitivePropertyAttribute : Attribute
     {
     }
 }

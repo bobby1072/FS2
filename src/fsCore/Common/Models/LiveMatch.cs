@@ -4,12 +4,12 @@ namespace Common.Models
 {
     public class LiveMatch : BaseModel
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
         [JsonPropertyName("matchName")]
         public string MatchName { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("matchRules")]

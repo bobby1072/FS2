@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class LiveMatchCatchValidator : CatchValidator<LiveMatchCatch>, IValidator<LiveMatchCatch>
+    public class LiveMatchCatchValidator : CatchValidator<LiveMatchCatch>
     {
         public LiveMatchCatchValidator() : base()
         {

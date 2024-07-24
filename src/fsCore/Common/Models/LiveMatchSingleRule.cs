@@ -8,7 +8,7 @@ namespace Common.Models
     {
         [JsonIgnore]
         protected Type _thisType => GetType();
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
         protected LiveMatchSingleRule(Guid? id = null)
