@@ -24,18 +24,9 @@ namespace Common.Models
             }
             if (obj is JsonElement jsonElement)
             {
-                if (jsonElement.TryGetProperty("speciesName", out var speciesNameElement))
-                {
-                    SpeciesNames = speciesNameElement.EnumerateArray().Select(x => x.GetString()).ToList();
-                }
-                if (jsonElement.TryGetProperty("worldFish", out var worldFishElement))
-                {
-                    WorldFish = worldFishElement.EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText())).ToList();
-                }
-                if (jsonElement.TryGetProperty("id", out var idElement))
-                {
-                    Id = Guid.Parse(idElement.GetString());
-                }
+                SpeciesNames = jsonElement.GetProperty("speciesName").EnumerateArray().Select(x => x.GetString()).ToList();
+                WorldFish = jsonElement.GetProperty("worldFish").EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText())).ToList();
+                Id = Guid.Parse(jsonElement.GetProperty("id").GetString());
             }
             else if (obj is SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
             {

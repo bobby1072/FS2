@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Common.Attributes;
 using Common.Utils;
 
@@ -17,7 +18,8 @@ namespace Common.Models
             {
                 throw new ArgumentNullException(nameof(obj));
             }
-            var childClasses = _allBaseModelChildren.Where(x => x.IsSubclassOf(typeof(T))).ToArray();
+            var targetType = typeof(T);
+            var childClasses = _allBaseModelChildren.Where(x => x.IsSubclassOf(targetType)).ToArray();
             foreach (var childType in childClasses)
             {
                 try
@@ -107,7 +109,9 @@ namespace Common.Models
     /// </summary>
     public class TestBaseModelVehicle : BaseModel
     {
+        [JsonPropertyName("manufacturer")]
         public string Manufacturer { get; set; }
+        [JsonPropertyName("year")]
         public int Year { get; set; }
         // public TestBaseModelVehicle(string manufacturer, int year)
         // {
@@ -122,6 +126,7 @@ namespace Common.Models
     public class TestBaseModelCar : TestBaseModelVehicle
     {
         public TestBaseModelCar() { }
+        [JsonPropertyName("driveSystem")]
         public string DriveSystem { get; set; }
         // public TestBaseModelCar(string manufacturer, int year, string driveSystem) : base(manufacturer, year)
         // {
@@ -136,18 +141,9 @@ namespace Common.Models
             }
             else if (obj is JsonElement jsonElement)
             {
-                if (jsonElement.TryGetProperty("manufacturer", out var manufacturerElement))
-                {
-                    Manufacturer = manufacturerElement.GetString();
-                }
-                if (jsonElement.TryGetProperty("year", out var yearElement))
-                {
-                    Year = yearElement.GetInt32();
-                }
-                if (jsonElement.TryGetProperty("driveSystem", out var driveSystemElement))
-                {
-                    DriveSystem = driveSystemElement.GetString();
-                }
+                Manufacturer = jsonElement.GetProperty("manufacturer").GetString();
+                Year = jsonElement.GetProperty("year").GetInt32();
+                DriveSystem = jsonElement.GetProperty("driveSystem").GetString();
                 return;
             }
             else if (obj is TestBaseModelCar testBaseModelCar)
@@ -167,6 +163,7 @@ namespace Common.Models
     public class TestBaseModelTruck : TestBaseModelVehicle
     {
         public TestBaseModelTruck() { }
+        [JsonPropertyName("cargoType")]
         public string CargoType { get; set; }
         // public TestBaseModelTruck(string manufacturer, int year, string cargoType) : base(manufacturer, year)
         // {
@@ -181,18 +178,9 @@ namespace Common.Models
             }
             else if (obj is JsonElement jsonElement)
             {
-                if (jsonElement.TryGetProperty("manufacturer", out var manufacturerElement))
-                {
-                    Manufacturer = manufacturerElement.GetString();
-                }
-                if (jsonElement.TryGetProperty("year", out var yearElement))
-                {
-                    Year = yearElement.GetInt32();
-                }
-                if (jsonElement.TryGetProperty("cargoType", out var cargoTypeElement))
-                {
-                    CargoType = cargoTypeElement.GetString();
-                }
+                Manufacturer = jsonElement.GetProperty("manufacturer").GetString();
+                Year = jsonElement.GetProperty("year").GetInt32();
+                CargoType = jsonElement.GetProperty("cargoType").GetString();
                 return;
             }
             else if (obj is TestBaseModelTruck testBaseModelTruck)
