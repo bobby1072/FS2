@@ -4,7 +4,10 @@ namespace Common.Models
 {
     public class LiveMatchCatch : Catch
     {
-        [LockedPropertyAttribute]
+        [LockedProperty]
+        [JsonPropertyName("id")]
+        public new Guid Id { get; set; }
+        [LockedProperty]
         [JsonPropertyName("matchId")]
         public Guid MatchId { get; set; }
         [JsonPropertyName("countsInMatch")]

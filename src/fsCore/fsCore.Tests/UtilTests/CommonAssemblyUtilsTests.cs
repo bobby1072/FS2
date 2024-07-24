@@ -1,9 +1,9 @@
 using System.Text.Json;
 using Common.Models;
 
-namespace fsCore.Tests.ModelTests
+namespace fsCore.Tests.UtilTests
 {
-    public class BaseModelTests
+    public class CommonAssemblyUtilsTests
     {
         internal class ParseToChildOf_When_Called_With_Vehicle_object_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
         {

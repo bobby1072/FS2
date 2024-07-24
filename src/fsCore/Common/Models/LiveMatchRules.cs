@@ -6,10 +6,10 @@ namespace Common.Models
 {
     public class LiveMatchRules : BaseModel
     {
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("matchId")]
         public Guid MatchId { get; set; }
         [JsonPropertyName("rules")]

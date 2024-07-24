@@ -1,9 +1,8 @@
 using Common.Models;
 using Services.Abstract;
-using System.Reflection;
 namespace Services.Concrete
 {
-    public class LiveMatchCachingService
+    public class LiveMatchCachingService : ILiveMatchCachingService
     {
         private readonly ICachingService _cachingService;
         private const string _liveMatchKey = "match-";
@@ -19,6 +18,11 @@ namespace Services.Concrete
         {
             var cacheType = await _cachingService.GetObject<LiveMatchCacheType>($"{_liveMatchKey}{matchId}");
             return cacheType.ToRuntimeType();
+        }
+        public async Task<LiveMatch?> TryGetLiveMatch(Guid matchId)
+        {
+            var cacheType = await _cachingService.TryGetObject<LiveMatchCacheType>($"{_liveMatchKey}{matchId}");
+            return cacheType?.ToRuntimeType();
         }
     }
 }

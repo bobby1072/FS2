@@ -4,12 +4,13 @@ namespace Common.Models
 {
     public class LiveMatch : BaseModel
     {
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
+        [LockedProperty]
         [JsonPropertyName("matchName")]
         public string MatchName { get; set; }
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("matchRules")]
@@ -18,15 +19,20 @@ namespace Common.Models
         public LiveMatchStatus MatchStatus { get; set; }
         [JsonPropertyName("matchWinStrategy")]
         public LiveMatchWinStrategy MatchWinStrategy { get; set; }
-        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, Guid? id = null)
+        [JsonPropertyName("catches")]
+        public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
+        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
+            Catches = catches;
             GroupId = groupId;
             MatchName = matchName;
             MatchRules = matchRules;
             MatchStatus = matchStatus;
             MatchWinStrategy = winStrategy;
         }
-        public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Id);
+        [JsonConstructor]
+        public LiveMatch() { }
+        public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Catches, Id);
     }
 }

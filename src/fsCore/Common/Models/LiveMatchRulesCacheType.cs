@@ -22,7 +22,7 @@ namespace Common.Models
         public LiveMatchRulesCacheType() { }
         public LiveMatchRules ToRuntimeType()
         {
-            var parsedRules = Rules.Select(x => BaseModel.ParseToChildOf<LiveMatchSingleRule>(JsonSerializer.Serialize(x))).ToList();
+            var parsedRules = Rules.Select(x => CommonAssemblyUtils.ParseToChildOf<LiveMatchSingleRule>(JsonSerializer.Serialize(x))).ToList();
             return new LiveMatchRules(MatchId, parsedRules, Id);
         }
     }
