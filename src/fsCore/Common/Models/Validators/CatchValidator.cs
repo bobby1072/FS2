@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class GroupCatchValidator : CatchValidator<GroupCatch>, IValidator<GroupCatch>
+    public abstract class CatchValidator<T> : BaseValidator<T>, IValidator<T> where T : Catch
     {
-        public GroupCatchValidator()
+        protected CatchValidator()
         {
             RuleFor(x => x.Species).NotEmpty().WithMessage(ErrorConstants.InvalidSpeciesInCatch);
             RuleFor(x => x.Species).Must(LettersAndWhiteSpaceOnly).WithMessage(ErrorConstants.InvalidSpeciesInCatch);
