@@ -1,10 +1,38 @@
 using System.Reflection;
+using System.Text.Json;
 using Common.Attributes;
+using Common.Utils;
 
 namespace Common.Models
 {
+    /// <summary>
+    /// <para>General base model for all models.</para>
+    /// </summary>
     public abstract class BaseModel
     {
+        private static readonly Type[] _allBaseModelChildren = CommonAssemblyUtils.AllAssemblyTypes.Where(t => t.IsSubclassOf(typeof(BaseModel))).ToArray();
+        public static T ParseToChildOf<T>(object? obj) where T : BaseModel
+        {
+            if (obj is null)
+            {
+                throw new ArgumentNullException(nameof(obj));
+            }
+            var childClasses = _allBaseModelChildren.Where(x => x.IsSubclassOf(typeof(T))).ToArray();
+            foreach (var childType in childClasses)
+            {
+                try
+                {
+                    var objConstructor = childType.GetConstructors().FirstOrDefault(x => x.GetCustomAttribute<AssemblyConstructor>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
+                    var parsedObj = objConstructor.Invoke(new object[] { obj });
+                    if (parsedObj is not null)
+                    {
+                        return (parsedObj as T)!;
+                    }
+                }
+                catch (Exception) { }
+            }
+            throw new InvalidCastException($"Cannot cast object");
+        }
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
             if (this is not TModel)
@@ -71,6 +99,110 @@ namespace Common.Models
             {
                 model.ElementAt(i).RemoveSensitive();
             }
+        }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for vehicle.</para>
+    /// </summary>
+    public class TestBaseModelVehicle : BaseModel
+    {
+        public string Manufacturer { get; set; }
+        public int Year { get; set; }
+        // public TestBaseModelVehicle(string manufacturer, int year)
+        // {
+        //     Manufacturer = manufacturer;
+        //     Year = year;
+        // }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for car.</para>
+    /// </summary>
+    public class TestBaseModelCar : TestBaseModelVehicle
+    {
+        public TestBaseModelCar() { }
+        public string DriveSystem { get; set; }
+        // public TestBaseModelCar(string manufacturer, int year, string driveSystem) : base(manufacturer, year)
+        // {
+        //     DriveSystem = driveSystem;
+        // }
+        [AssemblyConstructor]
+        public TestBaseModelCar(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            else if (obj is JsonElement jsonElement)
+            {
+                if (jsonElement.TryGetProperty("manufacturer", out var manufacturerElement))
+                {
+                    Manufacturer = manufacturerElement.GetString();
+                }
+                if (jsonElement.TryGetProperty("year", out var yearElement))
+                {
+                    Year = yearElement.GetInt32();
+                }
+                if (jsonElement.TryGetProperty("driveSystem", out var driveSystemElement))
+                {
+                    DriveSystem = driveSystemElement.GetString();
+                }
+                return;
+            }
+            else if (obj is TestBaseModelCar testBaseModelCar)
+            {
+                Manufacturer = testBaseModelCar.Manufacturer;
+                Year = testBaseModelCar.Year;
+                DriveSystem = testBaseModelCar.DriveSystem;
+                return;
+            }
+            throw new InvalidDataException("Object is not a valid type");
+        }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for truck.</para>
+    /// </summary>
+    public class TestBaseModelTruck : TestBaseModelVehicle
+    {
+        public TestBaseModelTruck() { }
+        public string CargoType { get; set; }
+        // public TestBaseModelTruck(string manufacturer, int year, string cargoType) : base(manufacturer, year)
+        // {
+        //     CargoType = cargoType;
+        // }
+        [AssemblyConstructor]
+        public TestBaseModelTruck(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            else if (obj is JsonElement jsonElement)
+            {
+                if (jsonElement.TryGetProperty("manufacturer", out var manufacturerElement))
+                {
+                    Manufacturer = manufacturerElement.GetString();
+                }
+                if (jsonElement.TryGetProperty("year", out var yearElement))
+                {
+                    Year = yearElement.GetInt32();
+                }
+                if (jsonElement.TryGetProperty("cargoType", out var cargoTypeElement))
+                {
+                    CargoType = cargoTypeElement.GetString();
+                }
+                return;
+            }
+            else if (obj is TestBaseModelTruck testBaseModelTruck)
+            {
+                Manufacturer = testBaseModelTruck.Manufacturer;
+                Year = testBaseModelTruck.Year;
+                CargoType = testBaseModelTruck.CargoType;
+                return;
+            }
+            throw new InvalidDataException("Object is not a valid type");
         }
     }
 }

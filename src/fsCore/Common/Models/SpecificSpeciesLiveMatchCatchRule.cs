@@ -1,5 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-
+using Common.Attributes;
 namespace Common.Models
 {
     public class SpecificSpeciesLiveMatchCatchRule : LiveMatchSingleRule
@@ -12,6 +14,36 @@ namespace Common.Models
         {
             SpeciesNames = speciesName;
             WorldFish = worldFish;
+        }
+        [AssemblyConstructor]
+        public SpecificSpeciesLiveMatchCatchRule(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            if (obj is JsonElement jsonElement)
+            {
+                if (jsonElement.TryGetProperty("speciesName", out var speciesNameElement))
+                {
+                    SpeciesNames = speciesNameElement.EnumerateArray().Select(x => x.GetString()).ToList();
+                }
+                if (jsonElement.TryGetProperty("worldFish", out var worldFishElement))
+                {
+                    WorldFish = worldFishElement.EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText())).ToList();
+                }
+                if (jsonElement.TryGetProperty("id", out var idElement))
+                {
+                    Id = Guid.Parse(idElement.GetString());
+                }
+            }
+            else if (obj is SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
+            {
+                SpeciesNames = specificSpeciesLiveMatchCatchRule.SpeciesNames;
+                WorldFish = specificSpeciesLiveMatchCatchRule.WorldFish;
+                Id = specificSpeciesLiveMatchCatchRule.Id;
+            }
+            throw new InvalidDataException("Object is not a valid type");
         }
         [JsonConstructor]
         public SpecificSpeciesLiveMatchCatchRule() : base()

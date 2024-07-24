@@ -30,7 +30,7 @@ namespace Common.Models
         public LiveMatchCacheType() { }
         public LiveMatch ToRuntimeType()
         {
-            var parsedWinStrategy = AssemblyUtils.ParseToChildOf<LiveMatchWinStrategy>(JsonSerializer.Serialize(MatchWinStrategy));
+            var parsedWinStrategy = BaseModel.ParseToChildOf<LiveMatchWinStrategy>(JsonSerializer.Serialize(MatchWinStrategy));
             return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, parsedWinStrategy, Id);
         }
     }

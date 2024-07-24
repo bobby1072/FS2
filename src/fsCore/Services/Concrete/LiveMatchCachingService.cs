@@ -1,6 +1,6 @@
 using Common.Models;
 using Services.Abstract;
-
+using System.Reflection;
 namespace Services.Concrete
 {
     public class LiveMatchCachingService
@@ -13,7 +13,7 @@ namespace Services.Concrete
         }
         public async Task<string> SetLiveMatch(LiveMatch liveMatch)
         {
-            return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", liveMatch.ToCacheType());
+            return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToCacheType());
         }
         public async Task<LiveMatch> GetLiveMatch(Guid matchId)
         {
