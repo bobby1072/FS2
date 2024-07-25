@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Common.Attributes;
 namespace Common.Models
@@ -15,7 +14,7 @@ namespace Common.Models
             SpeciesNames = speciesName;
             WorldFish = worldFish;
         }
-        [AssemblyConstructorAttribute]
+        [AssemblyConstructor]
         public SpecificSpeciesLiveMatchCatchRule(object? obj)
         {
             if (obj is null)
@@ -24,9 +23,9 @@ namespace Common.Models
             }
             if (obj is JsonElement jsonElement)
             {
-                SpeciesNames = jsonElement.GetProperty("speciesName").EnumerateArray().Select(x => x.GetString()).ToList();
-                WorldFish = jsonElement.GetProperty("worldFish").EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText())).ToList();
-                Id = Guid.Parse(jsonElement.GetProperty("id").GetString());
+                SpeciesNames = jsonElement.GetProperty("speciesName").EnumerateArray().Select(x => x.GetString() ?? throw new InvalidDataException("Cannot parse species name string")).ToList() ?? throw new InvalidDataException("SpeciesName is null");
+                WorldFish = jsonElement.GetProperty("worldFish").EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText()) ?? throw new InvalidDataException("Cannot parse worldFish")).ToList() ?? throw new InvalidDataException("WorldFish is null");
+                Id = Guid.Parse(jsonElement.GetProperty("id").GetString() ?? throw new InvalidDataException("Id is null"));
             }
             else if (obj is SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
             {

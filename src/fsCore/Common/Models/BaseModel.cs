@@ -11,30 +11,6 @@ namespace Common.Models
     /// </summary>
     public abstract class BaseModel
     {
-        private static readonly Type[] _allBaseModelChildren = CommonAssemblyUtils.AllAssemblyTypes.Where(t => t.IsSubclassOf(typeof(BaseModel))).ToArray();
-        public static T ParseToChildOf<T>(object? obj) where T : BaseModel
-        {
-            if (obj is null)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
-            var targetType = typeof(T);
-            var childClasses = _allBaseModelChildren.Where(x => x.IsSubclassOf(targetType)).ToArray();
-            foreach (var childType in childClasses)
-            {
-                try
-                {
-                    var objConstructor = childType.GetConstructors().FirstOrDefault(x => x.GetCustomAttribute<AssemblyConstructorAttribute>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
-                    var parsedObj = objConstructor.Invoke(new object[] { obj });
-                    if (parsedObj is not null)
-                    {
-                        return (parsedObj as T)!;
-                    }
-                }
-                catch { }
-            }
-            throw new InvalidCastException($"Cannot cast object");
-        }
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
             if (this is not TModel)
@@ -124,7 +100,7 @@ namespace Common.Models
         public string DriveSystem { get; set; }
         [JsonConstructor]
         public TestBaseModelCar() { }
-        [AssemblyConstructorAttribute]
+        [AssemblyConstructor]
         public TestBaseModelCar(object? obj)
         {
             if (obj is null)
@@ -158,7 +134,7 @@ namespace Common.Models
         public string CargoType { get; set; }
         [JsonConstructor]
         public TestBaseModelTruck() { }
-        [AssemblyConstructorAttribute]
+        [AssemblyConstructor]
         public TestBaseModelTruck(object? obj)
         {
             if (obj is null)
@@ -167,9 +143,9 @@ namespace Common.Models
             }
             else if (obj is JsonElement jsonElement)
             {
-                Manufacturer = jsonElement.GetProperty("manufacturer").GetString();
+                Manufacturer = jsonElement.GetProperty("manufacturer").GetString() ?? throw new InvalidDataException("Manufacturer is null");
                 Year = jsonElement.GetProperty("year").GetInt32();
-                CargoType = jsonElement.GetProperty("cargoType").GetString();
+                CargoType = jsonElement.GetProperty("cargoType").GetString() ?? throw new InvalidDataException("CargoType is null");
                 return;
             }
             else if (obj is TestBaseModelTruck testBaseModelTruck)

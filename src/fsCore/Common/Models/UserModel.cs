@@ -6,9 +6,9 @@ namespace Common.Models
     public class UserWithoutEmail : BaseModel
     {
         [JsonPropertyName("id")]
-        [LockedPropertyAttribute]
+        [LockedProperty]
         public Guid? Id { get; set; }
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("emailVerified")]
         public bool EmailVerified { get; set; }
         [JsonPropertyName("name")]
@@ -20,8 +20,8 @@ namespace Common.Models
     {
         public const string CacheKeyPrefix = $"{nameof(User)}_";
         private string _email;
-        [LockedPropertyAttribute]
-        [SensitivePropertyAttribute]
+        [LockedProperty]
+        [SensitiveProperty]
         [JsonPropertyName("email")]
         public string Email
         {
