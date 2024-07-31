@@ -1,4 +1,3 @@
-using FluentValidation;
 
 namespace Common.Models.Validators
 {
