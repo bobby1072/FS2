@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Common.Models
@@ -14,7 +15,7 @@ namespace Common.Models
         public InAreaLiveMatchCatchRule() { }
         public override string BuildRuleDescription()
         {
-            return $"Areas: {string.Join(", ", FourPointGeoAreas)}";
+            return $"{nameof(InAreaLiveMatchCatchRule)}: {string.Join(", ", JsonSerializer.Serialize(FourPointGeoAreas))}";
         }
         public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions()
         {
