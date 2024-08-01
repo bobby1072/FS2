@@ -16,10 +16,10 @@ namespace Common.Models
         [JsonPropertyName("matchStatus")]
         public LiveMatchStatus MatchStatus { get; set; }
         [JsonPropertyName("matchWinStrategy")]
-        public object MatchWinStrategy { get; set; }
+        public LiveMatchWinStrategy MatchWinStrategy { get; set; }
         [JsonPropertyName("catches")]
         public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
-        public LiveMatchCacheType(Guid groupId, string matchName, LiveMatchRulesCacheType matchRules, LiveMatchStatus matchStatus, object winStrategy, IList<LiveMatchCatch> catches, Guid? id = null)
+        public LiveMatchCacheType(Guid groupId, string matchName, LiveMatchRulesCacheType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             Catches = catches;
@@ -33,8 +33,7 @@ namespace Common.Models
         public LiveMatchCacheType() { }
         public LiveMatch ToRuntimeType()
         {
-            var parsedWinStrategy = CommonAssemblyUtils.ParseToChildOf<LiveMatchWinStrategy>(JsonSerializer.Serialize(MatchWinStrategy));
-            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, parsedWinStrategy, Catches, Id);
+            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Id);
         }
     }
 }
