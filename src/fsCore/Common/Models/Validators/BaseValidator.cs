@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public abstract class BaseValidator<T> : AbstractValidator<T> where T : class
+    public abstract class BaseValidator<T> : AbstractValidator<T>, IValidator<T> where T : class
     {
 
         protected static bool GuidNotNullOrEmpty(Guid? guid) => guid.HasValue && guid != Guid.Empty;

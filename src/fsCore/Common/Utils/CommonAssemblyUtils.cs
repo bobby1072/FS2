@@ -26,13 +26,15 @@ namespace Common.Utils
             {
                 try
                 {
-                    var objConstructor = childType.GetConstructors().FirstOrDefault(x => x.GetCustomAttribute<AssemblyConstructorAttribute>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
+
+                    var objConstructor = Array.Find(childType.GetConstructors(), x => x.GetCustomAttribute<AssemblyConstructorAttribute>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
                     var parsedObj = objConstructor.Invoke(new object[] { obj });
                     if (parsedObj is not null)
                     {
                         return (parsedObj as T)!;
                     }
                 }
+                //can be ignored as need to try constructors til you get a working one
                 catch { }
             }
             throw new InvalidCastException($"Cannot cast object");

@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public abstract class CatchValidator<T> : BaseValidator<T>, IValidator<T> where T : Catch
+    public abstract class CatchValidator<T> : BaseValidator<T> where T : Catch
     {
         protected CatchValidator()
         {

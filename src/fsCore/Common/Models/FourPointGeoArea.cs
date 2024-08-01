@@ -5,8 +5,6 @@ namespace Common.Models
 {
     public class FourPointGeoArea : BaseModel
     {
-        [JsonConstructor]
-        public FourPointGeoArea() { }
         [JsonPropertyName("topLeft")]
         public LatLng TopLeft { get; set; }
         [JsonPropertyName("bottomLeft")]
@@ -15,6 +13,8 @@ namespace Common.Models
         public LatLng TopRight { get; set; }
         [JsonPropertyName("bottomRight")]
         public LatLng BottomRight { get; set; }
+        [JsonConstructor]
+        public FourPointGeoArea() { }
         public FourPointGeoArea(LatLng topLeft, LatLng bottomLeft, LatLng topRight, LatLng bottomRight, Guid? id = null)
         {
             TopLeft = topLeft;

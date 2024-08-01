@@ -25,7 +25,7 @@ namespace Common.Models
         {
             for (int i = 0; i < FourPointGeoAreas.Count; i++)
             {
-                var area = FourPointGeoAreas.ElementAt(i);
+                var area = FourPointGeoAreas[i];
                 if (area.IsPointInside(new(matchCatch.Latitude, matchCatch.Longitude)))
                 {
                     return true;
