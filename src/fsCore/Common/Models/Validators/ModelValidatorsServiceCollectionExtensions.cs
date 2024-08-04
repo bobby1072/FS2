@@ -12,7 +12,10 @@ namespace Common.Models.Validators
                 .AddSingleton<IValidator<GroupCatch>, GroupCatchValidator>()
                 .AddSingleton<IValidator<Group>, GroupValidator>()
                 .AddSingleton<IValidator<GroupPosition>, GroupPositionValidator>()
-                .AddSingleton<IValidator<User>, UserValidator>();
+                .AddSingleton<IValidator<User>, UserValidator>()
+                .AddSingleton<IValidator<SpecificSpeciesLiveMatchCatchRule>, SpecificSpeciesMatchCatchRuleValidator>()
+                .AddSingleton<IValidator<FourPointGeoArea>, FourPointGeoAreaValidator>();
+
             return services;
         }
     }

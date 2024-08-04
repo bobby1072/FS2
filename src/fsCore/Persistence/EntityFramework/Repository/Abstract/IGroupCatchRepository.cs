@@ -1,5 +1,4 @@
 using Common.Models;
-using Common.Models.MiscModels;
 
 namespace Persistence.EntityFramework.Repository.Abstract
 {

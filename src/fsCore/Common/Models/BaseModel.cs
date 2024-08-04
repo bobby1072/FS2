@@ -1,8 +1,14 @@
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Common.Attributes;
+using Common.Utils;
 
 namespace Common.Models
 {
+    /// <summary>
+    /// <para>General base model for all models.</para>
+    /// </summary>
     public abstract class BaseModel
     {
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
@@ -15,7 +21,7 @@ namespace Common.Models
             for (var i = 0; i < allPropertiesToCheck.Length; i++)
             {
                 var property = allPropertiesToCheck[i];
-                if (property?.GetCustomAttribute<LockedProperty>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
+                if (property?.GetCustomAttribute<LockedPropertyAttribute>() is not null && property.GetValue(this)?.Equals(property.GetValue(checkAgainst)) is false)
                 {
                     return false;
                 }
@@ -56,7 +62,7 @@ namespace Common.Models
                 {
                     deepBaseModels.RemoveSensitive();
                 }
-                else if (property?.GetCustomAttribute<SensitiveProperty>() is not null)
+                else if (property?.GetCustomAttribute<SensitivePropertyAttribute>() is not null)
                 {
                     property.SetValue(this, null);
                 }
@@ -71,6 +77,85 @@ namespace Common.Models
             {
                 model.ElementAt(i).RemoveSensitive();
             }
+        }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for vehicle.</para>
+    /// </summary>
+    public class TestBaseModelVehicle : BaseModel
+    {
+        [JsonPropertyName("manufacturer")]
+        public string Manufacturer { get; set; }
+        [JsonPropertyName("year")]
+        public int Year { get; set; }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for car.</para>
+    /// </summary>
+    public class TestBaseModelCar : TestBaseModelVehicle
+    {
+        [JsonPropertyName("driveSystem")]
+        public string DriveSystem { get; set; }
+        [JsonConstructor]
+        public TestBaseModelCar() { }
+        [AssemblyConstructor]
+        public TestBaseModelCar(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            else if (obj is JsonElement jsonElement)
+            {
+                Manufacturer = jsonElement.GetProperty("manufacturer").GetString();
+                Year = jsonElement.GetProperty("year").GetInt32();
+                DriveSystem = jsonElement.GetProperty("driveSystem").GetString();
+                return;
+            }
+            else if (obj is TestBaseModelCar testBaseModelCar)
+            {
+                Manufacturer = testBaseModelCar.Manufacturer;
+                Year = testBaseModelCar.Year;
+                DriveSystem = testBaseModelCar.DriveSystem;
+                return;
+            }
+            throw new InvalidDataException("Object is not a valid type");
+        }
+    }
+    /// <summary>
+    /// <para>STRICTLY TEST PURPOSES ONLY</para>
+    /// <para>Test base model for truck.</para>
+    /// </summary>
+    public class TestBaseModelTruck : TestBaseModelVehicle
+    {
+        [JsonPropertyName("cargoType")]
+        public string CargoType { get; set; }
+        [JsonConstructor]
+        public TestBaseModelTruck() { }
+        [AssemblyConstructor]
+        public TestBaseModelTruck(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            else if (obj is JsonElement jsonElement)
+            {
+                Manufacturer = jsonElement.GetProperty("manufacturer").GetString() ?? throw new InvalidDataException("Manufacturer is null");
+                Year = jsonElement.GetProperty("year").GetInt32();
+                CargoType = jsonElement.GetProperty("cargoType").GetString() ?? throw new InvalidDataException("CargoType is null");
+                return;
+            }
+            else if (obj is TestBaseModelTruck testBaseModelTruck)
+            {
+                Manufacturer = testBaseModelTruck.Manufacturer;
+                Year = testBaseModelTruck.Year;
+                CargoType = testBaseModelTruck.CargoType;
+                return;
+            }
+            throw new InvalidDataException("Object is not a valid type");
         }
     }
 }

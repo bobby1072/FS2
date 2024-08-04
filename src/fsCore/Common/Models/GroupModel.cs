@@ -5,7 +5,7 @@ namespace Common.Models
 {
     public class Group : BaseModel
     {
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("id")]
         public Guid? Id { get; set; }
         [JsonPropertyName("catchesPublic")]
@@ -14,12 +14,12 @@ namespace Common.Models
         public string Name { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("leaderId")]
         public Guid LeaderId { get; set; }
         [JsonPropertyName("leader")]
         public User? Leader { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("public")]

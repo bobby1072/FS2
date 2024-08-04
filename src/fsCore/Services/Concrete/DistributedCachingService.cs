@@ -6,11 +6,11 @@ using Services.Abstract;
 
 namespace Services.Concrete
 {
-    public class CachingService : ICachingService
+    public class DistributedCachingService : ICachingService
     {
         private readonly IDistributedCache _distributedCache;
-        private readonly ILogger<CachingService> _logger;
-        public CachingService(IDistributedCache distributedCache, ILogger<CachingService> logger)
+        private readonly ILogger<DistributedCachingService> _logger;
+        public DistributedCachingService(IDistributedCache distributedCache, ILogger<DistributedCachingService> logger)
         {
             _distributedCache = distributedCache;
             _logger = logger;
@@ -29,17 +29,6 @@ namespace Services.Concrete
             catch (Exception)
             {
                 return default;
-            }
-        }
-        public async Task<string?> TrySetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
-        {
-            try
-            {
-                return await SetObject(key, value, timeToLive);
-            }
-            catch (Exception)
-            {
-                return null;
             }
         }
         public async Task<string?> TrySetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class

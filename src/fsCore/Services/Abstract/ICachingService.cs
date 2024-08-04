@@ -9,7 +9,6 @@ namespace Services.Abstract
         Task<T?> TryGetObject<T>(string key) where T : class;
         Task<string> SetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class;
         Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class;
-        Task<string?> TrySetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class;
         Task<string?> TrySetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class;
     }
 }

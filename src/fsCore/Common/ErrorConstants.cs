@@ -10,7 +10,7 @@ namespace Common
         public const string DateMustBeInThePast = "Date must be in the past";
         public const string NumbersMustBePositive = "These numbers must be positive";
         public const string InvalidLatitudeAndLongitude = "Invalid latitude and longitude";
-        public const string InvalidGroupCatchSpecies = "Invalid species used in catch";
+        public const string InvalidSpeciesInCatch = "Invalid species used in catch";
         public const string InvalidGroupCatch = "Invalid catch";
         public const string CouldntSaveCatch = "Couldn't save group catch";
         public const string InvalidGroupPositionName = "Invalid group position name. No punctuation or numbers allowed";

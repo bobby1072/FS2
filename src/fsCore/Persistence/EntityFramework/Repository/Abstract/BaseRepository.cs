@@ -7,7 +7,7 @@ using Common.Utils;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
 
-namespace Persistence.EntityFramework.Repository.Concrete
+namespace Persistence.EntityFramework.Repository.Abstract
 {
     internal abstract class BaseRepository<TEnt, TBase> where TEnt : BaseEntity<TBase> where TBase : BaseModel
     {
