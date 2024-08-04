@@ -21,7 +21,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Species = "catfish";
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules(new List<LiveMatchSingleRule> { specificSpeciesRules });
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert
@@ -62,7 +62,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Longitude = -119.2437;
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules(new List<LiveMatchSingleRule> { withinAreasRules });
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert

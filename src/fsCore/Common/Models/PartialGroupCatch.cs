@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Common.Models.MiscModels
+namespace Common.Models
 {
     public class PartialGroupCatch
     {

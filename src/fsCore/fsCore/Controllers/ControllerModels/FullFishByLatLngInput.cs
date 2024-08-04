@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Common.Models.MiscModels;
+using Common.Models;
 
 namespace fsCore.Controllers.ControllerModels
 {

@@ -10,7 +10,14 @@ namespace Common.Models.Validators
         }
         private static bool RectangleCorrectlyFormed(FourPointGeoArea area)
         {
-            return area.TopLeft.Latitude > area.BottomRight.Latitude && area.TopLeft.Longitude < area.BottomRight.Longitude;
+            return area.TopLeft.Latitude > area.BottomLeft.Latitude &&
+                   area.TopLeft.Latitude > area.TopRight.Latitude &&
+                   area.BottomLeft.Latitude < area.BottomRight.Latitude &&
+                   area.TopRight.Latitude < area.BottomRight.Latitude &&
+                   area.TopLeft.Longitude < area.TopRight.Longitude &&
+                   area.TopLeft.Longitude < area.BottomLeft.Longitude &&
+                   area.TopRight.Longitude > area.BottomRight.Longitude &&
+                   area.BottomLeft.Longitude < area.BottomRight.Longitude;
         }
     }
 }

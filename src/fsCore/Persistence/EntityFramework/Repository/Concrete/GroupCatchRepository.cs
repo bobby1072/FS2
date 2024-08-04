@@ -1,7 +1,6 @@
 using System.Net;
 using Common;
 using Common.Models;
-using Common.Models.MiscModels;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
 using Persistence.EntityFramework.Repository.Abstract;
