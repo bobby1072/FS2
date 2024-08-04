@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public abstract class BaseValidator<T> : AbstractValidator<T>, IValidator<T> where T : class
+    public abstract class BaseValidator<T> : AbstractValidator<T> where T : class
     {
 
         protected static bool GuidNotNullOrEmpty(Guid? guid) => guid.HasValue && guid != Guid.Empty;
@@ -22,5 +22,9 @@ namespace Common.Models.Validators
         protected static bool NotJustHaveNumbers(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsDigit);
         protected static bool LettersAndWhiteSpaceOnly(string input) => input.Any(char.IsLetter) && !input.All(char.IsWhiteSpace) && !input.Any(char.IsDigit) && !input.Any(char.IsPunctuation);
         protected static bool NumbersArePositive(double input) => input > 0;
+        protected static bool NumbersLettersAndWhitespaceOnlyNotJustWhiteSpace(string? input)
+        {
+            return !string.IsNullOrEmpty(input) && input.All(x => x == char.Parse(" ") || char.IsLetterOrDigit(x)) && !input.All(char.IsWhiteSpace);
+        }
     }
 }

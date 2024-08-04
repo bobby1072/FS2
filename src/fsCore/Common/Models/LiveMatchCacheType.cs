@@ -1,6 +1,4 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using Common.Utils;
 namespace Common.Models
 {
     public class LiveMatchCacheType
@@ -21,6 +19,8 @@ namespace Common.Models
         public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
         [JsonPropertyName("participants")]
         public IList<User> Participants { get; set; } = new List<User>();
+        [JsonPropertyName("matchLeaderId")]
+        public Guid MatchLeaderId { get; set; }
         public LiveMatchCacheType(Guid groupId, string matchName, LiveMatchRulesCacheType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> participants, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();

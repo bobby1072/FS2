@@ -23,7 +23,10 @@ namespace Common.Models
         public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
         [JsonPropertyName("participants")]
         public IList<User> Participants { get; set; } = new List<User>();
-        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid? id = null)
+        [LockedProperty]
+        [JsonPropertyName("matchLeaderId")]
+        public Guid MatchLeaderId { get; set; }
+        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid MatchLeaderId, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             Catches = catches;
