@@ -26,9 +26,9 @@ namespace Common.Models.Validators
         {
             return !string.IsNullOrEmpty(input) && input.All(x => x == char.Parse(" ") || char.IsLetterOrDigit(x)) && !input.All(char.IsWhiteSpace) && !input.All(char.IsDigit);
         }
-        protected static Func<string, bool> ShouldBeLength(int length)
+        protected static Func<string, bool> ShouldBeLessThanOrEqualTo(int length)
         {
-            return x => x.Length == length;
+            return x => !string.IsNullOrEmpty(x) && x.Length < length;
         }
     }
 }

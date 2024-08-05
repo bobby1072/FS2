@@ -103,10 +103,6 @@ namespace fsCore.Tests.UtilTests
             //Act
             var winner = LiveMatchUtils.CalculateWinner(liveMatch);
 
-            if(!expectedWinner.Equals(winner))
-            {
-                Console.WriteLine("fhf");
-            }
             //Assert
             Assert.Equal(expectedWinner, winner);
         }

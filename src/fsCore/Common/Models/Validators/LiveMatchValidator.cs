@@ -8,7 +8,7 @@ namespace Common.Models.Validators
         {
             RuleFor(x => x.GroupId).NotEmpty().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.MatchName).Must(NumbersLettersAndWhitespaceOnlyNotJustWhiteSpaceOrNumbers).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
-            RuleFor(x => x.MatchName).Must(ShouldBeLength(50)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            RuleFor(x => x.MatchName).Must(ShouldBeLessThanOrEqualTo(50)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.MatchRules).NotNull().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.MatchStatus).NotNull().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.MatchWinStrategy).NotNull().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
