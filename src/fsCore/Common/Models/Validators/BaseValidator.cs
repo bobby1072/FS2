@@ -28,7 +28,7 @@ namespace Common.Models.Validators
         }
         protected static Func<string, bool> ShouldBeLessThanOrEqualTo(int length)
         {
-            return x => !string.IsNullOrEmpty(x) && x.Length < length;
+            return x => !string.IsNullOrEmpty(x) && x.Length <= length;
         }
     }
 }
