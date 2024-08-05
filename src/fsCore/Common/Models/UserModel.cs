@@ -43,6 +43,14 @@ namespace Common.Models
         {
             return Email.Split('@').FirstOrDefault() ?? Email;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is User parsedUser)
+            {
+                return parsedUser.Email == Email && parsedUser.Id == Id && parsedUser.Name == Name && parsedUser.Username == Username;
+            }
+            return false;
+        }
     }
     public class UserWithGroupPermissionSet : User
     {

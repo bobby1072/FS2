@@ -22,9 +22,13 @@ namespace Common.Models.Validators
         protected static bool NotJustHaveNumbers(string? input) => string.IsNullOrEmpty(input) ? true : !input.All(char.IsDigit);
         protected static bool LettersAndWhiteSpaceOnly(string input) => input.Any(char.IsLetter) && !input.All(char.IsWhiteSpace) && !input.Any(char.IsDigit) && !input.Any(char.IsPunctuation);
         protected static bool NumbersArePositive(double input) => input > 0;
-        protected static bool NumbersLettersAndWhitespaceOnlyNotJustWhiteSpace(string? input)
+        protected static bool NumbersLettersAndWhitespaceOnlyNotJustWhiteSpaceOrNumbers(string? input)
         {
-            return !string.IsNullOrEmpty(input) && input.All(x => x == char.Parse(" ") || char.IsLetterOrDigit(x)) && !input.All(char.IsWhiteSpace);
+            return !string.IsNullOrEmpty(input) && input.All(x => x == char.Parse(" ") || char.IsLetterOrDigit(x)) && !input.All(char.IsWhiteSpace) && !input.All(char.IsDigit);
+        }
+        protected static Func<string, bool> ShouldBeLength(int length)
+        {
+            return x => x.Length == length;
         }
     }
 }

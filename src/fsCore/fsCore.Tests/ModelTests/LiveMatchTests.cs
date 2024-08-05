@@ -11,7 +11,7 @@ namespace fsCore.Tests.ModelTests
             //Arrange
 
             var liveMatchId = Guid.NewGuid();
-            var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(new List<string> { "salmon", "pike" }, new List<WorldFish>(), Guid.NewGuid());
+            var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], [], Guid.NewGuid());
             var validCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
             validCatch.Species = "salmon";
             var validCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
@@ -19,7 +19,7 @@ namespace fsCore.Tests.ModelTests
             var invalidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
             invalidCatch.Species = "catfish";
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
-            var liveMatchRules = new LiveMatchRules(new List<LiveMatchSingleRule> { specificSpeciesRules });
+            var liveMatchRules = new LiveMatchRules([specificSpeciesRules]);
             var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, Guid.NewGuid(), liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
@@ -49,7 +49,7 @@ namespace fsCore.Tests.ModelTests
             var bottomRight = new LatLng(33.0522, -117.2437);
 
             var geoArea = new FourPointGeoArea(topLeft, bottomLeft, topRight, bottomRight);
-            var withinAreasRules = new InAreaLiveMatchCatchRule(new List<FourPointGeoArea> { geoArea });
+            var withinAreasRules = new InAreaLiveMatchCatchRule([geoArea]);
             var validCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
             validCatch.Latitude = 33.5522;
             validCatch.Longitude = -117.7437;
@@ -60,7 +60,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Latitude = 35.0522;
             invalidCatch.Longitude = -119.2437;
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
-            var liveMatchRules = new LiveMatchRules(new List<LiveMatchSingleRule> { withinAreasRules });
+            var liveMatchRules = new LiveMatchRules([withinAreasRules]);
             var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, Guid.NewGuid(), liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 

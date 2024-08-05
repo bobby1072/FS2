@@ -32,6 +32,7 @@ namespace Common.Models
             Catches = catches;
             GroupId = groupId;
             MatchName = matchName;
+            Participants = users;
             MatchRules = matchRules;
             MatchStatus = matchStatus;
             MatchWinStrategy = winStrategy;
