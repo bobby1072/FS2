@@ -1,3 +1,5 @@
+using System.Text.Json;
+using AutoFixture;
 using Common.Models;
 using DataImporter.MockModelBuilders;
 
@@ -5,6 +7,11 @@ namespace fsCore.Tests.ModelTests
 {
     public class LiveMatchTests
     {
+        private readonly Fixture _fixture;
+        public LiveMatchTests()
+        {
+            _fixture = new Fixture();
+        }
         [Fact]
         public void LiveMatch_Rules_Should_Validate_Catches_Correctly_With_Specific_Catch_Rule()
         {
@@ -20,7 +27,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Species = "catfish";
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([specificSpeciesRules]);
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, Guid.NewGuid(), liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert
@@ -61,7 +68,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Longitude = -119.2437;
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([withinAreasRules]);
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, new[] { MockUserBuilder.Build() }, Guid.NewGuid(), liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert
@@ -78,6 +85,61 @@ namespace fsCore.Tests.ModelTests
                 }
             }
         }
+        internal class Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data : TheoryData<LiveMatch>
+        {
+            public Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data()
+            {
+                var withinAreaRuleLiveMatchId = Guid.NewGuid();
 
+                var topLeft = new LatLng(34.0522, -118.2437);
+                var bottomLeft = new LatLng(33.0522, -118.2437);
+                var topRight = new LatLng(34.0522, -117.2437);
+                var bottomRight = new LatLng(33.0522, -117.2437);
+
+                var geoArea = new FourPointGeoArea(topLeft, bottomLeft, topRight, bottomRight);
+                var withinAreasRules = new InAreaLiveMatchCatchRule([geoArea]);
+                var withinAreaRuleValidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
+                withinAreaRuleValidCatch.Latitude = 33.5522;
+                withinAreaRuleValidCatch.Longitude = -117.7437;
+                var withinAreaRuleValidCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
+                withinAreaRuleValidCatch2.Latitude = 33.8022;
+                withinAreaRuleValidCatch2.Longitude = -118.0437;
+                var withinAreaRuleInvalidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
+                withinAreaRuleInvalidCatch.Latitude = 35.0522;
+                withinAreaRuleInvalidCatch.Longitude = -119.2437;
+                var withinAreaRuleCatches = new List<LiveMatchCatch> { withinAreaRuleValidCatch, withinAreaRuleValidCatch2, withinAreaRuleInvalidCatch };
+                var withinAreaRuleLiveMatchRules = new LiveMatchRules([withinAreasRules]);
+                var LiveMatchWithInAreaRule = new LiveMatch(Guid.NewGuid(), "test match", withinAreaRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, withinAreaRuleCatches, [MockUserBuilder.Build()], Guid.NewGuid(), withinAreaRuleLiveMatchId);
+                Add(LiveMatchWithInAreaRule);
+
+                var specificSpeciesRuleLiveMatchId = Guid.NewGuid();
+                var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], [], Guid.NewGuid());
+                var specificSpeciesRuleValidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
+                withinAreaRuleValidCatch.Species = "salmon";
+                var specificSpeciesRuleValidCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
+                withinAreaRuleValidCatch2.Species = "pike";
+                var specificSpeciesRuleInvalidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
+                withinAreaRuleInvalidCatch.Species = "catfish";
+                var specificSpeciesRuleCatches = new List<LiveMatchCatch> { specificSpeciesRuleValidCatch, specificSpeciesRuleValidCatch2, specificSpeciesRuleInvalidCatch };
+                var specificSpeciesRuleLiveMatchRules = new LiveMatchRules([specificSpeciesRules]);
+                var LiveMatchWithSpecificSpeciesRule = new LiveMatch(Guid.NewGuid(), "test match", specificSpeciesRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, specificSpeciesRuleCatches, [MockUserBuilder.Build()], Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
+                Add(LiveMatchWithSpecificSpeciesRule);
+            }
+        }
+        [Theory]
+        [ClassData(typeof(Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data))]
+        public void Json_Serialisation_Should_Work_Through_Caching_Types(LiveMatch liveMatch)
+        {
+            //Arrange
+            var liveMatchCacheType = liveMatch.ToCacheType();
+            var json = JsonSerializer.Serialize(liveMatchCacheType);
+
+            //Act
+            var jsonResult = JsonSerializer.Deserialize<LiveMatchCacheType>(json);
+            var actual = jsonResult?.ToRuntimeType();
+
+            //Assert
+            Assert.Equal(liveMatch, actual);
+        }
     }
 }

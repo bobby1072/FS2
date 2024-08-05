@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Common.Attributes;
 
 namespace Common.Models
 {
@@ -13,6 +14,28 @@ namespace Common.Models
         }
         [JsonConstructor]
         public InAreaLiveMatchCatchRule() { }
+        [AssemblyConstructor]
+        public InAreaLiveMatchCatchRule(object? obj)
+        {
+            if (obj is null)
+            {
+                throw new InvalidDataException("Object is null");
+            }
+            else if (obj is JsonElement jsonElement)
+            {
+                FourPointGeoAreas = jsonElement.GetProperty("fourPointGeoAreas").EnumerateArray().Select(x => JsonSerializer.Deserialize<FourPointGeoArea>(x.GetRawText()) ?? throw new InvalidDataException("Cannot parse FourPointGeoArea")).ToList() ?? throw new InvalidDataException("FourPointGeoAreas is null");
+                Id = Guid.Parse(jsonElement.GetProperty("id").GetString() ?? throw new InvalidDataException("Id is null"));
+            }
+            else if (obj is InAreaLiveMatchCatchRule inAreaLiveMatchCatchRule)
+            {
+                FourPointGeoAreas = inAreaLiveMatchCatchRule.FourPointGeoAreas;
+                Id = inAreaLiveMatchCatchRule.Id;
+            }
+            else
+            {
+                throw new InvalidDataException("Object is not a valid type");
+            }
+        }
         public override string BuildRuleDescription()
         {
             return $"{nameof(InAreaLiveMatchCatchRule)}: {string.Join(", ", JsonSerializer.Serialize(FourPointGeoAreas))}";

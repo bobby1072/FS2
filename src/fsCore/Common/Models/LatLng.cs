@@ -14,5 +14,13 @@ namespace Common.Models
             Latitude = latitude;
             Longitude = longitude;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not LatLng latLng)
+            {
+                return false;
+            }
+            return Latitude == latLng.Latitude && Longitude == latLng.Longitude;
+        }
     }
 }

@@ -68,5 +68,15 @@ namespace Common.Models
                 return SpeciesNames.Contains(matchCatch.Species);
             }
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
+            {
+                return false;
+            }
+            return Id == specificSpeciesLiveMatchCatchRule.Id
+            && SpeciesNames.SequenceEqual(specificSpeciesLiveMatchCatchRule.SpeciesNames)
+            && WorldFish.SequenceEqual(specificSpeciesLiveMatchCatchRule.WorldFish);
+        }
     }
 }

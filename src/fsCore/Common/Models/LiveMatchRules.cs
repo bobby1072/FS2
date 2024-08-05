@@ -1,5 +1,4 @@
 using System.Text.Json.Serialization;
-using Common.Attributes;
 using Common.Models.Validators;
 using FluentValidation;
 namespace Common.Models
@@ -20,6 +19,14 @@ namespace Common.Models
             return new DynamicLiveMatchCatchRuleValidator(allSingleRuleValidatorFuncs);
         }
         public LiveMatchRulesCacheType ToCacheType() => new(Rules.Select(x => (object)x).ToList());
+        public override bool Equals(object? obj)
+        {
+            if (obj is not LiveMatchRules liveMatchRules)
+            {
+                return false;
+            }
+            return Rules.SequenceEqual(liveMatchRules.Rules);
+        }
     }
 
 }

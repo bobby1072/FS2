@@ -17,6 +17,7 @@ namespace Common.Models
         public LiveMatchRules MatchRules { get; set; }
         [JsonPropertyName("matchStatus")]
         public LiveMatchStatus MatchStatus { get; set; }
+        [LockedProperty]
         [JsonPropertyName("matchWinStrategy")]
         public LiveMatchWinStrategy MatchWinStrategy { get; set; }
         [JsonPropertyName("catches")]
@@ -40,5 +41,21 @@ namespace Common.Models
         [JsonConstructor]
         public LiveMatch() { }
         public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Catches, Participants, Id);
+        public override bool Equals(object? obj)
+        {
+            if (obj is not LiveMatch liveMatch)
+            {
+                return false;
+            }
+            return Id == liveMatch.Id
+            && MatchName == liveMatch.MatchName
+            && GroupId == liveMatch.GroupId
+            && MatchRules.Equals(liveMatch.MatchRules)
+            && MatchStatus == liveMatch.MatchStatus
+            && MatchWinStrategy == liveMatch.MatchWinStrategy
+            && Catches.SequenceEqual(liveMatch.Catches)
+            && Participants.SequenceEqual(liveMatch.Participants)
+            && MatchLeaderId == liveMatch.MatchLeaderId;
+        }
     }
 }

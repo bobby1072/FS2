@@ -39,5 +39,16 @@ namespace Common.Models
 
             return isInside;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not FourPointGeoArea fourPointGeoArea)
+            {
+                return false;
+            }
+            return TopLeft.Equals(fourPointGeoArea.TopLeft)
+                && BottomLeft.Equals(fourPointGeoArea.BottomLeft)
+                && TopRight.Equals(fourPointGeoArea.TopRight)
+                && BottomRight.Equals(fourPointGeoArea.BottomRight);
+        }
     }
 }
