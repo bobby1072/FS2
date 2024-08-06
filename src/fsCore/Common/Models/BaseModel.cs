@@ -11,6 +11,7 @@ namespace Common.Models
     /// </summary>
     public abstract class BaseModel
     {
+
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
             if (this is not TModel)
@@ -30,14 +31,18 @@ namespace Common.Models
         }
         public override bool Equals(object? obj)
         {
-            if (obj is not null)
+            if (obj is not BaseModel baseModel)
             {
-                var thisType = this.GetType().GetProperties();
-                for (var i = 0; i < thisType.Length; i++)
+                return false;
+            }
+            if (baseModel is not null)
+            {
+                var thisTypeProperties = this.GetType().GetProperties();
+                for (var i = 0; i < thisTypeProperties.Length; i++)
                 {
-                    var property = thisType[i];
+                    var property = thisTypeProperties[i];
                     var foundSelfValue = property.GetValue(this);
-                    var foundObjVal = property.GetValue(obj);
+                    var foundObjVal = property.GetValue(baseModel);
                     if (foundSelfValue != foundObjVal)
                     {
                         return false;
