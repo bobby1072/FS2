@@ -9,7 +9,7 @@ namespace Common.Models
         public IList<WorldFish> WorldFish { get; set; } = new List<WorldFish>();
         [JsonPropertyName("speciesName")]
         public IList<string> SpeciesNames { get; set; } = new List<string>();
-        public SpecificSpeciesLiveMatchCatchRule(IList<string> speciesName, IList<WorldFish> worldFish, Guid? id = null) : base(id)
+        public SpecificSpeciesLiveMatchCatchRule(IList<string> speciesName, IList<WorldFish> worldFish)
         {
             SpeciesNames = speciesName;
             WorldFish = worldFish;
@@ -25,13 +25,11 @@ namespace Common.Models
             {
                 SpeciesNames = jsonElement.GetProperty("speciesName").EnumerateArray().Select(x => x.GetString() ?? throw new InvalidDataException("Cannot parse species name string")).ToList() ?? throw new InvalidDataException("SpeciesName is null");
                 WorldFish = jsonElement.GetProperty("worldFish").EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText()) ?? throw new InvalidDataException("Cannot parse worldFish")).ToList() ?? throw new InvalidDataException("WorldFish is null");
-                Id = Guid.Parse(jsonElement.GetProperty("id").GetString() ?? throw new InvalidDataException("Id is null"));
             }
             else if (obj is SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
             {
                 SpeciesNames = specificSpeciesLiveMatchCatchRule.SpeciesNames;
                 WorldFish = specificSpeciesLiveMatchCatchRule.WorldFish;
-                Id = specificSpeciesLiveMatchCatchRule.Id;
             }
             else
             {
@@ -74,8 +72,7 @@ namespace Common.Models
             {
                 return false;
             }
-            return Id == specificSpeciesLiveMatchCatchRule.Id
-            && SpeciesNames.SequenceEqual(specificSpeciesLiveMatchCatchRule.SpeciesNames)
+            return SpeciesNames.SequenceEqual(specificSpeciesLiveMatchCatchRule.SpeciesNames)
             && WorldFish.SequenceEqual(specificSpeciesLiveMatchCatchRule.WorldFish);
         }
     }

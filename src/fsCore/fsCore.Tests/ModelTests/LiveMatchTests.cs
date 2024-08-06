@@ -18,7 +18,7 @@ namespace fsCore.Tests.ModelTests
             //Arrange
 
             var liveMatchId = Guid.NewGuid();
-            var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], [], Guid.NewGuid());
+            var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], []);
             var validCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
             validCatch.Species = "salmon";
             var validCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
@@ -113,7 +113,7 @@ namespace fsCore.Tests.ModelTests
                 Add(LiveMatchWithInAreaRule);
 
                 var specificSpeciesRuleLiveMatchId = Guid.NewGuid();
-                var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], [], Guid.NewGuid());
+                var specificSpeciesRules = new SpecificSpeciesLiveMatchCatchRule(["salmon", "pike"], []);
                 var specificSpeciesRuleValidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
                 withinAreaRuleValidCatch.Species = "salmon";
                 var specificSpeciesRuleValidCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
@@ -135,11 +135,11 @@ namespace fsCore.Tests.ModelTests
         public void Json_Serialisation_Should_Work_Through_Caching_Types(LiveMatch liveMatch)
         {
             //Arrange
-            var liveMatchCacheType = liveMatch.ToCacheType();
+            var liveMatchCacheType = liveMatch.ToJsonType();
             var json = JsonSerializer.Serialize(liveMatchCacheType);
 
             //Act
-            var jsonResult = JsonSerializer.Deserialize<LiveMatchCacheType>(json);
+            var jsonResult = JsonSerializer.Deserialize<LiveMatchJsonType>(json);
             var actual = jsonResult?.ToRuntimeType();
 
             //Assert

@@ -1,23 +1,25 @@
 using System.Data;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using Common.Utils;
 namespace Common.Models
 {
-    public class LiveMatchRulesCacheType
+    public class LiveMatchRulesJsonType
     {
+        [JsonPropertyName("id")]
+        public int? Id { get; set; }
         [JsonPropertyName("rules")]
         public IList<object> Rules { get; set; } = new List<object>();
-        public LiveMatchRulesCacheType(IList<object> rules)
+        public LiveMatchRulesJsonType(IList<object> rules, int? id = null)
         {
+            Id = id;
             Rules = rules;
         }
         [JsonConstructor]
-        public LiveMatchRulesCacheType() { }
+        public LiveMatchRulesJsonType() { }
         public LiveMatchRules ToRuntimeType()
         {
             var parsedRules = Rules.Select(x => CommonAssemblyUtils.ParseToChildOf<LiveMatchSingleRule>(x)).ToList();
-            return new LiveMatchRules(parsedRules);
+            return new LiveMatchRules(parsedRules, Id);
         }
     }
 

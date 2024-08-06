@@ -1,14 +1,19 @@
 using System.Text.Json.Serialization;
+using Common.Attributes;
 using Common.Models.Validators;
 using FluentValidation;
 namespace Common.Models
 {
     public class LiveMatchRules : BaseModel
     {
+        [LockedProperty]
+        [JsonPropertyName("id")]
+        public int? Id { get; set; }
         [JsonPropertyName("rules")]
         public IList<LiveMatchSingleRule> Rules { get; set; } = new List<LiveMatchSingleRule>();
-        public LiveMatchRules(IList<LiveMatchSingleRule> rules)
+        public LiveMatchRules(IList<LiveMatchSingleRule> rules, int? id = null)
         {
+            Id = id;
             Rules = rules;
         }
         [JsonConstructor]
@@ -18,7 +23,7 @@ namespace Common.Models
             var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions()).ToArray();
             return new DynamicLiveMatchCatchRuleValidator(allSingleRuleValidatorFuncs);
         }
-        public LiveMatchRulesCacheType ToCacheType() => new(Rules.Select(x => (object)x).ToList());
+        public LiveMatchRulesJsonType ToJsonType() => new(Rules.Select(x => (object)x).ToList());
         public override bool Equals(object? obj)
         {
             if (obj is not LiveMatchRules liveMatchRules)

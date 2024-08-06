@@ -8,7 +8,7 @@ namespace Common.Models
     {
         [JsonPropertyName("fourPointGeoAreas")]
         public IList<FourPointGeoArea> FourPointGeoAreas { get; set; } = new List<FourPointGeoArea>();
-        public InAreaLiveMatchCatchRule(IList<FourPointGeoArea> fourPointGeoAreas, Guid? id = null) : base(id)
+        public InAreaLiveMatchCatchRule(IList<FourPointGeoArea> fourPointGeoAreas)
         {
             FourPointGeoAreas = fourPointGeoAreas;
         }
@@ -24,12 +24,10 @@ namespace Common.Models
             else if (obj is JsonElement jsonElement)
             {
                 FourPointGeoAreas = jsonElement.GetProperty("fourPointGeoAreas").EnumerateArray().Select(x => JsonSerializer.Deserialize<FourPointGeoArea>(x.GetRawText()) ?? throw new InvalidDataException("Cannot parse FourPointGeoArea")).ToList() ?? throw new InvalidDataException("FourPointGeoAreas is null");
-                Id = Guid.Parse(jsonElement.GetProperty("id").GetString() ?? throw new InvalidDataException("Id is null"));
             }
             else if (obj is InAreaLiveMatchCatchRule inAreaLiveMatchCatchRule)
             {
                 FourPointGeoAreas = inAreaLiveMatchCatchRule.FourPointGeoAreas;
-                Id = inAreaLiveMatchCatchRule.Id;
             }
             else
             {

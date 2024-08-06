@@ -27,6 +27,30 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("commencesAt")]
+        public DateTime? CommencesAt { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("endsAt")]
+        public DateTime? EndsAt { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
+        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, Guid? id = null)
+        {
+            Id = id ?? Guid.NewGuid();
+            Catches = catches;
+            GroupId = groupId;
+            MatchName = matchName;
+            Participants = users;
+            MatchRules = matchRules;
+            MatchStatus = matchStatus;
+            MatchWinStrategy = winStrategy;
+            CreatedAt = createdAt;
+            CommencesAt = commencesAt;
+            EndsAt = endsAt;
+            MatchLeaderId = matchLeaderId;
+        }
         public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid MatchLeaderId, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
@@ -52,7 +76,7 @@ namespace Common.Models
         }
         [JsonConstructor]
         public LiveMatch() { }
-        public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Catches, Participants, Id);
+        public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches, Participants, Id);
         public override bool Equals(object? obj)
         {
             if (obj is not LiveMatch liveMatch)

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 namespace Common.Models
 {
-    public class LiveMatchCacheType
+    public class LiveMatchJsonType
     {
         [JsonPropertyName("id")]
         public Guid Id { get; set; }
@@ -10,7 +10,7 @@ namespace Common.Models
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("matchRules")]
-        public LiveMatchRulesCacheType MatchRules { get; set; }
+        public LiveMatchRulesJsonType MatchRules { get; set; }
         [JsonPropertyName("matchStatus")]
         public LiveMatchStatus MatchStatus { get; set; }
         [JsonPropertyName("matchWinStrategy")]
@@ -21,7 +21,7 @@ namespace Common.Models
         public IList<User> Participants { get; set; } = new List<User>();
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
-        public LiveMatchCacheType(Guid groupId, string matchName, LiveMatchRulesCacheType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> participants, Guid? id = null)
+        public LiveMatchJsonType(Guid groupId, string matchName, LiveMatchRulesJsonType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> participants, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             Catches = catches;
@@ -33,7 +33,7 @@ namespace Common.Models
             MatchWinStrategy = winStrategy;
         }
         [JsonConstructor]
-        public LiveMatchCacheType() { }
+        public LiveMatchJsonType() { }
         public LiveMatch ToRuntimeType()
         {
             return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, Id);
