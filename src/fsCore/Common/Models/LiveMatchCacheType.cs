@@ -36,7 +36,7 @@ namespace Common.Models
         public LiveMatchCacheType() { }
         public LiveMatch ToRuntimeType()
         {
-            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Participants, Id);
+            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, Id);
         }
     }
 }

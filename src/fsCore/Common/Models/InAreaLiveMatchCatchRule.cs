@@ -56,5 +56,10 @@ namespace Common.Models
             }
             return false;
         }
+        public override bool Equals(object? obj)
+        {
+            return obj is InAreaLiveMatchCatchRule inAreaLiveMatchCatchRule &&
+                   FourPointGeoAreas.SequenceEqual(inAreaLiveMatchCatchRule.FourPointGeoAreas);
+        }
     }
 }

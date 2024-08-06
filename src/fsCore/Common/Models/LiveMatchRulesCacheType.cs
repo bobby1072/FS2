@@ -16,7 +16,7 @@ namespace Common.Models
         public LiveMatchRulesCacheType() { }
         public LiveMatchRules ToRuntimeType()
         {
-            var parsedRules = Rules.Select(x => CommonAssemblyUtils.ParseToChildOf<LiveMatchSingleRule>(JsonSerializer.Serialize(x))).ToList();
+            var parsedRules = Rules.Select(x => CommonAssemblyUtils.ParseToChildOf<LiveMatchSingleRule>(x)).ToList();
             return new LiveMatchRules(parsedRules);
         }
     }

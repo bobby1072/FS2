@@ -41,5 +41,16 @@ namespace Common.Models
             }
             return this;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not LiveMatchCatch liveMatchCatch)
+            {
+                return false;
+            }
+            return Id == liveMatchCatch.Id
+            && MatchId == liveMatchCatch.MatchId
+            && CountsInMatch == liveMatchCatch.CountsInMatch
+            && base.Equals(liveMatchCatch);
+        }
     }
 }
