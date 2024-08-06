@@ -18,6 +18,7 @@ COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
 COPY src/fsCore/Services/*.csproj ./fsCore/Services/
 COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
+COPY src/fsCore/Services/*.csproj ./fsCore/Services/
 
 RUN dotnet restore fsCore/fsCore/fsCore.csproj 
 
@@ -26,6 +27,7 @@ COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/ ./fsCore/fsCore/
 COPY src/fsCore/Services/ ./fsCore/Services/
 COPY src/fsCore/Persistence/ ./fsCore/Persistence/
+COPY src/fsCore/Services/ ./fsCore/Services/
 
 WORKDIR /src/fsCore/fsCore
 ARG CONF=Release
