@@ -38,6 +38,18 @@ namespace Common.Models
             MatchStatus = matchStatus;
             MatchWinStrategy = winStrategy;
         }
+        public LiveMatch(LiveMatch liveMatch)
+        {
+            Id = liveMatch.Id;
+            Catches = liveMatch.Catches;
+            GroupId = liveMatch.GroupId;
+            MatchName = liveMatch.MatchName;
+            Participants = liveMatch.Participants;
+            MatchRules = liveMatch.MatchRules;
+            MatchStatus = liveMatch.MatchStatus;
+            MatchWinStrategy = liveMatch.MatchWinStrategy;
+            MatchLeaderId = liveMatch.MatchLeaderId;
+        }
         [JsonConstructor]
         public LiveMatch() { }
         public LiveMatchCacheType ToCacheType() => new(GroupId, MatchName, MatchRules.ToCacheType(), MatchStatus, MatchWinStrategy, Catches, Participants, Id);

@@ -124,6 +124,10 @@ namespace fsCore.Tests.ModelTests
                 var specificSpeciesRuleLiveMatchRules = new LiveMatchRules([specificSpeciesRules]);
                 var LiveMatchWithSpecificSpeciesRule = new LiveMatch(Guid.NewGuid(), "test match", specificSpeciesRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, specificSpeciesRuleCatches, [MockUserBuilder.Build()], Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
                 Add(LiveMatchWithSpecificSpeciesRule);
+
+                var liveMatchWithBothRules = new LiveMatch(LiveMatchWithSpecificSpeciesRule);
+                liveMatchWithBothRules.MatchRules = new LiveMatchRules([withinAreasRules, specificSpeciesRules]);
+                Add(liveMatchWithBothRules);
             }
         }
         [Theory]
