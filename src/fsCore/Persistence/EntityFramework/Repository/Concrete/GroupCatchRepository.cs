@@ -16,7 +16,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<PartialGroupCatch?> GetOnePartial(Guid id)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
@@ -27,7 +27,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<GroupCatch?> GetOne(Guid id)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
@@ -64,7 +64,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<PartialGroupCatch>?> GetAllPartialCatchesForUser(Guid userId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var catches = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
@@ -75,7 +75,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<PartialGroupCatch>?> GetCatchesInSquareRange(LatLng bottomLeft, LatLng topRight, Guid groupId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var catches = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
@@ -91,7 +91,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<PartialGroupCatch>?> GetAllPartialCatchesForGroup(Guid groupId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var catches = await dbContext.GroupCatch
                 .Include(gc => gc.User)
                 .Include(gc => gc.WorldFish)
@@ -102,7 +102,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<GroupCatch?> GetOne(LatLng latLng, Guid groupId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var groupCatch = await dbContext.GroupCatch
                 .Include(gc => gc.WorldFish)
                 .Include(gc => gc.User)

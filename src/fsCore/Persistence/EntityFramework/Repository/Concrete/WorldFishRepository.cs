@@ -13,7 +13,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         public WorldFishRepository(IDbContextFactory<FsContext> dbContextFactory) : base(dbContextFactory) { }
         public async Task<ICollection<WorldFish>?> FindSomeLike(string anyFish)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var foundEnts = await dbContext.WorldFish
                 .Where(x => x.Nickname != null && x.Nickname.ToLower().Contains(anyFish.ToLower()) ||
                             x.ScientificName != null && x.ScientificName.ToLower().Contains(anyFish.ToLower()) ||

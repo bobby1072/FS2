@@ -15,7 +15,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<GroupMember>?> GetFullMemberships(Guid userId, int count, int startIndex)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var foundEnts = await dbContext.GroupMember
                 .Include(x => x.Group)
                 .Where(x => x.UserId == userId)

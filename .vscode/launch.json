@@ -17,7 +17,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/fsCore/fsCore/bin/Debug/net7.0/fsCore.dll",
+      "program": "${workspaceFolder}/src/fsCore/fsCore/bin/Debug/net8.0/fsCore.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/fsCore/fsCore",
       "stopAtEntry": false,

@@ -12,7 +12,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         protected override GroupEntity RuntimeToEntity(Group runtimeObj) => GroupEntity.RuntimeToEntity(runtimeObj);
         public async Task<ICollection<Group>?> GetMany<T>(int startIndex, int count, T field, string fieldName, string fieldNameToOrderBy, ICollection<string>? relations = null)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var runtimeArray = (await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => EF.Property<T>(x, fieldName.ToPascalCase()).Equals(field))
                 .OrderBy(x => EF.Property<object>(x, fieldNameToOrderBy.ToPascalCase()))
@@ -24,7 +24,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<Group>?> ManyGroupWithoutEmblem(Guid leaderId, ICollection<string>? relations = null)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.LeaderId == leaderId)
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
@@ -33,7 +33,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<Group?> GetGroupWithoutEmblem(Guid groupId, ICollection<string>? relations = null)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var group = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => x.Id == groupId)
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })
@@ -42,7 +42,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<Group>?> SearchListedGroups(string groupNameString)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var foundGroup = await dbContext
                 .Group
                 .Where(x => x.Listed == true && x.Name.ToLower().Contains(groupNameString.ToLower()))
@@ -52,7 +52,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<Group>?> GetGroupWithoutEmblem(ICollection<Guid> groupId, ICollection<string>? relations = null)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var foundEnts = await _addRelationsToQuery(dbContext.Group, relations)
                 .Where(x => groupId.Contains(x.Id))
                 .Select(x => new { x.Name, x.Description, x.Id, x.CreatedAt, x.Public, x.Listed, x.LeaderId, x.Leader, x.Catches, x.Positions, x.CatchesPublic })

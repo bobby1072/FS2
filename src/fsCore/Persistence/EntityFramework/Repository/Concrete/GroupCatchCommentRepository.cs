@@ -16,7 +16,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<GroupCatchComment>?> GetAllForCatch(Guid catchId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var comments = await dbContext.GroupCatchComment
                 .Include(c => c.User)
                 .Include(c => c.TaggedUsers)!
@@ -28,7 +28,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<GroupCatchComment?> GetOne(int id)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var comment = await dbContext.GroupCatchComment
                 .Include(c => c.User)
                 .Include(c => c.TaggedUsers)!
@@ -38,7 +38,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<GroupCatchCommentTaggedUsers>?> DeleteTaggedUsers(ICollection<int> commentIds)
         {
-            await using var context = await DbContextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
             var foundEntities = await context.CommentTaggedUsers.Where(x => commentIds.Contains(x.CommentId)).ToArrayAsync();
             context.CommentTaggedUsers.RemoveRange(foundEntities);
             await context.SaveChangesAsync();
@@ -46,7 +46,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<GroupCatchCommentTaggedUsers>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUsers> GroupCatchCommentTaggedUsersToCreate)
         {
-            await using var context = await DbContextFactory.CreateDbContextAsync();
+            await using var context = await _contextFactory.CreateDbContextAsync();
             var entities = GroupCatchCommentTaggedUsersToCreate.Select(x => GroupCatchCommentTaggedUsersEntity.RuntimeToEntity(x)).ToArray();
             await context.CommentTaggedUsers.AddRangeAsync(entities);
             await context.SaveChangesAsync();

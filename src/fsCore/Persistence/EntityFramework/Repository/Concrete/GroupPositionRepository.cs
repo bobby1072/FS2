@@ -14,7 +14,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         }
         public async Task<ICollection<GroupPosition>?> GetAllPositionsForGroup(Guid groupId)
         {
-            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
             var groupPositions = await dbContext.Position
                 .Include(gp => gp.Group)
                 .Where(gp => gp.GroupId == groupId)
