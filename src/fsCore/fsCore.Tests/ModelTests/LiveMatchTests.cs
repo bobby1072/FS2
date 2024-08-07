@@ -27,7 +27,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Species = "catfish";
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([specificSpeciesRules]);
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert
@@ -68,7 +68,7 @@ namespace fsCore.Tests.ModelTests
             invalidCatch.Longitude = -119.2437;
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([withinAreasRules]);
-            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), liveMatchId);
+            var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", liveMatchId);
             var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidator();
 
             //Act && Assert
@@ -109,7 +109,9 @@ namespace fsCore.Tests.ModelTests
                 withinAreaRuleInvalidCatch.Longitude = -119.2437;
                 var withinAreaRuleCatches = new List<LiveMatchCatch> { withinAreaRuleValidCatch, withinAreaRuleValidCatch2, withinAreaRuleInvalidCatch };
                 var withinAreaRuleLiveMatchRules = new LiveMatchRules([withinAreasRules]);
-                var LiveMatchWithInAreaRule = new LiveMatch(Guid.NewGuid(), "test match", withinAreaRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, withinAreaRuleCatches, [MockUserBuilder.Build()], Guid.NewGuid(), withinAreaRuleLiveMatchId);
+                var withinAreaMatchUsers = new List<User>() { MockUserBuilder.Build() };
+
+                var LiveMatchWithInAreaRule = new LiveMatch(Guid.NewGuid(), "test match", withinAreaRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, withinAreaRuleCatches, withinAreaMatchUsers, (Guid)withinAreaMatchUsers[0].Id, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", withinAreaRuleLiveMatchId);
                 Add(LiveMatchWithInAreaRule);
 
                 var specificSpeciesRuleLiveMatchId = Guid.NewGuid();
@@ -122,11 +124,14 @@ namespace fsCore.Tests.ModelTests
                 withinAreaRuleInvalidCatch.Species = "catfish";
                 var specificSpeciesRuleCatches = new List<LiveMatchCatch> { specificSpeciesRuleValidCatch, specificSpeciesRuleValidCatch2, specificSpeciesRuleInvalidCatch };
                 var specificSpeciesRuleLiveMatchRules = new LiveMatchRules([specificSpeciesRules]);
-                var LiveMatchWithSpecificSpeciesRule = new LiveMatch(Guid.NewGuid(), "test match", specificSpeciesRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, specificSpeciesRuleCatches, [MockUserBuilder.Build()], Guid.NewGuid(), specificSpeciesRuleLiveMatchId);
+                var specificRuleMatchUsers = new List<User>() { MockUserBuilder.Build() };
+                var LiveMatchWithSpecificSpeciesRule = new LiveMatch(Guid.NewGuid(), "test match", specificSpeciesRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, specificSpeciesRuleCatches, specificRuleMatchUsers, (Guid)specificRuleMatchUsers[0].Id, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", specificSpeciesRuleLiveMatchId);
                 Add(LiveMatchWithSpecificSpeciesRule);
 
-                var liveMatchWithBothRules = new LiveMatch(LiveMatchWithSpecificSpeciesRule);
-                liveMatchWithBothRules.MatchRules = new LiveMatchRules([withinAreasRules, specificSpeciesRules]);
+                var liveMatchWithBothRules = new LiveMatch(LiveMatchWithSpecificSpeciesRule)
+                {
+                    MatchRules = new LiveMatchRules([withinAreasRules, specificSpeciesRules])
+                };
                 Add(liveMatchWithBothRules);
             }
         }

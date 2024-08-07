@@ -16,7 +16,7 @@ namespace fsCore.Tests.UtilTests
                     MockUserBuilder.Build(),
                     MockUserBuilder.Build()
                 };
-                var liveMatch = new LiveMatch(Guid.NewGuid(), "test match", new LiveMatchRules([]), LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, [], participants, (Guid)participants.FirstOrDefault()!.Id!);
+                var liveMatch = new LiveMatch(Guid.NewGuid(), "test match", new LiveMatchRules([]), LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, [], participants, (Guid)participants.FirstOrDefault()!.Id!, DateTime.UtcNow);
 
                 var firstSetOfCatches = new[]{
                     MockLiveMatchCatchBuilder.Build((Guid)participants[1].Id!, liveMatch.Id, "salmon", 2, 20),

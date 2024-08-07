@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Common.Attributes;
 namespace Common.Models
 {
     public class LiveMatchJsonType
@@ -21,22 +22,36 @@ namespace Common.Models
         public IList<User> Participants { get; set; } = new List<User>();
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
-        public LiveMatchJsonType(Guid groupId, string matchName, LiveMatchRulesJsonType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> participants, Guid? id = null)
+        [JsonPropertyName("description")]
+        public string? Description { get; set; }
+        [JsonPropertyName("commencesAt")]
+        public DateTime? CommencesAt { get; set; }
+        [JsonPropertyName("endsAt")]
+        public DateTime? EndsAt { get; set; }
+        [LockedProperty]
+        [JsonPropertyName("createdAt")]
+        public DateTime CreatedAt { get; set; }
+        public LiveMatchJsonType(Guid groupId, string matchName, LiveMatchRulesJsonType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             Catches = catches;
-            Participants = participants;
+            Description = description;
             GroupId = groupId;
             MatchName = matchName;
+            Participants = users;
             MatchRules = matchRules;
             MatchStatus = matchStatus;
             MatchWinStrategy = winStrategy;
+            CreatedAt = createdAt;
+            CommencesAt = commencesAt;
+            EndsAt = endsAt;
+            MatchLeaderId = matchLeaderId;
         }
         [JsonConstructor]
         public LiveMatchJsonType() { }
         public LiveMatch ToRuntimeType()
         {
-            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, Id);
+            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id);
         }
     }
 }
