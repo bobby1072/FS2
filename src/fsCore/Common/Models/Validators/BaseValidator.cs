@@ -30,5 +30,9 @@ namespace Common.Models.Validators
         {
             return x => !string.IsNullOrEmpty(x) && x.Length <= length;
         }
+        protected static bool MustBeBefore(DateTime? date, DateTime? dateToBeBefore)
+        {
+            return date is not null && dateToBeBefore is not null && date < dateToBeBefore;
+        }
     }
 }

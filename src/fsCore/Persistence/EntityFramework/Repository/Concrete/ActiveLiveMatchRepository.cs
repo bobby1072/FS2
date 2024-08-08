@@ -18,7 +18,8 @@ namespace Persistence.EntityFramework.Repository.Concrete
 
             var entity = await dbContext
                 .ActiveLiveMatch
-                .Include(x => x.Catches)
+                .Include(x => x.Catches)!
+                .ThenInclude(x => x.WorldFish)
                 .Where(x => x.Id == id)
                 .FirstOrDefaultAsync();
 

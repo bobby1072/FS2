@@ -1,3 +1,4 @@
+using System.Data;
 using FluentValidation;
 
 namespace Common.Models.Validators
@@ -16,6 +17,8 @@ namespace Common.Models.Validators
             RuleFor(x => x.Participants).NotNull().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.MatchLeaderId).NotEmpty().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x).Must(LiveMatchLeaderIsInParticipants).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            RuleFor(x => x.CreatedAt).Must(DateInThePastOrNow).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            RuleFor(x => x).Must(x => MustBeBefore(x.CommencesAt, x.EndsAt)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
         }
         private static bool LiveMatchLeaderIsInParticipants(LiveMatch liveMatch)
         {
