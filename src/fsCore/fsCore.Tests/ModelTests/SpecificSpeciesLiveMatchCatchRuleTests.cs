@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace fsCore.Tests.ModelTests
 {
-    public class SpecificSpeciesLiveMatchCatchRuleTests
+    public class SpecificSpeciesLiveMatchCatchRuleTests : TestBase
     {
         [Fact]
         public void BuildRuleDescription_ShouldReturnSpeciesNames()

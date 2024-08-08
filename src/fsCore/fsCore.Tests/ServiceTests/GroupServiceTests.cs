@@ -8,7 +8,7 @@ using Moq;
 using Persistence.EntityFramework.Repository.Abstract;
 namespace fsCore.Tests.ServiceTests
 {
-    public class GroupServiceTests
+    public class GroupServiceTests : TestBase
     {
         private readonly Mock<IGroupRepository> _mockGroupRepository;
         private readonly Mock<IGroupMemberRepository> _mockGroupMemberRepository;

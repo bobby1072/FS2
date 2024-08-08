@@ -2,7 +2,7 @@ using Common.Models;
 
 namespace fsCore.Tests.ModelTests
 {
-    public class InAreaLiveMatchCatchRuleTests
+    public class InAreaLiveMatchCatchRuleTests : TestBase
     {
         [Fact]
         public void BuildRuleDescription_ShouldReturnAreas()

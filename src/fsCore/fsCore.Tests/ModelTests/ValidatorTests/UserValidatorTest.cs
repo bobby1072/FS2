@@ -3,7 +3,7 @@ using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
-    public class UserValidatorTest
+    public class UserValidatorTest : TestBase
     {
         private readonly UserValidator _validator;
         public UserValidatorTest()

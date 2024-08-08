@@ -10,7 +10,7 @@ using Persistence.EntityFramework.Repository.Abstract;
 
 namespace fsCore.Tests.ServiceTests
 {
-    public class GroupCatchServiceTests
+    public class GroupCatchServiceTests : TestBase
     {
         private readonly Mock<IWorldFishRepository> _worldFishRepository;
         private readonly Mock<IGroupService> _groupService;

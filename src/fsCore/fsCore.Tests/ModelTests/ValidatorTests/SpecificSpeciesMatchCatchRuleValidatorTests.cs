@@ -3,7 +3,7 @@ using Common.Models.Validators;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
-    public class SpecificSpeciesMatchCatchRuleValidatorTests
+    public class SpecificSpeciesMatchCatchRuleValidatorTests : TestBase
     {
         private SpecificSpeciesMatchCatchRuleValidator _validator;
         public SpecificSpeciesMatchCatchRuleValidatorTests()

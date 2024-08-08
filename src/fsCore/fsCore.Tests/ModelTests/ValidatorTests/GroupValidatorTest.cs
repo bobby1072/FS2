@@ -4,7 +4,7 @@ using Common.Models.Validators;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
-    public class GroupValidatorTest
+    public class GroupValidatorTest : TestBase
     {
         private readonly GroupValidator _validator;
         public GroupValidatorTest()

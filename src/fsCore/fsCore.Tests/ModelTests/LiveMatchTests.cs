@@ -5,13 +5,8 @@ using DataImporter.MockModelBuilders;
 
 namespace fsCore.Tests.ModelTests
 {
-    public class LiveMatchTests
+    public class LiveMatchTests : TestBase
     {
-        private readonly Fixture _fixture;
-        public LiveMatchTests()
-        {
-            _fixture = new Fixture();
-        }
         [Fact]
         public void LiveMatch_Rules_Should_Validate_Catches_Correctly_With_Specific_Catch_Rule()
         {
