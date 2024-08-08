@@ -25,7 +25,7 @@ namespace fsCore.Tests.ServiceTests
         public async Task Should_Return_Match_If_Cached()
         {
             //Arrange
-            var liveMatch = _fixture.Create<LiveMatch>();
+            var liveMatch = _fixture.Build<LiveMatch>().With(x => x.MatchRules.Rules, [new SpecificSpeciesLiveMatchCatchRule(["dd"], [])]).Create();
             _mockCachingService.Setup(x => x.TryGetObject<LiveMatch>(liveMatch.Id.ToString())).ReturnsAsync(liveMatch);
 
             //Act
