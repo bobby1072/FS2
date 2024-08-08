@@ -1,4 +1,3 @@
-using System.Data;
 using FluentValidation;
 
 namespace Common.Models.Validators

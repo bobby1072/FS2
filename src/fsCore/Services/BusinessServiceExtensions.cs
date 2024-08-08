@@ -20,7 +20,7 @@ namespace Services
                 .AddScoped<IGroupCatchService, GroupCatchService>()
                 .AddScoped<IHangfireJobsService, HangfireJobService>()
                 .AddScoped<ICachingService, DistributedCachingService>()
-                .AddScoped<ILiveMatchCachingService, LiveMatchCachingService>();
+                .AddScoped<ILiveMatchPersistenceService, LiveMatchPersistenceService>();
 
             return serviceCollection;
         }
