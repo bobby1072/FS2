@@ -16,7 +16,7 @@ namespace Services.Concrete
             _activeLiveMatchCatchRepository = activeLiveMatchCatchRepository;
             _activeLiveMatchRepository = activeLiveMatchRepository;
         }
-        public async Task<string> SetLiveMatch(LiveMatch liveMatch)
+        public async Task SetLiveMatch(LiveMatch liveMatch)
         {
             var liveMatchFromDb = await _activeLiveMatchRepository.GetFullOneById(liveMatch.Id);
             if (liveMatchFromDb is null)
@@ -26,7 +26,10 @@ namespace Services.Concrete
                 await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
                 if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
                 {
-                    return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                    if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                    {
+                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                    }
                 }
                 else
                 {
@@ -44,7 +47,11 @@ namespace Services.Concrete
                     var savedResult = await _activeLiveMatchRepository.Update([liveMatch]);
                     if (savedResult is not null)
                     {
-                        return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+
+                        if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                        {
+                            await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                        }
                     }
                     else
                     {
@@ -58,7 +65,10 @@ namespace Services.Concrete
                     await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
                     if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
                     {
-                        return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                        if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                        {
+                            await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                        }
                     }
                     else
                     {
@@ -68,7 +78,10 @@ namespace Services.Concrete
             }
             else
             {
-                return await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                }
             }
         }
         public async Task<LiveMatch?> TryGetLiveMatch(Guid matchId)
@@ -83,8 +96,15 @@ namespace Services.Concrete
                 var liveMatch = await _activeLiveMatchRepository.GetFullOneById(matchId);
                 if (liveMatch is not null)
                 {
-                    await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType());
-                    return (await _cachingService.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{matchId}"))?.ToRuntimeType();
+                    if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                    {
+                        await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType());
+                        return (await _cachingService.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{matchId}"))?.ToRuntimeType();
+                    }
+                    else
+                    {
+                        return liveMatch;
+                    }
                 }
                 else
                 {

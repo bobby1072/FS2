@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.SignalR;
 
-namespace fsCore.Hubs.Concrete
+namespace fsCore.Hubs.Abstract
 {
     public abstract class BaseHub : Hub
     {
