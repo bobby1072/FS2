@@ -6,12 +6,12 @@ using Common.Utils;
 using FluentValidation;
 using fsCore.Services.Abstract;
 using Persistence.EntityFramework.Repository.Abstract;
-using Services.Abstract;
 
 namespace fsCore.Services.Concrete
 {
-    public class GroupService : BaseService<Group, IGroupRepository>, IGroupService
+    public class GroupService : IGroupService
     {
+        private readonly IGroupRepository _repo;
         private readonly IGroupMemberRepository _groupMemberRepo;
         private static readonly Type _groupMemberType = typeof(GroupMember);
         private static readonly Type _groupType = typeof(Group);
@@ -21,8 +21,9 @@ namespace fsCore.Services.Concrete
         private readonly IValidator<GroupPosition> _groupPositionValidator;
         public GroupService(IGroupRepository repository,
         IGroupMemberRepository groupMemberRepo,
-        IGroupPositionRepository groupPositionRepo, IValidator<Group> groupValidator, IValidator<GroupPosition> positionValidator) : base(repository)
+        IGroupPositionRepository groupPositionRepo, IValidator<Group> groupValidator, IValidator<GroupPosition> positionValidator)
         {
+            _repo = repository;
             _groupValidator = groupValidator;
             _groupPositionValidator = positionValidator;
             _groupMemberRepo = groupMemberRepo;

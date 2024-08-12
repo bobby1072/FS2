@@ -10,9 +10,13 @@ using Services.Abstract;
 
 namespace fsCore.Services.Concrete
 {
-    public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
+    public class WorldFishService : IWorldFishService
     {
-        public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
+        private readonly IWorldFishRepository _repo;
+        public WorldFishService(IWorldFishRepository baseRepo)
+        {
+            _repo = baseRepo;
+        }
         [Queue(HangfireConstants.Queues.StartUpJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 10 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()

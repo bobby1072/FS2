@@ -9,12 +9,14 @@ using Services.Abstract;
 
 namespace fsCore.Services.Concrete
 {
-    public class UserService : BaseService<User, IUserRepository>, IUserService
+    public class UserService : IUserService
     {
+        private readonly IUserRepository _repo;
         private readonly IValidator<User> _validator;
-        public UserService(IUserRepository repository, IValidator<User> userValidator) : base(repository)
+        public UserService(IUserRepository repository, IValidator<User> userValidator)
         {
             _validator = userValidator;
+            _repo = repository;
         }
         public async Task<User> GetUser(Guid id, UserWithGroupPermissionSet currentUser)
         {
