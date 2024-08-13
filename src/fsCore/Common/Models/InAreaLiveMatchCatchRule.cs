@@ -4,7 +4,7 @@ using Common.Attributes;
 
 namespace Common.Models
 {
-    public class InAreaLiveMatchCatchRule : LiveMatchSingleRule
+    public class InAreaLiveMatchCatchRule : LiveMatchCatchSingleRule
     {
         [JsonPropertyName("fourPointGeoAreas")]
         public IList<FourPointGeoArea> FourPointGeoAreas { get; set; } = new List<FourPointGeoArea>();

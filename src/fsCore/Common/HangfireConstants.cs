@@ -6,7 +6,7 @@ namespace Common
         {
             public const string Default = "default";
             public const string StartUpJobs = "startupjobs";
-            public static string[] FullList { get; } = new[] { Default, StartUpJobs };
+            public static string[] FullList { get; } = [Default, StartUpJobs];
         }
     }
 }

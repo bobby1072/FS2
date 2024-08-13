@@ -7,7 +7,7 @@ namespace Common.Models
     {
         [LockedProperty]
         [JsonPropertyName("id")]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         [LockedProperty]
         [JsonPropertyName("matchName")]
         public string MatchName { get; set; }
@@ -41,7 +41,10 @@ namespace Common.Models
         public DateTime CreatedAt { get; set; }
         public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
         {
-            Id = id ?? Guid.NewGuid();
+            if (id is Guid foundId)
+            {
+                Id = foundId;
+            }
             Catches = catches;
             Description = description;
             GroupId = groupId;

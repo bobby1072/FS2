@@ -25,7 +25,7 @@ namespace DataImporter
             _userRepository = userRepository;
         }
         [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 5, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = new[] { 1 })]
+        [AutomaticRetry(Attempts = 5, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = [1])]
         public virtual async Task Import()
         {
             try

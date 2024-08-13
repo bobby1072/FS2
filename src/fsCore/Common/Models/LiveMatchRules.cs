@@ -10,8 +10,8 @@ namespace Common.Models
         [JsonPropertyName("id")]
         public int? Id { get; set; }
         [JsonPropertyName("rules")]
-        public IList<LiveMatchSingleRule> Rules { get; set; } = new List<LiveMatchSingleRule>();
-        public LiveMatchRules(IList<LiveMatchSingleRule> rules, int? id = null)
+        public IList<LiveMatchCatchSingleRule> Rules { get; set; } = new List<LiveMatchCatchSingleRule>();
+        public LiveMatchRules(IList<LiveMatchCatchSingleRule> rules, int? id = null)
         {
             Id = id;
             Rules = rules;

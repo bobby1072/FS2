@@ -24,4 +24,30 @@ namespace Common.Models.Validators
             return liveMatch.Participants.Any(p => p.Id == liveMatch.MatchLeaderId);
         }
     }
+    public class LiveMatchDIValidator : LiveMatchValidator
+    {
+        private readonly IValidator<SpecificSpeciesLiveMatchCatchRule> _specificCatchRuleValidator;
+        private readonly IValidator<InAreaLiveMatchCatchRule> _inAreaRuleValidator;
+        public LiveMatchDIValidator(IValidator<SpecificSpeciesLiveMatchCatchRule> specificCatchRuleValidator, IValidator<InAreaLiveMatchCatchRule> inAreaRuleValidator) : base()
+        {
+            _specificCatchRuleValidator = specificCatchRuleValidator;
+            _inAreaRuleValidator = inAreaRuleValidator;
+            RuleFor(x => x).Must(ValidateRules).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+        }
+        private bool ValidateRules(LiveMatch match)
+        {
+            foreach (var rule in match.MatchRules.Rules)
+            {
+                if (rule is SpecificSpeciesLiveMatchCatchRule specificSpeciesRule)
+                {
+                    if (!_specificCatchRuleValidator.Validate(specificSpeciesRule).IsValid) return false;
+                }
+                else if (rule is InAreaLiveMatchCatchRule inAreaRule)
+                {
+                    if (!_inAreaRuleValidator.Validate(inAreaRule).IsValid) return false;
+                }
+            }
+            return true;
+        }
+    }
 }

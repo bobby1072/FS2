@@ -18,7 +18,7 @@ namespace fsCore.Services.Concrete
             _repo = baseRepo;
         }
         [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 10 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [10], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()
         {
             var fileJob = File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
