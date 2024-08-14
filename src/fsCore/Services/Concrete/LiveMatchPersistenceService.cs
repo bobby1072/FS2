@@ -16,10 +16,28 @@ namespace Services.Concrete
             _activeLiveMatchCatchRepository = activeLiveMatchCatchRepository;
             _activeLiveMatchRepository = activeLiveMatchRepository;
         }
+        public async Task SetLiveMatchCatches(Guid liveMatchId, IList<LiveMatchCatch> liveMatchCatches)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            if (liveMatchCatches.Count == 0 || liveMatchCatches.SequenceEqual(foundLiveMatch.Catches))
+            {
+                return;
+            }
+            var catchesToCreateAndUpdate = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+            {
+                foundLiveMatch.Catches = liveMatchCatches;
+                await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType());
+            }
+        }
         public async Task SetLiveMatch(LiveMatch liveMatch)
         {
-            var liveMatchFromDb = await _activeLiveMatchRepository.GetFullOneById(liveMatch.Id);
-            if (liveMatchFromDb is null)
+            var foundLiveMatch = await TryGetLiveMatch(liveMatch.Id);
+            if (liveMatch.Equals(foundLiveMatch))
+            {
+                return;
+            }
+            else if (foundLiveMatch is null)
             {
                 var liveMatchCreateJob = _activeLiveMatchRepository.Create([liveMatch]);
                 var liveMatchCatchCreateJob = _activeLiveMatchCatchRepository.Create(liveMatch.Catches);
@@ -36,51 +54,21 @@ namespace Services.Concrete
                     throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
                 }
             }
-            else if (!liveMatchFromDb.Equals(liveMatch))
+            else
             {
-                if (!liveMatch.ValidateAgainstOriginal(liveMatchFromDb))
+                var liveMatchCreateJob = _activeLiveMatchRepository.Update([liveMatch]);
+                var liveMatchCatchCreateJob = CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatch.Catches);
+                await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
+                if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
                 {
-                    throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
-                }
-                if (liveMatch.Catches.SequenceEqual(liveMatchFromDb.Catches))
-                {
-                    var savedResult = await _activeLiveMatchRepository.Update([liveMatch]);
-                    if (savedResult is not null)
+                    if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
-
-                        if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
-                        {
-                            await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
-                        }
-                    }
-                    else
-                    {
-                        throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
+                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
                     }
                 }
                 else
                 {
-                    var liveMatchCreateJob = _activeLiveMatchRepository.Update([liveMatch]);
-                    var liveMatchCatchCreateJob = _activeLiveMatchCatchRepository.Update(liveMatch.Catches);
-                    await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
-                    if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
-                    {
-                        if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
-                        {
-                            await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
-                        }
-                    }
-                    else
-                    {
-                        throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
-                    }
-                }
-            }
-            else
-            {
-                if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
-                {
-                    await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType());
+                    throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
                 }
             }
         }
@@ -115,6 +103,38 @@ namespace Services.Concrete
             {
                 return null;
             }
+        }
+        private async Task<ICollection<LiveMatchCatch>?> CreateAndUpdateCatchJobs(ICollection<LiveMatchCatch> existingCatches, ICollection<LiveMatchCatch> catchesToInsert)
+        {
+            var catchesToUpdate = new List<LiveMatchCatch>();
+            var catchesToCreate = new List<LiveMatchCatch>();
+
+            foreach (var catchItem in catchesToInsert)
+            {
+                if (existingCatches.Any(existingCatch => existingCatch.Id == catchItem.Id))
+                {
+                    catchesToUpdate.Add(catchItem);
+                }
+                else
+                {
+                    catchesToCreate.Add(catchItem);
+                }
+            }
+
+            var catchesToUpdateJob = catchesToUpdate.Any()
+                ? _activeLiveMatchCatchRepository.Update(catchesToUpdate)
+                : Task.FromResult<ICollection<LiveMatchCatch>?>(null);
+
+            var catchesToCreateJob = catchesToCreate.Any()
+                ? _activeLiveMatchCatchRepository.Create(catchesToCreate)
+                : Task.FromResult<ICollection<LiveMatchCatch>?>(null);
+
+            await Task.WhenAll(catchesToCreateJob, catchesToUpdateJob);
+
+            var updatedCatches = await catchesToUpdateJob;
+            var createdCatches = await catchesToCreateJob;
+
+            return createdCatches is null || updatedCatches is null ? null : updatedCatches?.Union(createdCatches).ToArray();
         }
     }
 }
