@@ -7,6 +7,6 @@ namespace fsCore.Services.Abstract
         Task<bool> IsParticipant(Guid matchId, Guid userId);
         Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task<LiveMatch> UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
-        Task<ICollection<LiveMatchCatch>> SaveCatches(Guid matchId, ICollection<LiveMatchCatch> catches, UserWithGroupPermissionSet currentUser);
+        Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch catches, UserWithGroupPermissionSet currentUser);
     }
 }

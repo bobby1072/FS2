@@ -44,14 +44,10 @@ namespace Common.Models
         {
             return $"{nameof(SpecificSpeciesLiveMatchCatchRule)}: {string.Join(", ", SpeciesNames)}";
         }
-        public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions() => new List<LiveMatchCatchSingleRuleValidatorFunction>
+        public override IList<(Func<LiveMatchCatch, bool> ValidatorFunctions, string ErrorMessage)> BuildMatchCatchRuleValidatorFunctions() => new List<(Func<LiveMatchCatch, bool> ValidatorFunctions, string ErrorMessage)>
         {
-            new (IsSpecificSpecies, IsSpecificSpecies,$"Catch is {(SpeciesNames.Count > 1 ? "not included in specified species list":"not the species specified in the")} in the rules"),
+            (IsSpecificSpecies, $"Catch is {(SpeciesNames.Count > 1 ? "not included in specified species list":"not the species specified in the")} in the rules"),
         };
-        private bool IsSpecificSpecies(IEnumerable<LiveMatchCatch> matchCatch)
-        {
-            return matchCatch.All(IsSpecificSpecies);
-        }
         private bool IsSpecificSpecies(LiveMatchCatch matchCatch)
         {
             if (WorldFish.Any())

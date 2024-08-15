@@ -23,7 +23,7 @@ namespace fsCore.Tests.ModelTests
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([specificSpeciesRules]);
             var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", liveMatchId);
-            var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidatorForSingleCatch();
+            var catchValidator = LiveMatch.MatchRules.BuildMatchCatchValidator();
 
             //Act && Assert
             foreach (var catchItem in LiveMatch.Catches)
@@ -64,7 +64,7 @@ namespace fsCore.Tests.ModelTests
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([withinAreasRules]);
             var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [MockUserBuilder.Build()], Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", liveMatchId);
-            var catchValidator = LiveMatch.MatchRules.BuildMatchRulesValidatorForSingleCatch();
+            var catchValidator = LiveMatch.MatchRules.BuildMatchCatchValidator();
 
             //Act && Assert
             foreach (var catchItem in LiveMatch.Catches)

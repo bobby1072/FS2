@@ -31,9 +31,8 @@ namespace Persistence.EntityFramework.Entity
         }
         public static ActiveLiveMatchCatchEntity FromRuntime(LiveMatchCatch runtime)
         {
-            return new ActiveLiveMatchCatchEntity
+            var entity = new ActiveLiveMatchCatchEntity
             {
-                Id = runtime.Id,
                 UserId = runtime.UserId,
                 MatchId = runtime.MatchId,
                 Latitude = runtime.Latitude,
@@ -47,6 +46,11 @@ namespace Persistence.EntityFramework.Entity
                 CreatedAt = runtime.CreatedAt,
                 CaughtAt = runtime.CaughtAt
             };
+            if (runtime.Id is Guid foundId)
+            {
+                entity.Id = foundId;
+            }
+            return entity;
         }
     }
 }

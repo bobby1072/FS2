@@ -38,13 +38,9 @@ namespace Common.Models
         {
             return $"{nameof(InAreaLiveMatchCatchRule)}: {string.Join(", ", JsonSerializer.Serialize(FourPointGeoAreas))}";
         }
-        public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions()
+        public override IList<(Func<LiveMatchCatch, bool> ValidatorFunctions, string ErrorMessage)> BuildMatchCatchRuleValidatorFunctions()
         {
-            return new List<LiveMatchCatchSingleRuleValidatorFunction> { new(IsWithinAreas, IsWithinAreas, "Catch is not within any of the specified areas") };
-        }
-        private bool IsWithinAreas(IEnumerable<LiveMatchCatch> matchCatch)
-        {
-            return matchCatch.All(IsWithinAreas);
+            return new List<(Func<LiveMatchCatch, bool> ValidatorFunctions, string ErrorMessage)> { (IsWithinAreas, "Catch is not within any of the specified areas") };
         }
         private bool IsWithinAreas(LiveMatchCatch matchCatch)
         {

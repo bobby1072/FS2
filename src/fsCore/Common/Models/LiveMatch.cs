@@ -21,9 +21,9 @@ namespace Common.Models
         [JsonPropertyName("matchWinStrategy")]
         public LiveMatchWinStrategy MatchWinStrategy { get; set; }
         [JsonPropertyName("catches")]
-        public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
+        public IList<LiveMatchCatch> Catches { get; set; } = [];
         [JsonPropertyName("participants")]
-        public IList<User> Participants { get; set; } = new List<User>();
+        public IList<User> Participants { get; set; } = [];
         [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
@@ -72,6 +72,24 @@ namespace Common.Models
         [JsonConstructor]
         public LiveMatch() { }
         public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id);
+        public void ApplyDefaults(LiveMatchStatus statusOfMatch, User leader)
+        {
+            MatchLeaderId = (Guid)leader.Id!;
+            MatchStatus = statusOfMatch;
+            if (MatchStatus == LiveMatchStatus.NotStarted)
+            {
+                Catches = [];
+                CreatedAt = DateTime.UtcNow;
+                Participants = [leader];
+            }
+            else if (MatchStatus == LiveMatchStatus.InProgress)
+            {
+            }
+            else
+            {
+                EndsAt = DateTime.UtcNow;
+            }
+        }
         public override bool Equals(object? obj)
         {
             if (obj is not LiveMatch liveMatch)

@@ -5,9 +5,6 @@ namespace Common.Models
     public class LiveMatchCatch : Catch
     {
         [LockedProperty]
-        [JsonPropertyName("id")]
-        public new Guid Id { get; set; }
-        [LockedProperty]
         [JsonPropertyName("matchId")]
         public Guid MatchId { get; set; }
         [JsonPropertyName("countsInMatch")]
@@ -16,7 +13,7 @@ namespace Common.Models
         public LiveMatchCatch() { }
         public LiveMatchCatch(Guid userId, Guid matchId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, bool? countsInMatch, Guid? id, DateTime? createdAt, string? worldFishTaxocode)
         {
-            Id = id ?? Guid.NewGuid();
+            Id = id;
             MatchId = matchId;
             Latitude = latitude;
             Longitude = longitude;
