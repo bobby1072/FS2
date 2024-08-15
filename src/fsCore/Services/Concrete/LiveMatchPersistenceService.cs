@@ -1,3 +1,4 @@
+using System.Net;
 using Common;
 using Common.Models;
 using Persistence.EntityFramework.Repository.Abstract;
@@ -16,17 +17,17 @@ namespace Services.Concrete
             _activeLiveMatchCatchRepository = activeLiveMatchCatchRepository;
             _activeLiveMatchRepository = activeLiveMatchRepository;
         }
-        public async Task SetLiveMatchCatches(Guid liveMatchId, IList<LiveMatchCatch> liveMatchCatches)
+        public async Task SetLiveMatchCatches(Guid liveMatchId, ICollection<LiveMatchCatch> liveMatchCatches)
         {
-            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (liveMatchCatches.Count == 0 || liveMatchCatches.SequenceEqual(foundLiveMatch.Catches))
             {
                 return;
             }
-            var catchesToCreateAndUpdate = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            var catchesToCreateAndUpdate = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
             {
-                foundLiveMatch.Catches = liveMatchCatches;
+                foundLiveMatch.Catches = liveMatchCatches.ToList();
                 await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType());
             }
         }
@@ -51,7 +52,7 @@ namespace Services.Concrete
                 }
                 else
                 {
-                    throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
+                    throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch, HttpStatusCode.InternalServerError);
                 }
             }
             else
@@ -68,7 +69,7 @@ namespace Services.Concrete
                 }
                 else
                 {
-                    throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch);
+                    throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch, HttpStatusCode.InternalServerError);
                 }
             }
         }

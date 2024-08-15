@@ -40,7 +40,11 @@ namespace Common.Models
         }
         public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions()
         {
-            return new List<LiveMatchCatchSingleRuleValidatorFunction> { new(IsWithinAreas, "Catch is not within any of the specified areas") };
+            return new List<LiveMatchCatchSingleRuleValidatorFunction> { new(IsWithinAreas, IsWithinAreas, "Catch is not within any of the specified areas") };
+        }
+        private bool IsWithinAreas(IEnumerable<LiveMatchCatch> matchCatch)
+        {
+            return matchCatch.All(IsWithinAreas);
         }
         private bool IsWithinAreas(LiveMatchCatch matchCatch)
         {

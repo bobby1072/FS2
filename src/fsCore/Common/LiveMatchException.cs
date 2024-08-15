@@ -1,11 +1,10 @@
+using System.Net;
+
 namespace Common
 {
-    public class LiveMatchException : Exception
+    public class LiveMatchException : ApiException
     {
-        public LiveMatchException(string message) : base(message)
-        {
-        }
-        public LiveMatchException(string message, Exception innerException) : base(message, innerException)
+        public LiveMatchException(string message, HttpStatusCode statusCode) : base(message, statusCode)
         {
         }
     }

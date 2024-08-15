@@ -46,8 +46,12 @@ namespace Common.Models
         }
         public override IList<LiveMatchCatchSingleRuleValidatorFunction> BuildRuleValidatorFunctions() => new List<LiveMatchCatchSingleRuleValidatorFunction>
         {
-            new (IsSpecificSpecies, $"Catch is {(SpeciesNames.Count > 1 ? "not included in specified species list":"not the species specified in the")} in the rules"),
+            new (IsSpecificSpecies, IsSpecificSpecies,$"Catch is {(SpeciesNames.Count > 1 ? "not included in specified species list":"not the species specified in the")} in the rules"),
         };
+        private bool IsSpecificSpecies(IEnumerable<LiveMatchCatch> matchCatch)
+        {
+            return matchCatch.All(IsSpecificSpecies);
+        }
         private bool IsSpecificSpecies(LiveMatchCatch matchCatch)
         {
             if (WorldFish.Any())

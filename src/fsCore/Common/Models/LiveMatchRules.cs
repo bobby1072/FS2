@@ -18,10 +18,15 @@ namespace Common.Models
         }
         [JsonConstructor]
         public LiveMatchRules() { }
-        public IValidator<LiveMatchCatch> BuildMatchRulesValidator()
+        public IValidator<LiveMatchCatch> BuildMatchRulesValidatorForSingleCatch()
         {
-            var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions()).ToArray();
-            return new DynamicLiveMatchCatchRuleValidator(allSingleRuleValidatorFuncs);
+            var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions());
+            return new DynamicLiveMatchCatchRuleValidatorForSingle(allSingleRuleValidatorFuncs.Select(x => (x.ValidatorFunctionForSingle, x.ErrorMessage)).ToArray());
+        }
+        public IValidator<IEnumerable<LiveMatchCatch>> BuildMatchRulesValidatorForEnumerableCatches()
+        {
+            var allSingleRuleValidatorFuncs = Rules.SelectMany(x => x.BuildRuleValidatorFunctions());
+            return new DynamicLiveMatchCatchRuleValidatorForEnumerable(allSingleRuleValidatorFuncs.Select(x => (x.ValidatorFunctionForList, x.ErrorMessage)).ToArray());
         }
         public LiveMatchRulesJsonType ToJsonType() => new(Rules.Select(x => (object)x).ToList());
         public override bool Equals(object? obj)

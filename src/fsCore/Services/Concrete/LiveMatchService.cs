@@ -1,3 +1,5 @@
+using System.Net;
+using Common;
 using Common.Models;
 using FluentValidation;
 using fsCore.Services.Abstract;
@@ -14,18 +16,15 @@ namespace fsCore.Services.Concrete
             _liveMatchValidator = liveMatchValidator;
             _liveMatchPersistenceService = liveMatchPersistenceService;
         }
-        public async Task<LiveMatch> SaveMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
+        public async Task<bool> IsParticipant(Guid matchId, Guid userId)
         {
-            throw new NotImplementedException();
+            return (await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest)).Participants.Any(p => p.Id == userId);
         }
-        // private async Task ValidateMatch(LiveMatch match)
-        // {
-        //     await _liveMatchValidator.ValidateAndThrowAsync(match);
-        //     var dynamicCatchValidator = match.MatchRules.BuildMatchRulesValidator();
-        //     foreach (var matchCatch in match.Catches)
-        //     {
-        //         dynamicCatchValidator.ValidateAndThrowAsync(matchCatch);
-        //     }
-        // }
+        public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
+        {
+
+        }
+        public async Task<LiveMatch> UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
+        public async Task<ICollection<LiveMatchCatch>> SaveCatches(Guid matchId, ICollection<LiveMatchCatch> catches, UserWithGroupPermissionSet currentUser);
     }
 }
