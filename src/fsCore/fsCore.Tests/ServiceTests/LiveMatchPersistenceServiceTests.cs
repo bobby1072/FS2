@@ -37,6 +37,21 @@ namespace fsCore.Tests.ServiceTests
             Assert.Equal(liveMatch, result);
 
         }
+        [Fact]
+        public async Task Should_Return_Null_If_CachingService_Returns_Null_Exception_Thrown()
+        {
+            //Arrange
+            var liveMatch = CreateLiveMatch();
+            _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}")).ThrowsAsync(new Exception());
+
+            //Act
+            var result = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id);
+
+            //Assert
+            _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
+            _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Never);
+            Assert.Null(result);
+        }
         private LiveMatch CreateLiveMatch()
         {
             var rules = new LiveMatchRules();
