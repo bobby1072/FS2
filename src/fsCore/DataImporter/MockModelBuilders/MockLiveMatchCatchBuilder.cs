@@ -25,7 +25,7 @@ namespace DataImporter.MockModelBuilders
                 worldFishTaxocode
             );
         }
-        public static LiveMatchCatch Build(Guid userId, Guid liveMatchId, string? speciesName, double? length = null, double? weight = null)
+        public static LiveMatchCatch Build(Guid userId, Guid liveMatchId, string? speciesName, double? length = null, double? weight = null, bool valid = false)
         {
             var random = new Random();
             return new LiveMatchCatch(
@@ -38,7 +38,7 @@ namespace DataImporter.MockModelBuilders
                 random.Next(-90, 90),
                 random.Next(-180, 180),
                 Faker.Lorem.Sentence(),
-                false,
+                valid,
                 Guid.NewGuid(),
                 DateTime.UtcNow,
                 null
