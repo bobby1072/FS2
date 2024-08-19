@@ -88,7 +88,7 @@ namespace Services.Concrete
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
                         await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType());
-                        return (await _cachingService.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{matchId}"))?.ToRuntimeType();
+                        return liveMatch;
                     }
                     else
                     {
