@@ -38,21 +38,6 @@ namespace fsCore.Tests.ServiceTests
             Assert.Equal(liveMatch, result);
 
         }
-        [Fact]
-        public async Task TryGetMatch_Should_Return_Null_If_CachingService_Returns_Null_Exception_Thrown()
-        {
-            //Arrange
-            var liveMatch = CreateLiveMatch();
-            _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}")).ThrowsAsync(new Exception());
-
-            //Act
-            var result = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id);
-
-            //Assert
-            _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
-            _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Never);
-            Assert.Null(result);
-        }
         [Theory]
         [InlineData(LiveMatchStatus.NotStarted)]
         [InlineData(LiveMatchStatus.InProgress)]
@@ -79,6 +64,36 @@ namespace fsCore.Tests.ServiceTests
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(liveMatch.Id), Times.Once);
             Assert.Equal(liveMatch, result);
+        }
+        [Fact]
+        public async Task TryGetMatch_Should_Return_Null_If_TryGetObject_Throws_Exception()
+        {
+            //Arrange
+            var liveMatch = CreateLiveMatch();
+            _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}")).ThrowsAsync(new Exception());
+
+            //Act
+            var result = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id);
+
+            //Assert
+            _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
+            _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Never);
+            Assert.Null(result);
+        }
+        [Fact]
+        public async Task TryGetMatch_Should_Return_Null_If_GetFullOneById_Throws_Exception()
+        {
+            //Arrange
+            var liveMatch = CreateLiveMatch();
+            _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}")).ReturnsAsync((LiveMatchJsonType?)null);
+            _mockActiveLiveMatchRepository.Setup(x => x.GetFullOneById(liveMatch.Id)).ThrowsAsync(new Exception());
+            //Act
+            var result = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id);
+
+            //Assert
+            _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
+            _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Once);
+            Assert.Null(result);
         }
         private LiveMatch CreateLiveMatch()
         {
