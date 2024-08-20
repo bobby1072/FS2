@@ -1,6 +1,7 @@
 using System.Net;
 using Common;
 using Common.Models;
+using Common.Utils;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
 namespace Services.Concrete
@@ -135,7 +136,7 @@ namespace Services.Concrete
             var updatedCatches = await catchesToUpdateJob;
             var createdCatches = await catchesToCreateJob;
 
-            return createdCatches is null || updatedCatches is null ? null : updatedCatches?.Union(createdCatches).ToArray();
+            return new[] { updatedCatches, createdCatches }.SelectManyWhere(x => x is not null).ToArray();
         }
     }
 }

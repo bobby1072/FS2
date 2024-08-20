@@ -126,7 +126,7 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             if (isTheSame is false)
             {
-                _mockActiveLiveMatchCatchRepository.Verify(x => x.Create(It.IsAny<ICollection<LiveMatchCatch>>()), Times.AtLeastOnce);
+                _mockActiveLiveMatchCatchRepository.Verify(x => x.Update(It.IsAny<ICollection<LiveMatchCatch>>()), Times.AtLeastOnce);
             }
             else
             {
