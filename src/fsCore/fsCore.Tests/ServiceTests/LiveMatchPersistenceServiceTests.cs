@@ -1,5 +1,6 @@
 using AutoFixture;
 using Common.Models;
+using DataImporter.MockModelBuilders;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using Persistence.EntityFramework.Repository.Abstract;
@@ -11,7 +12,7 @@ namespace fsCore.Tests.ServiceTests
     public class LiveMatchPersistenceServiceTests : TestBase
     {
         private const string _liveMatchKey = "match-";
-        private Mock<ICachingService> _mockCachingService;
+        private readonly Mock<ICachingService> _mockCachingService;
         private readonly Mock<IActiveLiveMatchCatchRepository> _mockActiveLiveMatchCatchRepository;
         private readonly Mock<IActiveLiveMatchRepository> _mockActiveLiveMatchRepository;
         private readonly LiveMatchPersistenceService _liveMatchPersistenceService;
@@ -95,7 +96,45 @@ namespace fsCore.Tests.ServiceTests
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Once);
             Assert.Null(result);
         }
-        private LiveMatch CreateLiveMatch()
+        internal class SetLiveMatchCatches_Should_Return_If_Catch_Lists_Are_The_Same_Class_Data : TheoryData<List<LiveMatchCatch>, List<LiveMatchCatch>, bool>
+        {
+            public SetLiveMatchCatches_Should_Return_If_Catch_Lists_Are_The_Same_Class_Data()
+            {
+                var liveMatchId = Guid.NewGuid();
+                var tenCatches = Enumerable.Range(0, 10).Select(x => MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId)).ToList();
+                Add(tenCatches, tenCatches, true);
+                Add(tenCatches, tenCatches.Take(5).ToList(), false);
+
+            }
+        }
+        [Theory]
+        [ClassData(typeof(SetLiveMatchCatches_Should_Return_If_Catch_Lists_Are_The_Same_Class_Data))]
+        public async Task SetLiveMatchCatches_Should_Return_If_Catch_Lists_Are_The_Same(List<LiveMatchCatch> catches1, List<LiveMatchCatch> catches2, bool isTheSame)
+        {
+            //Arrange
+            var liveMatch = CreateLiveMatch();
+            liveMatch.Catches = catches1;
+            _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id}")).ReturnsAsync(liveMatch.ToJsonType());
+            _mockActiveLiveMatchRepository.Setup(x => x.GetFullOneById(liveMatch.Id)).ReturnsAsync(liveMatch);
+            _mockActiveLiveMatchCatchRepository.Setup(x => x.Create(It.IsAny<ICollection<LiveMatchCatch>>())).ReturnsAsync([]);
+            _mockActiveLiveMatchCatchRepository.Setup(x => x.Update(It.IsAny<ICollection<LiveMatchCatch>>())).ReturnsAsync([]);
+
+
+            //Act
+            await _liveMatchPersistenceService.SetLiveMatchCatches(liveMatch.Id, catches2);
+
+            //Assert
+            if (isTheSame is false)
+            {
+                _mockActiveLiveMatchCatchRepository.Verify(x => x.Create(It.IsAny<ICollection<LiveMatchCatch>>()), Times.AtLeastOnce);
+            }
+            else
+            {
+                _mockActiveLiveMatchCatchRepository.Verify(x => x.Create(It.IsAny<ICollection<LiveMatchCatch>>()), Times.Never);
+                _mockActiveLiveMatchCatchRepository.Verify(x => x.Update(It.IsAny<ICollection<LiveMatchCatch>>()), Times.Never);
+            }
+        }
+        private static LiveMatch CreateLiveMatch()
         {
             var rules = new LiveMatchRules();
             var liveMatch = _fixture.Build<LiveMatch>().With(x => x.MatchRules, rules).Create();

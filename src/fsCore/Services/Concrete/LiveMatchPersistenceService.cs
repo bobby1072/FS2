@@ -24,7 +24,7 @@ namespace Services.Concrete
             {
                 return;
             }
-            var catchesToCreateAndUpdate = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            _ = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
             {
                 foundLiveMatch.Catches = liveMatchCatches.ToList();
