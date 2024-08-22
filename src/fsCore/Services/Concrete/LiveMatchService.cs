@@ -11,22 +11,16 @@ namespace fsCore.Services.Concrete
     public class LiveMatchService : ILiveMatchService
     {
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
-        private readonly IValidator<InAreaLiveMatchCatchRule> _inAreaLiveMatchCatchRuleValidator;
         private readonly IValidator<LiveMatch> _liveMatchValidator;
         private readonly IValidator<LiveMatchCatch> _liveMatchCatchValidator;
-        private readonly IValidator<SpecificSpeciesLiveMatchCatchRule> _specificSpeciesLiveMatchCatchRuleValidator;
         public LiveMatchService(ILiveMatchPersistenceService liveMatchPersistenceService,
-            IValidator<InAreaLiveMatchCatchRule> inAreaLiveMatchCatchRuleValidator,
             IValidator<LiveMatch> liveMatchValidator,
-            IValidator<LiveMatchCatch> liveMatchCatchValidator,
-            IValidator<SpecificSpeciesLiveMatchCatchRule> specificSpeciesLiveMatchCatchRuleValidator
+            IValidator<LiveMatchCatch> liveMatchCatchValidator
             )
         {
             _liveMatchValidator = liveMatchValidator;
             _liveMatchCatchValidator = liveMatchCatchValidator;
             _liveMatchPersistenceService = liveMatchPersistenceService;
-            _specificSpeciesLiveMatchCatchRuleValidator = specificSpeciesLiveMatchCatchRuleValidator;
-            _inAreaLiveMatchCatchRuleValidator = inAreaLiveMatchCatchRuleValidator;
         }
         public async Task<bool> IsParticipant(Guid matchId, Guid userId)
         {
@@ -46,7 +40,7 @@ namespace fsCore.Services.Concrete
             }
 
             match.ApplyDefaults(LiveMatchStatus.NotStarted, currentUser);
-            await Validate(match);
+            await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
             return match;
 
@@ -72,7 +66,7 @@ namespace fsCore.Services.Concrete
                 throw new LiveMatchException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.Forbidden);
             }
 
-            await Validate(match);
+            await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
             return match;
         }
@@ -116,25 +110,6 @@ namespace fsCore.Services.Concrete
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
-
         }
-        private async Task Validate(LiveMatch match)
-        {
-            var validateJobsList = new List<Task>();
-            foreach (var rule in match.MatchRules.Rules)
-            {
-                if (rule is SpecificSpeciesLiveMatchCatchRule specificSpeciesRule)
-                {
-                    validateJobsList.Add(_specificSpeciesLiveMatchCatchRuleValidator.ValidateAndThrowAsync(specificSpeciesRule));
-                }
-                else if (rule is InAreaLiveMatchCatchRule inAreaRule)
-                {
-                    validateJobsList.Add(_inAreaLiveMatchCatchRuleValidator.ValidateAndThrowAsync(inAreaRule));
-                }
-            }
-            validateJobsList.Add(_liveMatchValidator.ValidateAndThrowAsync(match));
-            await Task.WhenAll(validateJobsList);
-        }
-
     }
 }
