@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace fsCore.Controllers.ControllerModels
+namespace fsCore.RequestModels
 {
     public class GetSelfGroupsResponse
     {

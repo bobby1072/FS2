@@ -3,10 +3,10 @@ using System.Security.Claims;
 using System.Text.Json;
 using Common.Authentication;
 using Common.Models;
-using fsCore.Services.Abstract;
 using Microsoft.Extensions.Options;
+using Services.Abstract;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
     public class UserInfoClient : IUserInfoClient
     {

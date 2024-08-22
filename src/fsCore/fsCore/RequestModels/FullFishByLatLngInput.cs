@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using Common.Models;
 
-namespace fsCore.Controllers.ControllerModels
+namespace fsCore.RequestModels
 {
     public class FullFishByLatLngInput
     {

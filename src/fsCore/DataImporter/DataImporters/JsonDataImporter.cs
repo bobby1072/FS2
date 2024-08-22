@@ -1,7 +1,7 @@
 using Common;
 using Hangfire;
 
-namespace DataImporter.ModelImporters
+namespace DataImporter.DataImporters
 {
     public class JsonDataImporter : IDataImporter
     {

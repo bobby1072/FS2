@@ -1,7 +1,6 @@
 using Common;
 using Common.Authentication;
 using fsCore.Middleware;
-using fsCore.Services.Abstract;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +11,7 @@ using DataImporter;
 using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
 using Services;
+using Services.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);

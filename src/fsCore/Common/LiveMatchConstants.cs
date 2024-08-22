@@ -2,6 +2,8 @@ namespace Common
 {
     public static class LiveMatchConstants
     {
+        public const string LiveMatchHasntStarted = "Live match hasn't started";
+        public const string LiveMatchHasEnded = "Live match has ended";
         public const string LiveMatchAlreadyExists = "Live match already exists";
         public const string FailedToPersistLiveMatch = "Failed to persist live match";
         public const string FourPointAreaIncorrectlyFormed = "Four point area is incorrectly formed";

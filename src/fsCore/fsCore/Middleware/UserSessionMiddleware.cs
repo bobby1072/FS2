@@ -2,7 +2,6 @@ using System.Net;
 using Common;
 using Common.Models;
 using fsCore.Controllers.Attributes;
-using fsCore.Services.Abstract;
 using Services.Abstract;
 using Services.Concrete;
 

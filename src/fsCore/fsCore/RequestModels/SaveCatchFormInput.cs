@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using Common.Models;
 using Common.Utils;
 
-namespace fsCore.Controllers.ControllerModels
+namespace fsCore.RequestModels
 {
     public class SaveCatchFormInput
     {

@@ -3,7 +3,7 @@ using DataImporter.DataImporters.ModelImporters.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using Persistence.EntityFramework.Repository.Abstract;
-namespace DataImporter
+namespace DataImporter.DataImporters
 {
     internal class GenericDataImporter : IDataImporter
     {

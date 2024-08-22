@@ -1,6 +1,4 @@
-﻿using fsCore.Services.Abstract;
-using fsCore.Services.Concrete;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Services.Abstract;
 using Services.Concrete;
 

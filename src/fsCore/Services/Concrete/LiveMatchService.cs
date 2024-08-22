@@ -3,10 +3,9 @@ using Common;
 using Common.Models;
 using Common.Permissions;
 using FluentValidation;
-using fsCore.Services.Abstract;
 using Services.Abstract;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
     public class LiveMatchService : ILiveMatchService
     {
@@ -28,7 +27,7 @@ namespace fsCore.Services.Concrete
         }
         public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
-            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, (Guid)match.GroupId!))
+            if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, match.GroupId))
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
@@ -48,9 +47,13 @@ namespace fsCore.Services.Concrete
         public async Task<LiveMatch> UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(match.Id) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundMatch.EndsAt is not null && foundMatch.EndsAt < DateTime.UtcNow)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
+            }
             if (!foundMatch.Catches.SequenceEqual(match.Catches))
             {
-                throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch, HttpStatusCode.Unauthorized);
+                throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch, HttpStatusCode.BadRequest);
             }
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId))
             {
@@ -73,7 +76,14 @@ namespace fsCore.Services.Concrete
         public async Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch liveMatchCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-
+            if (foundMatch.EndsAt is not null && foundMatch.EndsAt < DateTime.UtcNow)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
+            }
+            else if (foundMatch.CommencesAt is not null && foundMatch.CommencesAt > DateTime.UtcNow)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasntStarted, HttpStatusCode.BadRequest);
+            }
             if (!foundMatch.Participants.Any(x => x.Id == currentUser.Id))
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);

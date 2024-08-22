@@ -1,6 +1,6 @@
+using DataImporter.DataImporters;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.DataImporters.ModelImporters.Concrete.Mock;
-using DataImporter.ModelImporters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
