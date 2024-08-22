@@ -18,18 +18,30 @@ namespace Services.Concrete
             _activeLiveMatchCatchRepository = activeLiveMatchCatchRepository;
             _activeLiveMatchRepository = activeLiveMatchRepository;
         }
-        public async Task SetLiveMatchCatches(Guid liveMatchId, ICollection<LiveMatchCatch> liveMatchCatches)
+        public async Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (liveMatchCatches.Count == 0 || liveMatchCatches.SequenceEqual(foundLiveMatch.Catches))
+            if (foundLiveMatch.Catches.FirstOrDefault(c => c.Id == liveMatchCatch.Id) is LiveMatchCatch foundCatch)
             {
-                return;
+                if (foundLiveMatch.Equals(foundCatch))
+                {
+                    return;
+                }
+                await _activeLiveMatchCatchRepository.Update([liveMatchCatch]);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Catches = foundLiveMatch.Catches.Select(c => c.Id == liveMatchCatch.Id ? liveMatchCatch : c).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType());
+                }
             }
-            _ = await CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatchCatches) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+            else
             {
-                foundLiveMatch.Catches = liveMatchCatches.ToList();
-                await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType());
+                await _activeLiveMatchCatchRepository.Create([liveMatchCatch]);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Catches = foundLiveMatch.Catches.ToList().Append(liveMatchCatch).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType());
+                }
             }
         }
         public async Task SetLiveMatch(LiveMatch liveMatch)

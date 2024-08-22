@@ -10,26 +10,20 @@ namespace fsCore.Services.Concrete
 {
     public class LiveMatchService : ILiveMatchService
     {
-        private readonly IGroupService _groupService;
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
-        private readonly IValidator<IEnumerable<LiveMatchCatch>> _liveMatchCatchEnumerableValidator;
         private readonly IValidator<InAreaLiveMatchCatchRule> _inAreaLiveMatchCatchRuleValidator;
         private readonly IValidator<LiveMatch> _liveMatchValidator;
         private readonly IValidator<LiveMatchCatch> _liveMatchCatchValidator;
         private readonly IValidator<SpecificSpeciesLiveMatchCatchRule> _specificSpeciesLiveMatchCatchRuleValidator;
-        public LiveMatchService(IGroupService groupService,
-            ILiveMatchPersistenceService liveMatchPersistenceService,
-            IValidator<IEnumerable<LiveMatchCatch>> liveMatchCatchEnumerableValidator,
+        public LiveMatchService(ILiveMatchPersistenceService liveMatchPersistenceService,
             IValidator<InAreaLiveMatchCatchRule> inAreaLiveMatchCatchRuleValidator,
             IValidator<LiveMatch> liveMatchValidator,
             IValidator<LiveMatchCatch> liveMatchCatchValidator,
             IValidator<SpecificSpeciesLiveMatchCatchRule> specificSpeciesLiveMatchCatchRuleValidator
             )
         {
-            _liveMatchCatchEnumerableValidator = liveMatchCatchEnumerableValidator;
             _liveMatchValidator = liveMatchValidator;
             _liveMatchCatchValidator = liveMatchCatchValidator;
-            _groupService = groupService;
             _liveMatchPersistenceService = liveMatchPersistenceService;
             _specificSpeciesLiveMatchCatchRuleValidator = specificSpeciesLiveMatchCatchRuleValidator;
             _inAreaLiveMatchCatchRuleValidator = inAreaLiveMatchCatchRuleValidator;
@@ -113,13 +107,13 @@ namespace fsCore.Services.Concrete
             {
                 liveMatchCatch.ApplyDefaults();
                 liveMatchCatch.CountsInMatch = isCatchValid;
-                await _liveMatchPersistenceService.SetLiveMatchCatches(foundMatch.Id, [liveMatchCatch]);
+                await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
             else
             {
                 liveMatchCatch.CountsInMatch = isCatchValid;
-                await _liveMatchPersistenceService.SetLiveMatchCatches(foundMatch.Id, [liveMatchCatch]);
+                await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
 
