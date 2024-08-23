@@ -1,8 +1,10 @@
-﻿using Common.Models;
+﻿using Common;
+using Common.Models;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 
 namespace fsCore.Controllers
 {
@@ -27,12 +29,12 @@ namespace fsCore.Controllers
         }
         protected async Task<User> GetCurrentUserAsync()
         {
-            return await _cachingService.GetObject<User>($"{Common.Models.User.CacheKeyPrefix}{GetTokenString()}");
+            return await _cachingService.TryGetObject<User>($"{Common.Models.User.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
 
         }
         protected async Task<UserWithGroupPermissionSet> GetCurrentUserWithPermissionsAsync()
         {
-            return await _cachingService.GetObject<UserWithGroupPermissionSet>($"{Common.Models.UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}");
+            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{Common.Models.UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
         }
     }
 }
