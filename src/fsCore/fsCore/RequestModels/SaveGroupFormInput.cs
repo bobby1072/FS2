@@ -3,7 +3,7 @@ using Common.Utils;
 
 namespace fsCore.RequestModels
 {
-    public class SaveGroupFormInput
+    public record SaveGroupFormInput
     {
         public IFormFile? Emblem { get; set; }
         public Guid? Id { get; set; }

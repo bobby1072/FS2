@@ -37,38 +37,16 @@ namespace fsCore.Hubs
                 {
                     await methodFunc.Invoke();
                 }
-                catch (ApiException apiException)
+                catch (Exception e)
                 {
-                    LogError(apiException.Message, Context);
-                }
-                catch (ValidationException validationException)
-                {
-                    LogError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, Context);
-                }
-                catch (NpgsqlException)
-                {
-                    LogError(ErrorConstants.FailedToPersistData, Context);
-                }
-                catch (Exception)
-                {
-                    LogError(ErrorConstants.InternalServerError, Context);
+                    LogError(e, Context);
                 }
             }
             catch { }
         }
-        private void LogError(string message, HubCallerContext context)
+        private void LogError(Exception exception, HubCallerContext context)
         {
-            _logger.LogError("Signal R {Connection} failed with {Exception}", context.ConnectionId, message);
-        }
-        private static string CreateValidationExceptionMessage(ValidationException validationException)
-        {
-            var sb = new StringBuilder();
-            for (int i = 0; i < validationException.Errors.Count(); i++)
-            {
-                var error = validationException.Errors.ElementAt(i);
-                sb.Append($"{error.ErrorMessage}. ");
-            }
-            return sb.ToString();
+            _logger.LogError("Signal R {Connection} failed with {Exception}", context.ConnectionId, exception);
         }
         protected JwtSecurityToken? GetTokenData()
         {

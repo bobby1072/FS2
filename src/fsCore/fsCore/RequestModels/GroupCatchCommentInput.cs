@@ -3,7 +3,7 @@ using Common.Models;
 
 namespace fsCore.RequestModels
 {
-    public class GroupCatchCommentInput
+    public record GroupCatchCommentInput
     {
         [JsonPropertyName("id")]
         public int? Id { get; set; }

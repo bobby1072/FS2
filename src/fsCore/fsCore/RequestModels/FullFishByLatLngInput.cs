@@ -3,7 +3,7 @@ using Common.Models;
 
 namespace fsCore.RequestModels
 {
-    public class FullFishByLatLngInput
+    public record FullFishByLatLngInput
     {
         [JsonPropertyName("latitude")]
         public double Latitude { get; set; }

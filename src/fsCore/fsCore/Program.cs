@@ -12,6 +12,8 @@ using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
 using Services;
 using Services.Abstract;
+using Microsoft.AspNetCore.SignalR;
+using fsCore.Hubs.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -31,7 +33,12 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-builder.Services.AddSignalR();
+builder.Services.AddSingleton<ExceptionHandlingFilter>();
+
+builder.Services.AddSignalR(opts =>
+{
+    opts.AddFilter<ExceptionHandlingFilter>();
+});
 
 builder.Services
     .AddDistributedMemoryCache()

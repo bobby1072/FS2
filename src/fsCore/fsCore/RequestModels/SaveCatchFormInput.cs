@@ -1,10 +1,9 @@
-using System.Text.Json.Serialization;
 using Common.Models;
 using Common.Utils;
 
 namespace fsCore.RequestModels
 {
-    public class SaveCatchFormInput
+    public record SaveCatchFormInput
     {
         public Guid? Id { get; set; }
         public Guid GroupId { get; set; }
