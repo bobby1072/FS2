@@ -23,10 +23,6 @@ namespace fsCore.Controllers
         {
             return ControllerContext.HttpContext.GetTokenData();
         }
-        private string GetTokenString()
-        {
-            return ControllerContext.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
-        }
         protected async Task<User> GetCurrentUserAsync()
         {
             return await _cachingService.TryGetObject<User>($"{Common.Models.User.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
@@ -34,7 +30,11 @@ namespace fsCore.Controllers
         }
         protected async Task<UserWithGroupPermissionSet> GetCurrentUserWithPermissionsAsync()
         {
-            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{Common.Models.UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+        }
+        private string GetTokenString()
+        {
+            return ControllerContext.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
         }
     }
 }

@@ -4,8 +4,8 @@ namespace Services.Abstract
 {
     public interface ILiveMatchPersistenceService
     {
-        Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
-        Task SetLiveMatch(LiveMatch liveMatch);
-        Task<LiveMatch?> TryGetLiveMatch(Guid matchId);
+        internal Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
+        internal Task SetLiveMatch(LiveMatch liveMatch);
+        public Task<LiveMatch?> TryGetLiveMatch(Guid matchId);
     }
 }

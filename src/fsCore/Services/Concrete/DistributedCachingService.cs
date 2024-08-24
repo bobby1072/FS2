@@ -45,7 +45,7 @@ namespace Services.Concrete
         }
         public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
         {
-            return await SetObject(key, value, new DistributedCacheEntryOptions
+            return await SetObject(key, JsonSerializer.Serialize(value), new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds((int)timeToLive)
             });
@@ -53,11 +53,6 @@ namespace Services.Concrete
         public async Task<string> SetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class
         {
             var serializedValue = JsonSerializer.Serialize(value);
-            if (value is BaseModel model)
-            {
-                model.RemoveSensitive();
-                _logger.LogInformation("Setting object of type {ModelName} with values (sensitiveRemoved) {Model}", model.GetType().Name, model);
-            }
             await _distributedCache.SetStringAsync(key, serializedValue, options ?? new DistributedCacheEntryOptions());
             return key;
         }

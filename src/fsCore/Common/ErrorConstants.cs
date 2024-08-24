@@ -3,6 +3,7 @@ namespace Common
 {
     public static class ErrorConstants
     {
+        public const string FailedToPersistData = "Failed to persist data";
         public const string InvalidCatchComment = "Invalid comment";
         public const string GroupCatchCommentNotDeleted = "Failed to delete comment";
         public const string GroupCatchCommentNotSaved = "Failed to save comment";

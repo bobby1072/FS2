@@ -1,17 +1,15 @@
 using System.Net;
-using System.Text.Json;
 using Common;
-using Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace fsCore.Controllers.Attributes
+namespace fsCore.Attributes
 {
-    internal sealed class RequiredUserWithGroupPermissions : AuthorizeAttribute, IAuthorizationFilter
+    internal sealed class RequiredUser : AuthorizeAttribute, IAuthorizationFilter
     {
         public bool UpdateAlways { get; set; }
-        public RequiredUserWithGroupPermissions(bool updateAfter = false)
+        public RequiredUser(bool updateAfter = false)
         {
             UpdateAlways = updateAfter;
         }
