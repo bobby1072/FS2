@@ -4,9 +4,10 @@ namespace Common
     {
         public static class Queues
         {
-            public const string Default = "default";
-            public const string StartUpJobs = "startupjobs";
-            public static string[] FullList { get; } = [Default, StartUpJobs];
+            public const string DefaultJobs = "DefaultJobs";
+            public const string StartUpJobs = "StartUpJobs";
+            public const string LiveMatchJobs = "LiveMatchJobs";
+            public static string[] FullList { get; } = [DefaultJobs, StartUpJobs, LiveMatchJobs];
         }
     }
 }

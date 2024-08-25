@@ -14,6 +14,8 @@ using Services;
 using Services.Abstract;
 using Microsoft.AspNetCore.SignalR;
 using fsCore.Hubs.Filters;
+using Common.Misc.Abstract;
+using fsCore.Hubs.Contexts;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -34,6 +36,8 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
 }
 
 builder.Services.AddSingleton<ExceptionHandlingFilter>();
+
+builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
 
 builder.Services.AddSignalR(opts =>
 {
@@ -65,9 +69,6 @@ builder.Services
     .Configure<AuthoritySettings>(config.GetSection(AuthoritySettings.Key))
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 
-builder.Services
-                .AddScoped<IAuthenticationStrategy, BearerTokenAuthenticationStrategy>()
-                .AddSingleton<IBearerTokenAuthenticationStrategy, BearerTokenAuthenticationStrategy>();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {

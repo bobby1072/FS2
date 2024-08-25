@@ -1,6 +1,6 @@
 using System.Net;
 using Common.Models;
-using fsCore.Controllers.Attributes;
+using fsCore.Attributes;
 using fsCore.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;

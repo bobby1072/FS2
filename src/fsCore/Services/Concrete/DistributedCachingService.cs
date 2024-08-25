@@ -9,11 +9,9 @@ namespace Services.Concrete
     public class DistributedCachingService : ICachingService
     {
         private readonly IDistributedCache _distributedCache;
-        private readonly ILogger<DistributedCachingService> _logger;
-        public DistributedCachingService(IDistributedCache distributedCache, ILogger<DistributedCachingService> logger)
+        public DistributedCachingService(IDistributedCache distributedCache)
         {
             _distributedCache = distributedCache;
-            _logger = logger;
         }
         public async Task<T> GetObject<T>(string key) where T : class
         {
@@ -30,18 +28,6 @@ namespace Services.Concrete
             {
                 return default;
             }
-        }
-        public async Task<string?> TrySetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class
-        {
-            try
-            {
-                return await SetObject(key, value, options);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
         }
         public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
         {

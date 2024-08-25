@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
-using fsCore.Attributes;
 using Services.Abstract;
+
 namespace fsCore.Hubs
 {
     [Authorize]
-    [RequiredUser]
-    [RequiredUserWithGroupPermissions]
     public class LiveMatchHub : BaseHub
     {
+        public const string UpdateMatchMessage = "UpdateMatch";
+        public const string CreateMatchMessage = "CreateMatch";
         public LiveMatchHub(ICachingService cachingService) : base(cachingService) { }
     }
 }

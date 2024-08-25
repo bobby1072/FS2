@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using Common;
 using Common.Models;
 using Common.Utils;
@@ -14,11 +15,9 @@ namespace fsCore.Hubs
     public abstract class BaseHub : Hub
     {
         protected readonly ICachingService _cachingService;
-        private readonly ILogger<BaseHub> _logger;
-        protected BaseHub(ICachingService cachingService, ILogger<BaseHub> logger)
+        protected BaseHub(ICachingService cachingService)
         {
             _cachingService = cachingService;
-            _logger = logger;
         }
         private HttpContext? _httpContext;
         protected HttpContext? HttpContext
@@ -28,29 +27,6 @@ namespace fsCore.Hubs
                 _httpContext ??= Context.GetHttpContext();
                 return _httpContext;
             }
-        }
-        protected async Task HandleErrors(Func<Task> methodFunc)
-        {
-            try
-            {
-                try
-                {
-                    await methodFunc.Invoke();
-                }
-                catch (Exception e)
-                {
-                    LogError(e, Context);
-                }
-            }
-            catch { }
-        }
-        private void LogError(Exception exception, HubCallerContext context)
-        {
-            _logger.LogError("Signal R {Connection} failed with {Exception}", context.ConnectionId, exception);
-        }
-        protected JwtSecurityToken? GetTokenData()
-        {
-            return HttpContext?.GetTokenData();
         }
         private string GetTokenString()
         {

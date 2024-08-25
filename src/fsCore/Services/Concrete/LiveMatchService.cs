@@ -1,25 +1,33 @@
 using System.Net;
 using Common;
+using Common.Misc.Abstract;
 using Common.Models;
 using Common.Permissions;
 using FluentValidation;
+using Hangfire;
 using Services.Abstract;
 
 namespace Services.Concrete
 {
     public class LiveMatchService : ILiveMatchService
     {
+        private readonly IBackgroundJobClient _backgroundJobClient;
+        private readonly ILiveMatchHubContextServiceProvider _liveMatchHubContextServiceProvider;
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
         private readonly IValidator<LiveMatch> _liveMatchValidator;
         private readonly IValidator<LiveMatchCatch> _liveMatchCatchValidator;
-        public LiveMatchService(ILiveMatchPersistenceService liveMatchPersistenceService,
+        public LiveMatchService(IBackgroundJobClient backgroundJobClient,
+            ILiveMatchHubContextServiceProvider liveMatchHubContextServiceProvider,
+            ILiveMatchPersistenceService liveMatchPersistenceService,
             IValidator<LiveMatch> liveMatchValidator,
             IValidator<LiveMatchCatch> liveMatchCatchValidator
             )
         {
-            _liveMatchValidator = liveMatchValidator;
-            _liveMatchCatchValidator = liveMatchCatchValidator;
+            _backgroundJobClient = backgroundJobClient;
+            _liveMatchHubContextServiceProvider = liveMatchHubContextServiceProvider;
             _liveMatchPersistenceService = liveMatchPersistenceService;
+            _liveMatchCatchValidator = liveMatchCatchValidator;
+            _liveMatchValidator = liveMatchValidator;
         }
         public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
@@ -37,20 +45,26 @@ namespace Services.Concrete
             match.ApplyDefaults(LiveMatchStatus.NotStarted, currentUser);
             await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
+
+            if (match.CommencesAt is DateTime commenceTime)
+            {
+                var timeSpanBetweenNowAndWhenToExecuteJob = commenceTime.Subtract(DateTime.UtcNow);
+                _backgroundJobClient.Schedule(() => StartMatch(match.Id, true), timeSpanBetweenNowAndWhenToExecuteJob);
+            }
+            if (match.EndsAt is DateTime endTime)
+            {
+                var timeSpanBetweenNowAndWhenToExecuteJob = endTime.Subtract(DateTime.UtcNow);
+                _backgroundJobClient.Schedule(() => EndMatch(match.Id, true), timeSpanBetweenNowAndWhenToExecuteJob);
+            }
+
             return match;
 
         }
-        public async Task<LiveMatch> UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
+        public async Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
+            match.Catches = [];
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(match.Id) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (foundMatch.EndsAt is not null && foundMatch.EndsAt < DateTime.UtcNow)
-            {
-                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
-            }
-            if (!foundMatch.Catches.SequenceEqual(match.Catches))
-            {
-                throw new LiveMatchException(LiveMatchConstants.FailedToPersistLiveMatch, HttpStatusCode.BadRequest);
-            }
+            match.MatchStatus = foundMatch.MatchStatus;
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId))
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
@@ -67,7 +81,6 @@ namespace Services.Concrete
 
             await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
-            return match;
         }
         public async Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch liveMatchCatch, UserWithGroupPermissionSet currentUser)
         {
@@ -116,6 +129,34 @@ namespace Services.Concrete
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
+        }
+        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+        public async Task<LiveMatch> StartMatch(Guid matchId, bool shouldUpdateClients = false)
+        {
+            var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            foundMatch.MatchStatus = LiveMatchStatus.InProgress;
+            foundMatch.CommencesAt = DateTime.UtcNow;
+            await _liveMatchPersistenceService.SetLiveMatch(foundMatch);
+            if (shouldUpdateClients)
+            {
+                await _liveMatchHubContextServiceProvider.UpdateMatchForClients(matchId);
+            }
+            return foundMatch;
+        }
+        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+        public async Task<LiveMatch> EndMatch(Guid matchId, bool shouldUpdateClients = false)
+        {
+            var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            foundMatch.MatchStatus = LiveMatchStatus.Finished;
+            foundMatch.EndsAt = DateTime.UtcNow;
+            await _liveMatchPersistenceService.SetLiveMatch(foundMatch);
+            if (shouldUpdateClients)
+            {
+                await _liveMatchHubContextServiceProvider.UpdateMatchForClients(matchId);
+            }
+            return foundMatch;
         }
     }
 }
