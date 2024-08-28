@@ -17,6 +17,8 @@ namespace Common.Models.Validators
             RuleFor(x => x.MatchLeaderId).NotEmpty().WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x).Must(LiveMatchLeaderIsInParticipants).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x.CreatedAt).Must(DateInThePastOrNow).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            RuleFor(x => x.CommencesAt).Must(x => x is null || DateInTheFuture((DateTime)x)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
+            RuleFor(x => x.EndsAt).Must(x => x is null || DateInTheFuture((DateTime)x)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
             RuleFor(x => x).Must(x => MustBeBefore(x.CommencesAt, x.EndsAt)).WithMessage(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails);
         }
         private static bool LiveMatchLeaderIsInParticipants(LiveMatch liveMatch)

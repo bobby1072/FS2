@@ -10,10 +10,6 @@ namespace fsCore.Middleware
         {
             _next = next;
         }
-        private static string GetTokenString(HttpContext reqContext)
-        {
-            return reqContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
-        }
         public static async Task<User?> GetUserFromCache(ICachingService cachingService, HttpContext reqContext)
         {
             return await cachingService.TryGetObject<User>($"{User.CacheKeyPrefix}{GetTokenString(reqContext)}");
@@ -21,6 +17,10 @@ namespace fsCore.Middleware
         public static async Task<UserWithGroupPermissionSet?> GetUserWithPermissionsFromCache(ICachingService cachingService, HttpContext reqContext)
         {
             return await cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString(reqContext)}");
+        }
+        private static string GetTokenString(HttpContext reqContext)
+        {
+            return reqContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
         }
     }
 }
