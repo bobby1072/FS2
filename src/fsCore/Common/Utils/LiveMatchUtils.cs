@@ -23,7 +23,7 @@ namespace Common.Utils
             if (liveMatch.MatchWinStrategy == LiveMatchWinStrategy.HighestSingleWeight)
             {
                 var test = liveMatch.Participants.FirstOrDefault(u => u.Id == FindHighestSingleWeightWinner(liveMatch.Catches));
-                return test;
+                return test!;
             }
             return liveMatch.MatchWinStrategy switch
             {

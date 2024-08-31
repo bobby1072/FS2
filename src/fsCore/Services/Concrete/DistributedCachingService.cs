@@ -1,7 +1,5 @@
 using System.Text.Json;
-using Common.Models;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Logging;
 using Services.Abstract;
 
 namespace Services.Concrete

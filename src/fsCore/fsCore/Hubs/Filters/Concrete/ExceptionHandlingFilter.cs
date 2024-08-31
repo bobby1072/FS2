@@ -1,17 +1,18 @@
 using System.Text.Json;
+using fsCore.Hubs.Filters.Abstract;
 using Microsoft.AspNetCore.SignalR;
 
-namespace fsCore.Hubs.Filters
+namespace fsCore.Hubs.Filters.Concrete
 {
-    public class ExceptionHandlingFilter : IHubFilter
+    public class ExceptionHandlingFilter : IExceptionHandlingFilter
     {
         private readonly ILogger<ExceptionHandlingFilter> _logger;
         public ExceptionHandlingFilter(ILogger<ExceptionHandlingFilter> logger)
         {
             _logger = logger;
         }
-        public async ValueTask<object> InvokeMethodAsync(
-                HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object>> next)
+        public async ValueTask<object?> InvokeMethodAsync(
+                HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object?>> next)
         {
             try
             {

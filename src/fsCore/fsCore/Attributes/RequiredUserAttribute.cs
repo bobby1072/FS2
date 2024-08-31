@@ -15,7 +15,6 @@ namespace fsCore.Attributes
         }
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-
             if (context.HttpContext.User.Identity?.IsAuthenticated == true)
             {
                 if (context.HttpContext.Request.Headers.Authorization.FirstOrDefault() is null)

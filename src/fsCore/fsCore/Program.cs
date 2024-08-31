@@ -13,9 +13,10 @@ using Common.Models.Validators;
 using Services;
 using Services.Abstract;
 using Microsoft.AspNetCore.SignalR;
-using fsCore.Hubs.Filters;
 using Common.Misc.Abstract;
 using fsCore.Hubs.Contexts;
+using fsCore.Hubs.Filters.Concrete;
+using fsCore.Hubs.Filters.Abstract;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -35,13 +36,16 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-builder.Services.AddSingleton<ExceptionHandlingFilter>();
+builder.Services
+    .AddSingleton<IExceptionHandlingFilter, ExceptionHandlingFilter>()
+    .AddSingleton<IUserSessionFilter, UserSessionFilter>();
 
 builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
 
 builder.Services.AddSignalR(opts =>
 {
-    opts.AddFilter<ExceptionHandlingFilter>();
+    opts.AddFilter<IExceptionHandlingFilter>();
+    opts.AddFilter<IUserSessionFilter>();
 });
 
 builder.Services

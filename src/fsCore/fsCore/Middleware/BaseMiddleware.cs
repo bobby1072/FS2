@@ -10,11 +10,11 @@ namespace fsCore.Middleware
         {
             _next = next;
         }
-        public static async Task<User?> GetUserFromCache(ICachingService cachingService, HttpContext reqContext)
+        protected static async Task<User?> GetUserFromCache(ICachingService cachingService, HttpContext reqContext)
         {
             return await cachingService.TryGetObject<User>($"{User.CacheKeyPrefix}{GetTokenString(reqContext)}");
         }
-        public static async Task<UserWithGroupPermissionSet?> GetUserWithPermissionsFromCache(ICachingService cachingService, HttpContext reqContext)
+        protected static async Task<UserWithGroupPermissionSet?> GetUserWithPermissionsFromCache(ICachingService cachingService, HttpContext reqContext)
         {
             return await cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString(reqContext)}");
         }
