@@ -17,7 +17,6 @@ namespace fsCore.Middleware
         {
             try
             {
-
                 try
                 {
                     await _next(httpContext);

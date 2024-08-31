@@ -2,7 +2,7 @@ namespace fsCore.Middleware
 {
     internal static class MiddlewareServiceCollectionExtensions
     {
-        public static IApplicationBuilder UseDefaultMiddlewares(
+        public static IApplicationBuilder MiddlewareApplicationBuilderExtensions(
             this IApplicationBuilder builder)
         {
             return builder

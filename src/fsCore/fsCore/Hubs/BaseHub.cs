@@ -1,13 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Text;
-using System.Text.Json;
 using Common;
 using Common.Models;
-using Common.Utils;
-using FluentValidation;
 using Microsoft.AspNetCore.SignalR;
-using Npgsql;
 using Services.Abstract;
 
 namespace fsCore.Hubs
@@ -19,14 +13,14 @@ namespace fsCore.Hubs
         {
             _cachingService = cachingService;
         }
-        private HttpContext? _httpContext;
         protected HttpContext? HttpContext
         {
             get
             {
-                _httpContext ??= Context.GetHttpContext();
-                return _httpContext;
+                HttpContext ??= Context.GetHttpContext();
+                return HttpContext;
             }
+            set { }
         }
         private string GetTokenString()
         {
@@ -39,7 +33,7 @@ namespace fsCore.Hubs
         }
         protected async Task<UserWithGroupPermissionSet> GetCurrentUserWithPermissionsAsync()
         {
-            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{Common.Models.UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
         }
     }
 }

@@ -38,7 +38,8 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
 
 builder.Services
     .AddSingleton<IExceptionHandlingFilter, ExceptionHandlingFilter>()
-    .AddSingleton<IUserSessionFilter, UserSessionFilter>();
+    .AddSingleton<IUserSessionFilter, UserSessionFilter>()
+    .AddSingleton<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>();
 
 builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
 
@@ -46,6 +47,7 @@ builder.Services.AddSignalR(opts =>
 {
     opts.AddFilter<IExceptionHandlingFilter>();
     opts.AddFilter<IUserSessionFilter>();
+    opts.AddFilter<IUserWithPermissionsSessionFilter>();
 });
 
 builder.Services
@@ -128,7 +130,7 @@ app.UseRouting();
 app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseDefaultMiddlewares();
+app.MiddlewareApplicationBuilderExtensions();
 app.MapControllers();
 #pragma warning disable ASP0014
 app.UseEndpoints(endpoint =>
