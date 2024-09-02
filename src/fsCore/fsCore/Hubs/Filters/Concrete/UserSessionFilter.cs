@@ -1,5 +1,4 @@
 using System.Net;
-using System.Reflection;
 using Common;
 using Common.Models;
 using fsCore.Attributes;
@@ -24,9 +23,8 @@ namespace fsCore.Hubs.Filters.Concrete
         public async ValueTask<object?> InvokeMethodAsync(
                 HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object?>> next)
         {
-            var hubRequireUserAttribute = invocationContext.Hub.GetType().GetCustomAttribute<RequiredUser>();
-            var hubMethodRequireUserAttribute = invocationContext.HubMethod.GetCustomAttribute<RequiredUser>();
-            if (hubMethodRequireUserAttribute is not null || hubRequireUserAttribute is not null)
+            var hubRequireAttribute = invocationContext.GetMetadata<RequiredUser>();
+            if (hubRequireAttribute is not null)
             {
                 var token = invocationContext.Context.GetHttpContext()?.Request.Headers.Authorization ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var existingUserSession = await _cacheService.TryGetObject<User>($"{User.CacheKeyPrefix}{token}");
@@ -36,7 +34,7 @@ namespace fsCore.Hubs.Filters.Concrete
                     var userExistence = await _userService.CheckUserExistsAndCreateIfNot(tokenUser);
                     await _cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userExistence, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
-                else if (existingUserSession is not null && (hubMethodRequireUserAttribute?.UpdateAlways ?? hubRequireUserAttribute?.UpdateAlways) == true)
+                else if (existingUserSession is not null && hubRequireAttribute.UpdateAlways == true)
                 {
                     var userFound = await _userService.GetUser((Guid)existingUserSession.Id!);
                     await _cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);

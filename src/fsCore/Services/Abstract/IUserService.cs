@@ -5,7 +5,6 @@ namespace Services.Abstract
     public interface IUserService
     {
         Task<User> SaveUser(User user);
-        Task<User> GetUser(string email);
         Task<User> GetUser(Guid id);
         Task<User> GetUser(Guid id, UserWithGroupPermissionSet currentUser);
         Task<ICollection<User>> GetUser(ICollection<Guid> id);

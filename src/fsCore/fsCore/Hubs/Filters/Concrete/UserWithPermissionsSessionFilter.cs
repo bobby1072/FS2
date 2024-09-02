@@ -21,13 +21,13 @@ namespace fsCore.Hubs.Filters.Concrete
         }
         public async ValueTask<object?> InvokeMethodAsync(HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object?>> next)
         {
-            var hubRequireUserAttribute = invocationContext.Hub.GetType().GetCustomAttribute<RequiredUserWithGroupPermissions>();
-            var hubMethodRequireUserAttribute = invocationContext.HubMethod.GetCustomAttribute<RequiredUserWithGroupPermissions>();
-            if (hubMethodRequireUserAttribute is not null || hubRequireUserAttribute is not null)
+            var hubRequireAttribute = invocationContext.GetMetadata<RequiredUserWithGroupPermissions>();
+
+            if (hubRequireAttribute is not null)
             {
                 var token = invocationContext.Context.GetHttpContext()?.Request.Headers.Authorization ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var existingUserWithPermissions = await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{token}");
-                if (existingUserWithPermissions is null || (hubMethodRequireUserAttribute?.UpdateAlways ?? hubRequireUserAttribute?.UpdateAlways) == true)
+                if (existingUserWithPermissions is null || hubRequireAttribute.UpdateAlways == true)
                 {
                     var parsedUser = await _cachingService.TryGetObject<User>($"{User.CacheKeyPrefix}{token}") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                     (ICollection<Group> groups, ICollection<GroupMember> members) = await _groupService.GetAllGroupsAndMembershipsForUser(parsedUser);

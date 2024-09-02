@@ -11,9 +11,5 @@ namespace fsCore.RequestModels
         public double Longitude { get; set; }
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
-        public (LatLng, Guid) BreakDown()
-        {
-            return (new LatLng(Latitude, Longitude), GroupId);
-        }
     }
 }
