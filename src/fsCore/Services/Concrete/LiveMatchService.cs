@@ -83,6 +83,7 @@ namespace Services.Concrete
             }
 
             await _liveMatchValidator.ValidateAndThrowAsync(match);
+
             await _liveMatchPersistenceService.SetLiveMatch(match);
         }
         public async Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch liveMatchCatch, UserWithGroupPermissionSet currentUser)
@@ -136,7 +137,7 @@ namespace Services.Concrete
         public async Task<LiveMatch> StartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet, bool shouldUpdateClients = false)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId))
+            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || userWithGroupPermissionSet.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
@@ -156,7 +157,7 @@ namespace Services.Concrete
         public async Task<LiveMatch> EndMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet, bool shouldUpdateClients = false)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId))
+            if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || userWithGroupPermissionSet.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
@@ -173,16 +174,16 @@ namespace Services.Concrete
             }
             return foundMatch;
         }
-        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [Queue(HangfireConstants.Queues.LiveMatchJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
-        private async Task AutomaticStartMatch(Guid matchId, string tokenString)
+        public async Task AutomaticStartMatch(Guid matchId, string tokenString)
         {
             var foundUser = await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{tokenString}") ?? throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             await StartMatch(matchId, foundUser, true);
         }
-        [Queue(HangfireConstants.Queues.StartUpJobs)]
+        [Queue(HangfireConstants.Queues.LiveMatchJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
-        private async Task AutomaticEndMatch(Guid matchId, string tokenString)
+        public async Task AutomaticEndMatch(Guid matchId, string tokenString)
         {
             var foundUser = await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{tokenString}") ?? throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             await EndMatch(matchId, foundUser, true);

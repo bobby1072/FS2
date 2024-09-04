@@ -18,6 +18,8 @@ namespace Persistence.EntityFramework.Repository.Concrete
 
             var entity = await dbContext
                 .ActiveLiveMatch
+                .Include(x => x.Participants)!
+                .ThenInclude(x => x.User)
                 .Include(x => x.Catches)!
                 .ThenInclude(x => x.WorldFish)
                 .Where(x => x.Id == id)
@@ -25,5 +27,17 @@ namespace Persistence.EntityFramework.Repository.Concrete
 
             return entity?.ToRuntime();
         }
+
+        // public async Task<ICollection<LiveMatch>?> GetMatchesForUser( LiveMatchStatus status)
+        // {
+        //     await using var dbContext = await _contextFactory.CreateDbContextAsync();
+
+        //     var entity = await dbContext
+        //         .ActiveLiveMatch
+        //         .Where(x => x.Id == id)
+        //         .FirstOrDefaultAsync();
+
+        //     return entity?.ToRuntime();
+        // }
     }
 }

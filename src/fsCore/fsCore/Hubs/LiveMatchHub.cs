@@ -9,6 +9,12 @@ namespace fsCore.Hubs
     {
         public const string UpdateMatchMessage = "UpdateMatch";
         public const string CreateMatchMessage = "CreateMatch";
-        public LiveMatchHub(ICachingService cachingService) : base(cachingService) { }
+        private readonly ILiveMatchService _liveMatchService;
+        private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
+        public LiveMatchHub(ICachingService cachingService, ILiveMatchService liveMatchService, ILiveMatchPersistenceService liveMatchPersistenceService) : base(cachingService)
+        {
+            _liveMatchService = liveMatchService;
+            _liveMatchPersistenceService = liveMatchPersistenceService;
+        }
     }
 }

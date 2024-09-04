@@ -82,9 +82,7 @@ namespace Common.Models
                 CreatedAt = DateTime.UtcNow;
                 Participants = [leader];
             }
-            else if (MatchStatus == LiveMatchStatus.InProgress)
-            {
-            }
+            else if (MatchStatus == LiveMatchStatus.InProgress) { }
             else
             {
                 EndsAt = DateTime.UtcNow;

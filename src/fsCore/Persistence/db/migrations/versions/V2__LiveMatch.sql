@@ -5,7 +5,6 @@ CREATE TABLE public."active_live_match"(
     serialised_match_rules TEXT NOT NULL,
     match_status INTEGER NOT NULL,
     match_win_strategy INTEGER NOT NULL,
-    serialised_participants TEXT NOT NULL,
     match_leader_id UUID NOT NULL,
     commences_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     ends_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
@@ -30,4 +29,13 @@ CREATE TABLE public."active_live_match_catch"(
     CONSTRAINT active_live_match_catch_world_fish_taxocode_fk FOREIGN KEY (world_fish_taxocode) REFERENCES public.world_fish(taxocode) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_match_id_fk FOREIGN KEY (match_id) REFERENCES public.active_live_match(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE public."active_live_match_participant"(
+    id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id UUID NOT NULL,
+    match_id UUID NOT NULL,
+    CONSTRAINT active_live_match_participant_match_id_fk FOREIGN KEY (match_id) REFERENCES public.active_live_match(id) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT active_live_match_participant_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT active_live_match_participant_unique UNIQUE (user_id, match_id)
 );

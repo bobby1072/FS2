@@ -4,6 +4,7 @@ namespace Services.Abstract
 {
     public interface ILiveMatchService
     {
+        // Task<ICollection<LiveMatch>> AllMatchesUserIn(UserWithGroupPermissionSet currentUser);
         Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser, string tokenString);
         Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch catches, UserWithGroupPermissionSet currentUser);
