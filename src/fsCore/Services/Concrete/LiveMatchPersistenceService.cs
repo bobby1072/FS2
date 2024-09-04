@@ -19,7 +19,7 @@ namespace Services.Concrete
             _activeLiveMatchRepository = activeLiveMatchRepository;
             _activeLiveMatchParticipantRepository = activeLiveMatchParticipantRepository;
         }
-        public async Task SaveUser(Guid liveMatchId, User user)
+        public async Task SaveParticipant(Guid liveMatchId, User user)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (foundLiveMatch.Participants.FirstOrDefault(p => p.Id == user.Id) is User foundUser)
@@ -41,6 +41,19 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Participants = foundLiveMatch.Participants.ToList().Append(user).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                }
+            }
+        }
+        public async Task DeleteParticipant(Guid liveMatchId, User user)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundLiveMatch.Participants.FirstOrDefault(p => p.Id == user.Id) is User foundUser)
+            {
+                await _activeLiveMatchParticipantRepository.Delete(user, liveMatchId);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Participants = foundLiveMatch.Participants.Where(p => p.Id != user.Id).ToList();
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
@@ -67,6 +80,19 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Catches = foundLiveMatch.Catches.ToList().Append(liveMatchCatch).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                }
+            }
+        }
+        public async Task DeleteCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundLiveMatch.Catches.FirstOrDefault(c => c.Id == liveMatchCatch.Id) is LiveMatchCatch foundCatch)
+            {
+                await _activeLiveMatchCatchRepository.Delete([liveMatchCatch]);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Catches = foundLiveMatch.Catches.Where(c => c.Id != liveMatchCatch.Id).ToList();
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
