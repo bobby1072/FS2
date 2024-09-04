@@ -15,13 +15,15 @@ namespace fsCore.Tests.ServiceTests
         private readonly Mock<ICachingService> _mockCachingService;
         private readonly Mock<IActiveLiveMatchCatchRepository> _mockActiveLiveMatchCatchRepository;
         private readonly Mock<IActiveLiveMatchRepository> _mockActiveLiveMatchRepository;
+        private readonly Mock<IActiveLiveMatchParticipantRepository> _mockActiveLiveMatchParticipantRepository;
         private readonly LiveMatchPersistenceService _liveMatchPersistenceService;
         public LiveMatchPersistenceServiceTests()
         {
             _mockActiveLiveMatchCatchRepository = new Mock<IActiveLiveMatchCatchRepository>();
             _mockActiveLiveMatchRepository = new Mock<IActiveLiveMatchRepository>();
             _mockCachingService = new Mock<ICachingService>();
-            _liveMatchPersistenceService = new LiveMatchPersistenceService(_mockCachingService.Object, _mockActiveLiveMatchCatchRepository.Object, _mockActiveLiveMatchRepository.Object);
+            _mockActiveLiveMatchParticipantRepository = new Mock<IActiveLiveMatchParticipantRepository>();
+            _liveMatchPersistenceService = new LiveMatchPersistenceService(_mockCachingService.Object, _mockActiveLiveMatchCatchRepository.Object, _mockActiveLiveMatchRepository.Object, _mockActiveLiveMatchParticipantRepository.Object);
         }
         [Fact]
         public async Task TryGetMatch_Should_Return_Match_If_Cached()
@@ -56,7 +58,7 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             if (status == LiveMatchStatus.InProgress)
             {
-                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions?>()), Times.Once);
+                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<CacheObjectTimeToLiveInSeconds>()), Times.Once);
             }
             else
             {

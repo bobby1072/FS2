@@ -36,19 +36,6 @@ if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || st
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-builder.Services
-    .AddSingleton<IExceptionHandlingFilter, ExceptionHandlingFilter>()
-    .AddSingleton<IUserSessionFilter, UserSessionFilter>()
-    .AddSingleton<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>();
-
-builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
-
-builder.Services.AddSignalR(opts =>
-{
-    opts.AddFilter<IExceptionHandlingFilter>();
-    opts.AddFilter<IUserSessionFilter>();
-    opts.AddFilter<IUserWithPermissionsSessionFilter>();
-});
 
 builder.Services
     .AddDistributedMemoryCache()
@@ -69,6 +56,20 @@ builder.Services
 
 builder.Services
     .AddDataImporter(config, environment);
+
+builder.Services
+    .AddScoped<IExceptionHandlingFilter, ExceptionHandlingFilter>()
+    .AddScoped<IUserSessionFilter, UserSessionFilter>()
+    .AddScoped<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>();
+
+builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
+
+builder.Services.AddSignalR(opts =>
+{
+    opts.AddFilter<IExceptionHandlingFilter>();
+    opts.AddFilter<IUserSessionFilter>();
+    opts.AddFilter<IUserWithPermissionsSessionFilter>();
+});
 
 builder.Services
     .AddAuthorization()
@@ -133,14 +134,13 @@ app.UseAuthorization();
 app.MiddlewareApplicationBuilderExtensions();
 app.MapControllers();
 #pragma warning disable ASP0014
-app.UseEndpoints(endpoint =>
-{
-    endpoint.MapFallbackToFile("index.html");
-});
-#pragma warning restore ASP0014 
 if (bool.Parse(useStaticFiles) is true)
 {
-
+    app.UseEndpoints(endpoint =>
+    {
+        endpoint.MapFallbackToFile("index.html");
+    });
+    #pragma warning restore ASP0014 
     app.UseStaticFiles();
     app.UseSpa(spa =>
     {

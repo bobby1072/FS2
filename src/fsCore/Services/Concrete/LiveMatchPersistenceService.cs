@@ -1,7 +1,6 @@
 using System.Net;
 using Common;
 using Common.Models;
-using Common.Utils;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
 namespace Services.Concrete
@@ -12,18 +11,46 @@ namespace Services.Concrete
         private readonly ICachingService _cachingService;
         private readonly IActiveLiveMatchCatchRepository _activeLiveMatchCatchRepository;
         private readonly IActiveLiveMatchRepository _activeLiveMatchRepository;
-        public LiveMatchPersistenceService(ICachingService cachingService, IActiveLiveMatchCatchRepository activeLiveMatchCatchRepository, IActiveLiveMatchRepository activeLiveMatchRepository)
+        private readonly IActiveLiveMatchParticipantRepository _activeLiveMatchParticipantRepository;
+        public LiveMatchPersistenceService(ICachingService cachingService, IActiveLiveMatchCatchRepository activeLiveMatchCatchRepository, IActiveLiveMatchRepository activeLiveMatchRepository, IActiveLiveMatchParticipantRepository activeLiveMatchParticipantRepository)
         {
             _cachingService = cachingService;
             _activeLiveMatchCatchRepository = activeLiveMatchCatchRepository;
             _activeLiveMatchRepository = activeLiveMatchRepository;
+            _activeLiveMatchParticipantRepository = activeLiveMatchParticipantRepository;
+        }
+        public async Task SaveUser(Guid liveMatchId, User user)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundLiveMatch.Participants.FirstOrDefault(p => p.Id == user.Id) is User foundUser)
+            {
+                if (user.Equals(foundUser))
+                {
+                    return;
+                }
+                await _activeLiveMatchParticipantRepository.Create([user], liveMatchId);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Participants = foundLiveMatch.Participants.Select(p => p.Id == user.Id ? user : p).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                }
+            }
+            else
+            {
+                await _activeLiveMatchParticipantRepository.Create([user], liveMatchId);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    foundLiveMatch.Participants = foundLiveMatch.Participants.ToList().Append(user).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                }
+            }
         }
         public async Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (foundLiveMatch.Catches.FirstOrDefault(c => c.Id == liveMatchCatch.Id) is LiveMatchCatch foundCatch)
             {
-                if (foundLiveMatch.Equals(foundCatch))
+                if (liveMatchCatch.Equals(foundCatch))
                 {
                     return;
                 }
@@ -53,10 +80,8 @@ namespace Services.Concrete
             }
             else if (foundLiveMatch is null)
             {
-                var liveMatchCreateJob = _activeLiveMatchRepository.Create([liveMatch]);
-                var liveMatchCatchCreateJob = _activeLiveMatchCatchRepository.Create(liveMatch.Catches);
-                await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
-                if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
+                var liveMatchCreateJob = await _activeLiveMatchRepository.Create([liveMatch]);
+                if (liveMatchCreateJob is not null)
                 {
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
@@ -70,10 +95,8 @@ namespace Services.Concrete
             }
             else
             {
-                var liveMatchCreateJob = _activeLiveMatchRepository.Update([liveMatch]);
-                var liveMatchCatchCreateJob = CreateAndUpdateCatchJobs(foundLiveMatch.Catches, liveMatch.Catches);
-                await Task.WhenAll(liveMatchCreateJob, liveMatchCatchCreateJob);
-                if (await liveMatchCreateJob is not null && await liveMatchCatchCreateJob is not null)
+                var liveMatchCreate = await _activeLiveMatchRepository.Update([liveMatch]);
+                if (liveMatchCreate is not null)
                 {
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
@@ -117,38 +140,6 @@ namespace Services.Concrete
             {
                 return null;
             }
-        }
-        private async Task<ICollection<LiveMatchCatch>?> CreateAndUpdateCatchJobs(ICollection<LiveMatchCatch> existingCatches, ICollection<LiveMatchCatch> catchesToInsert)
-        {
-            var catchesToUpdate = new List<LiveMatchCatch>();
-            var catchesToCreate = new List<LiveMatchCatch>();
-
-            foreach (var catchItem in catchesToInsert)
-            {
-                if (existingCatches.Any(existingCatch => existingCatch.Id == catchItem.Id))
-                {
-                    catchesToUpdate.Add(catchItem);
-                }
-                else
-                {
-                    catchesToCreate.Add(catchItem);
-                }
-            }
-
-            var catchesToUpdateJob = catchesToUpdate.Any()
-                ? _activeLiveMatchCatchRepository.Update(catchesToUpdate)
-                : Task.FromResult<ICollection<LiveMatchCatch>?>(null);
-
-            var catchesToCreateJob = catchesToCreate.Any()
-                ? _activeLiveMatchCatchRepository.Create(catchesToCreate)
-                : Task.FromResult<ICollection<LiveMatchCatch>?>(null);
-
-            await Task.WhenAll(catchesToCreateJob, catchesToUpdateJob);
-
-            var updatedCatches = await catchesToUpdateJob;
-            var createdCatches = await catchesToCreateJob;
-
-            return new[] { updatedCatches, createdCatches }.SelectManyWhere(x => x is not null).ToArray();
         }
     }
 }

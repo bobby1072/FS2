@@ -1,4 +1,4 @@
-CREATE TABLE public."active_live_match"(
+CREATE TABLE public."active_live_match" (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     group_id UUID NOT NULL,
     match_name TEXT NOT NULL,
@@ -13,7 +13,7 @@ CREATE TABLE public."active_live_match"(
     CONSTRAINT active_live_match_match_leader_id_fk FOREIGN KEY (match_leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE public."active_live_match_catch"(
+CREATE TABLE public."active_live_match_catch" (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
     user_id UUID NOT NULL,
     species TEXT NOT NULL,
@@ -31,11 +31,11 @@ CREATE TABLE public."active_live_match_catch"(
     CONSTRAINT active_live_match_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-CREATE TABLE public."active_live_match_participant"(
+CREATE TABLE public."active_live_match_participant" (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id UUID NOT NULL,
     match_id UUID NOT NULL,
     CONSTRAINT active_live_match_participant_match_id_fk FOREIGN KEY (match_id) REFERENCES public.active_live_match(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT active_live_match_participant_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT active_live_match_participant_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_participant_unique UNIQUE (user_id, match_id)
 );
