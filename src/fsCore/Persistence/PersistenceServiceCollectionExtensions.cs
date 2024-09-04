@@ -35,13 +35,14 @@ namespace Persistence
                 .AddSingleton<IGroupCatchRepository, GroupCatchRepository>()
                 .AddSingleton<IGroupCatchCommentRepository, GroupCatchCommentRepository>()
                 .AddSingleton<IActiveLiveMatchCatchRepository, ActiveLiveMatchCatchRepository>()
-                .AddSingleton<IActiveLiveMatchRepository, ActiveLiveMatchRepository>();
+                .AddSingleton<IActiveLiveMatchRepository, ActiveLiveMatchRepository>()
+                .AddSingleton<IActiveLiveMatchParticipantRepository, ActiveLiveMatchParticipantRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()
                 .AddSingleton<DatabaseMigratorHealthCheck>()
                 .AddHealthChecks()
-                .AddCheck<DatabaseMigratorHealthCheck>(DatabaseMigratorHealthCheck.Name, tags: new[] { HealthCheckConstants.ReadyTag });
+                .AddCheck<DatabaseMigratorHealthCheck>(DatabaseMigratorHealthCheck.Name, tags: [HealthCheckConstants.ReadyTag]);
 
             services
                 .AddPooledDbContextFactory<FsContext>(
