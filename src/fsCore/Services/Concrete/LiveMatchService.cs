@@ -17,13 +17,14 @@ namespace Services.Concrete
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
         private readonly IValidator<LiveMatch> _liveMatchValidator;
         private readonly IValidator<LiveMatchCatch> _liveMatchCatchValidator;
+        private readonly IGroupService _groupService;
         public LiveMatchService(IBackgroundJobClient backgroundJobClient,
             ICachingService cachingService,
             ILiveMatchHubContextServiceProvider liveMatchHubContextServiceProvider,
             ILiveMatchPersistenceService liveMatchPersistenceService,
             IValidator<LiveMatch> liveMatchValidator,
-            IValidator<LiveMatchCatch> liveMatchCatchValidator
-            )
+            IValidator<LiveMatchCatch> liveMatchCatchValidator,
+            IGroupService groupService)
         {
             _backgroundJobClient = backgroundJobClient;
             _cachingService = cachingService;
@@ -31,33 +32,43 @@ namespace Services.Concrete
             _liveMatchPersistenceService = liveMatchPersistenceService;
             _liveMatchCatchValidator = liveMatchCatchValidator;
             _liveMatchValidator = liveMatchValidator;
+            _groupService = groupService;
         }
+
         public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser, string tokenString)
         {
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, match.GroupId))
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
-
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(match.Id);
             if (foundMatch is not null)
             {
                 throw new LiveMatchException(LiveMatchConstants.LiveMatchAlreadyExists, HttpStatusCode.Conflict);
             }
 
+
+            var areUsersInGroup = await _groupService.IsUserInGroup(match.GroupId, match.Participants.Append(currentUser).DistinctBy(x => x.Id).ToList());
+
+            if (!areUsersInGroup.AllUsersInGroup)
+            {
+                throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+            }
+
+            match.Participants = areUsersInGroup.ActualUsers.ToList();
+
             match.ApplyDefaults(LiveMatchStatus.NotStarted, currentUser);
             await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
+            await _liveMatchPersistenceService.SaveParticipant(match.Id, match.Participants);
 
-            if (match.CommencesAt is DateTime commenceTime)
+            if (match.CommencesAt is not null)
             {
-                var timeSpanBetweenNowAndWhenToExecuteJob = commenceTime.Subtract(DateTime.UtcNow);
-                _backgroundJobClient.Schedule(() => AutomaticStartMatch(match.Id, tokenString), timeSpanBetweenNowAndWhenToExecuteJob);
+                _backgroundJobClient.Schedule(() => AutomaticStartMatch(match.Id, tokenString), match.TimeUntilStart!.Value);
             }
-            if (match.EndsAt is DateTime endTime)
+            if (match.EndsAt is not null)
             {
-                var timeSpanBetweenNowAndWhenToExecuteJob = endTime.Subtract(DateTime.UtcNow);
-                _backgroundJobClient.Schedule(() => AutomaticEndMatch(match.Id, tokenString), timeSpanBetweenNowAndWhenToExecuteJob);
+                _backgroundJobClient.Schedule(() => AutomaticEndMatch(match.Id, tokenString), match.TimeUntilEnd!.Value);
             }
 
             return match;
@@ -65,8 +76,9 @@ namespace Services.Concrete
         }
         public async Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
-            match.Catches = [];
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(match.Id) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            match.Catches = [];
+            match.Participants = [];
             match.MatchStatus = foundMatch.MatchStatus;
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId))
             {
@@ -120,16 +132,15 @@ namespace Services.Concrete
                     throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
                 }
             }
+            liveMatchCatch.CountsInMatch = isCatchValid;
             if (liveMatchCatch.Id is null)
             {
                 liveMatchCatch.ApplyDefaults();
-                liveMatchCatch.CountsInMatch = isCatchValid;
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
             else
             {
-                liveMatchCatch.CountsInMatch = isCatchValid;
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
                 return liveMatchCatch;
             }
@@ -141,7 +152,7 @@ namespace Services.Concrete
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
-            if (foundMatch.MatchStatus == LiveMatchStatus.InProgress)
+            if (foundMatch.MatchStatus == LiveMatchStatus.InProgress || foundMatch.MatchStatus == LiveMatchStatus.Finished)
             {
                 return foundMatch;
             }

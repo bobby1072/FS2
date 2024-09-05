@@ -22,25 +22,26 @@ namespace Services.Concrete
         public async Task SaveParticipant(Guid liveMatchId, User user)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (foundLiveMatch.Participants.FirstOrDefault(p => p.Id == user.Id) is User foundUser)
+            if (foundLiveMatch.Participants.FirstOrDefault(p => p.Id == user.Id) is null)
             {
-                if (user.Equals(foundUser))
-                {
-                    return;
-                }
                 await _activeLiveMatchParticipantRepository.Create([user], liveMatchId);
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
-                    foundLiveMatch.Participants = foundLiveMatch.Participants.Select(p => p.Id == user.Id ? user : p).ToList();
+                    foundLiveMatch.Participants = foundLiveMatch.Participants.Append(user).ToList();
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
-            else
+        }
+        public async Task SaveParticipant(Guid liveMatchId, ICollection<User> user)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            var newParticipants = user.Where(u => foundLiveMatch.Participants.FirstOrDefault(p => p.Id == u.Id) is null).ToArray();
+            if (newParticipants.Length != 0)
             {
-                await _activeLiveMatchParticipantRepository.Create([user], liveMatchId);
+                await _activeLiveMatchParticipantRepository.Create(newParticipants, liveMatchId);
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
-                    foundLiveMatch.Participants = foundLiveMatch.Participants.ToList().Append(user).ToList();
+                    foundLiveMatch.Participants = foundLiveMatch.Participants.Union(newParticipants).ToList();
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
@@ -54,6 +55,21 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Participants = foundLiveMatch.Participants.Where(p => p.Id != user.Id).ToList();
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                }
+            }
+        }
+        public async Task DeleteParticipant(Guid liveMatchId, ICollection<User> user)
+        {
+            var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            var idList = user.Select(u => (Guid)u.Id!).ToList();
+            if (foundLiveMatch.Participants.FirstOrDefault(p => user.FirstOrDefault(x => p.Id == x.Id) is not null) is not null)
+            {
+                await _activeLiveMatchParticipantRepository.Delete(idList, liveMatchId);
+                if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
+                {
+                    var participants = await _activeLiveMatchParticipantRepository.GetForMatch(liveMatchId);
+                    foundLiveMatch.Participants = participants?.ToList() ?? [];
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
@@ -79,7 +95,7 @@ namespace Services.Concrete
                 await _activeLiveMatchCatchRepository.Create([liveMatchCatch]);
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
-                    foundLiveMatch.Catches = foundLiveMatch.Catches.ToList().Append(liveMatchCatch).ToList();
+                    foundLiveMatch.Catches = foundLiveMatch.Catches.Append(liveMatchCatch).ToList();
                     await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }

@@ -1,4 +1,3 @@
-using Common.Utils;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,8 +16,7 @@ namespace Common.Models.Validators
                 .AddSingleton<IValidator<SpecificSpeciesLiveMatchCatchRule>, SpecificSpeciesMatchCatchRuleValidator>()
                 .AddSingleton<IValidator<InAreaLiveMatchCatchRule>, InAreaLiveMatchCatchRuleValidator>()
                 .AddSingleton<IValidator<LiveMatch>, LiveMatchDIValidator>()
-                .AddSingleton<IValidator<LiveMatchCatch>, LiveMatchCatchValidator>()
-                .AddSingleton(serviceProvider => serviceProvider.GetRequiredService<IValidator<LiveMatchCatch>>().CreateEnumerableValidator());
+                .AddSingleton<IValidator<LiveMatchCatch>, LiveMatchCatchValidator>();
 
             return services;
         }

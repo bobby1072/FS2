@@ -29,6 +29,16 @@ namespace Services.Concrete
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
         }
+        public async Task<bool> IsUserInGroup(Guid groupId, Guid userId)
+        {
+            var foundGroup = await _groupMemberRepo.GetOne(userId, groupId);
+            return foundGroup is not null;
+        }
+        public async Task<(bool AllUsersInGroup, ICollection<User> ActualUsers)> IsUserInGroup(Guid groupId, ICollection<User> users)
+        {
+            var foundGroup = await _groupMemberRepo.GetOne(users.Select(x => (Guid)x.Id!).ToArray(), groupId, true);
+            return (AllUsersInGroup: foundGroup?.Count == users.Count, ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? Array.Empty<User>());
+        }
         public async Task<int> GetGroupCount()
         {
             return await _repo.GetCount();

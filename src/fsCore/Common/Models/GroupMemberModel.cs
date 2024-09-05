@@ -6,10 +6,10 @@ namespace Common.Models
     {
         [JsonConstructor]
         public GroupMember() { }
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("id")]
         public int? Id { get; set; }
-        [LockedPropertyAttribute]
+        [LockedProperty]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]

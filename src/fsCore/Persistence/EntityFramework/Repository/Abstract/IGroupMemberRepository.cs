@@ -12,6 +12,8 @@ namespace Persistence.EntityFramework.Repository.Abstract
         Task<ICollection<GroupMember>?> GetMany<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<GroupMember?> GetOne<T>(T field, string fieldName, ICollection<string>? relationships = null);
         Task<GroupMember?> GetOne(GroupMember groupMember, ICollection<string>? relationships = null);
+        Task<GroupMember?> GetOne(Guid userId, Guid groupId);
+        Task<ICollection<GroupMember>?> GetOne(ICollection<Guid> userIds, Guid groupId, bool includeUser = false);
         Task<ICollection<GroupMember>?> GetMany(GroupMember baseObj, ICollection<string>? relationships = null);
     }
 }

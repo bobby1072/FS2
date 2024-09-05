@@ -38,6 +38,10 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
+        [JsonIgnore]
+        public TimeSpan? TimeUntilStart { get => CommencesAt - DateTime.UtcNow; }
+        [JsonIgnore]
+        public TimeSpan? TimeUntilEnd { get => EndsAt - DateTime.UtcNow; }
         public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
         {
             if (id is Guid foundId)
@@ -80,7 +84,6 @@ namespace Common.Models
             {
                 Catches = [];
                 CreatedAt = DateTime.UtcNow;
-                Participants = [leader];
             }
             else if (MatchStatus == LiveMatchStatus.InProgress) { }
             else
