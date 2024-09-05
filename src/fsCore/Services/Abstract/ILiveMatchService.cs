@@ -4,10 +4,11 @@ namespace Services.Abstract
 {
     public interface ILiveMatchService
     {
-        Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser, string tokenString);
+        Task CreateParticipant(Guid matchId, Guid participantId, UserWithGroupPermissionSet currentUser);
+        Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch catches, UserWithGroupPermissionSet currentUser);
-        Task<LiveMatch> StartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet, bool shouldUpdateClients = false);
-        Task<LiveMatch> EndMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet, bool shouldUpdateClients = false);
+        Task<LiveMatch> StartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet);
+        Task<LiveMatch> EndMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet);
     }
 }

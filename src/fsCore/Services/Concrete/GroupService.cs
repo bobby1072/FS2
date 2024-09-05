@@ -34,10 +34,10 @@ namespace Services.Concrete
             var foundGroup = await _groupMemberRepo.GetOne(userId, groupId);
             return foundGroup is not null;
         }
-        public async Task<(bool AllUsersInGroup, ICollection<User> ActualUsers)> IsUserInGroup(Guid groupId, ICollection<User> users)
+        public async Task<(bool AllUsersInGroup, ICollection<User> ActualUsers)> IsUserInGroup(Guid groupId, ICollection<Guid> userIds)
         {
-            var foundGroup = await _groupMemberRepo.GetOne(users.Select(x => (Guid)x.Id!).ToArray(), groupId, true);
-            return (AllUsersInGroup: foundGroup?.Count == users.Count, ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? Array.Empty<User>());
+            var foundGroup = await _groupMemberRepo.GetOne(userIds, groupId, true);
+            return (AllUsersInGroup: foundGroup?.Count == userIds.Count, ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? Array.Empty<User>());
         }
         public async Task<int> GetGroupCount()
         {

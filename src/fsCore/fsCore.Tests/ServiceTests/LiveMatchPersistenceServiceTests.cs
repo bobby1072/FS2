@@ -1,6 +1,5 @@
 using AutoFixture;
 using Common.Models;
-using DataImporter.MockModelBuilders;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using Persistence.EntityFramework.Repository.Abstract;
@@ -58,11 +57,11 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             if (status == LiveMatchStatus.InProgress)
             {
-                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<CacheObjectTimeToLiveInSeconds>()), Times.Once);
+                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions>()), Times.Once);
             }
             else
             {
-                _mockCachingService.Verify(x => x.SetObject(It.IsAny<string>(), It.IsAny<LiveMatch>(), It.IsAny<DistributedCacheEntryOptions?>()), Times.Never);
+                _mockCachingService.Verify(x => x.SetObject(It.IsAny<string>(), It.IsAny<LiveMatch>(), It.IsAny<DistributedCacheEntryOptions>()), Times.Never);
             }
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(liveMatch.Id), Times.Once);

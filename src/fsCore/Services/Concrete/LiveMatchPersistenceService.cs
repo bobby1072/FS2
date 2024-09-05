@@ -1,6 +1,7 @@
 using System.Net;
 using Common;
 using Common.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
 namespace Services.Concrete
@@ -28,7 +29,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Participants = foundLiveMatch.Participants.Append(user).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -42,7 +43,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Participants = foundLiveMatch.Participants.Union(newParticipants).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -55,7 +56,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Participants = foundLiveMatch.Participants.Where(p => p.Id != user.Id).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -70,7 +71,7 @@ namespace Services.Concrete
                 {
                     var participants = await _activeLiveMatchParticipantRepository.GetForMatch(liveMatchId);
                     foundLiveMatch.Participants = participants?.ToList() ?? [];
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -87,7 +88,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Catches = foundLiveMatch.Catches.Select(c => c.Id == liveMatchCatch.Id ? liveMatchCatch : c).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
             else
@@ -96,7 +97,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Catches = foundLiveMatch.Catches.Append(liveMatchCatch).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -109,7 +110,7 @@ namespace Services.Concrete
                 if (foundLiveMatch.MatchStatus == LiveMatchStatus.InProgress)
                 {
                     foundLiveMatch.Catches = foundLiveMatch.Catches.Where(c => c.Id != liveMatchCatch.Id).ToList();
-                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                    await _cachingService.SetObject($"{_liveMatchKey}{foundLiveMatch.Id}", foundLiveMatch.ToJsonType(), GetTimeToCache(foundLiveMatch));
                 }
             }
         }
@@ -127,7 +128,7 @@ namespace Services.Concrete
                 {
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
-                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType(), GetTimeToCache(liveMatch));
                     }
                 }
                 else
@@ -142,7 +143,7 @@ namespace Services.Concrete
                 {
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
-                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                        await _cachingService.SetObject($"{_liveMatchKey}{liveMatch.Id}", liveMatch.ToJsonType(), GetTimeToCache(liveMatch));
                     }
                 }
                 else
@@ -165,7 +166,7 @@ namespace Services.Concrete
                 {
                     if (liveMatch.MatchStatus == LiveMatchStatus.InProgress)
                     {
-                        await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType(), CacheObjectTimeToLiveInSeconds.OneHour);
+                        await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType(), GetTimeToCache(liveMatch));
                         return liveMatch;
                     }
                     else
@@ -182,6 +183,14 @@ namespace Services.Concrete
             {
                 return null;
             }
+        }
+        private static DistributedCacheEntryOptions GetTimeToCache(LiveMatch liveMatch)
+        {
+            if (liveMatch.TimeUntilEnd is null)
+            {
+                return new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1) };
+            }
+            return new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = liveMatch.TimeUntilEnd };
         }
     }
 }
