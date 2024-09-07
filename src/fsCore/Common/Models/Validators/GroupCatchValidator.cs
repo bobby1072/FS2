@@ -1,5 +1,3 @@
-using FluentValidation;
-
 namespace Common.Models.Validators
 {
     public class GroupCatchValidator : CatchValidator<GroupCatch>

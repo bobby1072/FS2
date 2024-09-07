@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 using Services.Abstract;
+using System.Text.Json;
 
 namespace Services.Concrete
 {

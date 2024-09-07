@@ -1,10 +1,9 @@
-using System.Net;
-using Common;
 using Common.Misc;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
 using Persistence.EntityFramework.Repository.Abstract;
+using System.Net;
 
 namespace Persistence.EntityFramework.Repository.Concrete
 {

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Http;
 using System.Net;
-using Microsoft.AspNetCore.Http;
 
 namespace Common.Misc
 {

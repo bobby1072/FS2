@@ -1,5 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Common.Utils
 {
@@ -15,7 +15,7 @@ namespace Common.Utils
                 var jsonToken = handler.ReadToken(token);
                 return jsonToken as JwtSecurityToken;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

@@ -1,6 +1,6 @@
+using Common.Attributes;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Common.Attributes;
 namespace Common.Models
 {
     public class SpecificSpeciesLiveMatchCatchRule : LiveMatchCatchSingleRule

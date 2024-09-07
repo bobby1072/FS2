@@ -1,11 +1,11 @@
-using System.Net;
-using System.Text.Json;
 using Common.Misc;
 using Common.Models;
 using Common.Utils;
 using Hangfire;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
+using System.Net;
+using System.Text.Json;
 
 namespace Services.Concrete
 {

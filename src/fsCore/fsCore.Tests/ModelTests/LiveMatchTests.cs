@@ -1,7 +1,6 @@
-using System.Text.Json;
-using AutoFixture;
 using Common.Models;
 using DataImporter.MockModelBuilders;
+using System.Text.Json;
 
 namespace fsCore.Tests.ModelTests
 {

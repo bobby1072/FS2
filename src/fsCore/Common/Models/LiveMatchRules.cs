@@ -1,7 +1,7 @@
-using System.Text.Json.Serialization;
 using Common.Attributes;
 using Common.Models.Validators;
 using FluentValidation;
+using System.Text.Json.Serialization;
 namespace Common.Models
 {
     public class LiveMatchRules : BaseModel

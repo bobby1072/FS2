@@ -1,6 +1,6 @@
-using System.Text.RegularExpressions;
 using Common.Models;
 using Common.Utils;
+using System.Text.RegularExpressions;
 
 namespace DataImporter.MockModelBuilders
 {

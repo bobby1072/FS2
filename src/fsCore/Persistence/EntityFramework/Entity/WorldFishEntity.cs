@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("world_fish", Schema = DbConstants.PublicSchema)]

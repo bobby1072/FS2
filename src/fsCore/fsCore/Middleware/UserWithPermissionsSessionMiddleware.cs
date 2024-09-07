@@ -1,9 +1,9 @@
-using System.Net;
 using Common.Misc;
 using Common.Models;
 using fsCore.Attributes;
 using Services.Abstract;
 using Services.Concrete;
+using System.Net;
 
 namespace fsCore.Middleware
 {

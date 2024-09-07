@@ -1,6 +1,6 @@
-using System.Text.Json;
 using fsCore.Hubs.Filters.Abstract;
 using Microsoft.AspNetCore.SignalR;
+using System.Text.Json;
 
 namespace fsCore.Hubs.Filters.Concrete
 {

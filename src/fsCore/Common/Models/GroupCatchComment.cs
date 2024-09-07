@@ -1,6 +1,6 @@
+using Common.Attributes;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Common.Attributes;
 
 namespace Common.Models
 {

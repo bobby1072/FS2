@@ -1,5 +1,5 @@
-using Hangfire;
 using Common.Misc;
+using Hangfire;
 
 namespace DataImporter.DataImporters
 {

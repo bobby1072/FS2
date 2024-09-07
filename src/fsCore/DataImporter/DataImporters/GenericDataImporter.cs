@@ -1,8 +1,8 @@
+using Common.Misc;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using Persistence.EntityFramework.Repository.Abstract;
-using Common.Misc;
 namespace DataImporter.DataImporters
 {
     internal class GenericDataImporter : IDataImporter

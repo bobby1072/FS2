@@ -1,9 +1,9 @@
-using System.Net;
-using System.Net.Mime;
-using System.Text;
 using Common.Misc;
 using FluentValidation;
 using Npgsql;
+using System.Net;
+using System.Net.Mime;
+using System.Text;
 namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware

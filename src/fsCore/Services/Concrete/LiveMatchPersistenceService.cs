@@ -1,9 +1,9 @@
-using System.Net;
 using Common.Misc;
 using Common.Models;
 using Microsoft.Extensions.Caching.Distributed;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
+using System.Net;
 namespace Services.Concrete
 {
     public class LiveMatchPersistenceService : ILiveMatchPersistenceService

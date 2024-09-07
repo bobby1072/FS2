@@ -1,4 +1,3 @@
-using System.Net;
 using Common.Misc;
 using Common.Models;
 using Common.Permissions;
@@ -6,6 +5,7 @@ using Common.Utils;
 using FluentValidation;
 using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
+using System.Net;
 
 namespace Services.Concrete
 {

@@ -1,9 +1,9 @@
-using System.Net;
 using Common.Models;
 using fsCore.Attributes;
 using fsCore.RequestModels;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
+using System.Net;
 
 namespace fsCore.Controllers
 {

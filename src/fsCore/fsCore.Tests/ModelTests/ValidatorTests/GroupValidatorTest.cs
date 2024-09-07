@@ -1,6 +1,6 @@
-using DataImporter.MockModelBuilders;
 using Common.Models;
 using Common.Models.Validators;
+using DataImporter.MockModelBuilders;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {

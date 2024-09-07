@@ -1,6 +1,6 @@
+using Common.Utils;
 using System.Data;
 using System.Text.Json.Serialization;
-using Common.Utils;
 namespace Common.Models
 {
     public class LiveMatchRulesJsonType

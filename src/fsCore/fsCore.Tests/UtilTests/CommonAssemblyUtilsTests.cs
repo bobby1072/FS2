@@ -1,6 +1,6 @@
-using System.Text.Json;
 using Common.Models;
 using Common.Utils;
+using System.Text.Json;
 
 namespace fsCore.Tests.UtilTests
 {

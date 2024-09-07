@@ -1,4 +1,3 @@
-using System.Net;
 using Common.Misc;
 using Common.Misc.Abstract;
 using Common.Models;
@@ -6,6 +5,7 @@ using Common.Permissions;
 using FluentValidation;
 using Hangfire;
 using Services.Abstract;
+using System.Net;
 
 namespace Services.Concrete
 {

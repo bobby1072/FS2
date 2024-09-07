@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
 using Common.Models;
 using Common.Permissions;
+using System.Text.Json.Serialization;
 namespace fsCore.RequestModels
 {
     public class RawUserPermission : User

@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Common.Attributes;
+using System.Text.Json.Serialization;
 namespace Common.Models
 {
     public abstract class Catch : BaseModel

@@ -1,10 +1,10 @@
-using System.Net;
-using System.Security.Claims;
-using System.Text.Json;
 using Common.Authentication;
 using Common.Models;
 using Microsoft.Extensions.Options;
 using Services.Abstract;
+using System.Net;
+using System.Security.Claims;
+using System.Text.Json;
 
 namespace Services.Concrete
 {

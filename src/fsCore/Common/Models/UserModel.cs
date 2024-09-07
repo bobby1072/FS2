@@ -1,6 +1,6 @@
-using System.Text.Json.Serialization;
-using Common.Permissions;
 using Common.Attributes;
+using Common.Permissions;
+using System.Text.Json.Serialization;
 namespace Common.Models
 {
     public class UserWithoutEmail : BaseModel

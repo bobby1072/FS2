@@ -1,6 +1,6 @@
+using fsCore.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Services.Abstract;
-using fsCore.Attributes;
 namespace fsCore.Hubs
 {
     [Authorize]
