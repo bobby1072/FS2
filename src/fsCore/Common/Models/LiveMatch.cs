@@ -85,11 +85,6 @@ namespace Common.Models
                 Catches = [];
                 CreatedAt = DateTime.UtcNow;
             }
-            else if (MatchStatus == LiveMatchStatus.InProgress) { }
-            else
-            {
-                EndsAt = DateTime.UtcNow;
-            }
         }
         public override bool Equals(object? obj)
         {

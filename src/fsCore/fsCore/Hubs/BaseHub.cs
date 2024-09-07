@@ -1,5 +1,6 @@
 using Common.Misc;
 using Common.Models;
+using fsCore.Attributes;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
 using System.Net;
@@ -34,6 +35,10 @@ namespace fsCore.Hubs
         protected async Task<UserWithGroupPermissionSet> GetCurrentUserWithPermissionsAsync()
         {
             return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+        }
+        protected async Task<string?> GetAnyUserConnectionIdAsync(Guid userId)
+        {
+            return await _cachingService.TryGetObject<string>($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{userId}");
         }
     }
 }

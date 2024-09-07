@@ -10,7 +10,6 @@ namespace fsCore.Hubs.Filters.Concrete
 {
     public class RequiredSignalRUserConnectionIdFilter : IRequiredSignalRUserConnectionIdFilter
     {
-        private const string ConnectionIdUserIdCacheKeyPrefix = "connectionIdUserId-";
         private readonly ICachingService _cachingService;
         public RequiredSignalRUserConnectionIdFilter(ICachingService cachingService)
         {
@@ -25,10 +24,10 @@ namespace fsCore.Hubs.Filters.Concrete
                 var connectionId = invocationContext.Context.ConnectionId ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var token = invocationContext.Context.GetHttpContext()?.Request.Headers.Authorization ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
                 var existingUser = await _cachingService.TryGetObject<User>($"{User.CacheKeyPrefix}{token}") ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-                var existingUserConnection = await _cachingService.TryGetObject<string>($"{ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}");
+                var existingUserConnection = await _cachingService.TryGetObject<string>($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}");
                 if (existingUserConnection is null)
                 {
-                    await _cachingService.SetObject($"{ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}", connectionId);
+                    await _cachingService.SetObject($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}", connectionId);
                 }
             }
             return await next.Invoke(invocationContext);
