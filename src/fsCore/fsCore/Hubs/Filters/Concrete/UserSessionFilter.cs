@@ -1,5 +1,5 @@
 using System.Net;
-using Common;
+using Common.Misc;
 using Common.Models;
 using fsCore.Attributes;
 using fsCore.Hubs.Filters.Abstract;
@@ -40,7 +40,7 @@ namespace fsCore.Hubs.Filters.Concrete
                     await _cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
-            return await next(invocationContext);
+            return await next.Invoke(invocationContext);
         }
 
     }

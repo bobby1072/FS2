@@ -1,5 +1,4 @@
-﻿
-namespace Common
+﻿namespace Common.Misc
 {
     public static class HealthCheckConstants
     {

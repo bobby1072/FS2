@@ -1,5 +1,6 @@
 using System.Net;
 using Common;
+using Common.Misc;
 using Common.Models;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;

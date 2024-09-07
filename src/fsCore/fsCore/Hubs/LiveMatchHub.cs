@@ -5,6 +5,8 @@ namespace fsCore.Hubs
 {
     [Authorize]
     [RequiredUser]
+    [RequiredUserWithGroupPermissions]
+    [RequiredSignalRUserConnectionId]
     public class LiveMatchHub : BaseHub
     {
         public const string UpdateMatchMessage = "UpdateMatch";

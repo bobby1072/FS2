@@ -1,5 +1,5 @@
 ﻿using System.Net;
-namespace Common
+namespace Common.Misc
 {
     public class ApiException : Exception
     {

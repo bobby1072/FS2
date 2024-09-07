@@ -1,4 +1,3 @@
-using Common;
 using Common.Authentication;
 using fsCore.Middleware;
 using Hangfire;
@@ -12,11 +11,8 @@ using Microsoft.Net.Http.Headers;
 using Common.Models.Validators;
 using Services;
 using Services.Abstract;
-using Microsoft.AspNetCore.SignalR;
-using Common.Misc.Abstract;
-using fsCore.Hubs.Contexts;
-using fsCore.Hubs.Filters.Concrete;
-using fsCore.Hubs.Filters.Abstract;
+using fsCore.Hubs;
+using Common.Misc;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -57,25 +53,15 @@ builder.Services
 builder.Services
     .AddDataImporter(config, environment);
 
-builder.Services
-    .AddScoped<IExceptionHandlingFilter, ExceptionHandlingFilter>()
-    .AddScoped<IUserSessionFilter, UserSessionFilter>()
-    .AddScoped<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>();
 
-builder.Services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
-
-builder.Services.AddSignalR(opts =>
-{
-    opts.AddFilter<IExceptionHandlingFilter>();
-    opts.AddFilter<IUserSessionFilter>();
-    opts.AddFilter<IUserWithPermissionsSessionFilter>();
-});
 
 builder.Services
     .AddAuthorization()
     .Configure<AuthoritySettings>(config.GetSection(AuthoritySettings.Key))
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 
+builder.Services
+    .AddSignalrFsCore();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
@@ -140,7 +126,7 @@ if (bool.Parse(useStaticFiles) is true)
     {
         endpoint.MapFallbackToFile("index.html");
     });
-    #pragma warning restore ASP0014 
+#pragma warning restore ASP0014
     app.UseStaticFiles();
     app.UseSpa(spa =>
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 
-namespace Common
+namespace Common.Misc
 {
     public static class HttpContextExtensions
     {

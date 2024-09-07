@@ -16,7 +16,7 @@ namespace fsCore.Hubs.Filters.Concrete
         {
             try
             {
-                return await next(invocationContext);
+                return await next.Invoke(invocationContext);
             }
             catch (Exception e)
             {

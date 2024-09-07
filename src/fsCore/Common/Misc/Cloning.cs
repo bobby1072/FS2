@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace Common;
+namespace Common.Misc;
 public static class Cloning
 {
     public static T JsonClone<T>(this T source) where T : class
@@ -17,7 +17,7 @@ public static class Cloning
     public static T? DeepCopy<T>(this T obj)
     {
         if (obj == null)
-            return default(T);
+            return default;
 
         var type = obj.GetType();
         if (type.IsPrimitive || type == typeof(string))

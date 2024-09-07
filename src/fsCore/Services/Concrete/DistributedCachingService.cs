@@ -24,7 +24,7 @@ namespace Services.Concrete
             }
             catch (Exception)
             {
-                return default;
+                return null;
             }
         }
         public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
@@ -39,6 +39,13 @@ namespace Services.Concrete
             var serializedValue = JsonSerializer.Serialize(value);
             await _distributedCache.SetStringAsync(key, serializedValue, options ?? new DistributedCacheEntryOptions());
             return key;
+        }
+        public async Task<string> SetObject(string key, string value, CacheObjectTimeToLiveInSeconds timeToLive)
+        {
+            return await SetObject(key, value, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds((int)timeToLive)
+            });
         }
     }
     public enum CacheObjectTimeToLiveInSeconds
