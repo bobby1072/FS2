@@ -4,6 +4,7 @@ using fsCore.Attributes;
 using fsCore.Hubs.Filters.Abstract;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
+using Services.Concrete;
 using System.Net;
 
 namespace fsCore.Hubs.Filters.Concrete
@@ -27,7 +28,7 @@ namespace fsCore.Hubs.Filters.Concrete
                 var existingUserConnection = await _cachingService.TryGetObject<string>($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}");
                 if (existingUserConnection is null)
                 {
-                    await _cachingService.SetObject($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}", connectionId);
+                    await _cachingService.SetObject($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{existingUser.Id}", connectionId, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
             return await next.Invoke(invocationContext);
