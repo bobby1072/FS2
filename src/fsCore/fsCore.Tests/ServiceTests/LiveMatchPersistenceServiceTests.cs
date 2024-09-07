@@ -57,7 +57,7 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             if (status == LiveMatchStatus.InProgress)
             {
-                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions>()), Times.Once);
+                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions>()), Times.Once);
             }
             else
             {
