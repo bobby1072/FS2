@@ -61,7 +61,7 @@ builder.Services
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 
 builder.Services
-    .AddSignalrFsCore();
+    .AddSignalRFsCore();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
@@ -117,7 +117,8 @@ app.UseRouting();
 app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MiddlewareApplicationBuilderExtensions();
+app.UseDefaultMiddleware();
+app.MapFsCoreHubs();
 app.MapControllers();
 #pragma warning disable ASP0014
 if (bool.Parse(useStaticFiles) is true)

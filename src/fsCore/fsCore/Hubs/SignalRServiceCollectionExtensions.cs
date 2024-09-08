@@ -8,22 +8,22 @@ namespace fsCore.Hubs
 {
     public static class SignalRServiceCollectionExtensions
     {
-        public static IServiceCollection AddSignalrFsCore(this IServiceCollection services)
+        public static IServiceCollection AddSignalRFsCore(this IServiceCollection services)
         {
-            services
-                .AddScoped<IExceptionHandlingFilter, ExceptionHandlingFilter>()
-                .AddScoped<IUserSessionFilter, UserSessionFilter>()
-                .AddScoped<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>()
-                .AddScoped<IRequiredSignalRUserConnectionIdFilter, RequiredSignalRUserConnectionIdFilter>();
+            // services
+            //     .AddScoped<IExceptionHandlingFilter, ExceptionHandlingFilter>()
+            //     .AddScoped<IUserSessionFilter, UserSessionFilter>()
+            //     .AddScoped<IUserWithPermissionsSessionFilter, UserWithPermissionsSessionFilter>()
+            //     .AddScoped<IRequiredSignalRUserConnectionIdFilter, RequiredSignalRUserConnectionIdFilter>();
 
             services.AddScoped<ILiveMatchHubContextServiceProvider, LiveMatchHubContextServiceProvider>();
 
             services.AddSignalR(opts =>
             {
-                opts.AddFilter<IExceptionHandlingFilter>();
-                opts.AddFilter<IUserSessionFilter>();
-                opts.AddFilter<IUserWithPermissionsSessionFilter>();
-                opts.AddFilter<IRequiredSignalRUserConnectionIdFilter>();
+                opts.AddFilter<ExceptionHandlingFilter>();
+                opts.AddFilter<UserSessionFilter>();
+                opts.AddFilter<UserWithPermissionsSessionFilter>();
+                opts.AddFilter<RequiredSignalRUserConnectionIdFilter>();
             });
 
             return services;
