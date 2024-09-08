@@ -58,7 +58,7 @@ namespace fsCore.Tests.ServiceTests
             _groupCatchRepository.Setup(x => x.GetOne(originalCatch.Id ?? Guid.Empty)).ReturnsAsync(originalCatch);
             var newCatch = originalCatch.JsonClone();
             newCatch.Description = "New test description";
-            newCatch.CaughtAt = DateTimeUtils.RandomPastDate()();
+            newCatch.CaughtAt = DateTimeUtils.RandomPastDate().Invoke();
             _groupCatchRepository.Setup(x => x.Update(It.IsAny<ICollection<GroupCatch>>())).ReturnsAsync(new[] { newCatch });
             await _groupCatchService.SaveGroupCatch(newCatch, user);
             _groupCatchRepository.Verify(x => x.Update(It.IsAny<ICollection<GroupCatch>>()), Times.Once);

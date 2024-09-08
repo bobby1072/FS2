@@ -6,6 +6,7 @@ namespace Services.Concrete
 {
     public class DistributedCachingService : ICachingService
     {
+        private static readonly Type _typeofString = typeof(string);
         private readonly IDistributedCache _distributedCache;
         public DistributedCachingService(IDistributedCache distributedCache)
         {
@@ -14,7 +15,7 @@ namespace Services.Concrete
         public async Task<T> GetObject<T>(string key) where T : class
         {
             var foundValue = await _distributedCache.GetStringAsync(key) ?? throw new InvalidOperationException("Cannot find object with that key");
-            if (typeof(T) == typeof(string))
+            if (typeof(T) == _typeofString)
             {
                 return foundValue as T ?? throw new InvalidDataException("Cannot parse object");
             }
@@ -31,7 +32,7 @@ namespace Services.Concrete
                 return null;
             }
         }
-        public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive) where T : class
+        public async Task<string> SetObject<T>(string key, T value, CacheObjectTimeToLiveInSeconds timeToLive = CacheObjectTimeToLiveInSeconds.OneHour) where T : class
         {
             return await SetObject(key, value, new DistributedCacheEntryOptions
             {
@@ -40,7 +41,7 @@ namespace Services.Concrete
         }
         public async Task<string> SetObject<T>(string key, T value, DistributedCacheEntryOptions? options = null) where T : class
         {
-            if (typeof(T) == typeof(string))
+            if (typeof(T) == _typeofString)
             {
                 await _distributedCache.SetStringAsync(key, (value as string)!, options ?? new DistributedCacheEntryOptions());
             }

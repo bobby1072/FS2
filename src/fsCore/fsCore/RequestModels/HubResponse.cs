@@ -1,4 +1,6 @@
+using System.Net;
 using System.Text.Json.Serialization;
+using Common.Models;
 
 namespace fsCore.RequestModels
 {
@@ -10,19 +12,28 @@ namespace fsCore.RequestModels
         public int Status { get; init; }
         [JsonPropertyName("data")]
         public TData? Data { get; init; }
-        [JsonPropertyName("errorMessage")]
-        public string? ErrorMessage { get; init; }
         public HubResponse(int status, TData? data, bool isSuccess = true)
         {
             IsSuccess = isSuccess;
             Status = status;
             Data = data;
         }
+    }
+    public record HubResponse
+    {
+        [JsonPropertyName("isSuccess")]
+        public bool IsSuccess { get; init; }
+        [JsonPropertyName("status")]
+        public int Status { get; init; }
+        [JsonPropertyName("errorMessage")]
+        public string? ErrorMessage { get; init; }
         public HubResponse(int status, string errorMessage, bool isSuccess = false)
         {
             IsSuccess = isSuccess;
             Status = status;
             ErrorMessage = errorMessage;
         }
+        public static HubResponse<LiveMatch> FromLiveMatch(LiveMatch liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
     }
+
 }

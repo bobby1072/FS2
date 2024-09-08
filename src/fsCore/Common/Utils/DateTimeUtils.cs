@@ -9,5 +9,10 @@
             int range = (DateTime.UtcNow.AddDays(-3) - start).Days;
             return () => start.AddDays(gen.Next(range));
         }
+        public static Func<DateTime> RandomFutureDate(int maxDaysInFutrue = 1000) 
+        {
+            Random gen = new Random();
+            return () => DateTime.UtcNow.AddDays(gen.Next(maxDaysInFutrue));
+        }
     }
 }
