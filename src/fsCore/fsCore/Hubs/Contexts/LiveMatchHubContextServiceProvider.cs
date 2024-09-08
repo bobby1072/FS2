@@ -1,4 +1,8 @@
+using System.Net;
+using Common.Misc;
 using Common.Misc.Abstract;
+using Common.Models;
+using fsCore.RequestModels;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
 
@@ -19,8 +23,8 @@ namespace fsCore.Hubs.Contexts
         {
             try
             {
-                var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId);
-                await _hubContext.Clients.Groups(matchId.ToString()).SendAsync(LiveMatchHub.UpdateMatchMessage, foundMatch);
+                var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException("Match not found", HttpStatusCode.NotFound);
+                await _hubContext.Clients.Groups(matchId.ToString()).SendAsync(LiveMatchHub.UpdateMatchMessage, new HubResponse<LiveMatch>((int)HttpStatusCode.OK, foundMatch));
             }
             catch (Exception e)
             {

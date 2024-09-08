@@ -1,5 +1,6 @@
 using Common.Models;
 using Common.Utils;
+using FluentAssertions;
 using System.Text.Json;
 
 namespace fsCore.Tests.UtilTests
@@ -24,7 +25,7 @@ namespace fsCore.Tests.UtilTests
             var result = CommonAssemblyUtils.ParseToChildOf<TestBaseModelVehicle>(obj);
 
             // Assert
-            Assert.IsType(expectedType, result);
+            result.Should().BeOfType(expectedType);
         }
         internal class ParseToChildOf_When_Called_With_Deserialised_Json_Vehicle_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
         {
@@ -44,7 +45,7 @@ namespace fsCore.Tests.UtilTests
             var result = CommonAssemblyUtils.ParseToChildOf<TestBaseModelVehicle>(obj);
 
             // Assert
-            Assert.IsType(expectedType, result);
+            result.Should().BeOfType(expectedType);
         }
     }
 }

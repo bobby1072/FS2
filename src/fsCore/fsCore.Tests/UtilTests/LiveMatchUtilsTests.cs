@@ -2,6 +2,7 @@ using Common.Misc;
 using Common.Models;
 using Common.Utils;
 using DataImporter.MockModelBuilders;
+using FluentAssertions;
 
 namespace fsCore.Tests.UtilTests
 {
@@ -104,7 +105,7 @@ namespace fsCore.Tests.UtilTests
             var winner = LiveMatchUtils.CalculateWinner(liveMatch);
 
             //Assert
-            Assert.Equal(expectedWinner, winner);
+            winner.Should().BeEquivalentTo(expectedWinner);
         }
 
     }

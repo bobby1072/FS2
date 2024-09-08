@@ -1,6 +1,7 @@
 using Common.Models;
 using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
+using FluentAssertions;
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
     public class UserValidatorTest : TestBase
@@ -71,7 +72,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             var result = _validator.Validate(user);
 
-            Assert.Equal(expected, result.IsValid);
+            result.IsValid.Should().Be(expected);
         }
     }
 }

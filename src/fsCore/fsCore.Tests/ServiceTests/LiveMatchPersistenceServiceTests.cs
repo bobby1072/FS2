@@ -1,5 +1,6 @@
 using AutoFixture;
 using Common.Models;
+using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using Persistence.EntityFramework.Repository.Abstract;
@@ -37,7 +38,7 @@ namespace fsCore.Tests.ServiceTests
             // Assert
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Never);
-            Assert.Equal(liveMatch, result);
+            result.Should().BeEquivalentTo(liveMatch);
 
         }
         [Theory]
@@ -65,7 +66,7 @@ namespace fsCore.Tests.ServiceTests
             }
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(liveMatch.Id), Times.Once);
-            Assert.Equal(liveMatch, result);
+            result.Should().BeEquivalentTo(liveMatch);
         }
         [Fact]
         public async Task TryGetMatch_Should_Return_Null_If_TryGetObject_Throws_Exception()
@@ -80,7 +81,7 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Never);
-            Assert.Null(result);
+            result.Should().BeNull();
         }
         [Fact]
         public async Task TryGetMatch_Should_Return_Null_If_GetFullOneById_Throws_Exception()
@@ -95,7 +96,7 @@ namespace fsCore.Tests.ServiceTests
             //Assert
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(It.IsAny<Guid>()), Times.Once);
-            Assert.Null(result);
+            result.Should().BeNull();
         }
         private static LiveMatch CreateLiveMatch()
         {

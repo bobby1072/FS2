@@ -1,4 +1,5 @@
 using Common.Models;
+using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests
 {
@@ -18,7 +19,7 @@ namespace fsCore.Tests.ModelTests
             var result = inAreaLiveMatchCatchRule.BuildRuleDescription();
 
             // Assert
-            Assert.Equal("InAreaLiveMatchCatchRule: [{\"topLeft\":{\"latitude\":1,\"longitude\":1},\"bottomLeft\":{\"latitude\":1,\"longitude\":2},\"topRight\":{\"latitude\":2,\"longitude\":1},\"bottomRight\":{\"latitude\":2,\"longitude\":2}}]", result);
+            result.Should().Be("InAreaLiveMatchCatchRule: [{\"topLeft\":{\"latitude\":1,\"longitude\":1},\"bottomLeft\":{\"latitude\":1,\"longitude\":2},\"topRight\":{\"latitude\":2,\"longitude\":1},\"bottomRight\":{\"latitude\":2,\"longitude\":2}}]");
         }
     }
 }

@@ -64,15 +64,15 @@ stages:
               customCommand: "run check-types"
               workingDir: $(Build.SourcesDirectory)/src/client
 
-          - powershell: $(Build.SourcesDirectory)/build-scripts/add_build_env_frontend.ps1
-            displayName: "Add build environment"
-
           - task: Npm@1
             displayName: "Test"
             inputs:
               command: "custom"
               customCommand: "test --watchAll=false --coverage --ci"
               workingDir: $(Build.SourcesDirectory)/src/client
+
+          - powershell: $(Build.SourcesDirectory)/build-scripts/add_build_env_frontend.ps1
+            displayName: "Add build environment"
 
           - task: Npm@1
             displayName: "Build"

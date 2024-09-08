@@ -1,4 +1,5 @@
 using Common.Models;
+using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests
 {
@@ -20,7 +21,7 @@ namespace fsCore.Tests.ModelTests
             var result = specificSpeciesLiveMatchCatchRule.BuildRuleDescription();
 
             // Assert
-            Assert.Equal("SpecificSpeciesLiveMatchCatchRule: species1, species2", result);
+            result.Should().Be("SpecificSpeciesLiveMatchCatchRule: species1, species2");
         }
     }
 }

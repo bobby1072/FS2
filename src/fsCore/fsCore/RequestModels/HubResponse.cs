@@ -2,25 +2,25 @@ using System.Text.Json.Serialization;
 
 namespace fsCore.RequestModels
 {
-    public record HubResponse
+    public record HubResponse<TData>
     {
         [JsonPropertyName("isSuccess")]
         public bool IsSuccess { get; init; }
         [JsonPropertyName("status")]
         public int Status { get; init; }
-        [JsonPropertyName("message")]
-        public object? Data { get; init; }
+        [JsonPropertyName("data")]
+        public TData? Data { get; init; }
         [JsonPropertyName("errorMessage")]
         public string? ErrorMessage { get; init; }
-        public HubResponse(int status, object data)
+        public HubResponse(int status, TData? data, bool isSuccess = true)
         {
-            IsSuccess = true;
+            IsSuccess = isSuccess;
             Status = status;
             Data = data;
         }
-        public HubResponse(int status, string errorMessage)
+        public HubResponse(int status, string errorMessage, bool isSuccess = false)
         {
-            IsSuccess = false;
+            IsSuccess = isSuccess;
             Status = status;
             ErrorMessage = errorMessage;
         }

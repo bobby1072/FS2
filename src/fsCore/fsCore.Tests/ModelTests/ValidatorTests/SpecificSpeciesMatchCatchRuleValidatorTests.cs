@@ -1,5 +1,6 @@
 using Common.Models;
 using Common.Models.Validators;
+using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
@@ -92,7 +93,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
             var result = _validator.Validate(rule);
 
             //Assert
-            Assert.Equal(expected, result.IsValid);
+            result.IsValid.Should().Be(expected);
         }
     }
 }

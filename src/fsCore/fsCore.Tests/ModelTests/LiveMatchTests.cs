@@ -1,5 +1,6 @@
 using Common.Models;
 using DataImporter.MockModelBuilders;
+using FluentAssertions;
 using System.Text.Json;
 
 namespace fsCore.Tests.ModelTests
@@ -30,11 +31,11 @@ namespace fsCore.Tests.ModelTests
                 var result = catchValidator.Validate(catchItem);
                 if (catchItem.Species == "salmon" || catchItem.Species == "pike")
                 {
-                    Assert.True(result.IsValid);
+                    result.IsValid.Should().BeTrue();
                 }
                 else
                 {
-                    Assert.False(result.IsValid);
+                    result.IsValid.Should().BeFalse();
                 }
             }
         }
@@ -71,11 +72,11 @@ namespace fsCore.Tests.ModelTests
                 var result = catchValidator.Validate(catchItem);
                 if (catchItem.Latitude == 33.5522 && catchItem.Longitude == -117.7437 || catchItem.Latitude == 33.8022 && catchItem.Longitude == -118.0437)
                 {
-                    Assert.True(result.IsValid);
+                    result.IsValid.Should().BeTrue();
                 }
                 else
                 {
-                    Assert.False(result.IsValid);
+                    result.IsValid.Should().BeFalse();
                 }
             }
         }
@@ -142,7 +143,7 @@ namespace fsCore.Tests.ModelTests
             var actual = jsonResult?.ToRuntimeType();
 
             //Assert
-            Assert.Equal(liveMatch, actual);
+            liveMatch.Should().BeEquivalentTo(actual);
         }
     }
 }

@@ -1,6 +1,7 @@
 using Common.Models;
 using Common.Models.Validators;
 using DataImporter.MockModelBuilders;
+using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
@@ -68,7 +69,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             var result = _validator.Validate(group);
 
-            Assert.Equal(expected, result.IsValid);
+            result.IsValid.Should().Be(expected);
         }
     }
 }
