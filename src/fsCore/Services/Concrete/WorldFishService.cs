@@ -16,16 +16,14 @@ namespace Services.Concrete
         {
             _repo = baseRepo;
         }
-        [Queue(HangfireConstants.Queues.StartUpJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [10], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()
         {
             var fileJob = File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
             var allDbFishJob = _repo.GetAll();
-            await Task.WhenAll(fileJob, allDbFishJob);
             var file = await fileJob;
-            var allDbFish = await allDbFishJob;
             var allFileFish = JsonSerializer.Deserialize<JsonFileWorldFish[]>(file) ?? throw new Exception();
+            var allDbFish = await allDbFishJob;
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
             if (allDbFish is null)
             {

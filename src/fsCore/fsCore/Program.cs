@@ -87,7 +87,7 @@ builder.Services.AddBusinessServiceExtensions();
 
 builder.Services
     .AddHangfire(configuration => configuration?
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
         .UseSimpleAssemblyNameTypeSerializer()
         .UseRecommendedSerializerSettings()
         .UsePostgreSqlStorage(x => x.UseNpgsqlConnection(dbConnectString)))
@@ -108,6 +108,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("corsapp");
+    app.UseHangfireDashboard("/api/hangfire");
 }
 else
 {

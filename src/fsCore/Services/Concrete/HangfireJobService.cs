@@ -1,3 +1,4 @@
+using Common.Misc;
 using DataImporter;
 using Hangfire;
 using Microsoft.Extensions.Logging;
@@ -44,8 +45,8 @@ namespace Services.Concrete
         }
         public void RegisterStartupJobs()
         {
-            _backgroundJobs.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
-            _backgroundJobs.Enqueue<IDataImporter>(importer => importer.Import());
+            _backgroundJobs.Enqueue<IWorldFishService>(HangfireConstants.Queues.StartUpJobs, service => service.MigrateJsonFishToDb());
+            _backgroundJobs.Enqueue<IDataImporter>(HangfireConstants.Queues.StartUpJobs, importer => importer.Import());
         }
     }
 }

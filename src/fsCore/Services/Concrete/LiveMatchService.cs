@@ -80,11 +80,11 @@ namespace Services.Concrete
 
             if (match.CommencesAt is not null)
             {
-                _backgroundJobClient.Schedule(() => AutomaticStartMatch(match.Id, currentUser), match.TimeUntilStart!.Value);
+                _backgroundJobClient.Schedule(HangfireConstants.Queues.LiveMatchJobs, () => AutomaticStartMatch(match.Id, currentUser), match.TimeUntilStart!.Value);
             }
             if (match.EndsAt is not null)
             {
-                _backgroundJobClient.Schedule(() => AutomaticEndMatch(match.Id, currentUser), match.TimeUntilEnd!.Value);
+                _backgroundJobClient.Schedule(HangfireConstants.Queues.LiveMatchJobs, () => AutomaticEndMatch(match.Id, currentUser), match.TimeUntilEnd!.Value);
             }
 
             return match;
@@ -189,14 +189,12 @@ namespace Services.Concrete
             await _liveMatchPersistenceService.SetLiveMatch(foundMatch);
             return foundMatch;
         }
-        [Queue(HangfireConstants.Queues.LiveMatchJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task AutomaticStartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             await StartMatch(matchId, userWithGroupPermissionSet);
             await _liveMatchHubContextServiceProvider.UpdateMatchForClients(matchId);
         }
-        [Queue(HangfireConstants.Queues.LiveMatchJobs)]
         [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [1], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task AutomaticEndMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
