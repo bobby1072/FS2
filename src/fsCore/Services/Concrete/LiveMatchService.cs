@@ -31,18 +31,18 @@ namespace Services.Concrete
             _liveMatchValidator = liveMatchValidator;
             _groupService = groupService;
         }
-        public async Task CreateParticipant(Guid matchId, Guid participantId, UserWithGroupPermissionSet currentUser)
+        public async Task CreateParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            if (foundMatch.Participants.Any(x => x.Id == participantId))
-            {
-                return;
-            }
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || currentUser.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
-            var areUsersInGroup = await _groupService.IsUserInGroup(foundMatch.GroupId, [participantId]);
+            if (foundMatch.Participants.Any(x => x.Id == userId))
+            {
+                return;
+            }
+            var areUsersInGroup = await _groupService.IsUserInGroup(foundMatch.GroupId, [userId]);
 
             if (!areUsersInGroup.AllUsersInGroup)
             {

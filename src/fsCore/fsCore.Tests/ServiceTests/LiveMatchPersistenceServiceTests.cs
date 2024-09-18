@@ -10,7 +10,7 @@ using Services.Concrete;
 
 namespace fsCore.Tests.ServiceTests
 {
-    public class LiveMatchPersistenceServiceTests : TestBase
+    public class LiveMatchPersistenceServiceTests : LiveMatchTestBase
     {
         private const string _liveMatchKey = "match-";
         private readonly Mock<ICachingService> _mockCachingService;
@@ -152,18 +152,6 @@ namespace fsCore.Tests.ServiceTests
             {
                 _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id.ToString()}", It.Is<LiveMatchJsonType>(y => y.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions>()), Times.Never);
             }
-        }
-        private static LiveMatch CreateLiveMatch()
-        {
-            var rules = new LiveMatchRules();
-            var liveMatch = _fixture
-                .Build<LiveMatch>()
-                .With(x => x.MatchRules, rules)
-                .With(x => x.CreatedAt, DateTimeUtils.RandomPastDate().Invoke())
-                .With(x => x.CommencesAt, DateTime.UtcNow)
-                .With(x => x.EndsAt, DateTimeUtils.RandomFutureDate().Invoke())
-                .Create();
-            return liveMatch;
         }
     }
 }

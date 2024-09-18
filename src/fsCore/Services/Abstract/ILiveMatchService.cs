@@ -4,7 +4,7 @@ namespace Services.Abstract
 {
     public interface ILiveMatchService
     {
-        Task CreateParticipant(Guid matchId, Guid participantId, UserWithGroupPermissionSet currentUser);
+        Task CreateParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser);
         Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser);
         Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch catches, UserWithGroupPermissionSet currentUser);

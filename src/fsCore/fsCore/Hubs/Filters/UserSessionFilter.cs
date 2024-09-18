@@ -1,7 +1,6 @@
 using Common.Misc;
 using Common.Models;
 using fsCore.Attributes;
-using fsCore.Hubs.Filters.Abstract;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
 using Services.Concrete;
@@ -9,7 +8,7 @@ using System.Net;
 
 namespace fsCore.Hubs.Filters.Concrete
 {
-    public class UserSessionFilter : IUserSessionFilter
+    public class UserSessionFilter : IHubFilter
     {
         private readonly IUserService _userService;
         private readonly IUserInfoClient _userInfoClient;

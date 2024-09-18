@@ -18,5 +18,9 @@ namespace fsCore.Hubs
             _liveMatchService = liveMatchService;
             _liveMatchPersistenceService = liveMatchPersistenceService;
         }
+        private async Task AddUserToMatchGroup(Guid matchId, string connectionId)
+        {
+            await Groups.AddToGroupAsync(connectionId, matchId.ToString());
+        }
     }
 }

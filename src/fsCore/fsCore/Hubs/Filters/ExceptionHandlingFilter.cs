@@ -1,10 +1,9 @@
-using fsCore.Hubs.Filters.Abstract;
 using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
 
 namespace fsCore.Hubs.Filters.Concrete
 {
-    public class ExceptionHandlingFilter : IExceptionHandlingFilter
+    public class ExceptionHandlingFilter : IHubFilter
     {
         private readonly ILogger<ExceptionHandlingFilter> _logger;
         public ExceptionHandlingFilter(ILogger<ExceptionHandlingFilter> logger)
