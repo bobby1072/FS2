@@ -4,7 +4,7 @@ using Common.Models;
 
 namespace fsCore.RequestModels
 {
-    public record HubResponse<TData>
+    internal record HubResponse<TData>
     {
         [JsonPropertyName("isSuccess")]
         public bool IsSuccess { get; init; }
@@ -19,7 +19,7 @@ namespace fsCore.RequestModels
             Data = data;
         }
     }
-    public record HubResponse
+    internal record HubResponse
     {
         [JsonPropertyName("isSuccess")]
         public bool IsSuccess { get; init; }
@@ -34,6 +34,7 @@ namespace fsCore.RequestModels
             ErrorMessage = errorMessage;
         }
         public static HubResponse<LiveMatch> FromLiveMatch(LiveMatch liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
+        public static HubResponse<ICollection<LiveMatch>> FromLiveMatch(ICollection<LiveMatch> liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
     }
 
 }
