@@ -20,10 +20,6 @@ namespace Services.Concrete
             _activeLiveMatchRepository = activeLiveMatchRepository;
             _activeLiveMatchParticipantRepository = activeLiveMatchParticipantRepository;
         }
-        public async Task<ICollection<Guid>> AllLiveMatchesForUser(Guid userId)
-        {
-            return await _activeLiveMatchRepository.GetForUser(userId);
-        }
         public async Task SaveParticipant(Guid liveMatchId, User user)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);

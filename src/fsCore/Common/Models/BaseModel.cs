@@ -34,22 +34,18 @@ namespace Common.Models
             {
                 return false;
             }
-            if (baseModel is not null)
+            var thisTypeProperties = this.GetType().GetProperties();
+            for (var i = 0; i < thisTypeProperties.Length; i++)
             {
-                var thisTypeProperties = this.GetType().GetProperties();
-                for (var i = 0; i < thisTypeProperties.Length; i++)
+                var property = thisTypeProperties[i];
+                var foundSelfValue = property.GetValue(this);
+                var foundObjVal = property.GetValue(baseModel);
+                if (foundSelfValue != foundObjVal)
                 {
-                    var property = thisTypeProperties[i];
-                    var foundSelfValue = property.GetValue(this);
-                    var foundObjVal = property.GetValue(baseModel);
-                    if (foundSelfValue != foundObjVal)
-                    {
-                        return false;
-                    }
+                    return false;
                 }
-                return true;
             }
-            return false;
+            return true;
         }
         public virtual void RemoveSensitive()
         {

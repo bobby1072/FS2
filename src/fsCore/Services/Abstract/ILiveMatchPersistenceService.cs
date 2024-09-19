@@ -11,6 +11,5 @@ namespace Services.Abstract
         Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
         Task SetLiveMatch(LiveMatch liveMatch);
         Task<LiveMatch?> TryGetLiveMatch(Guid matchId);
-        Task<ICollection<Guid>> AllLiveMatchesForUser(Guid userId);
     }
 }

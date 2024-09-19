@@ -4,6 +4,7 @@ using Common.Models;
 using Common.Permissions;
 using FluentValidation;
 using Hangfire;
+using Persistence.EntityFramework.Repository.Abstract;
 using Services.Abstract;
 using System.Net;
 
@@ -11,6 +12,8 @@ namespace Services.Concrete
 {
     public class LiveMatchService : ILiveMatchService
     {
+        private readonly IActiveLiveMatchParticipantRepository _liveMatchParticipantRepository;
+        private readonly IActiveLiveMatchRepository _liveMatchRepository;
         private readonly IBackgroundJobClient _backgroundJobClient;
         private readonly ILiveMatchHubContextServiceProvider _liveMatchHubContextServiceProvider;
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
@@ -20,6 +23,8 @@ namespace Services.Concrete
         public LiveMatchService(IBackgroundJobClient backgroundJobClient,
             ILiveMatchHubContextServiceProvider liveMatchHubContextServiceProvider,
             ILiveMatchPersistenceService liveMatchPersistenceService,
+            IActiveLiveMatchParticipantRepository liveMatchParticipantRepository,
+            IActiveLiveMatchRepository liveMatchRepository,
             IValidator<LiveMatch> liveMatchValidator,
             IValidator<LiveMatchCatch> liveMatchCatchValidator,
             IGroupService groupService)
@@ -30,10 +35,18 @@ namespace Services.Concrete
             _liveMatchCatchValidator = liveMatchCatchValidator;
             _liveMatchValidator = liveMatchValidator;
             _groupService = groupService;
+            _liveMatchParticipantRepository = liveMatchParticipantRepository;
+            _liveMatchRepository = liveMatchRepository;
         }
-        public async Task<ICollection<Guid>> AllMatchesParticipantIn(UserWithGroupPermissionSet currentUser)
+        public async Task<ICollection<LiveMatch>> AllMatchesParticipatedIn(ICollection<Guid> matchIds)
         {
-            return await _liveMatchPersistenceService.AllLiveMatchesForUser((Guid)currentUser.Id!);
+            var matches = await _liveMatchRepository.GetFullOneById(matchIds);
+
+            return matches ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+        }
+        public async Task<ICollection<Guid>> AllMatchesParticipatedIn(UserWithGroupPermissionSet currentUser)
+        {
+            return await _liveMatchParticipantRepository.GetMatchIdsForUser((Guid)currentUser.Id!);
         }
         public async Task CreateParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
         {

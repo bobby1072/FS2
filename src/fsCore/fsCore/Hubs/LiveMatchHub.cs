@@ -18,6 +18,26 @@ namespace fsCore.Hubs
             _liveMatchService = liveMatchService;
             _liveMatchPersistenceService = liveMatchPersistenceService;
         }
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
+            var user = await GetCurrentUserWithPermissionsAsync();
+            var allMatchesForUser = await _liveMatchService.AllMatchesParticipatedIn(user);
+            var jobList = new List<Task>();
+            jobList.Add(AddUsersToMatchGroup(allMatchesForUser, Context.ConnectionId));
+            jobList.Add()
+            await AddUsersToMatchGroup(allMatchesForUser, Context.ConnectionId);
+
+        }
+        private async Task AddUsersToMatchGroup(ICollection<Guid> matchIds, string connectionId)
+        {
+            var jobList = new List<Task>();
+            foreach (var matchId in matchIds)
+            {
+                jobList.Add(Groups.AddToGroupAsync(connectionId, matchId.ToString()));
+            }
+            await Task.WhenAll(jobList);
+        }
         private async Task AddUsersToMatchGroup(Guid matchId, ICollection<string> connectionIds)
         {
             var jobList = new List<Task>();

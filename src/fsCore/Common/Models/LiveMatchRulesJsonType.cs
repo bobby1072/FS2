@@ -18,7 +18,7 @@ namespace Common.Models
         public LiveMatchRulesJsonType() { }
         public LiveMatchRules ToRuntimeType()
         {
-            var parsedRules = Rules.Select(x => CommonAssemblyUtils.ParseToChildOf<LiveMatchCatchSingleRule>(x)).ToList();
+            var parsedRules = Rules.Select(LiveMatchCatchSingleRule.ToSingleRule).ToList();
             return new LiveMatchRules(parsedRules, Id);
         }
     }
