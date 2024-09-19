@@ -31,6 +31,10 @@ namespace Services.Concrete
             _liveMatchValidator = liveMatchValidator;
             _groupService = groupService;
         }
+        public async Task<ICollection<Guid>> AllMatchesParticipantIn(UserWithGroupPermissionSet currentUser)
+        {
+            return await _liveMatchPersistenceService.AllLiveMatchesForUser((Guid)currentUser.Id!);
+        }
         public async Task CreateParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);

@@ -4,12 +4,13 @@ namespace Services.Abstract
 {
     public interface ILiveMatchPersistenceService
     {
-        internal Task DeleteParticipant(Guid liveMatchId, User user);
-        internal Task SaveParticipant(Guid liveMatchId, User user);
-        internal Task SaveParticipant(Guid liveMatchId, ICollection<User> user);
-        internal Task DeleteCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
-        internal Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
-        internal Task SetLiveMatch(LiveMatch liveMatch);
-        public Task<LiveMatch?> TryGetLiveMatch(Guid matchId);
+        Task DeleteParticipant(Guid liveMatchId, User user);
+        Task SaveParticipant(Guid liveMatchId, User user);
+        Task SaveParticipant(Guid liveMatchId, ICollection<User> user);
+        Task DeleteCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
+        Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
+        Task SetLiveMatch(LiveMatch liveMatch);
+        Task<LiveMatch?> TryGetLiveMatch(Guid matchId);
+        Task<ICollection<Guid>> AllLiveMatchesForUser(Guid userId);
     }
 }

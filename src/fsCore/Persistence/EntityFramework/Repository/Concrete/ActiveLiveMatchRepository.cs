@@ -12,6 +12,18 @@ namespace Persistence.EntityFramework.Repository.Concrete
         {
             return ActiveLiveMatchEntity.FromRuntime(runtimeObj);
         }
+        public async Task<ICollection<Guid>> GetForUser(Guid userId)
+        {
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
+
+            var entities = await dbContext
+                .ActiveLiveMatchParticipant
+                .Where(x => x.UserId == userId)
+                .Select(x => x.MatchId)
+                .ToArrayAsync();
+
+            return entities;
+        }
         public async Task<LiveMatch?> GetFullOneById(Guid id)
         {
             await using var dbContext = await _contextFactory.CreateDbContextAsync();
