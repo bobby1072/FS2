@@ -66,7 +66,9 @@ namespace Services.Concrete
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
 
-            await _liveMatchPersistenceService.SaveParticipant(matchId, areUsersInGroup.ActualUsers.FirstOrDefault()!);
+            var user = areUsersInGroup.ActualUsers.FirstOrDefault()!;
+
+            await _liveMatchPersistenceService.SaveParticipant(matchId, LiveMatchParticipant.FromUser(user)!);
         }
         public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
@@ -80,17 +82,11 @@ namespace Services.Concrete
                 throw new LiveMatchException(LiveMatchConstants.LiveMatchAlreadyExists, HttpStatusCode.Conflict);
             }
 
-
-            var areUsersInGroup = await _groupService.IsUserInGroup(match.GroupId, match.Participants.Append(currentUser).Select(x => x.Id ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest)).Distinct().ToList());
-
-            if (!areUsersInGroup.AllUsersInGroup)
-            {
-                throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
-            }
-
-            match.Participants = areUsersInGroup.ActualUsers.ToList();
-
             match.ApplyDefaults(LiveMatchStatus.NotStarted, currentUser);
+
+            match.Participants = [LiveMatchParticipant.FromUser(currentUser, true)!];
+
+
             await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
             await _liveMatchPersistenceService.SaveParticipant(match.Id, match.Participants);
@@ -127,7 +123,7 @@ namespace Services.Concrete
 
             await _liveMatchPersistenceService.SetLiveMatch(match);
         }
-        public async Task<LiveMatchCatch> SaveCatch(Guid matchId, LiveMatchCatch liveMatchCatch, UserWithGroupPermissionSet currentUser)
+        public async Task SaveCatch(Guid matchId, LiveMatchCatch liveMatchCatch, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (foundMatch.EndsAt is not null && foundMatch.EndsAt < DateTime.UtcNow)
@@ -158,7 +154,7 @@ namespace Services.Concrete
             {
                 if (!liveMatchCatch.ValidateAgainstOriginal(foundCatch))
                 {
-                    throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+                    throw new LiveMatchException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.Unauthorized);
                 }
             }
             liveMatchCatch.CountsInMatch = isCatchValid;
@@ -166,12 +162,10 @@ namespace Services.Concrete
             {
                 liveMatchCatch.ApplyDefaults();
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
-                return liveMatchCatch;
             }
             else
             {
                 await _liveMatchPersistenceService.SaveCatch(foundMatch.Id, liveMatchCatch);
-                return liveMatchCatch;
             }
         }
         public async Task<LiveMatch> StartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet)

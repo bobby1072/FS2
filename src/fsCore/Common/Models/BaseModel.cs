@@ -10,7 +10,6 @@ namespace Common.Models
     /// </summary>
     public abstract class BaseModel
     {
-
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
             if (this is not TModel)

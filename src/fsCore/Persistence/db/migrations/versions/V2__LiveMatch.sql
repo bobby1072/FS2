@@ -35,6 +35,7 @@ CREATE TABLE public."active_live_match_participant" (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id UUID NOT NULL,
     match_id UUID NOT NULL,
+    user_online BOOLEAN NOT NULL DEFAULT FALSE,
     CONSTRAINT active_live_match_participant_match_id_fk FOREIGN KEY (match_id) REFERENCES public.active_live_match(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_participant_user_id_fk FOREIGN KEY (user_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_participant_unique UNIQUE (user_id, match_id)

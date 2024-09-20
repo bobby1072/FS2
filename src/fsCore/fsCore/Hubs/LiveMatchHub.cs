@@ -23,9 +23,6 @@ namespace fsCore.Hubs
             await base.OnConnectedAsync();
             var user = await GetCurrentUserWithPermissionsAsync();
             var allMatchesForUser = await _liveMatchService.AllMatchesParticipatedIn(user);
-            var jobList = new List<Task>();
-            jobList.Add(AddUsersToMatchGroup(allMatchesForUser, Context.ConnectionId));
-            jobList.Add()
             await AddUsersToMatchGroup(allMatchesForUser, Context.ConnectionId);
 
         }

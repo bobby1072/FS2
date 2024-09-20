@@ -25,7 +25,7 @@ namespace Persistence.EntityFramework.Entity
         {
             var deserialisedRules = JsonSerializer.Deserialize<IList<object>>(SerialisedMatchRules) ?? throw new InvalidOperationException("Couldn't deserialise live match rules");
             var rules = new LiveMatchRulesJsonType(deserialisedRules);
-            return new LiveMatch(GroupId, MatchName, rules.ToRuntimeType(), (LiveMatchStatus)MatchStatus, (LiveMatchWinStrategy)MatchWinStrategy, Catches?.Select(x => x.ToRuntime()).ToList() ?? [], Participants?.Select(x => x.User?.ToRuntime()).ToList() ?? [], MatchLeaderId, CreatedAt, CommencesAt, EndsAt, null, Id);
+            return new LiveMatch(GroupId, MatchName, rules.ToRuntimeType(), (LiveMatchStatus)MatchStatus, (LiveMatchWinStrategy)MatchWinStrategy, Catches?.Select(x => x.ToRuntime()).ToList() ?? [], Participants?.Select(x => x.ToRuntime()).ToList() ?? [], MatchLeaderId, CreatedAt, CommencesAt, EndsAt, null, Id);
         }
         public static ActiveLiveMatchEntity FromRuntime(LiveMatch runtime)
         {

@@ -13,16 +13,29 @@ namespace Persistence.EntityFramework.Entity
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
-        public override User? ToRuntime()
+        public bool UserOnline { get; set; }
+        public override LiveMatchParticipant? ToRuntime()
         {
-            return User?.ToRuntime();
+            return LiveMatchParticipant.FromUser(User?.ToRuntime(), UserOnline);
         }
-        public static ActiveLiveMatchParticipantEntity FromRuntime(User runtime, Guid matchId)
+        public static ActiveLiveMatchParticipantEntity FromRuntime(LiveMatchParticipant runtime, Guid matchId)
         {
             var entity = new ActiveLiveMatchParticipantEntity
             {
                 UserId = (Guid)runtime.Id,
-                MatchId = matchId
+                MatchId = matchId,
+                UserOnline = runtime.Online
+            };
+            return entity;
+        }
+        public static ActiveLiveMatchParticipantEntity FromRuntime(LiveMatchParticipant runtime, Guid matchId, int id)
+        {
+            var entity = new ActiveLiveMatchParticipantEntity
+            {
+                UserId = (Guid)runtime.Id,
+                MatchId = matchId,
+                UserOnline = runtime.Online,
+                Id = id
             };
             return entity;
         }

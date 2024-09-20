@@ -13,7 +13,7 @@ namespace DataImporter.MockModelBuilders
                 LiveMatchStatus.NotStarted,
                 LiveMatchWinStrategy.MostCatches,
                 new List<LiveMatchCatch>(),
-                new List<User>(),
+                new List<LiveMatchParticipant>(),
                 leaderId ?? Guid.NewGuid(),
                 DateTime.UtcNow,
                 DateTime.UtcNow,

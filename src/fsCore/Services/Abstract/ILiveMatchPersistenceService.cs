@@ -4,9 +4,9 @@ namespace Services.Abstract
 {
     public interface ILiveMatchPersistenceService
     {
-        Task DeleteParticipant(Guid liveMatchId, User user);
-        Task SaveParticipant(Guid liveMatchId, User user);
-        Task SaveParticipant(Guid liveMatchId, ICollection<User> user);
+        Task DeleteParticipant(Guid liveMatchId, LiveMatchParticipant user);
+        Task SaveParticipant(Guid liveMatchId, LiveMatchParticipant user);
+        Task SaveParticipant(Guid liveMatchId, ICollection<LiveMatchParticipant> user);
         Task DeleteCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
         Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
         Task SetLiveMatch(LiveMatch liveMatch);

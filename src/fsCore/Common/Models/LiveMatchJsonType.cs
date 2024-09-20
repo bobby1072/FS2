@@ -19,7 +19,7 @@ namespace Common.Models
         [JsonPropertyName("catches")]
         public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
         [JsonPropertyName("participants")]
-        public IList<User> Participants { get; set; } = new List<User>();
+        public IList<LiveMatchParticipant> Participants { get; set; } = new List<LiveMatchParticipant>();
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
         [JsonPropertyName("description")]
@@ -31,7 +31,7 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
-        public LiveMatchJsonType(Guid groupId, string matchName, LiveMatchRulesJsonType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
+        public LiveMatchJsonType(Guid groupId, string matchName, LiveMatchRulesJsonType matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<LiveMatchParticipant> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
         {
             Id = id ?? Guid.NewGuid();
             Catches = catches;

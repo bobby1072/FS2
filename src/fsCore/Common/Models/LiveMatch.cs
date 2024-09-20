@@ -21,9 +21,9 @@ namespace Common.Models
         [JsonPropertyName("matchWinStrategy")]
         public LiveMatchWinStrategy MatchWinStrategy { get; set; }
         [JsonPropertyName("catches")]
-        public IList<LiveMatchCatch> Catches { get; set; } = [];
+        public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
         [JsonPropertyName("participants")]
-        public IList<User> Participants { get; set; } = [];
+        public IList<LiveMatchParticipant> Participants { get; set; } = new List<LiveMatchParticipant>();
         [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
@@ -42,7 +42,7 @@ namespace Common.Models
         public TimeSpan? TimeUntilStart { get => CommencesAt - DateTime.UtcNow; }
         [JsonIgnore]
         public TimeSpan? TimeUntilEnd { get => EndsAt - DateTime.UtcNow; }
-        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<User> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
+        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<LiveMatchParticipant> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
         {
             if (id is Guid foundId)
             {
@@ -83,6 +83,7 @@ namespace Common.Models
             if (MatchStatus == LiveMatchStatus.NotStarted)
             {
                 Catches = [];
+                Participants = [];
                 CreatedAt = DateTime.UtcNow;
             }
         }
