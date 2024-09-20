@@ -13,7 +13,7 @@ namespace fsCore.Hubs
     {
         public const string UpdateMatchMessage = "UpdateMatch";
         public const string CreateMatchMessage = "CreateMatch";
-        public const string AllMatchesForUser = "AllMatchesForUser";
+        public const string AllMatchesForUserMessage = "AllMatchesForUser";
         private readonly ILiveMatchService _liveMatchService;
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
         public LiveMatchHub(ICachingService cachingService, ILiveMatchService liveMatchService, ILiveMatchPersistenceService liveMatchPersistenceService) : base(cachingService)
@@ -35,7 +35,7 @@ namespace fsCore.Hubs
 
             var allMatches = await allMatchesJob;
 
-            await Clients.Caller.SendAsync(AllMatchesForUser, HubResponse.FromLiveMatch(allMatches));
+            await Clients.Caller.SendAsync(AllMatchesForUserMessage, HubResponse.FromLiveMatch(allMatches));
         }
         private async Task AddUsersToMatchGroup(ICollection<Guid> matchIds, string connectionId)
         {
