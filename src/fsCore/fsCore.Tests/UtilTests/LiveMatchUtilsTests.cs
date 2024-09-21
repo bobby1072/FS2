@@ -13,9 +13,9 @@ namespace fsCore.Tests.UtilTests
             public Should_Calculate_LiveMatch_Winner_Correctly_Class_Data()
             {
                 var participants = new[] {
-                    MockUserBuilder.Build(),
-                    MockUserBuilder.Build(),
-                    MockUserBuilder.Build()
+                    LiveMatchParticipant.FromUser(MockUserBuilder.Build()),
+                    LiveMatchParticipant.FromUser(MockUserBuilder.Build()),
+                    LiveMatchParticipant.FromUser(MockUserBuilder.Build())
                 };
                 var liveMatch = new LiveMatch(Guid.NewGuid(), "test match", new LiveMatchRules([]), LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, [], participants, (Guid)participants.FirstOrDefault()!.Id!, DateTime.UtcNow);
 

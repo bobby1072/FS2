@@ -36,7 +36,7 @@ namespace fsCore.Hubs
 
             var allMatches = await allMatchesJob;
 
-            await _liveMatchPersistenceService.SaveParticipant(allMatches, LiveMatchParticipant.FromUser(user)!);
+            //await _liveMatchPersistenceService.SaveParticipant(allMatches, LiveMatchParticipant.FromUser(user)!);
 
             await Clients.Caller.SendAsync(AllMatchesForUserMessage, HubResponse.FromLiveMatch(allMatches));
         }
