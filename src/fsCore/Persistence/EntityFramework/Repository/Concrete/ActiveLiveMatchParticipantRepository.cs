@@ -28,7 +28,14 @@ namespace Persistence.EntityFramework.Repository.Concrete
         public async Task<ICollection<LiveMatchParticipant>?> GetForMatch(Guid matchId)
         {
             await using var context = _contextFactory.CreateDbContext();
-            var entities = await context.ActiveLiveMatchParticipant.Where(x => x.MatchId == matchId).ToArrayAsync();
+            var entities = await context.ActiveLiveMatchParticipant.Include(x => x.User).Where(x => x.MatchId == matchId).ToArrayAsync();
+            var returnObjs = entities.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
+            return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
+        }
+        public async Task<ICollection<LiveMatchParticipant>?> GetForMatch(ICollection<Guid> matchId)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var entities = await context.ActiveLiveMatchParticipant.Include(x => x.User).Where(x => matchId.Contains(x.MatchId)).ToArrayAsync();
             var returnObjs = entities.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
             return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
         }
@@ -48,35 +55,40 @@ namespace Persistence.EntityFramework.Repository.Concrete
             var entities = await context.ActiveLiveMatchParticipant.Where(x => x.MatchId == matchId && userIdList.Contains(x.UserId)).ToArrayAsync();
             var newEntities = newRuntimeObjs.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x, matchId, entities.First(y => y.UserId == x.Id && y.MatchId == matchId).Id)).ToArray();
             context.ActiveLiveMatchParticipant.UpdateRange(newEntities);
-
             await context.SaveChangesAsync();
             var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
             return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
 
         }
-        public async Task<User?> Delete(User runtimeObj, Guid matchId)
+        public async Task<ICollection<LiveMatchParticipant>?> Update(ICollection<Guid> matchIds, LiveMatchParticipant runtimeObj)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var entities = await context.ActiveLiveMatchParticipant.Where(x => matchIds.Contains(x.MatchId) && x.UserId == runtimeObj.Id).ToArrayAsync();
+            var newEntities = entities.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(runtimeObj, x.MatchId, x.Id)).ToArray();
+            context.ActiveLiveMatchParticipant.UpdateRange(newEntities);
+            await context.SaveChangesAsync();
+            var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
+            return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
+        }
+        public async Task Delete(User runtimeObj, Guid matchId)
         {
             await using var context = _contextFactory.CreateDbContext();
             var entity = await context.ActiveLiveMatchParticipant.FirstOrDefaultAsync(x => x.UserId == runtimeObj.Id && x.MatchId == matchId);
-            if (entity is null)
+            if (entity is not null)
             {
-                return null;
+                context.ActiveLiveMatchParticipant.Remove(entity);
+                await context.SaveChangesAsync();
             }
-            context.ActiveLiveMatchParticipant.Remove(entity);
-            await context.SaveChangesAsync();
-            return entity.ToRuntime();
         }
-        public async Task<User?> Delete(ICollection<Guid> userIdList, Guid matchId)
+        public async Task Delete(ICollection<Guid> userIdList, Guid matchId)
         {
             await using var context = _contextFactory.CreateDbContext();
             var entity = await context.ActiveLiveMatchParticipant.FirstOrDefaultAsync(x => userIdList.Contains(x.UserId) && x.MatchId == matchId);
-            if (entity is null)
+            if (entity is not null)
             {
-                return null;
+                context.ActiveLiveMatchParticipant.Remove(entity);
+                await context.SaveChangesAsync();
             }
-            context.ActiveLiveMatchParticipant.Remove(entity);
-            await context.SaveChangesAsync();
-            return entity.ToRuntime();
         }
     }
 }

@@ -43,17 +43,5 @@ namespace Persistence.EntityFramework.Repository.Concrete
 
             return entity?.Select(x => x.ToRuntime()).ToArray();
         }
-
-        // public async Task<ICollection<LiveMatch>?> GetMatchesForUser( LiveMatchStatus status)
-        // {
-        //     await using var dbContext = await _contextFactory.CreateDbContextAsync();
-
-        //     var entity = await dbContext
-        //         .ActiveLiveMatch
-        //         .Where(x => x.Id == id)
-        //         .FirstOrDefaultAsync();
-
-        //     return entity?.ToRuntime();
-        // }
     }
 }

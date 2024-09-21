@@ -6,6 +6,7 @@ namespace Services.Abstract
     {
         Task DeleteParticipant(Guid liveMatchId, LiveMatchParticipant user);
         Task SaveParticipant(Guid liveMatchId, LiveMatchParticipant user);
+        //Task SaveParticipant(ICollection<Guid> liveMatchId, LiveMatchParticipant user);
         Task SaveParticipant(Guid liveMatchId, ICollection<LiveMatchParticipant> user);
         Task DeleteCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
         Task SaveCatch(Guid liveMatchId, LiveMatchCatch liveMatchCatch);
