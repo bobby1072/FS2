@@ -4,9 +4,22 @@ namespace Common.Models
 {
     public class LiveMatch : BaseModel
     {
+        public override int GetHashCode() => base.GetHashCode();
+        private Guid? _id;
         [LockedProperty]
         [JsonPropertyName("id")]
-        public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid Id
+        {
+            get
+            {
+                _id ??= Guid.NewGuid();
+                return (Guid)_id!;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
         [LockedProperty]
         [JsonPropertyName("matchName")]
         public string MatchName { get; set; }
@@ -20,10 +33,34 @@ namespace Common.Models
         [LockedProperty]
         [JsonPropertyName("matchWinStrategy")]
         public LiveMatchWinStrategy MatchWinStrategy { get; set; }
+        private IList<LiveMatchCatch>? _catches;
         [JsonPropertyName("catches")]
-        public IList<LiveMatchCatch> Catches { get; set; } = new List<LiveMatchCatch>();
+        public IList<LiveMatchCatch> Catches
+        {
+            get
+            {
+                _catches ??= new List<LiveMatchCatch>();
+                return _catches;
+            }
+            set
+            {
+                _catches = value;
+            }
+        }
+        private IList<LiveMatchParticipant>? _participants;
         [JsonPropertyName("participants")]
-        public IList<LiveMatchParticipant> Participants { get; set; } = new List<LiveMatchParticipant>();
+        public IList<LiveMatchParticipant> Participants
+        {
+            get
+            {
+                _participants ??= new List<LiveMatchParticipant>();
+                return _participants;
+            }
+            set
+            {
+                _participants = value;
+            }
+        }
         [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
@@ -75,7 +112,7 @@ namespace Common.Models
         }
         [JsonConstructor]
         public LiveMatch() { }
-        public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches, Participants, MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id);
+        public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches.ToList(), Participants.ToList(), MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id);
         public void ApplyDefaults(LiveMatchStatus statusOfMatch, User leader)
         {
             MatchLeaderId = (Guid)leader.Id!;

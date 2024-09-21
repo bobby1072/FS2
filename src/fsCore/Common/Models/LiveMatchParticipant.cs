@@ -5,6 +5,20 @@ namespace Common.Models
 {
     public class LiveMatchParticipant : User
     {
+        [LockedProperty]
+        [JsonPropertyName("id")]
+        public new Guid Id
+        {
+            get
+            {
+                base.Id ??= Guid.NewGuid();
+                return (Guid)base.Id!;
+            }
+            set
+            {
+                base.Id = value;
+            }
+        }
         [JsonPropertyName("online")]
         public bool Online { get; set; }
         [LockedProperty]

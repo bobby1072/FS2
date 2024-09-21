@@ -48,7 +48,7 @@ namespace Services.Concrete
         {
             return await _liveMatchParticipantRepository.GetMatchIdsForUser((Guid)currentUser.Id!);
         }
-        public async Task CreateParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
+        public async Task SaveParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || currentUser.Id != foundMatch.MatchLeaderId)
@@ -68,7 +68,11 @@ namespace Services.Concrete
 
             var user = areUsersInGroup.ActualUsers.FirstOrDefault()!;
 
-            await _liveMatchPersistenceService.SaveParticipant(matchId, LiveMatchParticipant.FromUser(user)!);
+            await _liveMatchPersistenceService.SaveParticipant(
+                [
+                    (LiveMatchParticipant.FromUser(user, false)!, matchId)
+                ]
+            );
         }
         public async Task<LiveMatch> CreateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
@@ -89,7 +93,9 @@ namespace Services.Concrete
 
             await _liveMatchValidator.ValidateAndThrowAsync(match);
             await _liveMatchPersistenceService.SetLiveMatch(match);
-            await _liveMatchPersistenceService.SaveParticipant(match.Id, match.Participants);
+            await _liveMatchPersistenceService.SaveParticipant(
+                match.Participants.Select(x => (x, match.Id)).ToArray()
+                );
 
             if (match.CommencesAt is not null)
             {
@@ -109,17 +115,16 @@ namespace Services.Concrete
             match.Catches = [];
             match.Participants = [];
             match.MatchStatus = foundMatch.MatchStatus;
-            match.ApplyDefaults(LiveMatchStatus.InProgress, currentUser);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || currentUser.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
+            await _liveMatchValidator.ValidateAndThrowAsync(match);
             if (!match.ValidateAgainstOriginal(foundMatch))
             {
                 throw new LiveMatchException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.Forbidden);
             }
 
-            await _liveMatchValidator.ValidateAndThrowAsync(match);
 
             await _liveMatchPersistenceService.SetLiveMatch(match);
         }

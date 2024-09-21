@@ -10,6 +10,7 @@ namespace Common.Models
     /// </summary>
     public abstract class BaseModel
     {
+        public override int GetHashCode() => base.GetHashCode();
         public virtual bool ValidateAgainstOriginal<TModel>(TModel checkAgainst) where TModel : BaseModel
         {
             if (this is not TModel)
@@ -39,10 +40,11 @@ namespace Common.Models
                 var property = thisTypeProperties[i];
                 var foundSelfValue = property.GetValue(this);
                 var foundObjVal = property.GetValue(baseModel);
-                if (foundSelfValue != foundObjVal)
+                if (foundObjVal is null && foundSelfValue is null)
                 {
-                    return false;
+                    continue;
                 }
+                return foundSelfValue?.Equals(foundObjVal) ?? false;
             }
             return true;
         }

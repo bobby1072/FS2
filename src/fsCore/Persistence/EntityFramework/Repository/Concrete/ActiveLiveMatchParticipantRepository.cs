@@ -13,6 +13,24 @@ namespace Persistence.EntityFramework.Repository.Concrete
         {
             _contextFactory = context;
         }
+        public async Task<ICollection<LiveMatchParticipant>?> Create(ICollection<(LiveMatchParticipant LiveMatchParticipant, Guid MatchId)> participants)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var entities = participants.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x.LiveMatchParticipant, x.MatchId)).ToArray();
+            await context.ActiveLiveMatchParticipant.AddRangeAsync(entities);
+            await context.SaveChangesAsync();
+            var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
+            return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
+        }
+        public async Task<ICollection<LiveMatchParticipant>?> Update(ICollection<(LiveMatchParticipant LiveMatchParticipant, Guid MatchId)> participants)
+        {
+            await using var context = await _contextFactory.CreateDbContextAsync();
+            var entities = participants.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x.LiveMatchParticipant, x.MatchId)).ToArray();
+            context.ActiveLiveMatchParticipant.UpdateRange(entities);
+            await context.SaveChangesAsync();
+            var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
+            return returnObjs.Length > 0 ? (ICollection<LiveMatchParticipant>)returnObjs! : null;
+        }
         public async Task<ICollection<Guid>> GetMatchIdsForUser(Guid userId)
         {
             await using var dbContext = await _contextFactory.CreateDbContextAsync();
