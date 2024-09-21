@@ -51,9 +51,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         public async Task<ICollection<LiveMatchParticipant>?> Update(ICollection<LiveMatchParticipant> newRuntimeObjs, Guid matchId)
         {
             await using var context = _contextFactory.CreateDbContext();
-            var userIdList = newRuntimeObjs.Select(x => x.Id).ToArray();
-            var entities = await context.ActiveLiveMatchParticipant.Where(x => x.MatchId == matchId && userIdList.Contains(x.UserId)).ToArrayAsync();
-            var newEntities = newRuntimeObjs.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x, matchId, entities.First(y => y.UserId == x.Id && y.MatchId == matchId).Id)).ToArray();
+            var newEntities = newRuntimeObjs.DistinctBy(x => x.Id).Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x, matchId)).ToArray();
             context.ActiveLiveMatchParticipant.UpdateRange(newEntities);
             await context.SaveChangesAsync();
             var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
@@ -63,8 +61,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
         public async Task<ICollection<LiveMatchParticipant>?> Update(ICollection<Guid> matchIds, LiveMatchParticipant runtimeObj)
         {
             await using var context = _contextFactory.CreateDbContext();
-            var entities = await context.ActiveLiveMatchParticipant.Where(x => matchIds.Contains(x.MatchId) && x.UserId == runtimeObj.Id).ToArrayAsync();
-            var newEntities = entities.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(runtimeObj, x.MatchId, x.Id)).ToArray();
+            var newEntities = matchIds.Distinct().Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(runtimeObj, x)).ToArray();
             context.ActiveLiveMatchParticipant.UpdateRange(newEntities);
             await context.SaveChangesAsync();
             var returnObjs = context.ActiveLiveMatchParticipant.Local.SelectWhere(x => x.User is not null, x => x.ToRuntime()).ToArray();
@@ -89,6 +86,13 @@ namespace Persistence.EntityFramework.Repository.Concrete
                 context.ActiveLiveMatchParticipant.Remove(entity);
                 await context.SaveChangesAsync();
             }
+        }
+        public async Task Delete(ICollection<LiveMatchParticipant> participants)
+        {
+            await using var context = _contextFactory.CreateDbContext();
+            var entities = participants.Select(x => ActiveLiveMatchParticipantEntity.FromRuntime(x, Guid.Empty)).ToArray();
+            context.ActiveLiveMatchParticipant.RemoveRange(entities);
+            await context.SaveChangesAsync();
         }
     }
 }

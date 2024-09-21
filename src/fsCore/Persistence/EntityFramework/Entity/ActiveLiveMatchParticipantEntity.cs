@@ -16,27 +16,20 @@ namespace Persistence.EntityFramework.Entity
         public bool UserOnline { get; set; }
         public override LiveMatchParticipant? ToRuntime()
         {
-            return LiveMatchParticipant.FromUser(User?.ToRuntime(), UserOnline);
+            return LiveMatchParticipant.FromUser(User?.ToRuntime(), UserOnline, Id);
         }
         public static ActiveLiveMatchParticipantEntity FromRuntime(LiveMatchParticipant runtime, Guid matchId)
         {
             var entity = new ActiveLiveMatchParticipantEntity
             {
-                UserId = (Guid)runtime.Id,
+                UserId = (Guid)runtime.Id!,
                 MatchId = matchId,
                 UserOnline = runtime.Online
             };
-            return entity;
-        }
-        public static ActiveLiveMatchParticipantEntity FromRuntime(LiveMatchParticipant runtime, Guid matchId, int id)
-        {
-            var entity = new ActiveLiveMatchParticipantEntity
+            if (runtime.DbId is int foundId)
             {
-                UserId = (Guid)runtime.Id,
-                MatchId = matchId,
-                UserOnline = runtime.Online,
-                Id = id
-            };
+                entity.Id = foundId;
+            }
             return entity;
         }
     }

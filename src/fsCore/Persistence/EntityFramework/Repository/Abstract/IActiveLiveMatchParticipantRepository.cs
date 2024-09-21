@@ -10,6 +10,7 @@ namespace Persistence.EntityFramework.Repository.Abstract
         Task<ICollection<LiveMatchParticipant>?> Create(ICollection<LiveMatchParticipant> runtimeObjs, Guid matchId);
         Task Delete(ICollection<Guid> userIdList, Guid matchId);
         Task Delete(User runtimeObj, Guid matchId);
+        Task Delete(ICollection<LiveMatchParticipant> participants);
         Task<ICollection<LiveMatchParticipant>?> GetForMatch(Guid matchId);
         Task<ICollection<LiveMatchParticipant>?> GetForMatch(ICollection<Guid> matchId);
     }
