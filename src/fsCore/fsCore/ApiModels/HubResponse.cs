@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json.Serialization;
 using Common.Misc;
 using Common.Models;
+using FluentValidation;
 
 namespace fsCore.ApiModels
 {
@@ -41,5 +42,6 @@ namespace fsCore.ApiModels
         public static HubResponse<ICollection<LiveMatch>> FromLiveMatch(ICollection<LiveMatch> liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
         public static HubResponse FromError(ApiException exception) => new((int)exception.StatusCode, exception.Message);
         public static HubResponse FromError(Exception exception) => new((int)HttpStatusCode.InternalServerError, exception.Message);
+        public static HubResponse FromError(ValidationException exception) => new((int)HttpStatusCode.BadRequest, exception.Message);
     }
 }

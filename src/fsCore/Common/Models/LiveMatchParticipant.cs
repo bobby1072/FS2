@@ -29,6 +29,8 @@ namespace Common.Models
             Online = online;
             DbId = dbId;
         }
+        [JsonConstructor]
+        public LiveMatchParticipant() { }
         public static LiveMatchParticipant? FromUser(User? user, int? dbId = null) => user is null ? null : new(user.Email, user.EmailVerified, user.Name, user.Username, user.Id, false, dbId);
         public static LiveMatchParticipant? FromUser(User? user, bool online, int? dbId = null) => user is null ? null : new(user.Email, user.EmailVerified, user.Name, user.Username, user.Id, online, dbId);
 

@@ -39,6 +39,8 @@ namespace Common.Models
             Name = name;
             Username = username ?? CalculateDefaultUsername();
         }
+        [JsonConstructor]
+        public User() { }
         public string CalculateDefaultUsername()
         {
             return Email.Split('@').FirstOrDefault() ?? Email;

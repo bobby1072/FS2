@@ -1,5 +1,6 @@
 using Common.Misc;
 using Common.Models;
+using FluentValidation;
 using fsCore.ApiModels;
 using fsCore.Attributes;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,10 @@ namespace fsCore.Hubs
             _logger = logger;
         }
         public override async Task OnConnectedAsync()
+        {
+            await HubMethodExceptionWrapper((OnConnectedAsyncLogic, nameof(OnConnectedAsync)));
+        }
+        private async Task OnConnectedAsyncLogic()
         {
             await base.OnConnectedAsync();
             var user = await GetCurrentUserWithPermissionsAsync();
@@ -64,6 +69,10 @@ namespace fsCore.Hubs
         }
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
+            await HubMethodExceptionWrapper((() => OnDisconnectedAsyncLogic(exception), nameof(OnDisconnectedAsync)));
+        }
+        private async Task OnDisconnectedAsyncLogic(Exception? exception)
+        {
             await base.OnDisconnectedAsync(exception);
             var user = await GetCurrentUserWithPermissionsAsync();
 
@@ -93,23 +102,31 @@ namespace fsCore.Hubs
                 );
             }
         }
-        private async Task LiveMatchHubExceptionWrapper(Func<Task> hubAction)
+        private async Task HubMethodExceptionWrapper((Func<Task> Func, string HubMethodName) hubAction)
         {
+            _logger.LogInformation("LiveMatch signal R method: {MethodName} started executing for connection {ConnectionId}", hubAction.HubMethodName, Context.ConnectionId);
             try
             {
-                await hubAction.Invoke();
+                await hubAction.Func.Invoke();
             }
-            catch (LiveMatchException e)
+            catch (ApiException e)
             {
                 await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
-                _logger.LogError("Signal R connection failed with {Exception}", e.Message);
+                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception} and status code {StatusCode}", hubAction.HubMethodName, Context.ConnectionId, e.Message, e.StatusCode);
+            }
+            catch (ValidationException e)
+            {
+                await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
+                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
             }
             catch (Exception e)
             {
-                _logger.LogError("Signal R connection failed with {Exception}", e.Message);
+                await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
+                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
             }
             finally
             {
+                _logger.LogInformation("LiveMatch signal R method: {MethodName} finished executing for connection {ConnectionId}", hubAction.HubMethodName, Context.ConnectionId);
             }
         }
         private async Task AddUsersToMatchGroup(ICollection<Guid> matchIds, string connectionId)
