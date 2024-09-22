@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Text.Json;
 
-namespace fsCore.Hubs.Filters.Concrete
+namespace fsCore.Hubs.Filters
 {
     public class ExceptionHandlingFilter : IHubFilter
     {

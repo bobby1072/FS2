@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using System.Reflection;
 
-namespace fsCore.Hubs.Filters.Concrete
+namespace fsCore.Hubs.Filters
 {
     public static class FilterContextExtensions
     {

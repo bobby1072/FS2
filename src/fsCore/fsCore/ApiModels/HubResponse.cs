@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json.Serialization;
+using Common.Misc;
 using Common.Models;
 
 namespace fsCore.RequestModels
@@ -33,8 +34,12 @@ namespace fsCore.RequestModels
             Status = status;
             ErrorMessage = errorMessage;
         }
+    }
+    internal static class HubResponseBuilder
+    {
         public static HubResponse<LiveMatch> FromLiveMatch(LiveMatch liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
         public static HubResponse<ICollection<LiveMatch>> FromLiveMatch(ICollection<LiveMatch> liveMatch) => new((int)HttpStatusCode.OK, liveMatch);
+        public static HubResponse FromError(ApiException exception) => new((int)exception.StatusCode, exception.Message);
+        public static HubResponse FromError(Exception exception) => new((int)HttpStatusCode.InternalServerError, exception.Message);
     }
-
 }

@@ -6,7 +6,7 @@ using Services.Abstract;
 using Services.Concrete;
 using System.Net;
 
-namespace fsCore.Hubs.Filters.Concrete
+namespace fsCore.Hubs.Filters
 {
     public class UserWithPermissionsSessionFilter : IHubFilter
     {

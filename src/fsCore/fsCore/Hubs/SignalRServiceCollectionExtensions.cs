@@ -1,6 +1,6 @@
 using Common.Misc.Abstract;
 using fsCore.Hubs.Contexts;
-using fsCore.Hubs.Filters.Concrete;
+using fsCore.Hubs.Filters;
 using Microsoft.AspNetCore.SignalR;
 
 namespace fsCore.Hubs

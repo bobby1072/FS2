@@ -23,7 +23,7 @@ namespace fsCore.Hubs.Contexts
             try
             {
                 var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException("Match not found", HttpStatusCode.NotFound);
-                await _hubContext.Clients.Groups(matchId.ToString()).SendAsync(LiveMatchHub.UpdateMatchMessage, HubResponse.FromLiveMatch(foundMatch));
+                await _hubContext.Clients.Groups($"{LiveMatchHub.LiveMatchGroupMessage}{matchId}").SendAsync(LiveMatchHub.UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(foundMatch));
             }
             catch (Exception e)
             {
