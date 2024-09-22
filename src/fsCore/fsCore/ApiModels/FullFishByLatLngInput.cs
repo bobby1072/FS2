@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace fsCore.RequestModels
+namespace fsCore.ApiModels
 {
     public record FullFishByLatLngInput
     {

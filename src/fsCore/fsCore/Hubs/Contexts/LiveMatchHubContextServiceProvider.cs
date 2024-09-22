@@ -1,7 +1,7 @@
 using System.Net;
 using Common.Misc;
 using Common.Misc.Abstract;
-using fsCore.RequestModels;
+using fsCore.ApiModels;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
 

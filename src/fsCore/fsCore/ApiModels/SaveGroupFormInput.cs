@@ -1,7 +1,7 @@
 using Common.Models;
 using Common.Utils;
 
-namespace fsCore.RequestModels
+namespace fsCore.ApiModels
 {
     public record SaveGroupFormInput
     {

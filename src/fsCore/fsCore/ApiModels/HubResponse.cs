@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Common.Misc;
 using Common.Models;
 
-namespace fsCore.RequestModels
+namespace fsCore.ApiModels
 {
     internal record HubResponse<TData>
     {

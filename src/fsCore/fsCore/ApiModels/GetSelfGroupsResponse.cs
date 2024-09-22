@@ -1,6 +1,6 @@
 using Common.Models;
 
-namespace fsCore.RequestModels
+namespace fsCore.ApiModels
 {
     public record GetSelfGroupsResponse
     {

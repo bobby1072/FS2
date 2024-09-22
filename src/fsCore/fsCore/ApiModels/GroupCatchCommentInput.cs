@@ -1,7 +1,7 @@
 using Common.Models;
 using System.Text.Json.Serialization;
 
-namespace fsCore.RequestModels
+namespace fsCore.ApiModels
 {
     public record GroupCatchCommentInput
     {

@@ -1,7 +1,7 @@
 using Common.Misc;
 using Common.Models;
 using fsCore.Attributes;
-using fsCore.RequestModels;
+using fsCore.ApiModels;
 using Microsoft.AspNetCore.Mvc;
 using Services.Abstract;
 using System.Net;
