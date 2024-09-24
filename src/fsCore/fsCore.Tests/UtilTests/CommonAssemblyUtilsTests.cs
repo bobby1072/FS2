@@ -33,8 +33,8 @@ namespace fsCore.Tests.UtilTests
             {
                 var car = new TestBaseModelCar { DriveSystem = "4x4", Manufacturer = "volvo", Year = 2021 };
                 Add(JsonSerializer.Deserialize<object>(JsonSerializer.Serialize(car)), typeof(TestBaseModelCar));
-                var boat = new TestBaseModelTruck { CargoType = "wood", Manufacturer = "volvo", Year = 2021 };
-                Add(JsonSerializer.Deserialize<object>(JsonSerializer.Serialize(boat)), typeof(TestBaseModelTruck));
+                var truck = new TestBaseModelTruck { CargoType = "wood", Manufacturer = "volvo", Year = 2021 };
+                Add(JsonSerializer.Deserialize<object>(JsonSerializer.Serialize(truck)), typeof(TestBaseModelTruck));
             }
         }
         [Theory]

@@ -5,8 +5,8 @@ namespace Common.Utils
 {
     public static class CommonAssemblyUtils
     {
-        public static readonly Assembly RuntimeAssembly = Assembly.GetExecutingAssembly();
-        public static readonly IReadOnlyCollection<Type> AllAssemblyTypes = RuntimeAssembly.GetTypes();
+        private static readonly Assembly RuntimeAssembly = Assembly.GetExecutingAssembly();
+        private static readonly IReadOnlyCollection<Type> AllAssemblyTypes = RuntimeAssembly.GetTypes();
         /// <summary>
         /// <para>Parse object to child of T</para>
         /// <para>Requires child classes you want to parse to to have an AssemblyConstructor</para>
@@ -16,10 +16,7 @@ namespace Common.Utils
         /// <returns></returns>
         public static T ParseToChildOf<T>(object? obj) where T : class
         {
-            if (obj is null)
-            {
-                throw new ArgumentNullException(nameof(obj));
-            }
+            ArgumentNullException.ThrowIfNull(obj);
             var targetType = typeof(T);
             var childClasses = AllAssemblyTypes.Where(x => x.IsSubclassOf(targetType)).ToArray();
             foreach (var childType in childClasses)
@@ -37,7 +34,7 @@ namespace Common.Utils
                 //can be ignored as need to try constructors til you get a working one
                 catch { }
             }
-            throw new InvalidCastException($"Cannot cast object");
+            throw new InvalidCastException($"Cannot cast instance to type {typeof(T).Name}");
         }
     }
 }

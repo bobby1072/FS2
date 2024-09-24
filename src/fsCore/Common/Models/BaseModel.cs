@@ -115,11 +115,12 @@ namespace Common.Models
                 DriveSystem = jsonElement.GetProperty("driveSystem").GetString();
                 return;
             }
-            else if (obj is TestBaseModelCar testBaseModelCar)
+            else
             {
-                Manufacturer = testBaseModelCar.Manufacturer;
-                Year = testBaseModelCar.Year;
-                DriveSystem = testBaseModelCar.DriveSystem;
+                dynamic dynamicObj = obj;
+                Manufacturer = dynamicObj.Manufacturer;
+                Year = dynamicObj.Year;
+                DriveSystem = dynamicObj.DriveSystem;
                 return;
             }
             throw new InvalidDataException("Object is not a valid type");
@@ -149,11 +150,12 @@ namespace Common.Models
                 CargoType = jsonElement.GetProperty("cargoType").GetString() ?? throw new InvalidDataException("CargoType is null");
                 return;
             }
-            else if (obj is TestBaseModelTruck testBaseModelTruck)
+            else
             {
-                Manufacturer = testBaseModelTruck.Manufacturer;
-                Year = testBaseModelTruck.Year;
-                CargoType = testBaseModelTruck.CargoType;
+                dynamic dynamicObj = obj;
+                Manufacturer = dynamicObj.Manufacturer;
+                Year = dynamicObj.Year;
+                CargoType = dynamicObj.CargoType;
                 return;
             }
             throw new InvalidDataException("Object is not a valid type");

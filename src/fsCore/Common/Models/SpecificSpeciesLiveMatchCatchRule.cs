@@ -25,16 +25,16 @@ namespace Common.Models
             {
                 SpeciesNames = jsonElement.GetProperty("speciesName").EnumerateArray().Select(x => x.GetString() ?? throw new InvalidDataException("Cannot parse species name string")).ToList() ?? throw new InvalidDataException("SpeciesName is null");
                 WorldFish = jsonElement.GetProperty("worldFish").EnumerateArray().Select(x => JsonSerializer.Deserialize<WorldFish>(x.GetRawText()) ?? throw new InvalidDataException("Cannot parse worldFish")).ToList() ?? throw new InvalidDataException("WorldFish is null");
-            }
-            else if (obj is SpecificSpeciesLiveMatchCatchRule specificSpeciesLiveMatchCatchRule)
-            {
-                SpeciesNames = specificSpeciesLiveMatchCatchRule.SpeciesNames;
-                WorldFish = specificSpeciesLiveMatchCatchRule.WorldFish;
+                return;
             }
             else
             {
-                throw new InvalidDataException("Object is not a valid type");
+                dynamic dynamicObj = obj;
+                SpeciesNames = dynamicObj.SpeciesNames;
+                WorldFish = dynamicObj.WorldFish;
+                return;
             }
+            throw new InvalidDataException("Object is not a valid type");
         }
         [JsonConstructor]
         public SpecificSpeciesLiveMatchCatchRule() : base()
