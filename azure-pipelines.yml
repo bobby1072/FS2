@@ -26,7 +26,8 @@ stages:
         displayName: "Build backend"
         steps:
           - checkout: self
-            submodules: false
+            submodules: true
+
           - task: UseDotNet@2
             displayName: "Install .NET SDK"
             inputs:
