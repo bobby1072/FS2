@@ -8,7 +8,7 @@ namespace fsCore.Tests.UtilTests
 {
     public class LiveMatchUtilsTests
     {
-        internal class Should_Calculate_LiveMatch_Winner_Correctly_Class_Data : TheoryData<LiveMatch, User>
+        private class Should_Calculate_LiveMatch_Winner_Correctly_Class_Data : TheoryData<LiveMatch, User>
         {
             public Should_Calculate_LiveMatch_Winner_Correctly_Class_Data()
             {

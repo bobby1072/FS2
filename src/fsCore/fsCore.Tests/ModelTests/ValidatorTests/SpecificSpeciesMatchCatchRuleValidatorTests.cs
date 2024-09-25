@@ -11,7 +11,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             _validator = new SpecificSpeciesMatchCatchRuleValidator();
         }
-        internal class SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data : TheoryData<SpecificSpeciesLiveMatchCatchRule, bool>
+        private class SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data : TheoryData<SpecificSpeciesLiveMatchCatchRule, bool>
         {
             public SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data()
             {

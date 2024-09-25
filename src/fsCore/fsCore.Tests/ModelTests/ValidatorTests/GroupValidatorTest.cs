@@ -12,7 +12,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             _validator = new GroupValidator();
         }
-        internal class Group_Class_Data : TheoryData<Group, bool>
+        private class Group_Class_Data : TheoryData<Group, bool>
         {
             public Group_Class_Data()
             {

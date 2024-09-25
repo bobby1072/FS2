@@ -7,7 +7,7 @@ namespace fsCore.Tests.UtilTests
 {
     public class CommonAssemblyUtilsTests
     {
-        internal class ParseToChildOf_When_Called_With_Vehicle_object_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
+        private class ParseToChildOf_When_Called_With_Vehicle_object_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
         {
             public ParseToChildOf_When_Called_With_Vehicle_object_Returns_Correct_Vehicle_Instance_Class_Data()
             {
@@ -27,7 +27,7 @@ namespace fsCore.Tests.UtilTests
             // Assert
             result.Should().BeOfType(expectedType);
         }
-        internal class ParseToChildOf_When_Called_With_Deserialised_Json_Vehicle_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
+        private class ParseToChildOf_When_Called_With_Deserialised_Json_Vehicle_Returns_Correct_Vehicle_Instance_Class_Data : TheoryData<object, Type>
         {
             public ParseToChildOf_When_Called_With_Deserialised_Json_Vehicle_Returns_Correct_Vehicle_Instance_Class_Data()
             {

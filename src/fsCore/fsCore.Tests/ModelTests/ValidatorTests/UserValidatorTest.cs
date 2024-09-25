@@ -11,7 +11,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             _validator = new UserValidator();
         }
-        internal class User_Class_Data : TheoryData<User, bool>
+        private class User_Class_Data : TheoryData<User, bool>
         {
             public User_Class_Data()
             {

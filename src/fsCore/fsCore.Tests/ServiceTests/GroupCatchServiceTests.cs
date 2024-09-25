@@ -31,9 +31,9 @@ namespace fsCore.Tests.ServiceTests
             _commentValidator = new MockGroupCatchCommentValidator();
             _groupCatchService = new GroupCatchService(_groupCatchRepository.Object, _worldFishRepository.Object, _groupService.Object, _userService.Object, _commentRepo.Object, _commentValidator, _catchValidator);
         }
-        internal class MockGroupCatchValidator : AbstractValidator<GroupCatch>, IValidator<GroupCatch> { }
-        internal class MockGroupCatchCommentValidator : AbstractValidator<GroupCatchComment>, IValidator<GroupCatchComment> { }
-        internal class Can_Manage_Catches_User_Class_Data : TheoryData<UserWithGroupPermissionSet, Group>
+        private class MockGroupCatchValidator : AbstractValidator<GroupCatch>, IValidator<GroupCatch> { }
+        private class MockGroupCatchCommentValidator : AbstractValidator<GroupCatchComment>, IValidator<GroupCatchComment> { }
+        private class Can_Manage_Catches_User_Class_Data : TheoryData<UserWithGroupPermissionSet, Group>
         {
             public Can_Manage_Catches_User_Class_Data()
             {

@@ -80,7 +80,7 @@ namespace fsCore.Tests.ModelTests
                 }
             }
         }
-        internal class Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data : TheoryData<LiveMatch>
+        private class Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data : TheoryData<LiveMatch>
         {
             public Json_Serialisation_Should_Work_Through_Caching_Types_Class_Data()
             {
@@ -119,7 +119,7 @@ namespace fsCore.Tests.ModelTests
                 withinAreaRuleInvalidCatch.Species = "catfish";
                 var specificSpeciesRuleCatches = new List<LiveMatchCatch> { specificSpeciesRuleValidCatch, specificSpeciesRuleValidCatch2, specificSpeciesRuleInvalidCatch };
                 var specificSpeciesRuleLiveMatchRules = new LiveMatchRules([specificSpeciesRules]);
-                var specificRuleMatchUsers = new List<LiveMatchParticipant>() { LiveMatchParticipant.FromUser(MockUserBuilder.Build())!};
+                var specificRuleMatchUsers = new List<LiveMatchParticipant>() { LiveMatchParticipant.FromUser(MockUserBuilder.Build())! };
                 var LiveMatchWithSpecificSpeciesRule = new LiveMatch(Guid.NewGuid(), "test match", specificSpeciesRuleLiveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, specificSpeciesRuleCatches, specificRuleMatchUsers, (Guid)specificRuleMatchUsers[0].Id, DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", specificSpeciesRuleLiveMatchId);
                 Add(LiveMatchWithSpecificSpeciesRule);
 
