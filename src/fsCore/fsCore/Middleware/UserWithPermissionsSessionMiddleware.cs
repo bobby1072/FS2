@@ -27,7 +27,7 @@ namespace fsCore.Middleware
                     await cachingService.SetObject($"{UserWithGroupPermissionSet.CacheKeyPrefix}{token}", newUserWithPermissions, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
-            await _next(httpContext);
+            await _next.Invoke(httpContext);
         }
     }
     internal static class UserWithPermissionsSessionMiddlewareExtensions

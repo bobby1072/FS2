@@ -19,7 +19,7 @@ namespace fsCore.Middleware
             {
                 try
                 {
-                    await _next(httpContext);
+                    await _next.Invoke(httpContext);
                 }
                 catch (ApiException apiException)
                 {

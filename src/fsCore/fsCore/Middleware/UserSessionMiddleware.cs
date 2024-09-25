@@ -29,7 +29,7 @@ namespace fsCore.Middleware
                     await cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
             }
-            await _next(httpContext);
+            await _next.Invoke(httpContext);
 
         }
     }
