@@ -1,3 +1,6 @@
 [submodule "Submodules/BT.Common"]
 	path = Submodules/BT.Common
 	url = https://github.com/bobby1072/BT.git
+[submodule "src/Submodules/BT.Common"]
+	path = src/Submodules/BT.Common
+	url = https://github.com/bobby1072/BT.git
