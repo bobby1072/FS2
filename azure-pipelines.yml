@@ -26,7 +26,7 @@ stages:
         displayName: "Build backend"
         steps:
           - checkout: self
-            submodules: true
+            submodules: recursive
 
           - task: UseDotNet@2
             displayName: "Install .NET SDK"
@@ -96,6 +96,8 @@ stages:
     jobs:
       - job: push_core_image
         steps:
+          - checkout: self
+            submodules: recursive
           - task: DownloadPipelineArtifact@2
             inputs:
               artifact: client
