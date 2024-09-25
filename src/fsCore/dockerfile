@@ -18,8 +18,8 @@ COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
 COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
 COPY src/fsCore/Services/*.csproj ./fsCore/Services/
-COPY src/Submodules/BT.Common/BT.Common.FastArray/*.csproj ./fsCore/Submodules/BT.Common/BT.Common.FastArray
-COPY src/Submodules/BT.Common/BT.Common.OperationTimer/*.csproj ./fsCore/Submodules/BT.Common/BT.Common.OperationTimer
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/*.csproj ./fsCore/Submodules/BT.Common/BT.Common.FastArray
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/*.csproj ./fsCore/Submodules/BT.Common/BT.Common.OperationTimer
 
 ARG WEB_APP_CLIENT_PATH
 COPY ${WEB_APP_CLIENT_PATH} ./fsCore/fsCore/wwwroot/
@@ -31,8 +31,8 @@ COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/ ./fsCore/fsCore/
 COPY src/fsCore/Persistence/ ./fsCore/Persistence/
 COPY src/fsCore/Services/ ./fsCore/Services/
-COPY src/Submodules/BT.Common/BT.Common.FastArray/ ./fsCore/Submodules/BT.Common/BT.Common.FastArray/
-COPY src/Submodules/BT.Common/BT.Common.OperationTimer/ ./fsCore/Submodules/BT.Common/BT.Common.OperationTimer/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/ ./fsCore/Submodules/BT.Common/BT.Common.FastArray/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/ ./fsCore/Submodules/BT.Common/BT.Common.OperationTimer/
 
 WORKDIR /src/fsCore/fsCore
 ARG CONF=Release
