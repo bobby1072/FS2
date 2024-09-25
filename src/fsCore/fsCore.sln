@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.FastArray", "..\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.OperationTimer", "..\Submodules\BT.Common\src\BT.Common\BT.Common.OperationTimer\BT.Common.OperationTimer.csproj", "{27A9920B-4F13-4132-81FC-A6B75996306C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.FastArray.Tests", "..\Submodules\BT.Common\src\BT.Common\BT.Common.FastArray.Tests\BT.Common.FastArray.Tests.csproj", "{A920B08E-B769-4B7C-A02F-8F18D8D4BA74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A920B08E-B769-4B7C-A02F-8F18D8D4BA74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A920B08E-B769-4B7C-A02F-8F18D8D4BA74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A920B08E-B769-4B7C-A02F-8F18D8D4BA74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A920B08E-B769-4B7C-A02F-8F18D8D4BA74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913} = {B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}
 		{27A9920B-4F13-4132-81FC-A6B75996306C} = {B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}
+		{A920B08E-B769-4B7C-A02F-8F18D8D4BA74} = {B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6032FFEC-26F7-4093-88A5-EFE26EA8D966}
