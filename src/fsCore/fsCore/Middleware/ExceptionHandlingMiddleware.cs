@@ -60,13 +60,5 @@ namespace fsCore.Middleware
             return sb.ToString();
         }
     }
-    internal static class ExceptionHandlingMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseExceptionHandlingMiddleware(
-            this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<ExceptionHandlingMiddleware>();
-        }
-    }
 
 }

@@ -11,7 +11,7 @@ namespace fsCore.Middleware
         }
         public async Task InvokeAsync(HttpContext httpContext)
         {
-            _logger.LogInformation("Request entering: {request}", JsonSerializer.Serialize(httpContext.Request));
+            _logger.LogInformation("Request entering: {request}", httpContext.Request);
             if (httpContext.Request.Headers.Authorization.Count > 0)
             {
                 _logger.LogInformation("Request webToken from {webToken}", httpContext.Request.Headers.Authorization.ToString());
@@ -19,7 +19,7 @@ namespace fsCore.Middleware
 
             await _next.Invoke(httpContext);
 
-            _logger.LogInformation("Request leaving with response: {request}", JsonSerializer.Serialize(httpContext.Response));
+            _logger.LogInformation("Request leaving with response: {request}", httpContext.Response);
         }
     }
 }

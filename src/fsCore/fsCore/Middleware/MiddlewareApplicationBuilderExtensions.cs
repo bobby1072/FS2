@@ -7,6 +7,7 @@ namespace fsCore.Middleware
         {
             return builder
                 .UseMiddleware<ExceptionHandlingMiddleware>()
+                .UseMiddleware<RequestTimingMiddleware>()
                 .UseMiddleware<RequestResponseLoggingMiddleware>()
                 .UseMiddleware<UserSessionMiddleware>()
                 .UseMiddleware<UserWithPermissionsSessionMiddleware>();
