@@ -12,9 +12,9 @@ namespace fsCore.Hubs.Filters
         }
         public async ValueTask<object?> InvokeMethodAsync(HubInvocationContext invocationContext, Func<HubInvocationContext, ValueTask<object?>> next)
         {
-            var (timeToComplete, valTask) = await OperationTimerUtils.TimeAsyncWithResults(next.Invoke, invocationContext);
+            var (timeToComplete, valTask) = await OperationTimerUtils.TimeWithResultsAsync(next.Invoke, invocationContext);
             _logger.LogInformation("Hub method {InvocationContext} took {TimeToComplete}ms to complete.", invocationContext.HubMethodName, timeToComplete.Milliseconds);
-            return await valTask;
+            return valTask;
         }
     }
 }

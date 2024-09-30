@@ -33,7 +33,7 @@ namespace fsCore.Hubs.Filters
                     var userExistence = await _userService.CheckUserExistsAndCreateIfNot(tokenUser);
                     await _cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userExistence, CacheObjectTimeToLiveInSeconds.OneHour);
                 }
-                else if (existingUserSession is not null && hubRequireAttribute.UpdateAlways == true)
+                else if (hubRequireAttribute.UpdateAlways)
                 {
                     var userFound = await _userService.GetUser((Guid)existingUserSession.Id!);
                     await _cacheService.SetObject($"{User.CacheKeyPrefix}{token}", userFound, CacheObjectTimeToLiveInSeconds.OneHour);
