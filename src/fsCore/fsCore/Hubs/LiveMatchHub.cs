@@ -112,17 +112,17 @@ namespace fsCore.Hubs
             catch (ApiException e)
             {
                 await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
-                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception} and status code {StatusCode}", hubAction.HubMethodName, Context.ConnectionId, e.Message, e.StatusCode);
+                _logger.LogError(e, "Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception} and status code {StatusCode}", hubAction.HubMethodName, Context.ConnectionId, e.Message, e.StatusCode);
             }
             catch (ValidationException e)
             {
                 await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
-                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
+                _logger.LogError(e, "Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
             }
             catch (Exception e)
             {
                 await Clients.Caller.SendAsync(ErrorMessage, HubResponseBuilder.FromError(e));
-                _logger.LogError("Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
+                _logger.LogError(e, "Signal R method: {MethodName} for connection {ConnectionId} failed with exception message {Exception}", hubAction.HubMethodName, Context.ConnectionId, e.Message);
             }
             finally
             {
