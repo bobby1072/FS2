@@ -14,14 +14,18 @@ namespace fsCore.Hubs
         {
             _cachingService = cachingService;
         }
+        private HttpContext? _httpContext;
         protected HttpContext? HttpContext
         {
             get
             {
-                HttpContext ??= Context.GetHttpContext();
-                return HttpContext;
+                _httpContext ??= Context.GetHttpContext();
+                return _httpContext;
             }
-            set { }
+            set
+            {
+                _httpContext = value;
+            }
         }
         private string GetTokenString()
         {

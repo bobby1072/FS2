@@ -23,7 +23,6 @@ namespace Common.Utils
             {
                 try
                 {
-
                     var objConstructor = Array.Find(childType.GetConstructors(), x => x.GetCustomAttribute<AssemblyConstructorAttribute>() is not null) ?? throw new InvalidDataException("No assembly constructor found");
                     var parsedObj = objConstructor.Invoke([obj]);
                     if (parsedObj is not null)

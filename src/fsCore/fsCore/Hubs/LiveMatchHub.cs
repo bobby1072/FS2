@@ -28,13 +28,26 @@ namespace fsCore.Hubs
             _liveMatchPersistenceService = liveMatchPersistenceService;
             _logger = logger;
         }
+        public async Task CreateMatch(SaveMatchLiveHubInput liveMatch)
+        {
+            var user = await GetCurrentUserWithPermissionsAsync();
+            Task methodFunction() => CreateMatchLogic(liveMatch.ToLiveMatch((Guid)user.Id!), user);
+            await HubMethodExceptionWrapper((methodFunction, nameof(CreateMatch)));
+        }
+        private async Task CreateMatchLogic(LiveMatch liveMatch, UserWithGroupPermissionSet user)
+        {
+            var createdMatch = await _liveMatchService.CreateMatch(liveMatch, user);
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{LiveMatchGroupMessage}{createdMatch.Id}");
+
+            await Clients.Group($"{LiveMatchGroupMessage}{createdMatch.Id}").SendAsync(CreateMatchMessage, HubResponseBuilder.FromLiveMatch(createdMatch));
+        }
         public override async Task OnConnectedAsync()
         {
             await HubMethodExceptionWrapper((OnConnectedAsyncLogic, nameof(OnConnectedAsync)));
         }
         private async Task OnConnectedAsyncLogic()
         {
-            await base.OnConnectedAsync();
             var user = await GetCurrentUserWithPermissionsAsync();
 
             var allMatchesForUser = await _liveMatchService.AllMatchesParticipatedIn(user);
@@ -73,7 +86,11 @@ namespace fsCore.Hubs
         }
         private async Task OnDisconnectedAsyncLogic(Exception? exception)
         {
-            await base.OnDisconnectedAsync(exception);
+            if (exception is not null)
+            {
+                _logger.LogError(exception, "Signal R connection {ConnectionId} disconnected with exception message {Exception}", Context.ConnectionId, exception.Message);
+            }
+
             var user = await GetCurrentUserWithPermissionsAsync();
 
             var allMatchesForUser = await _liveMatchService.AllMatchesParticipatedIn(user);
@@ -104,9 +121,9 @@ namespace fsCore.Hubs
         }
         private async Task HubMethodExceptionWrapper((Func<Task> Func, string HubMethodName) hubAction)
         {
-            _logger.LogInformation("LiveMatch signal R method: {MethodName} started executing for connection {ConnectionId}", hubAction.HubMethodName, Context.ConnectionId);
             try
             {
+                _logger.LogInformation("LiveMatch signal R method: {MethodName} started executing for connection {ConnectionId}", hubAction.HubMethodName, Context.ConnectionId);
                 await hubAction.Func.Invoke();
             }
             catch (ApiException e)
@@ -134,18 +151,9 @@ namespace fsCore.Hubs
             var jobList = new List<Task>();
             foreach (var matchId in matchIds)
             {
-                jobList.Add(Groups.AddToGroupAsync(connectionId, matchId.ToString()));
+                jobList.Add(Groups.AddToGroupAsync(connectionId, $"{LiveMatchGroupMessage}{matchId.ToString()}"));
             }
             await Task.WhenAll(jobList);
         }
-        // private async Task AddUsersToMatchGroup(Guid matchId, ICollection<string> connectionIds)
-        // {
-        //     var jobList = new List<Task>();
-        //     foreach (var connectionId in connectionIds)
-        //     {
-        //         jobList.Add(Groups.AddToGroupAsync(connectionId, matchId.ToString()));
-        //     }
-        //     await Task.WhenAll(jobList);
-        // }
     }
 }
