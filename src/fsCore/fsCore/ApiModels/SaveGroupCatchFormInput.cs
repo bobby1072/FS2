@@ -1,6 +1,6 @@
 namespace fsCore.ApiModels
 {
-    public record SaveCatchFormInput
+    public record SaveGroupCatchFormInput
     {
         public Guid? Id { get; init; }
         public Guid GroupId { get; init; }

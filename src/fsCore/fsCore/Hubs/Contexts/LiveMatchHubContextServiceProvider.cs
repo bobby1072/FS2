@@ -25,7 +25,7 @@ namespace fsCore.Hubs.Contexts
         private async Task UpdateMatchForClientsLogic(Guid matchId)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException("Match not found", HttpStatusCode.NotFound);
-            await _hubContext.Clients.Groups($"{LiveMatchHub.LiveMatchGroupMessage}{matchId}").SendAsync(LiveMatchHub.UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(foundMatch));
+            await _hubContext.Clients.Groups($"{LiveMatchHub.LiveMatchGroupPrefix}{matchId}").SendAsync(LiveMatchHub.UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(foundMatch));
         }
         private async Task HubContextServiceProviderMethodExceptionWrapper((Func<Task> Func, string HubMethodName) hubAction)
         {

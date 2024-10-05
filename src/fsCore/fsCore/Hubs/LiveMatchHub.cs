@@ -17,8 +17,7 @@ namespace fsCore.Hubs
     {
         public const string UpdateMatchMessage = "UpdateMatch";
         public const string CreateMatchMessage = "CreateMatch";
-        public const string AllMatchesForUserMessage = "AllMatchesForUser";
-        public const string LiveMatchGroupMessage = "LiveMatchGroup";
+        public const string LiveMatchGroupPrefix = "LiveMatchGroup-";
         public const string ErrorMessage = "Error";
         private readonly ILiveMatchService _liveMatchService;
         private readonly ILiveMatchPersistenceService _liveMatchPersistenceService;
@@ -29,11 +28,77 @@ namespace fsCore.Hubs
             _liveMatchPersistenceService = liveMatchPersistenceService;
             _logger = logger;
         }
+        public async Task SaveCatch(SaveMatchCatchLiveMatchHubInput hubInput)
+        {
+            Task saveCatchLocalMethod() => SaveCatchLogic(hubInput);
+            await HubMethodExceptionWrapper((saveCatchLocalMethod, nameof(SaveCatch)));
+        }
+        private async Task SaveCatchLogic(SaveMatchCatchLiveMatchHubInput hubInput)
+        {
+            var user = await GetCurrentUserWithPermissionsAsync();
+
+            await _liveMatchService.SaveCatch(hubInput.MatchId, hubInput.ToLiveMatchCatch((Guid)user.Id!), user);
+
+            var match = await _liveMatchPersistenceService.TryGetLiveMatch(hubInput.MatchId) ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
+
+            match.RemoveSensitive();
+
+            await Clients.Group($"{LiveMatchGroupPrefix}{hubInput.MatchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+        }
+        public async Task EndMatch(Guid matchId)
+        {
+            Task endMatchLocalMethod() => EndMatchLogic(matchId);
+            await HubMethodExceptionWrapper((endMatchLocalMethod, nameof(EndMatch)));
+        }
+        private async Task EndMatchLogic(Guid matchId)
+        {
+            var user = await GetCurrentUserWithPermissionsAsync();
+
+            var match = await _liveMatchService.EndMatch(matchId, user);
+
+            match.RemoveSensitive();
+
+            await Clients.Group($"{LiveMatchGroupPrefix}{matchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+        }
+        public async Task StartMatch(Guid matchId)
+        {
+            Task startMatchLocalMethod() => StartMatchLogic(matchId);
+            await HubMethodExceptionWrapper((startMatchLocalMethod, nameof(StartMatch)));
+        }
+        private async Task StartMatchLogic(Guid matchId)
+        {
+            var user = await GetCurrentUserWithPermissionsAsync();
+
+            var match = await _liveMatchService.StartMatch(matchId, user);
+
+            match.RemoveSensitive();
+
+            await Clients.Group($"{LiveMatchGroupPrefix}{matchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+        }
+        public async Task UpdateMatch(SaveMatchLiveHubInput matchInput)
+        {
+            Task updateMatchLocalMethod() => UpdateMatchLogic(matchInput);
+            await HubMethodExceptionWrapper((updateMatchLocalMethod, nameof(UpdateMatch)));
+        }
+        private async Task UpdateMatchLogic(SaveMatchLiveHubInput matchInput)
+        {
+            var user = await GetCurrentUserWithPermissionsAsync();
+
+            var liveMatch = matchInput.ToLiveMatch((Guid)user.Id!);
+            await _liveMatchService.UpdateMatch(liveMatch, user);
+
+            var match = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id) ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
+
+            match.RemoveSensitive();
+
+            await Clients.Group($"{LiveMatchGroupPrefix}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+        }
         public async Task SaveParticipant(SaveParticipantLiveMatchHubInput hubInput)
         {
-
+            Task saveParticipantLocalMethod() => SaveParticipantLogic(hubInput.UserId, hubInput.MatchId);
+            await HubMethodExceptionWrapper((saveParticipantLocalMethod, nameof(SaveParticipant)));
         }
-        public async Task SaveParticipantLogic(Guid userId, Guid matchId)
+        private async Task SaveParticipantLogic(Guid userId, Guid matchId)
         {
             var user = await GetCurrentUserWithPermissionsAsync();
 
@@ -43,12 +108,12 @@ namespace fsCore.Hubs
 
             match.RemoveSensitive();
 
-            await Clients.Group($"{LiveMatchGroupMessage}{matchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+            await Clients.Group($"{LiveMatchGroupPrefix}{matchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
         }
         public async Task CreateMatch(SaveMatchLiveHubInput liveMatch)
         {
-            Task methodFunction() => CreateMatchLogic(liveMatch);
-            await HubMethodExceptionWrapper((methodFunction, nameof(CreateMatch)));
+            Task createMatchLocalMethod() => CreateMatchLogic(liveMatch);
+            await HubMethodExceptionWrapper((createMatchLocalMethod, nameof(CreateMatch)));
         }
         private async Task CreateMatchLogic(SaveMatchLiveHubInput liveMatchInput)
         {
@@ -57,11 +122,11 @@ namespace fsCore.Hubs
             var liveMatch = liveMatchInput.ToLiveMatch((Guid)user.Id!);
             var createdMatch = await _liveMatchService.CreateMatch(liveMatch, user);
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, $"{LiveMatchGroupMessage}{createdMatch.Id}");
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"{LiveMatchGroupPrefix}{createdMatch.Id}");
 
             createdMatch.RemoveSensitive();
 
-            await Clients.Group($"{LiveMatchGroupMessage}{createdMatch.Id}").SendAsync(CreateMatchMessage, HubResponseBuilder.FromLiveMatch(createdMatch));
+            await Clients.Group($"{LiveMatchGroupPrefix}{createdMatch.Id}").SendAsync(CreateMatchMessage, HubResponseBuilder.FromLiveMatch(createdMatch));
         }
         public override async Task OnConnectedAsync()
         {
@@ -95,7 +160,7 @@ namespace fsCore.Hubs
                 foreach (var match in allMatches)
                 {
                     match.RemoveSensitive();
-                    jobList.Add(Clients.Group($"{LiveMatchGroupMessage}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
+                    jobList.Add(Clients.Group($"{LiveMatchGroupPrefix}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
                 }
                 await Task.WhenAll(
                     jobList
@@ -135,7 +200,7 @@ namespace fsCore.Hubs
                 foreach (var match in allMatches)
                 {
                     match.RemoveSensitive();
-                    jobList.Add(Clients.Group($"{LiveMatchGroupMessage}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
+                    jobList.Add(Clients.Group($"{LiveMatchGroupPrefix}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
                 }
                 await Task.WhenAll(
                     jobList
@@ -174,7 +239,7 @@ namespace fsCore.Hubs
             var jobList = new List<Task>();
             foreach (var matchId in matchIds)
             {
-                jobList.Add(Groups.AddToGroupAsync(connectionId, $"{LiveMatchGroupMessage}{matchId.ToString()}"));
+                jobList.Add(Groups.AddToGroupAsync(connectionId, $"{LiveMatchGroupPrefix}{matchId.ToString()}"));
             }
             await Task.WhenAll(jobList);
         }
