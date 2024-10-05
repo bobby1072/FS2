@@ -1,6 +1,3 @@
-using Common.Models;
-using Common.Utils;
-
 namespace fsCore.ApiModels
 {
     public record SaveCatchFormInput
@@ -17,26 +14,5 @@ namespace fsCore.ApiModels
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string? WorldFishTaxocode { get; set; }
-        public async Task<GroupCatch> ToGroupCatchAsync(Guid userId)
-        {
-            return new GroupCatch(
-                userId,
-                GroupId,
-                Species,
-                Weight,
-                CaughtAt is not null ? DateTime.Parse(CaughtAt).ToUniversalTime() : DateTime.UtcNow,
-                Length,
-                Latitude,
-                Longitude,
-                Description,
-                Id,
-                CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
-                CatchPhoto is not null ? await CatchPhoto.ToByteArrayAsync(1) : null,
-                null,
-                null,
-                WorldFishTaxocode,
-                null
-            );
-        }
     }
 }

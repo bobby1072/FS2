@@ -1,4 +1,3 @@
-using Common.Models;
 using System.Text.Json.Serialization;
 
 namespace fsCore.ApiModels
@@ -15,9 +14,5 @@ namespace fsCore.ApiModels
         public Guid UserId { get; set; }
         [JsonPropertyName("createdAt")]
         public DateTime? CreatedAt { get; set; }
-        public GroupCatchComment ToGroupCatchComment()
-        {
-            return new GroupCatchComment(Id, GroupCatchId, UserId, Comment, CreatedAt ?? DateTime.UtcNow);
-        }
     }
 }

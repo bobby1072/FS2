@@ -1,6 +1,3 @@
-using Common.Models;
-using Common.Utils;
-
 namespace fsCore.ApiModels
 {
     public record SaveGroupFormInput
@@ -14,19 +11,6 @@ namespace fsCore.ApiModels
         public string IsListed { get; set; }
         public string CatchesPublic { get; set; }
         public string? CreatedAt { get; set; }
-        public async Task<Group> ToGroupAsync()
-        {
-            return new Group(
-                Name,
-                Emblem is not null ? await Emblem.ToByteArrayAsync(720, 576, 0.5) : null,
-                Description,
-                Id is not null ? Id : null,
-                CreatedAt is not null ? DateTime.Parse(CreatedAt).ToUniversalTime() : DateTime.UtcNow,
-                bool.Parse(IsPublic),
-                bool.Parse(IsListed),
-                bool.Parse(CatchesPublic),
-                LeaderId
-            );
-        }
+
     }
 }

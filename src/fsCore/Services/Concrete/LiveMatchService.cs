@@ -59,6 +59,10 @@ namespace Services.Concrete
             {
                 return;
             }
+            if (foundMatch.Participants.Count >= 10)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchIsFull, HttpStatusCode.BadRequest);
+            }
             var areUsersInGroup = await _groupService.IsUserInGroup(foundMatch.GroupId, [userId]);
 
             if (!areUsersInGroup.AllUsersInGroup)

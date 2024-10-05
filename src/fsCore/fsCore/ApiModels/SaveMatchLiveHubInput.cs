@@ -27,13 +27,5 @@ namespace fsCore.ApiModels
         public DateTime? CommencesAt { get; init; }
         [JsonPropertyName("endsAt")]
         public DateTime? EndsAt { get; init; }
-        public LiveMatch ToLiveMatch(Guid matchLeaderId)
-        {
-            if (!Enum.TryParse<LiveMatchStatus>(MatchStatus.ToString(), out var matchStatus) || !Enum.TryParse<LiveMatchWinStrategy>(MatchWinStrategy.ToString(), out var matchWinStrategy))
-            {
-                throw new ApiException(ErrorConstants.BadRequest, HttpStatusCode.BadRequest);
-            }
-            return new LiveMatch(GroupId, MatchName, MatchRules.ToRuntimeType(), matchStatus, matchWinStrategy, new List<LiveMatchCatch>(), new List<LiveMatchParticipant>(), matchLeaderId, DateTime.UtcNow, CommencesAt, EndsAt, Description, Id);
-        }
     }
 }

@@ -46,7 +46,7 @@ namespace fsCore.Controllers
         [HttpGet("SelfWithGroupPermissions")]
         public async Task<IActionResult> GetUserWithPermissions()
         {
-            return Ok(RawUserPermission.FromUserWithPermissions(await GetCurrentUserWithPermissionsAsync()));
+            return Ok((await GetCurrentUserWithPermissionsAsync()).ToRawUserPermission());
         }
 
     }
