@@ -1,3 +1,4 @@
+using System.Net;
 using Common.Misc;
 using Common.Models;
 using FluentValidation;
@@ -28,17 +29,37 @@ namespace fsCore.Hubs
             _liveMatchPersistenceService = liveMatchPersistenceService;
             _logger = logger;
         }
-        public async Task CreateMatch(SaveMatchLiveHubInput liveMatch)
+        public async Task SaveParticipant(SaveParticipantLiveMatchHubInput hubInput)
+        {
+
+        }
+        public async Task SaveParticipantLogic(Guid userId, Guid matchId)
         {
             var user = await GetCurrentUserWithPermissionsAsync();
-            Task methodFunction() => CreateMatchLogic(liveMatch.ToLiveMatch((Guid)user.Id!), user);
+
+            await _liveMatchService.SaveParticipant(matchId, userId, user);
+
+            var match = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
+
+            match.RemoveSensitive();
+
+            await Clients.Group($"{LiveMatchGroupMessage}{matchId}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match));
+        }
+        public async Task CreateMatch(SaveMatchLiveHubInput liveMatch)
+        {
+            Task methodFunction() => CreateMatchLogic(liveMatch);
             await HubMethodExceptionWrapper((methodFunction, nameof(CreateMatch)));
         }
-        private async Task CreateMatchLogic(LiveMatch liveMatch, UserWithGroupPermissionSet user)
+        private async Task CreateMatchLogic(SaveMatchLiveHubInput liveMatchInput)
         {
+            var user = await GetCurrentUserWithPermissionsAsync();
+
+            var liveMatch = liveMatchInput.ToLiveMatch((Guid)user.Id!);
             var createdMatch = await _liveMatchService.CreateMatch(liveMatch, user);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, $"{LiveMatchGroupMessage}{createdMatch.Id}");
+
+            createdMatch.RemoveSensitive();
 
             await Clients.Group($"{LiveMatchGroupMessage}{createdMatch.Id}").SendAsync(CreateMatchMessage, HubResponseBuilder.FromLiveMatch(createdMatch));
         }
@@ -73,6 +94,7 @@ namespace fsCore.Hubs
                 };
                 foreach (var match in allMatches)
                 {
+                    match.RemoveSensitive();
                     jobList.Add(Clients.Group($"{LiveMatchGroupMessage}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
                 }
                 await Task.WhenAll(
@@ -112,6 +134,7 @@ namespace fsCore.Hubs
                 };
                 foreach (var match in allMatches)
                 {
+                    match.RemoveSensitive();
                     jobList.Add(Clients.Group($"{LiveMatchGroupMessage}{match.Id}").SendAsync(UpdateMatchMessage, HubResponseBuilder.FromLiveMatch(match)));
                 }
                 await Task.WhenAll(

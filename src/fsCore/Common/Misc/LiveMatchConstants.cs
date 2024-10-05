@@ -2,6 +2,7 @@ namespace Common.Misc
 {
     public static class LiveMatchConstants
     {
+        public const string LiveMatchDoesntExist = "Live match doesn't exist";
         public const string LiveMatchIsFull = "Live match is full";
         public const string LiveMatchHasntStarted = "Live match hasn't started";
         public const string LiveMatchHasEnded = "Live match has ended";

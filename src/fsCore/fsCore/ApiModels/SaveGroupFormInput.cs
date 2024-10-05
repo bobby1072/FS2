@@ -2,15 +2,15 @@ namespace fsCore.ApiModels
 {
     public record SaveGroupFormInput
     {
-        public IFormFile? Emblem { get; set; }
-        public Guid? Id { get; set; }
-        public Guid LeaderId { get; set; }
-        public string Name { get; set; }
-        public string? Description { get; set; }
-        public string IsPublic { get; set; }
-        public string IsListed { get; set; }
-        public string CatchesPublic { get; set; }
-        public string? CreatedAt { get; set; }
+        public IFormFile? Emblem { get; init; }
+        public Guid? Id { get; init; }
+        public Guid LeaderId { get; init; }
+        public string Name { get; init; }
+        public string? Description { get; init; }
+        public string IsPublic { get; init; }
+        public string IsListed { get; init; }
+        public string CatchesPublic { get; init; }
+        public string? CreatedAt { get; init; }
 
     }
 }

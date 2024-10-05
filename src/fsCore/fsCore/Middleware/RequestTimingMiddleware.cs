@@ -12,7 +12,7 @@ namespace fsCore.Middleware
         public async Task Invoke(HttpContext context)
         {
             var completedOperation = await OperationTimerUtils.TimeAsync(_next.Invoke, context);
-            _logger.LogInformation("Request completed in {time}ms", completedOperation.Milliseconds);
+            _logger.LogInformation("Request completed in {Time}ms", completedOperation.Milliseconds);
         }
     }
 }
