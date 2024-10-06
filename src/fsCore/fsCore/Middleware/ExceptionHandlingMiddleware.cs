@@ -42,8 +42,8 @@ namespace fsCore.Middleware
         }
         private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext)
         {
-            _logger.LogError("Request {Request} failed with {Exception}", httpContext.Request.Path, message);
-            _logger.LogError("Request from {webToken}", httpContext.Request.Headers.Authorization.ToString());
+            _logger.LogError("Request {Request} failed with message: {Exception}", httpContext.Request.Path, message);
+            _logger.LogError("Request from: {webToken}", httpContext.Request.Headers.Authorization.ToString());
             httpContext.Response.Clear();
             httpContext.Response.ContentType = MediaTypeNames.Text.Plain;
             httpContext.Response.StatusCode = (int)statusCode;
