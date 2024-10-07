@@ -17,33 +17,35 @@ namespace fsCore.Middleware
         {
             try
             {
-                try
-                {
-                    await _next.Invoke(httpContext);
-                }
-                catch (ApiException apiException)
-                {
-                    await HandleError(apiException.Message, apiException.StatusCode, httpContext);
-                }
-                catch (ValidationException validationException)
-                {
-                    await HandleError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, HttpStatusCode.BadRequest, httpContext);
-                }
-                catch (NpgsqlException)
-                {
-                    await HandleError(ErrorConstants.FailedToPersistData, HttpStatusCode.InternalServerError, httpContext);
-                }
-                catch (Exception)
-                {
-                    await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext);
-                }
+                await _next.Invoke(httpContext);
             }
-            catch { }
+            catch (ApiException apiException)
+            {
+                await HandleError(apiException.Message, apiException.StatusCode, httpContext, true);
+            }
+            catch (ValidationException validationException)
+            {
+                await HandleError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, HttpStatusCode.BadRequest, httpContext, true);
+            }
+            catch (NpgsqlException)
+            {
+                await HandleError(ErrorConstants.FailedToPersistData, HttpStatusCode.InternalServerError, httpContext, true);
+            }
+            catch (Exception)
+            {
+                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext);
+            }
         }
-        private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext)
+        private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext, bool logAsInformation = false)
         {
-            _logger.LogError("Request {Request} failed with message: {Exception}", httpContext.Request.Path, message);
-            _logger.LogError("Request from: {webToken}", httpContext.Request.Headers.Authorization.ToString());
+            if (logAsInformation)
+            {
+                _logger.LogInformation("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+            }
+            else
+            {
+                _logger.LogError("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+            }
             httpContext.Response.Clear();
             httpContext.Response.ContentType = MediaTypeNames.Text.Plain;
             httpContext.Response.StatusCode = (int)statusCode;
