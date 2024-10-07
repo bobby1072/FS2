@@ -104,11 +104,15 @@ namespace fsCore.Hubs
 
             var foundUserConnection = await _cachingService.TryGetObject<string>($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{userId}");
 
-            await _liveMatchService.SaveParticipant(matchId, userId, user);
+            var isUserConnected = foundUserConnection is not null;
 
-            var match = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
+            await _liveMatchService.SaveParticipant(matchId, userId, isUserConnected, user);
 
+            var matchJob = _liveMatchPersistenceService.TryGetLiveMatch(matchId);
 
+            await Task.WhenAll(matchJob, isUserConnected ? Groups.AddToGroupAsync(foundUserConnection!, $"{LiveMatchGroupPrefix}{matchId}") : Task.CompletedTask);
+
+            var match = await matchJob ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
 
             match.RemoveSensitive();
 
