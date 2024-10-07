@@ -102,9 +102,13 @@ namespace fsCore.Hubs
         {
             var user = await GetCurrentUserWithPermissionsAsync();
 
+            var foundUserConnection = await _cachingService.TryGetObject<string>($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{userId}");
+
             await _liveMatchService.SaveParticipant(matchId, userId, user);
 
             var match = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new ApiException(LiveMatchConstants.LiveMatchDoesntExist, HttpStatusCode.NotFound);
+
+
 
             match.RemoveSensitive();
 
@@ -173,14 +177,21 @@ namespace fsCore.Hubs
         }
         private async Task OnDisconnectedAsyncLogic(Exception? exception)
         {
+
             if (exception is not null)
             {
                 _logger.LogError(exception, "Signal R connection {ConnectionId} disconnected with exception message {Exception}", Context.ConnectionId, exception.Message);
             }
 
+
             var user = await GetCurrentUserWithPermissionsAsync();
 
-            var allMatchesForUser = await _liveMatchService.AllMatchesParticipatedIn(user);
+            var allMatchesForUserJob = _liveMatchService.AllMatchesParticipatedIn(user);
+
+            await Task.WhenAll(_cachingService.TryRemoveObject($"{RequiredSignalRUserConnectionId.ConnectionIdUserIdCacheKeyPrefix}{user.Id}"),
+                allMatchesForUserJob);
+
+            var allMatchesForUser = await allMatchesForUserJob;
 
             var allMatches = await _liveMatchService.AllMatchesParticipatedIn(allMatchesForUser);
 

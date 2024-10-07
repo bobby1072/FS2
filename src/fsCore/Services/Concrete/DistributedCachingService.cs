@@ -12,6 +12,18 @@ namespace Services.Concrete
         {
             _distributedCache = distributedCache;
         }
+        public async Task<bool> TryRemoveObject(string key)
+        {
+            try
+            {
+                await _distributedCache.RemoveAsync(key);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public async Task<T> GetObject<T>(string key) where T : class
         {
             var foundValue = await _distributedCache.GetStringAsync(key) ?? throw new InvalidOperationException("Cannot find object with that key");

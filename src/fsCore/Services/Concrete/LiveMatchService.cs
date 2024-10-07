@@ -48,7 +48,7 @@ namespace Services.Concrete
         {
             return await _liveMatchParticipantRepository.GetMatchIdsForUser((Guid)currentUser.Id!);
         }
-        public async Task SaveParticipant(Guid matchId, Guid userId, UserWithGroupPermissionSet currentUser)
+        public async Task SaveParticipant(Guid matchId, Guid userId, bool online, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || currentUser.Id != foundMatch.MatchLeaderId)
@@ -74,7 +74,7 @@ namespace Services.Concrete
 
             await _liveMatchPersistenceService.SaveParticipant(
                 [
-                    (LiveMatchParticipant.FromUser(user, false)!, matchId)
+                    (LiveMatchParticipant.FromUser(user, online)!, matchId)
                 ]
             );
         }
