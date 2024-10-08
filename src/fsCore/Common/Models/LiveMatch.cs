@@ -62,6 +62,9 @@ namespace Common.Models
             }
         }
         [LockedProperty]
+        [JsonPropertyName("matchWinner")]
+        public LiveMatchParticipant? MatchWinner { get; set; } = null;
+        [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
         [JsonPropertyName("description")]

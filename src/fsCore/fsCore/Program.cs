@@ -7,6 +7,7 @@ using fsCore.Middleware;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Persistence;
@@ -37,6 +38,10 @@ builder.Services
     .AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
+    .AddRequestTimeouts(opts =>
+    {
+        opts.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMilliseconds(5000) };
+    })
     .AddLogging()
     .AddHttpClient()
     .AddEndpointsApiExplorer()
@@ -95,6 +100,7 @@ builder.Services
         {
             options.Queues = HangfireConstants.Queues.FullList;
         });
+
 
 var app = builder.Build();
 
