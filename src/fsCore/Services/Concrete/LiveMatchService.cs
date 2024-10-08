@@ -2,6 +2,7 @@ using Common.Misc;
 using Common.Misc.Abstract;
 using Common.Models;
 using Common.Permissions;
+using Common.Utils;
 using FluentValidation;
 using Hangfire;
 using Persistence.EntityFramework.Repository.Abstract;
@@ -204,8 +205,11 @@ namespace Services.Concrete
             {
                 return foundMatch;
             }
+
             foundMatch.MatchStatus = LiveMatchStatus.Finished;
             foundMatch.EndsAt = DateTime.UtcNow;
+            foundMatch.MatchWinner = LiveMatchUtils.CalculateWinner(foundMatch);
+
             await _liveMatchPersistenceService.SetLiveMatch(foundMatch);
             return foundMatch;
         }

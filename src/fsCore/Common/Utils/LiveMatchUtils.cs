@@ -19,7 +19,7 @@ namespace Common.Utils
                 _ => "Unknown",
             };
         }
-        public static User CalculateWinner(LiveMatch liveMatch)
+        public static LiveMatchParticipant CalculateWinner(LiveMatch liveMatch)
         {
             if (liveMatch.MatchWinStrategy == LiveMatchWinStrategy.HighestSingleWeight)
             {
