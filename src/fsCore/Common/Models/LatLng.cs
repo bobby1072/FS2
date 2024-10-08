@@ -5,11 +5,11 @@ namespace Common.Models
     public class LatLng
     {
         [JsonPropertyName("latitude")]
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
         [JsonPropertyName("longitude")]
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
         [JsonConstructor]
-        public LatLng(double latitude, double longitude)
+        public LatLng(double latitude, decimal longitude)
         {
             Latitude = latitude;
             Longitude = longitude;

@@ -9,9 +9,9 @@ namespace Common.Models
         [JsonPropertyName("species")]
         public string Species { get; set; }
         [JsonPropertyName("latitude")]
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
         [JsonPropertyName("longitude")]
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
         [JsonPropertyName("worldFish")]
         public WorldFish? WorldFish { get; set; }
         [JsonPropertyName("caughtAt")]
@@ -19,12 +19,12 @@ namespace Common.Models
         [JsonPropertyName("user")]
         public UserWithoutEmail User { get; set; }
         [JsonPropertyName("weight")]
-        public double Weight { get; set; }
+        public decimal Weight { get; set; }
         [JsonPropertyName("length")]
-        public double Length { get; set; }
+        public decimal Length { get; set; }
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
-        public PartialGroupCatch(string species, double latitude, double longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, double weight, Guid id, double length, Guid groupId)
+        public PartialGroupCatch(string species, decimal latitude, decimal longitude, WorldFish? worldFish, DateTime caughtAt, UserWithoutEmail user, decimal weight, Guid id, decimal length, Guid groupId)
         {
             Species = species;
             GroupId = groupId;

@@ -11,9 +11,9 @@ namespace fsCore.ApiModels
         [JsonPropertyName("userId")]
         public string Species { get; init; }
         [JsonPropertyName("weight")]
-        public double Weight { get; init; }
+        public decimal Weight { get; init; }
         [JsonPropertyName("length")]
-        public double Length { get; init; }
+        public decimal Length { get; init; }
         [JsonPropertyName("description")]
         public string? Description { get; init; }
         [JsonPropertyName("caughtAt")]
@@ -21,9 +21,9 @@ namespace fsCore.ApiModels
         [JsonPropertyName("createdAt")]
         public DateTime? CreatedAt { get; init; }
         [JsonPropertyName("latitude")]
-        public double Latitude { get; init; }
+        public decimal Latitude { get; init; }
         [JsonPropertyName("longitude")]
-        public double Longitude { get; init; }
+        public decimal Longitude { get; init; }
         [JsonPropertyName("worldFishTaxocode")]
         public string? WorldFishTaxocode { get; init; }
         [JsonPropertyName("countsInMatch")]

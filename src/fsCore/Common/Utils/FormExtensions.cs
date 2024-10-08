@@ -6,7 +6,7 @@ namespace Common.Utils
 {
     public static class FormExtensions
     {
-        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, double maxSize = 5)
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, decimal maxSize = 5)
         {
             if (((double)file.Length / 1000000) > maxSize)
             {

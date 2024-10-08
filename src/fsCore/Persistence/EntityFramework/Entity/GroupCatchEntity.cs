@@ -16,14 +16,14 @@ namespace Persistence.EntityFramework.Entity
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
         public string Species { get; set; }
-        public double Weight { get; set; }
-        public double Length { get; set; }
+        public decimal Weight { get; set; }
+        public decimal Length { get; set; }
         public string? Description { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime CaughtAt { get; set; }
         public byte[]? CatchPhoto { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
         public string? WorldFishTaxocode { get; set; }
         [ForeignKey(nameof(WorldFishTaxocode))]
         public WorldFishEntity? WorldFish { get; set; }

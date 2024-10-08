@@ -19,7 +19,7 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
             _groupRepository = groupRepository;
             _groupMemberRepository = groupMemberRepository;
         }
-        private static (double, double) GetCloseByLatLng(double lat, double lng)
+        private static (double, double) GetCloseByLatLng(double lat, decimal lng)
         {
             var random = new Random();
             var latOffset = lat + (random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (2.0 - 1.0)) : 1.0 + random.NextDouble() * (2.0 - 1.0));

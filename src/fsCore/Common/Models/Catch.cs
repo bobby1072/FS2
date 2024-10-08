@@ -14,9 +14,9 @@ namespace Common.Models
         [JsonPropertyName("species")]
         public string Species { get; set; }
         [JsonPropertyName("weight")]
-        public double Weight { get; set; }
+        public decimal Weight { get; set; }
         [JsonPropertyName("length")]
-        public double Length { get; set; }
+        public decimal Length { get; set; }
         [JsonPropertyName("description")]
         public string? Description { get; set; }
         [LockedProperty]
@@ -25,9 +25,9 @@ namespace Common.Models
         [JsonPropertyName("caughtAt")]
         public DateTime CaughtAt { get; set; }
         [JsonPropertyName("latitude")]
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
         [JsonPropertyName("longitude")]
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
         [JsonPropertyName("worldFishTaxocode")]
         public string? WorldFishTaxocode { get; set; }
         public override bool Equals(object? obj)
