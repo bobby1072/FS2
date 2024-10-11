@@ -22,7 +22,7 @@ namespace Persistence.EntityFramework.Entity
         {
             var entity = new ActiveLiveMatchParticipantEntity
             {
-                UserId = (Guid)runtime.Id!,
+                UserId = runtime.Id!,
                 MatchId = matchId,
                 UserOnline = runtime.Online
             };

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Common.Models;
 
@@ -5,6 +6,7 @@ namespace Persistence.EntityFramework.Entity
 {
     internal record ArchivedLiveMatchCatch
     {
+        [Key]
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]

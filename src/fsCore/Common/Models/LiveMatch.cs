@@ -62,8 +62,8 @@ namespace Common.Models
             }
         }
         [LockedProperty]
-        [JsonPropertyName("matchWinner")]
-        public LiveMatchParticipant? MatchWinner { get; set; } = null;
+        [JsonPropertyName("matchWinnerId")]
+        public Guid? MatchWinnerId { get; set; } = null;
         [LockedProperty]
         [JsonPropertyName("matchLeaderId")]
         public Guid MatchLeaderId { get; set; }
@@ -82,7 +82,7 @@ namespace Common.Models
         public TimeSpan? TimeUntilStart { get => CommencesAt - DateTime.UtcNow; }
         [JsonIgnore]
         public TimeSpan? TimeUntilEnd { get => EndsAt - DateTime.UtcNow; }
-        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<LiveMatchParticipant> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null)
+        public LiveMatch(Guid groupId, string matchName, LiveMatchRules matchRules, LiveMatchStatus matchStatus, LiveMatchWinStrategy winStrategy, IList<LiveMatchCatch> catches, IList<LiveMatchParticipant> users, Guid matchLeaderId, DateTime createdAt, DateTime? commencesAt = null, DateTime? endsAt = null, string? description = null, Guid? id = null, Guid? matchWinner = null)
         {
             if (id is Guid foundId)
             {
@@ -90,6 +90,7 @@ namespace Common.Models
             }
             Catches = catches;
             Description = description;
+            MatchWinnerId = matchWinner;
             GroupId = groupId;
             MatchName = matchName;
             Participants = users;
@@ -112,10 +113,15 @@ namespace Common.Models
             MatchStatus = liveMatch.MatchStatus;
             MatchWinStrategy = liveMatch.MatchWinStrategy;
             MatchLeaderId = liveMatch.MatchLeaderId;
+            MatchWinnerId = liveMatch.MatchWinnerId;
+            CreatedAt = liveMatch.CreatedAt;
+            CommencesAt = liveMatch.CommencesAt;
+            EndsAt = liveMatch.EndsAt;
+            Description = liveMatch.Description;
         }
         [JsonConstructor]
         public LiveMatch() { }
-        public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches.ToList(), Participants.ToList(), MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id);
+        public LiveMatchJsonType ToJsonType() => new(GroupId, MatchName, MatchRules.ToJsonType(), MatchStatus, MatchWinStrategy, Catches.ToList(), Participants.ToList(), MatchLeaderId, CreatedAt, CommencesAt, EndsAt, Description, Id, MatchWinnerId);
         public void ApplyDefaults(LiveMatchStatus statusOfMatch, User leader)
         {
             MatchLeaderId = (Guid)leader.Id!;

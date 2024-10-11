@@ -3,6 +3,7 @@ CREATE TABLE public."active_live_match" (
     group_id UUID NOT NULL,
     match_name TEXT NOT NULL,
     serialised_match_rules TEXT NOT NULL,
+    match_winner_id UUID,
     match_status INTEGER NOT NULL,
     match_win_strategy INTEGER NOT NULL,
     match_leader_id UUID NOT NULL,
@@ -11,6 +12,7 @@ CREATE TABLE public."active_live_match" (
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     CONSTRAINT active_live_match_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_match_leader_id_fk FOREIGN KEY (match_leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT active_live_match_match_winner_id_fk FOREIGN KEY (match_winner_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE public."active_live_match_catch" (
@@ -49,11 +51,13 @@ CREATE TABLE public."archived_live_match" (
     match_name TEXT NOT NULL,
     match_win_strategy INTEGER NOT NULL,
     match_leader_id UUID NOT NULL,
+    match_winner_id UUID NOT NULL,
     started_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     ended_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     CONSTRAINT archived_live_match_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT archived_live_match_match_leader_id_fk FOREIGN KEY (match_leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT archived_live_match_match_winner_id_fk FOREIGN KEY (match_winner_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE public."archived_live_match_catch" (

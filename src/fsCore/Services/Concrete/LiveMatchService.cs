@@ -208,7 +208,7 @@ namespace Services.Concrete
 
             foundMatch.MatchStatus = LiveMatchStatus.Finished;
             foundMatch.EndsAt = DateTime.UtcNow;
-            foundMatch.MatchWinner = LiveMatchUtils.CalculateWinner(foundMatch);
+            foundMatch.MatchWinnerId = LiveMatchUtils.CalculateWinner(foundMatch).Id;
 
             await _liveMatchPersistenceService.SetLiveMatch(foundMatch);
             return foundMatch;
