@@ -176,15 +176,7 @@ namespace Services.Concrete
                 var liveMatch = await _activeLiveMatchRepository.GetFullOneById(matchId);
                 if (liveMatch is not null)
                 {
-                    if (liveMatch.MatchStatus == LiveMatchStatus.InProgress || liveMatch.MatchStatus == LiveMatchStatus.Finished)
-                    {
-                        await _cachingService.SetObject($"{_liveMatchKey}{matchId}", liveMatch.ToJsonType(), GetTimeToCache(liveMatch));
-                        return liveMatch;
-                    }
-                    else
-                    {
-                        return liveMatch;
-                    }
+                    return liveMatch;
                 }
                 else
                 {
