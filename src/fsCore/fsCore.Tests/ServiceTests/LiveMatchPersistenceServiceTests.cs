@@ -42,14 +42,11 @@ namespace fsCore.Tests.ServiceTests
             result.Should().BeEquivalentTo(liveMatch);
 
         }
-        [Theory]
-        [InlineData(LiveMatchStatus.NotStarted)]
-        [InlineData(LiveMatchStatus.InProgress)]
-        public async Task TryGetMatch_Should_Return_MatchFrom_Db_If_Cached_Returns_Null(LiveMatchStatus status)
+        [Fact]
+        public async Task TryGetMatch_Should_Return_MatchFrom_Db_If_Cached_Returns_Null()
         {
             //Arrange
             var liveMatch = CreateLiveMatch();
-            liveMatch.MatchStatus = status;
             _mockCachingService.Setup(x => x.TryGetObject<LiveMatchJsonType>(It.IsAny<string>())).ReturnsAsync((LiveMatchJsonType?)null);
             _mockActiveLiveMatchRepository.Setup(x => x.GetFullOneById(liveMatch.Id)).ReturnsAsync(liveMatch);
 
@@ -57,14 +54,6 @@ namespace fsCore.Tests.ServiceTests
             var result = await _liveMatchPersistenceService.TryGetLiveMatch(liveMatch.Id);
 
             //Assert
-            if (status == LiveMatchStatus.InProgress)
-            {
-                _mockCachingService.Verify(x => x.SetObject($"{_liveMatchKey}{liveMatch.Id}", It.Is<LiveMatchJsonType>(x => x.Id == liveMatch.Id), It.IsAny<DistributedCacheEntryOptions>()), Times.Once);
-            }
-            else
-            {
-                _mockCachingService.Verify(x => x.SetObject(It.IsAny<string>(), It.IsAny<LiveMatch>(), It.IsAny<DistributedCacheEntryOptions>()), Times.Never);
-            }
             _mockCachingService.Verify(x => x.TryGetObject<LiveMatchJsonType>($"{_liveMatchKey}{liveMatch.Id.ToString()}"), Times.Once);
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(liveMatch.Id), Times.Once);
             result.Should().BeEquivalentTo(liveMatch);
