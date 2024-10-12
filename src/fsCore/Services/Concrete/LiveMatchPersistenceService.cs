@@ -196,12 +196,6 @@ namespace Services.Concrete
                 return null;
             }
         }
-        public async Task ArchiveLiveMatch(LiveMatch liveMatch)
-        {
-            var tryToRemoveFromCacheJob = _cachingService.TryRemoveObject($"{_liveMatchKey}{liveMatch.Id}");
-            var removeFromDbJob = _activeLiveMatchRepository.Delete([liveMatch]);
-            await Task.WhenAll(tryToRemoveFromCacheJob, removeFromDbJob);
-        }
         private static DistributedCacheEntryOptions GetTimeToCache(LiveMatch liveMatch)
         {
             if (liveMatch.TimeUntilEnd is null)

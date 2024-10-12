@@ -52,6 +52,10 @@ namespace Services.Concrete
         public async Task SaveParticipant(Guid matchId, Guid userId, bool online, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundMatch.MatchStatus == LiveMatchStatus.Finished)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
+            }
             if (!currentUser.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || currentUser.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
@@ -117,6 +121,11 @@ namespace Services.Concrete
         public async Task UpdateMatch(LiveMatch match, UserWithGroupPermissionSet currentUser)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(match.Id) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+
+            if (foundMatch.MatchStatus == LiveMatchStatus.Finished)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
+            }
             match.Catches = [];
             match.Participants = [];
             match.MatchStatus = foundMatch.MatchStatus;
@@ -181,13 +190,17 @@ namespace Services.Concrete
         public async Task<LiveMatch> StartMatch(Guid matchId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
             var foundMatch = await _liveMatchPersistenceService.TryGetLiveMatch(matchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
+            if (foundMatch.MatchStatus == LiveMatchStatus.InProgress)
+            {
+                return foundMatch;
+            }
             if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || userWithGroupPermissionSet.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
             }
-            if (foundMatch.MatchStatus == LiveMatchStatus.InProgress || foundMatch.MatchStatus == LiveMatchStatus.Finished)
+            if (foundMatch.MatchStatus == LiveMatchStatus.Finished)
             {
-                return foundMatch;
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasEnded, HttpStatusCode.BadRequest);
             }
             foundMatch.MatchStatus = LiveMatchStatus.InProgress;
             foundMatch.CommencesAt = DateTime.UtcNow;
@@ -200,6 +213,10 @@ namespace Services.Concrete
             if (!userWithGroupPermissionSet.GroupPermissions.Can(PermissionConstants.Manage, foundMatch.GroupId) || userWithGroupPermissionSet.Id != foundMatch.MatchLeaderId)
             {
                 throw new LiveMatchException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+            }
+            if (foundMatch.MatchStatus == LiveMatchStatus.NotStarted)
+            {
+                throw new LiveMatchException(LiveMatchConstants.LiveMatchHasntStarted, HttpStatusCode.BadRequest);
             }
             if (foundMatch.MatchStatus == LiveMatchStatus.Finished)
             {
