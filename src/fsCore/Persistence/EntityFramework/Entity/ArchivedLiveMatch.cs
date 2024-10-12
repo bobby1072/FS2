@@ -5,13 +5,14 @@ using Common.Models;
 namespace Persistence.EntityFramework.Entity
 {
     [Table("archived_live_match", Schema = DbConstants.PublicSchema)]
-    internal record ArchivedLiveMatch
+    internal record ArchivedLiveMatch : BaseEntity<LiveMatch>
     {
         [Key]
         public Guid Id { get; set; }
         public Guid GroupId { get; set; }
         public string MatchName { get; set; }
         public int MatchWinStrategy { get; set; }
+        public Guid MatchLeaderId { get; set; }
         public Guid MatchWinnerId { get; set; }
         public DateTime StartedAt { get; set; }
         public DateTime EndedAt { get; set; }
@@ -25,7 +26,10 @@ namespace Persistence.EntityFramework.Entity
                 StartedAt = (DateTime)runtime.CommencesAt!,
                 EndedAt = (DateTime)runtime.EndsAt!,
                 CreatedAt = runtime.CreatedAt,
-                Id = runtime.Id
+                MatchLeaderId = runtime.MatchLeaderId,
+                MatchWinnerId = (Guid)runtime.MatchWinnerId!,
+                MatchWinStrategy = (int)runtime.MatchWinStrategy,
+                Id = runtime.Id,
             };
         }
     }

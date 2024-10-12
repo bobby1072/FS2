@@ -4,6 +4,7 @@ using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
+    [Table("archived_live_match_catch", Schema = DbConstants.PublicSchema)]
     internal record ArchivedLiveMatchCatch
     {
         [Key]

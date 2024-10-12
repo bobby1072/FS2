@@ -4,6 +4,7 @@ using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
+    [Table("archived_live_match_participant", Schema = DbConstants.PublicSchema)]
     internal record ArchivedLiveMatchParticipant
     {
         [Key]
@@ -18,7 +19,7 @@ namespace Persistence.EntityFramework.Entity
             {
                 Id = (int)runtime.DbId!,
                 UserId = runtime.Id,
-                MatchId = matchId,
+                MatchId = matchId
             };
         }
     }
