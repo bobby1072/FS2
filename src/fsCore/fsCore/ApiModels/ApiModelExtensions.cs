@@ -62,7 +62,7 @@ namespace fsCore.ApiModels
         {
             return new Group(
                 groupInput.Name,
-                groupInput.Emblem is not null ? await groupInput.Emblem.ToByteArrayAsync(720, 576, 0.5) : null,
+                groupInput.Emblem is not null ? await groupInput.Emblem.ToByteArrayAsync(720, 576, (decimal)0.5) : null,
                 groupInput.Description,
                 groupInput.Id is not null ? groupInput.Id : null,
                 groupInput.CreatedAt is not null ? DateTime.Parse(groupInput.CreatedAt).ToUniversalTime() : DateTime.UtcNow,

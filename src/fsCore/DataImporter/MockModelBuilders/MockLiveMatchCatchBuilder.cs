@@ -25,7 +25,7 @@ namespace DataImporter.MockModelBuilders
                 worldFishTaxocode
             );
         }
-        public static LiveMatchCatch Build(Guid userId, Guid liveMatchId, string? speciesName, double? length = null, double? weight = null, bool valid = false)
+        public static LiveMatchCatch Build(Guid userId, Guid liveMatchId, string? speciesName, decimal? length = null, decimal? weight = null, bool valid = false)
         {
             var random = new Random();
             return new LiveMatchCatch(

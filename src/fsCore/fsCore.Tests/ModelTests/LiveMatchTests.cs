@@ -45,22 +45,22 @@ namespace fsCore.Tests.ModelTests
             //Arrange
             var liveMatchId = Guid.NewGuid();
 
-            var topLeft = new LatLng(34.0522, -118.2437);
-            var bottomLeft = new LatLng(33.0522, -118.2437);
-            var topRight = new LatLng(34.0522, -117.2437);
-            var bottomRight = new LatLng(33.0522, -117.2437);
+            var topLeft = new LatLng((decimal)34.0522, (decimal)-118.2437);
+            var bottomLeft = new LatLng((decimal)33.0522, (decimal)-118.2437);
+            var topRight = new LatLng((decimal)34.0522, (decimal)-117.2437);
+            var bottomRight = new LatLng((decimal)33.0522, (decimal)-117.2437);
 
             var geoArea = new FourPointGeoArea(topLeft, bottomLeft, topRight, bottomRight);
             var withinAreasRules = new InAreaLiveMatchCatchRule([geoArea]);
             var validCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
-            validCatch.Latitude = 33.5522;
-            validCatch.Longitude = -117.7437;
+            validCatch.Latitude = (decimal)33.5522;
+            validCatch.Longitude = (decimal)-117.7437;
             var validCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
-            validCatch2.Latitude = 33.8022;
-            validCatch2.Longitude = -118.0437;
+            validCatch2.Latitude = (decimal)33.8022;
+            validCatch2.Longitude = (decimal)-118.0437;
             var invalidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), liveMatchId);
-            invalidCatch.Latitude = 35.0522;
-            invalidCatch.Longitude = -119.2437;
+            invalidCatch.Latitude = (decimal)35.0522;
+            invalidCatch.Longitude = (decimal)-119.2437;
             var catches = new List<LiveMatchCatch> { validCatch, validCatch2, invalidCatch };
             var liveMatchRules = new LiveMatchRules([withinAreasRules]);
             var LiveMatch = new LiveMatch(Guid.NewGuid(), "test match", liveMatchRules, LiveMatchStatus.InProgress, LiveMatchWinStrategy.HighestSingleWeight, catches, [LiveMatchParticipant.FromUser(MockUserBuilder.Build())!], Guid.NewGuid(), DateTime.UtcNow, DateTime.UtcNow, DateTime.UtcNow, "", liveMatchId);
@@ -70,7 +70,7 @@ namespace fsCore.Tests.ModelTests
             foreach (var catchItem in LiveMatch.Catches)
             {
                 var result = catchValidator.Validate(catchItem);
-                if (catchItem.Latitude == 33.5522 && catchItem.Longitude == -117.7437 || catchItem.Latitude == 33.8022 && catchItem.Longitude == -118.0437)
+                if (catchItem.Latitude == (decimal)33.5522 && catchItem.Longitude == (decimal)-117.7437 || catchItem.Latitude == (decimal)33.8022 && catchItem.Longitude == (decimal)-118.0437)
                 {
                     result.IsValid.Should().BeTrue();
                 }
@@ -86,22 +86,22 @@ namespace fsCore.Tests.ModelTests
             {
                 var withinAreaRuleLiveMatchId = Guid.NewGuid();
 
-                var topLeft = new LatLng(34.0522, -118.2437);
-                var bottomLeft = new LatLng(33.0522, -118.2437);
-                var topRight = new LatLng(34.0522, -117.2437);
-                var bottomRight = new LatLng(33.0522, -117.2437);
+                var topLeft = new LatLng((decimal)34.0522, (decimal)-118.2437);
+                var bottomLeft = new LatLng((decimal)33.0522, (decimal)-118.2437);
+                var topRight = new LatLng((decimal)34.0522, (decimal)-117.2437);
+                var bottomRight = new LatLng((decimal)33.0522, (decimal)-117.2437);
 
                 var geoArea = new FourPointGeoArea(topLeft, bottomLeft, topRight, bottomRight);
                 var withinAreasRules = new InAreaLiveMatchCatchRule([geoArea]);
                 var withinAreaRuleValidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
-                withinAreaRuleValidCatch.Latitude = 33.5522;
-                withinAreaRuleValidCatch.Longitude = -117.7437;
+                withinAreaRuleValidCatch.Latitude = (decimal)33.5522;
+                withinAreaRuleValidCatch.Longitude = (decimal)-117.7437;
                 var withinAreaRuleValidCatch2 = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
-                withinAreaRuleValidCatch2.Latitude = 33.8022;
-                withinAreaRuleValidCatch2.Longitude = -118.0437;
+                withinAreaRuleValidCatch2.Latitude = (decimal)33.8022;
+                withinAreaRuleValidCatch2.Longitude = (decimal)-118.0437;
                 var withinAreaRuleInvalidCatch = MockLiveMatchCatchBuilder.Build(Guid.NewGuid(), withinAreaRuleLiveMatchId);
-                withinAreaRuleInvalidCatch.Latitude = 35.0522;
-                withinAreaRuleInvalidCatch.Longitude = -119.2437;
+                withinAreaRuleInvalidCatch.Latitude = (decimal)35.0522;
+                withinAreaRuleInvalidCatch.Longitude = (decimal)-119.2437;
                 var withinAreaRuleCatches = new List<LiveMatchCatch> { withinAreaRuleValidCatch, withinAreaRuleValidCatch2, withinAreaRuleInvalidCatch };
                 var withinAreaRuleLiveMatchRules = new LiveMatchRules([withinAreasRules]);
                 var withinAreaMatchUsers = new List<LiveMatchParticipant>() { LiveMatchParticipant.FromUser(MockUserBuilder.Build())! };

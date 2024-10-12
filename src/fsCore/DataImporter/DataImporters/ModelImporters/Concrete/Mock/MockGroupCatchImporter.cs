@@ -19,11 +19,11 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
             _groupRepository = groupRepository;
             _groupMemberRepository = groupMemberRepository;
         }
-        private static (double, double) GetCloseByLatLng(double lat, decimal lng)
+        private static (decimal, decimal) GetCloseByLatLng(decimal lat, decimal lng)
         {
             var random = new Random();
-            var latOffset = lat + (random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (2.0 - 1.0)) : 1.0 + random.NextDouble() * (2.0 - 1.0));
-            var lngOffset = lng + (random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (4.0 - 2.0)) : 2.0 + random.NextDouble() * (4.0 - 2.0));
+            var latOffset = lat + (decimal)(random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (2.0 - 1.0)) : 1.0 + random.NextDouble() * (2.0 - 1.0));
+            var lngOffset = lng + (decimal)(random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (4.0 - 2.0)) : 2.0 + random.NextDouble() * (4.0 - 2.0));
             if (latOffset < -90 || latOffset > 90 || lngOffset < -180 || lngOffset > 180)
             {
                 return GetCloseByLatLng(random.Next(-90, 90), random.Next(-180, 180));
