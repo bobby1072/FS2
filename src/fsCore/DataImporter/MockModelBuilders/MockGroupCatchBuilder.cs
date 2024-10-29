@@ -1,6 +1,6 @@
-using System.Text.RegularExpressions;
 using Common.Models;
 using Common.Utils;
+using System.Text.RegularExpressions;
 
 namespace DataImporter.MockModelBuilders
 {
@@ -14,7 +14,7 @@ namespace DataImporter.MockModelBuilders
                 groupId,
                 speciesName ?? Regex.Replace(Faker.Name.First(), "[^a-zA-Z0-9]", ""),
                 random.Next(1, 100),
-                DateTimeUtils.RandomPastDate()(),
+                DateTimeUtils.RandomPastDate().Invoke(),
                 random.Next(1, 100),
                 random.Next(-90, 90),
                 random.Next(-180, 180),

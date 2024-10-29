@@ -1,19 +1,21 @@
-using System.Net;
-using Common;
+using Common.Misc;
 using Common.Models;
 using Common.Utils;
 using FluentValidation;
-using fsCore.Services.Abstract;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
+using System.Net;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
-    public class UserService : BaseService<User, IUserRepository>, IUserService
+    public class UserService : IUserService
     {
+        private readonly IUserRepository _repo;
         private readonly IValidator<User> _validator;
-        public UserService(IUserRepository repository, IValidator<User> userValidator) : base(repository)
+        public UserService(IUserRepository repository, IValidator<User> userValidator)
         {
             _validator = userValidator;
+            _repo = repository;
         }
         public async Task<User> GetUser(Guid id, UserWithGroupPermissionSet currentUser)
         {

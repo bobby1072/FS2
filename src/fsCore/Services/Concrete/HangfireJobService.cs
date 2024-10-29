@@ -1,9 +1,10 @@
+using Common.Misc;
 using DataImporter;
-using fsCore.Services.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
+using Services.Abstract;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
     public class HangfireJobService : IHangfireJobsService
     {
@@ -44,8 +45,8 @@ namespace fsCore.Services.Concrete
         }
         public void RegisterStartupJobs()
         {
-            _backgroundJobs.Enqueue<IWorldFishService>(service => service.MigrateJsonFishToDb());
-            _backgroundJobs.Enqueue<IDataImporter>(importer => importer.Import());
+            _backgroundJobs.Enqueue<IWorldFishService>(HangfireConstants.Queues.StartUpJobs, service => service.MigrateJsonFishToDb());
+            _backgroundJobs.Enqueue<IDataImporter>(HangfireConstants.Queues.StartUpJobs, importer => importer.Import());
         }
     }
 }

@@ -1,50 +1,24 @@
-using System.Text.Json.Serialization;
 using Common.Attributes;
+using System.Text.Json.Serialization;
 
 namespace Common.Models
 {
-    public class GroupCatch : BaseModel
+    public class GroupCatch : Catch
     {
-        [LockedProperty]
-        [JsonPropertyName("id")]
-        public Guid? Id { get; set; }
-        [LockedProperty]
+        [LockedPropertyAttribute]
         [JsonPropertyName("groupId")]
         public Guid GroupId { get; set; }
         [JsonPropertyName("group")]
         public Group? Group { get; set; }
-        [LockedProperty]
-        [JsonPropertyName("userId")]
-        public Guid UserId { get; set; }
         [JsonPropertyName("user")]
         public User? User { get; set; }
-        [LockedProperty]
-        [JsonPropertyName("species")]
-        public string Species { get; set; }
-        [JsonPropertyName("weight")]
-        public double Weight { get; set; }
-        [JsonPropertyName("length")]
-        public double Length { get; set; }
-        [JsonPropertyName("description")]
-        public string? Description { get; set; }
-        [LockedProperty]
-        [JsonPropertyName("createdAt")]
-        public DateTime CreatedAt { get; set; }
-        [JsonPropertyName("caughtAt")]
-        public DateTime CaughtAt { get; set; }
         [JsonPropertyName("catchPhoto")]
         public byte[]? CatchPhoto { get; set; }
-        [JsonPropertyName("latitude")]
-        public double Latitude { get; set; }
-        [JsonPropertyName("longitude")]
-        public double Longitude { get; set; }
-        [JsonPropertyName("worldFishTaxocode")]
-        public string? WorldFishTaxocode { get; set; }
         [JsonPropertyName("worldFish")]
         public WorldFish? WorldFish { get; set; }
         [JsonConstructor]
         public GroupCatch() { }
-        public GroupCatch(Guid userId, Guid groupId, string species, double weight, DateTime caughtAt, double length, double latitude, double longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user, string? worldFishTaxocode, WorldFish? worldFish)
+        public GroupCatch(Guid userId, Guid groupId, string species, decimal weight, DateTime caughtAt, decimal length, decimal latitude, decimal longitude, string? description, Guid? id, DateTime? createdAt, byte[]? catchPhoto, Group? group, User? user, string? worldFishTaxocode, WorldFish? worldFish)
         {
             Id = id;
             Latitude = latitude;

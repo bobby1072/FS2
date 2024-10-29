@@ -1,11 +1,11 @@
+using Common.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
     [Table("group_catch_comment", Schema = DbConstants.PublicSchema)]
-    internal class GroupCatchCommentEntity : BaseEntity<GroupCatchComment>
+    internal record GroupCatchCommentEntity : BaseEntity<GroupCatchComment>
     {
         [Key]
         [Column("id")]
@@ -52,7 +52,7 @@ namespace Persistence.EntityFramework.Entity
         }
     }
     [Table("group_catch_comment_tagged_users", Schema = DbConstants.PublicSchema)]
-    internal class GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUsers>
+    internal record GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUsers>
     {
         [Key]
         [Column("id")]

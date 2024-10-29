@@ -1,17 +1,17 @@
-using System.Net;
-using Common;
+using Common.Misc;
 using Common.Models;
-using fsCore.Controllers.Attributes;
-using fsCore.Controllers.ControllerModels;
-using fsCore.Services.Abstract;
+using fsCore.Attributes;
+using fsCore.ApiModels;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstract;
+using System.Net;
 namespace fsCore.Controllers
 {
     [RequiredUser]
     public class GroupController : BaseController
     {
         private readonly IGroupService _groupService;
-        public GroupController(ILogger<GroupController> logger, IGroupService groupService) : base(logger)
+        public GroupController(ILogger<GroupController> logger, IGroupService groupService, ICachingService cachingService) : base(logger, cachingService)
         {
             _groupService = groupService;
         }
@@ -21,7 +21,7 @@ namespace fsCore.Controllers
         [HttpGet("GetGroupWithPositions")]
         public async Task<IActionResult> GetGroupWithPositions(Guid groupId)
         {
-            return Ok(await _groupService.GetGroupWithPositions(groupId, GetCurrentUserWithPermissions()));
+            return Ok(await _groupService.GetGroupWithPositions(groupId, await GetCurrentUserWithPermissionsAsync()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupMember>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -29,7 +29,7 @@ namespace fsCore.Controllers
         [HttpGet("GetGroupMembers")]
         public async Task<IActionResult> GetGroupMembers(Guid groupId)
         {
-            return Ok(await _groupService.GetGroupMembers(groupId, GetCurrentUserWithPermissions()));
+            return Ok(await _groupService.GetGroupMembers(groupId, await GetCurrentUserWithPermissionsAsync()));
         }
         [ProducesDefaultResponseType(typeof(Guid))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -50,7 +50,7 @@ namespace fsCore.Controllers
                 CreatedAt = createdAt
             };
             var parsedGroup = await group.ToGroupAsync();
-            var savedGroup = await _groupService.SaveGroup(parsedGroup, GetCurrentUserWithPermissions());
+            var savedGroup = await _groupService.SaveGroup(parsedGroup, await GetCurrentUserWithPermissionsAsync());
             return Ok(savedGroup.Id);
         }
         [ProducesDefaultResponseType(typeof(Guid))]
@@ -59,7 +59,7 @@ namespace fsCore.Controllers
         [HttpGet("DeleteGroup")]
         public async Task<IActionResult> DeleteGroup(Guid groupId)
         {
-            return Ok((await _groupService.DeleteGroup(groupId, GetCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.DeleteGroup(groupId, await GetCurrentUserWithPermissionsAsync())).Id);
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -67,7 +67,7 @@ namespace fsCore.Controllers
         [HttpPost("SavePosition")]
         public async Task<IActionResult> SavePosition([FromBody] GroupPosition position)
         {
-            return Ok((await _groupService.SavePosition(position, GetCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.SavePosition(position, await GetCurrentUserWithPermissionsAsync())).Id);
         }
         [ProducesDefaultResponseType(typeof(GroupPosition))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -75,7 +75,7 @@ namespace fsCore.Controllers
         [HttpGet("DeletePosition")]
         public async Task<IActionResult> DeletePosition(int positionId)
         {
-            return Ok(await _groupService.DeletePosition(positionId, GetCurrentUserWithPermissions()));
+            return Ok(await _groupService.DeletePosition(positionId, await GetCurrentUserWithPermissionsAsync()));
         }
         [ProducesDefaultResponseType(typeof(ICollection<GroupCatch>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -111,7 +111,7 @@ namespace fsCore.Controllers
         [HttpGet("GetSelfGroups")]
         public async Task<IActionResult> GetSelfGroups(int startIndex, int count)
         {
-            return Ok(await _groupService.GetAllSelfLeadGroups(GetCurrentUser(), startIndex, count));
+            return Ok(await _groupService.GetAllSelfLeadGroups(await GetCurrentUserAsync(), startIndex, count));
         }
         [ProducesDefaultResponseType(typeof(ICollection<Group>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -119,7 +119,7 @@ namespace fsCore.Controllers
         [HttpGet("GetUsersGroups")]
         public async Task<IActionResult> GetUsersGroups(int startIndex, int count)
         {
-            return Ok(await _groupService.GetAllGroupsForUser(GetCurrentUser(), startIndex, count));
+            return Ok(await _groupService.GetAllGroupsForUser(await GetCurrentUserAsync(), startIndex, count));
         }
         [ProducesDefaultResponseType(typeof(int))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -127,7 +127,7 @@ namespace fsCore.Controllers
         [HttpPost("SaveGroupMember")]
         public async Task<IActionResult> SaveGroupMember([FromBody] GroupMember groupMember)
         {
-            return Ok((await _groupService.SaveGroupMember(groupMember, GetCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.SaveGroupMember(groupMember, await GetCurrentUserWithPermissionsAsync())).Id);
         }
 
         [ProducesDefaultResponseType(typeof(int))]
@@ -136,7 +136,7 @@ namespace fsCore.Controllers
         [HttpGet("DeleteGroupMember")]
         public async Task<IActionResult> DeleteGroupMember(int groupMemberId)
         {
-            return Ok((await _groupService.DeleteGroupMember(groupMemberId, GetCurrentUserWithPermissions())).Id);
+            return Ok((await _groupService.DeleteGroupMember(groupMemberId, await GetCurrentUserWithPermissionsAsync())).Id);
         }
     }
 }

@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/aspnet:7.0-alpine AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS base
 
 RUN apk add --no-cache icu-libs
 RUN apk add --no-cache icu-data-full
@@ -8,7 +8,7 @@ USER 10000
 
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/sdk:7.0-alpine AS publish
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS publish
 ARG CONF=Release
 
 WORKDIR /src
@@ -16,16 +16,22 @@ WORKDIR /src
 COPY src/fsCore/Common/*.csproj ./fsCore/Common/
 COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
+COPY src/fsCore/Services/*.csproj ./fsCore/Services/
 COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
 COPY src/fsCore/Services/*.csproj ./fsCore/Services/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
 RUN dotnet restore fsCore/fsCore/fsCore.csproj 
 
 COPY src/fsCore/Common/ ./fsCore/Common/
 COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
 COPY src/fsCore/fsCore/ ./fsCore/fsCore/
+COPY src/fsCore/Services/ ./fsCore/Services/
 COPY src/fsCore/Persistence/ ./fsCore/Persistence/
 COPY src/fsCore/Services/ ./fsCore/Services/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/ ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
+COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/ ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
 WORKDIR /src/fsCore/fsCore
 ARG CONF=Release

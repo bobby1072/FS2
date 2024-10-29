@@ -1,27 +1,29 @@
-using System.Net;
-using System.Text.Json;
-using Common;
+using Common.Misc;
 using Common.Models;
 using Common.Utils;
-using fsCore.Services.Abstract;
 using Hangfire;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
+using System.Net;
+using System.Text.Json;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
-    public class WorldFishService : BaseService<WorldFish, IWorldFishRepository>, IWorldFishService
+    public class WorldFishService : IWorldFishService
     {
-        public WorldFishService(IWorldFishRepository baseRepo) : base(baseRepo) { }
-        [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = new[] { 10 }, OnAttemptsExceeded = AttemptsExceededAction.Fail)]
+        private readonly IWorldFishRepository _repo;
+        public WorldFishService(IWorldFishRepository baseRepo)
+        {
+            _repo = baseRepo;
+        }
+        [AutomaticRetry(Attempts = 3, LogEvents = true, DelaysInSeconds = [10], OnAttemptsExceeded = AttemptsExceededAction.Fail)]
         public async Task MigrateJsonFishToDb()
         {
             var fileJob = File.ReadAllTextAsync(Path.GetFullPath($"Data{Path.DirectorySeparatorChar}allFish.json"));
             var allDbFishJob = _repo.GetAll();
-            await Task.WhenAll(fileJob, allDbFishJob);
             var file = await fileJob;
-            var allDbFish = await allDbFishJob;
             var allFileFish = JsonSerializer.Deserialize<JsonFileWorldFish[]>(file) ?? throw new Exception();
+            var allDbFish = await allDbFishJob;
             var allWorldFishFromFile = allFileFish.Select(x => x.ToWorldFishRegular()).ToHashSet();
             if (allDbFish is null)
             {

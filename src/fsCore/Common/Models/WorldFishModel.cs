@@ -54,6 +54,19 @@ namespace Common.Models
             }
             return null;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is not WorldFish worldFish)
+            {
+                return false;
+            }
+            return Taxocode == worldFish.Taxocode
+            && Isscaap == worldFish.Isscaap
+            && A3Code == worldFish.A3Code
+            && ScientificName == worldFish.ScientificName
+            && EnglishName == worldFish.EnglishName
+            && Nickname == worldFish.Nickname;
+        }
     }
     public class JsonFileWorldFish
     {

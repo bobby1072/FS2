@@ -2,6 +2,7 @@ node_modules/
 *.pfx
 build/
 .aspnet/
+*.pfx
 dist/
 reports/*.txt
 pnp

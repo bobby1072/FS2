@@ -1,11 +1,11 @@
+using Common.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
     [Table("group_position", Schema = DbConstants.PublicSchema)]
-    internal class GroupPositionEntity : BaseEntity<GroupPosition>
+    internal record GroupPositionEntity : BaseEntity<GroupPosition>
     {
         [Key]
         public int Id { get; init; }

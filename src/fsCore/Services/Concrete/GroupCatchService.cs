@@ -1,26 +1,27 @@
-using System.Net;
-using System.Text.RegularExpressions;
-using Common;
+using Common.Misc;
 using Common.Models;
-using Common.Models.MiscModels;
 using Common.Permissions;
 using FluentValidation;
-using fsCore.Services.Abstract;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
+using System.Net;
+using System.Text.RegularExpressions;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
-    public class GroupCatchService : BaseService<GroupCatch, IGroupCatchRepository>, IGroupCatchService
+    public class GroupCatchService : IGroupCatchService
     {
+        private readonly IGroupCatchRepository _repo;
         private readonly IWorldFishRepository _worldFishRepository;
         private readonly IGroupService _groupService;
         private readonly IUserService _userService;
         private readonly IValidator<GroupCatch> _catchValidator;
         private readonly IValidator<GroupCatchComment> _commentValidator;
         private readonly IGroupCatchCommentRepository _commentRepo;
-        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IValidator<GroupCatchComment> commentValidator, IValidator<GroupCatch> catchValidator) : base(groupCatchRepository)
+        public GroupCatchService(IGroupCatchRepository groupCatchRepository, IWorldFishRepository worldFishRepo, IGroupService groupService, IUserService userService, IGroupCatchCommentRepository commentRepo, IValidator<GroupCatchComment> commentValidator, IValidator<GroupCatch> catchValidator)
         {
             _catchValidator = catchValidator;
+            _repo = groupCatchRepository;
             _commentValidator = commentValidator;
             _worldFishRepository = worldFishRepo;
             _userService = userService;

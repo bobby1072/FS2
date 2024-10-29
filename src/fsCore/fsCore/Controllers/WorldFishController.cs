@@ -1,9 +1,9 @@
-using System.Net;
-using Common;
+using Common.Misc;
 using Common.Models;
-using fsCore.Services.Abstract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstract;
+using System.Net;
 
 namespace fsCore.Controllers
 {
@@ -11,7 +11,7 @@ namespace fsCore.Controllers
     public class WorldFishController : BaseController
     {
         private readonly IWorldFishService _worldFishService;
-        public WorldFishController(IWorldFishService worldFishService, ILogger<WorldFishController> logger) : base(logger)
+        public WorldFishController(IWorldFishService worldFishService, ILogger<WorldFishController> logger, ICachingService cachingService) : base(logger, cachingService)
         {
             _worldFishService = worldFishService;
         }

@@ -1,5 +1,5 @@
-using System.Text.RegularExpressions;
 using Common.Models;
+using System.Text.RegularExpressions;
 
 namespace DataImporter.MockModelBuilders
 {

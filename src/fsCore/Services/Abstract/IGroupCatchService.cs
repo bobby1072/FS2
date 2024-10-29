@@ -1,7 +1,6 @@
 using Common.Models;
-using Common.Models.MiscModels;
 
-namespace fsCore.Services.Abstract
+namespace Services.Abstract
 {
     public interface IGroupCatchService
     {

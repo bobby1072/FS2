@@ -1,17 +1,16 @@
+using Common.Misc;
 using Common.Models;
-using Common;
+using Common.Utils;
 using DataImporter.MockModelBuilders;
 using FluentValidation;
-using fsCore.Services.Concrete;
-using Faker;
-using fsCore.Services.Abstract;
 using Moq;
-using Common.Utils;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
+using Services.Concrete;
 
-namespace fsCore.test.ServiceTests
+namespace fsCore.Tests.ServiceTests
 {
-    public class GroupCatchServiceTests
+    public class GroupCatchServiceTests : TestBase
     {
         private readonly Mock<IWorldFishRepository> _worldFishRepository;
         private readonly Mock<IGroupService> _groupService;
@@ -32,9 +31,9 @@ namespace fsCore.test.ServiceTests
             _commentValidator = new MockGroupCatchCommentValidator();
             _groupCatchService = new GroupCatchService(_groupCatchRepository.Object, _worldFishRepository.Object, _groupService.Object, _userService.Object, _commentRepo.Object, _commentValidator, _catchValidator);
         }
-        internal class MockGroupCatchValidator : AbstractValidator<GroupCatch>, IValidator<GroupCatch> { }
-        internal class MockGroupCatchCommentValidator : AbstractValidator<GroupCatchComment>, IValidator<GroupCatchComment> { }
-        internal class Can_Manage_Catches_User_Class_Data : TheoryData<UserWithGroupPermissionSet, Group>
+        private class MockGroupCatchValidator : AbstractValidator<GroupCatch>, IValidator<GroupCatch> { }
+        private class MockGroupCatchCommentValidator : AbstractValidator<GroupCatchComment>, IValidator<GroupCatchComment> { }
+        private class Can_Manage_Catches_User_Class_Data : TheoryData<UserWithGroupPermissionSet, Group>
         {
             public Can_Manage_Catches_User_Class_Data()
             {
@@ -59,7 +58,7 @@ namespace fsCore.test.ServiceTests
             _groupCatchRepository.Setup(x => x.GetOne(originalCatch.Id ?? Guid.Empty)).ReturnsAsync(originalCatch);
             var newCatch = originalCatch.JsonClone();
             newCatch.Description = "New test description";
-            newCatch.CaughtAt = DateTimeUtils.RandomPastDate()();
+            newCatch.CaughtAt = DateTimeUtils.RandomPastDate().Invoke();
             _groupCatchRepository.Setup(x => x.Update(It.IsAny<ICollection<GroupCatch>>())).ReturnsAsync(new[] { newCatch });
             await _groupCatchService.SaveGroupCatch(newCatch, user);
             _groupCatchRepository.Verify(x => x.Update(It.IsAny<ICollection<GroupCatch>>()), Times.Once);

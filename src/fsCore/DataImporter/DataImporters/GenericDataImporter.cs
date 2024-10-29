@@ -1,9 +1,9 @@
-using Common;
+using Common.Misc;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Abstract.Repository;
-namespace DataImporter
+using Persistence.EntityFramework.Repository.Abstract;
+namespace DataImporter.DataImporters
 {
     internal class GenericDataImporter : IDataImporter
     {
@@ -24,8 +24,7 @@ namespace DataImporter
             _groupImporter = groupImporter;
             _userRepository = userRepository;
         }
-        [Queue(HangfireConstants.Queues.StartUpJobs)]
-        [AutomaticRetry(Attempts = 5, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = new[] { 1 })]
+        [AutomaticRetry(Attempts = 5, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = [1])]
         public virtual async Task Import()
         {
             try

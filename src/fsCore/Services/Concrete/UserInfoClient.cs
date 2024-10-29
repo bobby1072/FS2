@@ -1,12 +1,12 @@
+using Common.Authentication;
+using Common.Models;
+using Microsoft.Extensions.Options;
+using Services.Abstract;
 using System.Net;
 using System.Security.Claims;
 using System.Text.Json;
-using Common.Authentication;
-using Common.Models;
-using fsCore.Services.Abstract;
-using Microsoft.Extensions.Options;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
     public class UserInfoClient : IUserInfoClient
     {
@@ -17,7 +17,18 @@ namespace fsCore.Services.Concrete
             _userInfoEndpoint = options.Value.UserInfoEndpoint;
             _client = httpClient;
         }
-        public async Task<UserInfoResponse> GetUserInfo(string accessToken)
+        public async Task<User> GetUserInfoReturnUser(string accessToken)
+        {
+            var response = await GetUserInfo(accessToken);
+            var email = response.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value
+                        ?? throw new InvalidOperationException("User does not have email claim");
+            var emailVerified = response.Claims.FirstOrDefault(claim => claim.Type == "email_verified")?.Value
+                                ?? throw new InvalidOperationException("User does not have email_verified claim");
+            var name = response.Claims.FirstOrDefault(claim => claim.Type == "name")?.Value
+                       ?? throw new InvalidOperationException("User does not have name claim");
+            return new User(email, bool.Parse(emailVerified), name);
+        }
+        private async Task<UserInfoResponse> GetUserInfo(string accessToken)
         {
             using var request = new HttpRequestMessage
             {
@@ -38,17 +49,6 @@ namespace fsCore.Services.Concrete
 
             var claims = data.Select(kvp => new Claim(kvp.Key, kvp.Value));
             return new UserInfoResponse(claims);
-        }
-        public async Task<User> GetUserInfoReturnUser(string accessToken)
-        {
-            var response = await GetUserInfo(accessToken);
-            var email = response.Claims.FirstOrDefault(claim => claim.Type == "email")?.Value
-                        ?? throw new InvalidOperationException("User does not have email claim");
-            var emailVerified = response.Claims.FirstOrDefault(claim => claim.Type == "email_verified")?.Value
-                                ?? throw new InvalidOperationException("User does not have email_verified claim");
-            var name = response.Claims.FirstOrDefault(claim => claim.Type == "name")?.Value
-                       ?? throw new InvalidOperationException("User does not have name claim");
-            return new User(email, bool.Parse(emailVerified), name);
         }
     }
     public class UserInfoResponse

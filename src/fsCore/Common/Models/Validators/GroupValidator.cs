@@ -1,15 +1,15 @@
+using Common.Misc;
 using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class GroupValidator : BaseValidator<Group>, IValidator<Group>
+    public class GroupValidator : BaseValidator<Group>
     {
         public GroupValidator()
         {
             RuleFor(x => x.Name).NotEmpty().WithMessage(ErrorConstants.GroupNameCorrectFormat);
-            RuleFor(x => x.Name).Must(x => x?.Length <= 50).WithMessage(ErrorConstants.GroupNameCorrectFormat);
-            RuleFor(x => x.Name).Must(NotHaveNonAlphanumerics).WithMessage(ErrorConstants.GroupNameCorrectFormat);
-            RuleFor(x => x.Name).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(ShouldBeLessThanOrEqualTo(50)).WithMessage(ErrorConstants.GroupNameCorrectFormat);
+            RuleFor(x => x.Name).Must(NumbersLettersAndWhitespaceOnlyNotJustWhiteSpaceOrNumbers).WithMessage(ErrorConstants.GroupNameCorrectFormat);
 
             RuleFor(x => x.CreatedAt).Must(DateInThePastOrNow).WithMessage(ErrorConstants.DateMustBeInThePast);
 

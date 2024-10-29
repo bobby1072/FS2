@@ -1,8 +1,9 @@
+using Common.Misc;
 using FluentValidation;
 
 namespace Common.Models.Validators
 {
-    public class GroupPositionValidator : BaseValidator<GroupPosition>, IValidator<GroupPosition>
+    public class GroupPositionValidator : BaseValidator<GroupPosition>
     {
         public GroupPositionValidator()
         {

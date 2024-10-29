@@ -1,9 +1,9 @@
+using Common.Misc;
+using FluentValidation;
+using Npgsql;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
-using Common;
-using FluentValidation;
-using Persistence;
 namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware
@@ -12,6 +12,44 @@ namespace fsCore.Middleware
         public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger) : base(next)
         {
             _logger = logger;
+        }
+        public async Task InvokeAsync(HttpContext httpContext)
+        {
+            try
+            {
+                await _next.Invoke(httpContext);
+            }
+            catch (ApiException apiException)
+            {
+                await HandleError(apiException.Message, apiException.StatusCode, httpContext, true);
+            }
+            catch (ValidationException validationException)
+            {
+                await HandleError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, HttpStatusCode.BadRequest, httpContext, true);
+            }
+            catch (NpgsqlException)
+            {
+                await HandleError(ErrorConstants.FailedToPersistData, HttpStatusCode.InternalServerError, httpContext, true);
+            }
+            catch (Exception)
+            {
+                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext);
+            }
+        }
+        private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext, bool logAsInformation = false)
+        {
+            if (logAsInformation)
+            {
+                _logger.LogInformation("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+            }
+            else
+            {
+                _logger.LogError("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+            }
+            httpContext.Response.Clear();
+            httpContext.Response.ContentType = MediaTypeNames.Text.Plain;
+            httpContext.Response.StatusCode = (int)statusCode;
+            await httpContext.Response.WriteAsync(message);
         }
         private static string CreateValidationExceptionMessage(ValidationException validationException)
         {
@@ -22,59 +60,6 @@ namespace fsCore.Middleware
                 sb.Append($"{error.ErrorMessage}. ");
             }
             return sb.ToString();
-        }
-        private async Task RouteErrorHandler<T>(T error, HttpContext httpContext) where T : Exception
-        {
-            try
-            {
-
-                _logger.LogError(error, error.Message);
-                httpContext.Response.Clear();
-                httpContext.Response.ContentType = MediaTypeNames.Text.Plain;
-                if (error is ApiException apiException)
-                {
-                    httpContext.Response.StatusCode = (int)apiException.StatusCode;
-                    await httpContext.Response.WriteAsync(apiException.Message);
-                }
-                else if (error is ValidationException validationException)
-                {
-                    httpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    await httpContext.Response.WriteAsync(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest);
-                }
-                else
-                {
-                    var foundPostgresExceptionResults = NpgExceptionHandler.HandleException(error);
-                    if (foundPostgresExceptionResults is null)
-                    {
-                        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        await httpContext.Response.WriteAsync(ErrorConstants.InternalServerError);
-                        return;
-                    }
-                    var (statusCode, message) = foundPostgresExceptionResults.Value;
-                    httpContext.Response.StatusCode = statusCode;
-                    await httpContext.Response.WriteAsync(message);
-                }
-            }
-            catch (Exception) { }
-        }
-        public async Task InvokeAsync(HttpContext httpContext)
-        {
-            try
-            {
-                await _next(httpContext);
-            }
-            catch (Exception e)
-            {
-                await RouteErrorHandler(e, httpContext);
-            }
-        }
-    }
-    internal static class ExceptionHandlingMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseExceptionHandlingMiddleware(
-            this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<ExceptionHandlingMiddleware>();
         }
     }
 

@@ -1,6 +1,6 @@
+using DataImporter.DataImporters;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.DataImporters.ModelImporters.Concrete.Mock;
-using DataImporter.ModelImporters;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +13,7 @@ namespace DataImporter
         public static IServiceCollection AddDataImporter(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
         {
             var isDev = environment.IsDevelopment();
-            var useJsonFileImport = bool.Parse(configuration["DataImporter:UseJsonFile"] ?? "false");
+            var useJsonFileImport = bool.Parse(configuration.GetSection("DataImporter").GetSection("UseJsonFile")?.Value ?? "false");
             if (isDev && !useJsonFileImport)
             {
                 services

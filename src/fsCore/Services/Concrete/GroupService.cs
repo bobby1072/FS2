@@ -1,16 +1,17 @@
-using System.Net;
-using Common;
+using Common.Misc;
 using Common.Models;
 using Common.Permissions;
 using Common.Utils;
 using FluentValidation;
-using fsCore.Services.Abstract;
-using Persistence.EntityFramework.Abstract.Repository;
+using Persistence.EntityFramework.Repository.Abstract;
+using Services.Abstract;
+using System.Net;
 
-namespace fsCore.Services.Concrete
+namespace Services.Concrete
 {
-    public class GroupService : BaseService<Group, IGroupRepository>, IGroupService
+    public class GroupService : IGroupService
     {
+        private readonly IGroupRepository _repo;
         private readonly IGroupMemberRepository _groupMemberRepo;
         private static readonly Type _groupMemberType = typeof(GroupMember);
         private static readonly Type _groupType = typeof(Group);
@@ -20,12 +21,23 @@ namespace fsCore.Services.Concrete
         private readonly IValidator<GroupPosition> _groupPositionValidator;
         public GroupService(IGroupRepository repository,
         IGroupMemberRepository groupMemberRepo,
-        IGroupPositionRepository groupPositionRepo, IValidator<Group> groupValidator, IValidator<GroupPosition> positionValidator) : base(repository)
+        IGroupPositionRepository groupPositionRepo, IValidator<Group> groupValidator, IValidator<GroupPosition> positionValidator)
         {
+            _repo = repository;
             _groupValidator = groupValidator;
             _groupPositionValidator = positionValidator;
             _groupMemberRepo = groupMemberRepo;
             _groupPositionRepo = groupPositionRepo;
+        }
+        public async Task<bool> IsUserInGroup(Guid groupId, Guid userId)
+        {
+            var foundGroup = await _groupMemberRepo.GetOne(userId, groupId);
+            return foundGroup is not null;
+        }
+        public async Task<(bool AllUsersInGroup, ICollection<User> ActualUsers)> IsUserInGroup(Guid groupId, ICollection<Guid> userIds)
+        {
+            var foundGroup = await _groupMemberRepo.GetOne(userIds, groupId, true);
+            return (AllUsersInGroup: foundGroup?.Count == userIds.Count, ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? Array.Empty<User>());
         }
         public async Task<int> GetGroupCount()
         {

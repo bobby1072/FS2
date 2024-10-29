@@ -1,9 +1,10 @@
 using Common.Models;
 
-namespace fsCore.Services.Abstract
+namespace Services.Abstract
 {
     public interface IGroupService
     {
+        Task<(bool AllUsersInGroup, ICollection<User> ActualUsers)> IsUserInGroup(Guid groupId, ICollection<Guid> userIds);
         Task<ICollection<Group>> GetAllGroupsForUser(User currentUser, int startIndex, int count);
         Task<ICollection<Group>> SearchAllListedGroups(string groupNameString);
         Task<GroupPosition> DeletePosition(int positionId, UserWithGroupPermissionSet currentUser);

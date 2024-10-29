@@ -1,7 +1,8 @@
+using Common.Misc;
 using FluentValidation;
 namespace Common.Models.Validators
 {
-    public class UserValidator : BaseValidator<User>, IValidator<User>
+    public class UserValidator : BaseValidator<User>
     {
         public UserValidator()
         {
@@ -10,7 +11,7 @@ namespace Common.Models.Validators
 
             RuleFor(x => x.Username).NotEmpty().WithMessage(ErrorConstants.UsernameInvalid);
             RuleFor(x => x.Username).Must(NotJustHaveNumbers).WithMessage(ErrorConstants.UsernameInvalid);
-            RuleFor(x => x.Username).Must(x => x?.Length <= 30).WithMessage(ErrorConstants.UsernameInvalid);
+            RuleFor(x => x.Username).Must(ShouldBeLessThanOrEqualTo(30)).WithMessage(ErrorConstants.UsernameInvalid);
         }
     }
 }

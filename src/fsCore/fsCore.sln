@@ -13,7 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImporter", "DataImporte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{D0D13E32-6246-4273-B859-4EE914C92F67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fsCore.Tests", "fsCore.Tests\fsCore.Tests.csproj", "{9D84C856-4A03-4FD9-B7E6-C86CB3972650}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsCore.Tests", "fsCore.Tests\fsCore.Tests.csproj", "{9D84C856-4A03-4FD9-B7E6-C86CB3972650}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Submodules", "Submodules", "{B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.FastArray", "..\Submodules\BT.Common\src\BT.Common\BT.Common.FastArray\BT.Common.FastArray.csproj", "{D5296BD8-1F41-4B87-98DC-0E72A0DF7913}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.OperationTimer", "..\Submodules\BT.Common\src\BT.Common\BT.Common.OperationTimer\BT.Common.OperationTimer.csproj", "{27A9920B-4F13-4132-81FC-A6B75996306C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,9 +51,21 @@ Global
 		{9D84C856-4A03-4FD9-B7E6-C86CB3972650}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D84C856-4A03-4FD9-B7E6-C86CB3972650}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D84C856-4A03-4FD9-B7E6-C86CB3972650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27A9920B-4F13-4132-81FC-A6B75996306C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27A9920B-4F13-4132-81FC-A6B75996306C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D5296BD8-1F41-4B87-98DC-0E72A0DF7913} = {B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}
+		{27A9920B-4F13-4132-81FC-A6B75996306C} = {B3C304B7-811C-4821-8BD3-F70B5CF9FCCD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6032FFEC-26F7-4093-88A5-EFE26EA8D966}

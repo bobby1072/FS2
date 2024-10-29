@@ -1,10 +1,10 @@
-﻿using Common;
+﻿using Common.Misc;
 using Common.Models;
 using Common.Utils;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstract;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using System.Text.Json;
 
 namespace fsCore.Controllers
 {
@@ -13,27 +13,28 @@ namespace fsCore.Controllers
     public abstract class BaseController : ControllerBase
     {
         protected readonly ILogger _logger;
-
+        protected ICachingService _cachingService;
+        protected BaseController(ILogger logger, ICachingService cachingService)
+        {
+            _logger = logger;
+            _cachingService = cachingService;
+        }
         protected JwtSecurityToken? GetTokenData()
         {
             return ControllerContext.HttpContext.GetTokenData();
         }
-        public BaseController(ILogger logger)
+        protected async Task<User> GetCurrentUserAsync()
         {
-            _logger = logger;
-        }
-        protected User GetCurrentUser()
-        {
-            var user = HttpContext.Session.GetString(RuntimeConstants.UserSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-            var parsedUser = JsonSerializer.Deserialize<User>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
-            return parsedUser;
-        }
-        protected UserWithGroupPermissionSet GetCurrentUserWithPermissions()
-        {
-            var user = HttpContext.Session.GetString(RuntimeConstants.UserWithPermissionsSession) ?? throw new ApiException(ErrorConstants.NotAuthorized, HttpStatusCode.Unauthorized);
-            var parsedUser = JsonSerializer.Deserialize<UserWithGroupPermissionSet>(user) ?? throw new ApiException(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError);
-            return parsedUser;
+            return await _cachingService.TryGetObject<User>($"{Common.Models.User.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
 
+        }
+        protected async Task<UserWithGroupPermissionSet> GetCurrentUserWithPermissionsAsync()
+        {
+            return await _cachingService.TryGetObject<UserWithGroupPermissionSet>($"{UserWithGroupPermissionSet.CacheKeyPrefix}{GetTokenString()}") ?? throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Unauthorized);
+        }
+        private string GetTokenString()
+        {
+            return ControllerContext.HttpContext.Request.Headers.Authorization.FirstOrDefault() ?? throw new InvalidDataException("Can't find auth token");
         }
     }
 }

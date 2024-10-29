@@ -6,9 +6,9 @@ namespace Common.Utils
 {
     public static class FormExtensions
     {
-        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, double maxSize = 5)
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, decimal maxSize = 5)
         {
-            if (((double)file.Length / 1000000) > maxSize)
+            if (((decimal)file.Length / 1000000) > maxSize)
             {
                 await using var compressStream = file.OpenReadStream();
                 using var image = await Image.LoadAsync(compressStream);
@@ -20,7 +20,7 @@ namespace Common.Utils
             return basicStream.ToArray();
         }
 
-        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, int? width = null, int? height = null, double? maxSize = null)
+        public static async Task<byte[]> ToByteArrayAsync(this IFormFile file, int? width = null, int? height = null, decimal? maxSize = null)
         {
             if (width is null && height is null && maxSize is null)
             {
@@ -42,7 +42,7 @@ namespace Common.Utils
             {
                 image.Mutate(x => x.Resize(image.Width, height.Value));
             }
-            if (((double)file.Length / 1000000) > maxSize)
+            if (((decimal)file.Length / 1000000) > maxSize)
             {
                 await image.SaveAsync(compressStream, new JpegEncoder { Quality = 50 });
             }

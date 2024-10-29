@@ -6,8 +6,13 @@
         {
             DateTime start = new DateTime(1995, 1, 1);
             Random gen = new Random();
-            int range = ((TimeSpan)(DateTime.UtcNow.AddDays(-3) - start)).Days;
+            int range = (DateTime.UtcNow.AddDays(-3) - start).Days;
             return () => start.AddDays(gen.Next(range));
+        }
+        public static Func<DateTime> RandomFutureDate(int maxDaysInFutrue = 1000) 
+        {
+            Random gen = new Random();
+            return () => DateTime.UtcNow.AddDays(gen.Next(maxDaysInFutrue));
         }
     }
 }

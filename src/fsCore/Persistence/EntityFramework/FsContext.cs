@@ -25,5 +25,8 @@ namespace Persistence.EntityFramework
         public virtual DbSet<GroupPositionEntity> Position { get; set; }
         public virtual DbSet<GroupMemberEntity> GroupMember { get; set; }
         public virtual DbSet<GroupCatchEntity> GroupCatch { get; set; }
+        public virtual DbSet<ActiveLiveMatchCatchEntity> ActiveLiveMatchCatch { get; set; }
+        public virtual DbSet<ActiveLiveMatchEntity> ActiveLiveMatch { get; set; }
+        public virtual DbSet<ActiveLiveMatchParticipantEntity> ActiveLiveMatchParticipant { get; set; }
     }
 }

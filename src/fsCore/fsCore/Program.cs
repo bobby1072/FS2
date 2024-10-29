@@ -1,18 +1,19 @@
-using Common;
 using Common.Authentication;
+using Common.Misc;
+using Common.Models.Validators;
+using DataImporter;
+using fsCore.Hubs;
 using fsCore.Middleware;
-using fsCore.Services.Abstract;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.IdentityModel.Tokens;
-using Persistence;
-using System.Text.Json;
-using DataImporter;
 using Microsoft.Net.Http.Headers;
-using Common.Models.Validators;
-using fsCore.Services.Concrete;
+using Persistence;
 using Services;
+using Services.Abstract;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
@@ -22,26 +23,25 @@ var config = builder.Configuration;
 var environment = builder.Environment;
 
 var dbConnectString = config.GetConnectionString("DefaultConnection");
-var clientId = config["ClientConfig:AuthorityClientId"];
-var issuerHost = config["JWT_ISSUER_HOST"];
-var authAudience = config["JWT_AUDIENCE"];
-var useStaticFiles = config["UseStaticFiles"];
+var clientId = config.GetSection("ClientConfig").GetSection("AuthorityClientId")?.Value;
+var issuerHost = config.GetSection("JWT_ISSUER_HOST")?.Value;
+var authAudience = config.GetSection("JWT_AUDIENCE")?.Value;
+var useStaticFiles = config.GetSection("UseStaticFiles")?.Value;
 
 if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
+
 builder.Services
-    .AddSession(options =>
-    {
-        options.IdleTimeout = TimeSpan.FromMinutes(30);
-        options.Cookie.HttpOnly = true;
-        options.Cookie.IsEssential = true;
-    })
     .AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
+    .AddRequestTimeouts(opts =>
+    {
+        opts.DefaultPolicy = new RequestTimeoutPolicy { Timeout = TimeSpan.FromMilliseconds(5000) };
+    })
     .AddLogging()
     .AddHttpClient()
     .AddEndpointsApiExplorer()
@@ -58,14 +58,15 @@ builder.Services
 builder.Services
     .AddDataImporter(config, environment);
 
+
+
 builder.Services
     .AddAuthorization()
     .Configure<AuthoritySettings>(config.GetSection(AuthoritySettings.Key))
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 
 builder.Services
-                .AddScoped<IAuthenticationStrategy, BearerTokenAuthenticationStrategy>()
-                .AddSingleton<IBearerTokenAuthenticationStrategy, BearerTokenAuthenticationStrategy>();
+    .AddSignalRFsCore();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
@@ -91,14 +92,15 @@ builder.Services.AddBusinessServiceExtensions();
 
 builder.Services
     .AddHangfire(configuration => configuration?
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-        ?.UseSimpleAssemblyNameTypeSerializer()
-        ?.UseRecommendedSerializerSettings()
-        ?.UsePostgreSqlStorage(dbConnectString))
-        ?.AddHangfireServer(options =>
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(x => x.UseNpgsqlConnection(dbConnectString)))
+        .AddHangfireServer(options =>
         {
             options.Queues = HangfireConstants.Queues.FullList;
         });
+
 
 var app = builder.Build();
 
@@ -112,6 +114,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors("corsapp");
+    app.UseHangfireDashboard("/api/hangfire");
 }
 else
 {
@@ -121,18 +124,17 @@ app.UseRouting();
 app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
-app.UseDefaultMiddlewares();
+app.UseDefaultMiddleware();
+app.MapFsCoreHubs();
 app.MapControllers();
 #pragma warning disable ASP0014
-app.UseEndpoints(endpoint =>
-{
-    endpoint.MapFallbackToFile("index.html");
-});
-#pragma warning restore ASP0014 
 if (bool.Parse(useStaticFiles) is true)
 {
-
+    app.UseEndpoints(endpoint =>
+    {
+        endpoint.MapFallbackToFile("index.html");
+    });
+#pragma warning restore ASP0014
     app.UseStaticFiles();
     app.UseSpa(spa =>
     {

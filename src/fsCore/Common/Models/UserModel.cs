@@ -1,8 +1,6 @@
-using System.Text.Json.Serialization;
-using Common.Permissions;
 using Common.Attributes;
-using Common.Models.Validators;
-using FluentValidation;
+using Common.Permissions;
+using System.Text.Json.Serialization;
 namespace Common.Models
 {
     public class UserWithoutEmail : BaseModel
@@ -20,6 +18,7 @@ namespace Common.Models
     }
     public class User : UserWithoutEmail
     {
+        public const string CacheKeyPrefix = $"{nameof(User)}_";
         private string _email;
         [LockedProperty]
         [SensitiveProperty]
@@ -40,13 +39,24 @@ namespace Common.Models
             Name = name;
             Username = username ?? CalculateDefaultUsername();
         }
+        [JsonConstructor]
+        public User() { }
         public string CalculateDefaultUsername()
         {
             return Email.Split('@').FirstOrDefault() ?? Email;
         }
+        public override bool Equals(object? obj)
+        {
+            if (obj is User parsedUser)
+            {
+                return parsedUser.Email == Email && parsedUser.Id == Id && parsedUser.Name == Name && parsedUser.Username == Username;
+            }
+            return false;
+        }
     }
     public class UserWithGroupPermissionSet : User
     {
+        public new const string CacheKeyPrefix = $"{nameof(UserWithGroupPermissionSet)}_";
         [JsonPropertyName("permissions")]
         public GroupPermissionSet GroupPermissions { get; set; } = new GroupPermissionSet();
         public UserWithGroupPermissionSet(User user) : base(user.Email, user.EmailVerified, user.Name, user.Username, user.Id) { }

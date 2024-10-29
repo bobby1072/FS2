@@ -1,16 +1,16 @@
-using System.Net;
 using Common.Models;
-using fsCore.Controllers.Attributes;
-using fsCore.Controllers.ControllerModels;
-using fsCore.Services.Abstract;
+using fsCore.ApiModels;
+using fsCore.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using Services.Abstract;
+using System.Net;
 
 namespace fsCore.Controllers
 {
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
-        public UserController(ILogger<UserController> logger, IUserService userService) : base(logger)
+        public UserController(ILogger<UserController> logger, IUserService userService, ICachingService cachingService) : base(logger, cachingService)
         {
             _userService = userService;
         }
@@ -20,7 +20,7 @@ namespace fsCore.Controllers
         [HttpGet("ChangeUsername")]
         public async Task<IActionResult> ChangeUserName(string newUsername)
         {
-            var user = GetCurrentUser();
+            var user = await GetCurrentUserAsync();
             return Ok((await _userService.SaveUser(new User(user.Email, user.EmailVerified, user.Name, newUsername, user.Id))).Id);
         }
         [ProducesDefaultResponseType(typeof(User))]
@@ -29,7 +29,7 @@ namespace fsCore.Controllers
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetOneUser(Guid userId)
         {
-            return Ok(await _userService.GetUser(userId, GetCurrentUserWithPermissions()));
+            return Ok(await _userService.GetUser(userId, await GetCurrentUserWithPermissionsAsync()));
         }
         [ProducesDefaultResponseType(typeof(UserWithoutEmail[]))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -44,9 +44,9 @@ namespace fsCore.Controllers
         [RequiredUser(true)]
         [RequiredUserWithGroupPermissions(true)]
         [HttpGet("SelfWithGroupPermissions")]
-        public Task<IActionResult> GetUserWithPermissions()
+        public async Task<IActionResult> GetUserWithPermissions()
         {
-            return Task.FromResult((IActionResult)Ok(RawUserPermission.FromUserWithPermissions(GetCurrentUserWithPermissions())));
+            return Ok((await GetCurrentUserWithPermissionsAsync()).ToRawUserPermission());
         }
 
     }

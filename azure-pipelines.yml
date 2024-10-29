@@ -25,11 +25,14 @@ stages:
       - job: build_backend
         displayName: "Build backend"
         steps:
+          - checkout: self
+            submodules: recursive
+
           - task: UseDotNet@2
             displayName: "Install .NET SDK"
             inputs:
               packageType: "sdk"
-              version: "7.0.x"
+              version: "8.0.x"
 
           - task: DotNetCoreCLI@2
             displayName: "Run .NET Unit Tests"
@@ -93,6 +96,8 @@ stages:
     jobs:
       - job: push_core_image
         steps:
+          - checkout: self
+            submodules: recursive
           - task: DownloadPipelineArtifact@2
             inputs:
               artifact: client

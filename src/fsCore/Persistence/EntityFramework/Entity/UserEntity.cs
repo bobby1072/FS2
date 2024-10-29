@@ -1,11 +1,11 @@
+using Common.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Common.Models;
 
 namespace Persistence.EntityFramework.Entity
 {
     [Table("user", Schema = DbConstants.PublicSchema)]
-    internal class UserEntity : BaseEntity<User>
+    internal record UserEntity : BaseEntity<User>
     {
         [Key]
         public Guid Id { get; set; }

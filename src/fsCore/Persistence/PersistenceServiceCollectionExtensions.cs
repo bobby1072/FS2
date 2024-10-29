@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Common;
-using Npgsql;
-using Microsoft.Extensions.Logging;
-using Persistence.Migrations;
-using Persistence.EntityFramework;
+﻿using Common.Misc;
 using Microsoft.EntityFrameworkCore;
-using Persistence.EntityFramework.Repository;
-using Persistence.EntityFramework.Abstract.Repository;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Npgsql;
+using Persistence.EntityFramework;
+using Persistence.EntityFramework.Repository.Abstract;
+using Persistence.EntityFramework.Repository.Concrete;
+using Persistence.Migration;
 
 namespace Persistence
 {
@@ -16,7 +16,7 @@ namespace Persistence
         public static IServiceCollection AddSqlPersistence(this IServiceCollection services, IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
-            var migrationStartVersion = configuration["Migration:StartVersion"];
+            var migrationStartVersion = configuration.GetSection("Migration").GetSection("StartVersion")?.Value;
             if (string.IsNullOrEmpty(connectionString) || string.IsNullOrEmpty(migrationStartVersion))
             {
                 throw new Exception(ErrorConstants.MissingEnvVars);
@@ -33,13 +33,16 @@ namespace Persistence
                 .AddSingleton<IGroupPositionRepository, GroupPositionRepository>()
                 .AddSingleton<IGroupMemberRepository, GroupMemberRepository>()
                 .AddSingleton<IGroupCatchRepository, GroupCatchRepository>()
-                .AddSingleton<IGroupCatchCommentRepository, GroupCatchCommentRepository>();
+                .AddSingleton<IGroupCatchCommentRepository, GroupCatchCommentRepository>()
+                .AddSingleton<IActiveLiveMatchCatchRepository, ActiveLiveMatchCatchRepository>()
+                .AddSingleton<IActiveLiveMatchRepository, ActiveLiveMatchRepository>()
+                .AddSingleton<IActiveLiveMatchParticipantRepository, ActiveLiveMatchParticipantRepository>();
 
             services
                 .AddHostedService<DatabaseMigratorHostedService>()
                 .AddSingleton<DatabaseMigratorHealthCheck>()
                 .AddHealthChecks()
-                .AddCheck<DatabaseMigratorHealthCheck>(DatabaseMigratorHealthCheck.Name, tags: new[] { HealthCheckConstants.ReadyTag });
+                .AddCheck<DatabaseMigratorHealthCheck>(DatabaseMigratorHealthCheck.Name, tags: [HealthCheckConstants.ReadyTag]);
 
             services
                 .AddPooledDbContextFactory<FsContext>(
