@@ -27,11 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\fsCore.Api\fsCore.Api.csproj" />
     <ProjectReference Include="..\fsCore.Common\fsCore.Common.csproj" />
     <ProjectReference Include="..\fsCore.DataImporter\fsCore.DataImporter.csproj" />
     <ProjectReference Include="..\fsCore.Persistence\fsCore.Persistence.csproj" />
     <ProjectReference Include="..\fsCore.Services\fsCore.Services.csproj" />
-    <ProjectReference Include="..\fsCore\fsCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>
