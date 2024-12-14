@@ -1,6 +1,6 @@
 using AutoFixture;
-using Common.Models;
-using Common.Utils;
+using fsCore.Common.Models;
+using fsCore.Common.Utils;
 
 namespace fsCore.Tests.ServiceTests
 {

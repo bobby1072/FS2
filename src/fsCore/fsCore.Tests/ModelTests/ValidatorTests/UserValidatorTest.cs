@@ -1,16 +1,19 @@
-using Common.Models;
-using Common.Models.Validators;
-using DataImporter.MockModelBuilders;
 using FluentAssertions;
+using fsCore.Common.Models;
+using fsCore.Common.Models.Validators;
+using fsCore.DataImporter.MockModelBuilders;
+
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
     public class UserValidatorTest : TestBase
     {
         private readonly UserValidator _validator;
+
         public UserValidatorTest()
         {
             _validator = new UserValidator();
         }
+
         private class User_Class_Data : TheoryData<User, bool>
         {
             public User_Class_Data()
@@ -63,9 +66,9 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                 userWithLongUsername.Email = Faker.Internet.Email();
                 userWithLongUsername.Username = new string('a', 256);
                 Add(userWithLongUsername, false);
-
             }
         }
+
         [Theory]
         [ClassData(typeof(User_Class_Data))]
         public void User_Validator_Should_Validate_Correctly(User user, bool expected)

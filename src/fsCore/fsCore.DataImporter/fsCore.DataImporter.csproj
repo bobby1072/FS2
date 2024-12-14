@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Faker.Net" Version="2.0.163" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.17" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\fsCore.Common\fsCore.Common.csproj" />
+    <ProjectReference Include="..\fsCore.Persistence\fsCore.Persistence.csproj" />
+  </ItemGroup>
+  
+</Project>
