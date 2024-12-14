@@ -13,21 +13,22 @@ ARG CONF=Release
 
 WORKDIR /src
 
-COPY src/fsCore/Common/*.csproj ./fsCore/Common/
-COPY src/fsCore/DataImporter/*.csproj ./fsCore/DataImporter/
-COPY src/fsCore/fsCore/*.csproj ./fsCore/fsCore/
-COPY src/fsCore/Persistence/*.csproj ./fsCore/Persistence/
-COPY src/fsCore/Services/*.csproj ./fsCore/Services/
+COPY src/fsCore/fsCore.Common/*.csproj ./fsCore/fsCore.Common/
+COPY src/fsCore/fsCore.DataImporter/*.csproj ./fsCore/fsCore.DataImporter/
+COPY src/fsCore/fsCore.Api/*.csproj ./fsCore/fsCore.Api/
+COPY src/fsCore/fsCore.Persistence/*.csproj ./fsCore/fsCore.Persistence/
+COPY src/fsCore/fsCore.Services/*.csproj ./fsCore/fsCore.Services/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
-RUN dotnet restore fsCore/fsCore/fsCore.csproj 
+RUN dotnet restore fsCore/fsCore.Api/fsCore.Api.csproj 
 
-COPY src/fsCore/Common/ ./fsCore/Common/
-COPY src/fsCore/DataImporter/ ./fsCore/DataImporter/
-COPY src/fsCore/fsCore/ ./fsCore/fsCore/
-COPY src/fsCore/Persistence/ ./fsCore/Persistence/
-COPY src/fsCore/Services/ ./fsCore/Services/
+
+COPY src/fsCore/fsCore.Common/ ./fsCore/fsCore.Common/
+COPY src/fsCore/fsCore.DataImporter/ ./fsCore/fsCore.DataImporter/
+COPY src/fsCore/fsCore.Api/ ./fsCore/fsCore.Api/
+COPY src/fsCore/fsCore.Persistence/ ./fsCore/fsCore.Persistence/
+COPY src/fsCore/fsCore.Services/ ./fsCore/fsCore.Services/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/ ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/ ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
