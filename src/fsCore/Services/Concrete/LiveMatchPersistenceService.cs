@@ -75,7 +75,7 @@ namespace Services.Concrete
         public async Task DeleteParticipant(Guid liveMatchId, ICollection<LiveMatchParticipant> user)
         {
             var foundLiveMatch = await TryGetLiveMatch(liveMatchId) ?? throw new LiveMatchException(LiveMatchConstants.LiveMatchHasMissingOrIncorrectDetails, HttpStatusCode.BadRequest);
-            var idList = user.Select(u => (Guid)u.Id!).ToList();
+            var idList = user.Select(u => u.Id!).ToList();
             if (foundLiveMatch.Participants.FirstOrDefault(p => user.FirstOrDefault(x => p.Id == x.Id) is not null) is not null)
             {
                 await _activeLiveMatchParticipantRepository.Delete(idList, liveMatchId);

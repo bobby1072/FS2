@@ -3,10 +3,10 @@ using Common.Models;
 using Common.Permissions;
 using FluentValidation;
 using Persistence.EntityFramework.Repository.Abstract;
+using Persistence.EntityFramework.Repository.Concrete;
 using Services.Abstract;
 using System.Net;
 using System.Text.RegularExpressions;
-using Persistence.EntityFramework.Repository.Concrete;
 
 namespace Services.Concrete
 {

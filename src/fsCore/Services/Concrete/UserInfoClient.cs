@@ -1,13 +1,9 @@
-using System.Net;
-using System.Net.Http.Json;
-using System.Security.Claims;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Common.Authentication;
 using Common.Models;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Services.Abstract;
+using System.Net;
+using System.Net.Http.Json;
 
 namespace Services.Concrete
 {

@@ -53,7 +53,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
                 return newComment.ToRuntime();
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await transaction.RollbackAsync();
                 throw;

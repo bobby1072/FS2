@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace fsCore.Middleware
 {
     internal class RequestResponseLoggingMiddleware : BaseMiddleware

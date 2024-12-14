@@ -1,5 +1,5 @@
-using System.Text.Json.Serialization;
 using Common.Models;
+using System.Text.Json.Serialization;
 
 namespace fsCore.ApiModels
 {

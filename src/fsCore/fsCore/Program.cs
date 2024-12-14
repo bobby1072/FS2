@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Common.Authentication;
 using Common.Misc;
 using Common.Models.Validators;
@@ -14,6 +13,7 @@ using Microsoft.Net.Http.Headers;
 using Persistence;
 using Services;
 using Services.Abstract;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);

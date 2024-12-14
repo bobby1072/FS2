@@ -1,4 +1,3 @@
-using System.Net;
 using Common.Misc;
 using Common.Models;
 using FluentValidation;
@@ -7,6 +6,7 @@ using fsCore.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Services.Abstract;
+using System.Net;
 namespace fsCore.Hubs
 {
     [Authorize]
