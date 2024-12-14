@@ -24,7 +24,7 @@ namespace Persistence.EntityFramework.Repository.Concrete
 
             try
             {
-                var groupCatchCommentEntity = GroupCatchCommentEntity.RuntimeToEntity(groupCatchComment);
+                var groupCatchCommentEntity = RuntimeToEntity(groupCatchComment);
                 
                 
                 Func<Task> commentJob = saveFullGroupCatchCommentType == SaveFullGroupCatchCommentType.Create ? () => dbContext.GroupCatchComment.AddAsync(groupCatchCommentEntity).AsTask()
@@ -42,7 +42,14 @@ namespace Persistence.EntityFramework.Repository.Concrete
                         ent.CommentId = newComment.Id;
                         return ent;
                     }).ToArray();
+                    if (saveFullGroupCatchCommentType == SaveFullGroupCatchCommentType.Update)
+                    {
+                        await dbContext.GroupCatchCommentTaggedUsers
+                            .Where(x => x.CommentId == newComment.Id)
+                            .ExecuteDeleteAsync();
 
+                        await dbContext.SaveChangesAsync();
+                    }
                     await dbContext.GroupCatchCommentTaggedUsers.AddRangeAsync(taggedEntities);
                         
                     await dbContext.SaveChangesAsync();

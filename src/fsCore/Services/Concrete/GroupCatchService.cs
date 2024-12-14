@@ -165,23 +165,17 @@ namespace Services.Concrete
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-
-                if (groupCatchComment.TaggedUsers?.Any() == true)
-                {
-                    await _commentRepo.DeleteTaggedUsers([(int)foundId!]);
-                }
             }
             else
             {
                 groupCatchComment.ApplyDefaults();
             }
             var taggedUsers = await FindTaggedUsersFromComment(groupCatchComment.Comment);
-            var createdComment = (await _commentRepo.SaveFullGroupCatchComment(
+            var createdComment = await _commentRepo.SaveFullGroupCatchComment(
                     groupCatchComment,
                     taggedUsers.Select(x => new GroupCatchCommentTaggedUser(x.Id ?? throw new Exception())).ToArray(),
-                        foundId is not null ? SaveFullGroupCatchCommentType.Update: SaveFullGroupCatchCommentType.Create
-                        
-                )) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved);
+                    foundId is not null ? SaveFullGroupCatchCommentType.Update: SaveFullGroupCatchCommentType.Create
+                ) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved);
             return createdComment;
         }
         public async Task<GroupCatchComment> DeleteComment(int id, UserWithGroupPermissionSet userWithGroupPermissionSet)
