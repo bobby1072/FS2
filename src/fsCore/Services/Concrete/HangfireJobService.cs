@@ -1,5 +1,5 @@
 using fsCore.Common.Misc;
-using DataImporter;
+using fsCore.DataImporter;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 using Services.Abstract;

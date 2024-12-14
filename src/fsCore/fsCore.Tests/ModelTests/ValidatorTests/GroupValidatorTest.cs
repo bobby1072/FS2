@@ -1,17 +1,19 @@
+using FluentAssertions;
 using fsCore.Common.Models;
 using fsCore.Common.Models.Validators;
-using DataImporter.MockModelBuilders;
-using FluentAssertions;
+using fsCore.DataImporter.MockModelBuilders;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
     public class GroupValidatorTest : TestBase
     {
         private readonly GroupValidator _validator;
+
         public GroupValidatorTest()
         {
             _validator = new GroupValidator();
         }
+
         private class Group_Class_Data : TheoryData<Group, bool>
         {
             public Group_Class_Data()
@@ -49,7 +51,8 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
 
                 // Group with special characters in name
                 var groupWithSpecialCharName = MockGroupBuilder.Build(Guid.NewGuid());
-                groupWithSpecialCharName.Name = "Group with special characters !@#$%^&*()_+{}|:<>?~`-=[]\\;',./\"";
+                groupWithSpecialCharName.Name =
+                    "Group with special characters !@#$%^&*()_+{}|:<>?~`-=[]\\;',./\"";
                 Add(groupWithSpecialCharName, false);
 
                 // Group with overly long name
@@ -63,6 +66,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                 Add(groupWithValidEmblem, true);
             }
         }
+
         [Theory]
         [ClassData(typeof(Group_Class_Data))]
         public void Group_Validator_Should_Validate_Correctly(Group group, bool expected)
