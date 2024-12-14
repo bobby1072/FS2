@@ -1,19 +1,19 @@
+using System.Text.Json;
+using DataImporter;
 using fsCore.Common.Authentication;
 using fsCore.Common.Misc;
 using fsCore.Common.Models.Validators;
-using DataImporter;
 using fsCore.Hubs;
 using fsCore.Middleware;
+using fsCore.Persistence;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Timeouts;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
-using Persistence;
 using Services;
 using Services.Abstract;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);

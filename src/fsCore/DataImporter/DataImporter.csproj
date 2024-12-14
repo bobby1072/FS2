@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\fsCore.Common\fsCore.Common.csproj" />
-    <ProjectReference Include="..\Persistence\Persistence.csproj" />
+    <ProjectReference Include="..\fsCore.Persistence\fsCore.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

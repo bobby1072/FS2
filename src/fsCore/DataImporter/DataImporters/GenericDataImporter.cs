@@ -1,8 +1,9 @@
-using fsCore.Common.Misc;
 using DataImporter.DataImporters.ModelImporters.Abstract;
+using fsCore.Common.Misc;
+using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Repository.Abstract;
+
 namespace DataImporter.DataImporters
 {
     internal class GenericDataImporter : IDataImporter
@@ -14,7 +15,16 @@ namespace DataImporter.DataImporters
         private readonly IGroupPositionImporter _groupPositionImporter;
         private readonly IGroupMemberImporter _groupMemberImporter;
         private readonly IGroupCatchImporter _groupCatchImporter;
-        public GenericDataImporter(IUserImporter userImporter, ILogger<GenericDataImporter> logger, IUserRepository userRepository, IGroupImporter groupImporter, IGroupPositionImporter groupPositionImporter, IGroupMemberImporter groupMemberImporter, IGroupCatchImporter groupCatchImporter)
+
+        public GenericDataImporter(
+            IUserImporter userImporter,
+            ILogger<GenericDataImporter> logger,
+            IUserRepository userRepository,
+            IGroupImporter groupImporter,
+            IGroupPositionImporter groupPositionImporter,
+            IGroupMemberImporter groupMemberImporter,
+            IGroupCatchImporter groupCatchImporter
+        )
         {
             _groupCatchImporter = groupCatchImporter;
             _groupMemberImporter = groupMemberImporter;
@@ -24,7 +34,13 @@ namespace DataImporter.DataImporters
             _groupImporter = groupImporter;
             _userRepository = userRepository;
         }
-        [AutomaticRetry(Attempts = 5, LogEvents = true, OnAttemptsExceeded = AttemptsExceededAction.Fail, DelaysInSeconds = [1])]
+
+        [AutomaticRetry(
+            Attempts = 5,
+            LogEvents = true,
+            OnAttemptsExceeded = AttemptsExceededAction.Fail,
+            DelaysInSeconds = [1]
+        )]
         public virtual async Task Import()
         {
             try

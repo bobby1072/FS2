@@ -1,23 +1,31 @@
-using fsCore.Common.Models;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.MockModelBuilders;
+using fsCore.Common.Models;
+using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Repository.Abstract;
+
 namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
     internal class MockUserImporter : IUserImporter
     {
         private readonly IUserRepository _userRepository;
         private readonly ILogger<MockUserImporter> _logger;
+
         public MockUserImporter(IUserRepository userRepo, ILogger<MockUserImporter> logger)
         {
             _logger = logger;
             _userRepository = userRepo;
         }
+
         public User CreateUniqueEmailUsernameUser(ICollection<User> users)
         {
             var tempUser = MockUserBuilder.Build();
-            if (users.FirstOrDefault(x => x?.Email == tempUser.Email || x?.Username == tempUser.Username) is not null)
+            if (
+                users.FirstOrDefault(x =>
+                    x?.Email == tempUser.Email || x?.Username == tempUser.Username
+                )
+                is not null
+            )
             {
                 return CreateUniqueEmailUsernameUser(users);
             }
@@ -26,12 +34,12 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
                 return tempUser;
             }
         }
+
         public async Task Import()
         {
             int tryCount = 0;
             while (tryCount < 3)
             {
-
                 try
                 {
                     var newUserArray = new User[(int)NumberOfMockModelToCreate.Users];
@@ -40,7 +48,9 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
                         var tempUser = CreateUniqueEmailUsernameUser(newUserArray);
                         newUserArray[x] = tempUser;
                     }
-                    var createdUsers = await _userRepository.Create(newUserArray) ?? throw new InvalidOperationException("Failed to create groups");
+                    var createdUsers =
+                        await _userRepository.Create(newUserArray)
+                        ?? throw new InvalidOperationException("Failed to create groups");
                     return;
                 }
                 catch (Exception e)

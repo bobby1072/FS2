@@ -1,8 +1,8 @@
-using fsCore.Common.Models;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.MockModelBuilders;
+using fsCore.Common.Models;
+using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Repository.Abstract;
 
 namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
@@ -11,16 +11,38 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
         private readonly IGroupRepository _groupRepository;
         private readonly ILogger<MockGroupPositionImporter> _logger;
         private readonly IGroupPositionRepository _groupPositionRepository;
-        public MockGroupPositionImporter(IGroupRepository groupRepository, ILogger<MockGroupPositionImporter> logger, IGroupPositionRepository groupPositionRepository)
+
+        public MockGroupPositionImporter(
+            IGroupRepository groupRepository,
+            ILogger<MockGroupPositionImporter> logger,
+            IGroupPositionRepository groupPositionRepository
+        )
         {
             _logger = logger;
             _groupRepository = groupRepository;
             _groupPositionRepository = groupPositionRepository;
         }
-        private static GroupPosition CreateUniqueGroupIdNameGroupPosition(ICollection<GroupPosition> groupPositions, Guid groupId)
+
+        private static GroupPosition CreateUniqueGroupIdNameGroupPosition(
+            ICollection<GroupPosition> groupPositions,
+            Guid groupId
+        )
         {
-            var tempGroupPosition = MockGroupPositionBuilder.Build(groupId, null, null, null, null, null, null);
-            if (groupPositions.FirstOrDefault(x => x?.GroupId == tempGroupPosition.GroupId && x?.Name == tempGroupPosition.Name) is not null)
+            var tempGroupPosition = MockGroupPositionBuilder.Build(
+                groupId,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            );
+            if (
+                groupPositions.FirstOrDefault(x =>
+                    x?.GroupId == tempGroupPosition.GroupId && x?.Name == tempGroupPosition.Name
+                )
+                is not null
+            )
             {
                 return CreateUniqueGroupIdNameGroupPosition(groupPositions, groupId);
             }
@@ -29,29 +51,39 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
                 return tempGroupPosition;
             }
         }
+
         public async Task Import()
         {
             int tryCount = 0;
             while (tryCount < 3)
             {
-
                 try
                 {
-                    var allGroups = await _groupRepository.GetAll() ?? throw new InvalidOperationException("Cannot get all groups");
+                    var allGroups =
+                        await _groupRepository.GetAll()
+                        ?? throw new InvalidOperationException("Cannot get all groups");
                     var listOfPositionsToCreate = new List<GroupPosition>();
                     for (int x = 0; x < allGroups.Count; x++)
                     {
-                        var currentPositionsList = new GroupPosition[(int)NumberOfMockModelToCreate.PositionPerGroup];
+                        var currentPositionsList = new GroupPosition[
+                            (int)NumberOfMockModelToCreate.PositionPerGroup
+                        ];
                         var tempGroup = allGroups.ElementAt(x);
                         for (int deepX = 0; deepX < currentPositionsList.Length; deepX++)
                         {
                             var tempPositionList = new List<GroupPosition>(listOfPositionsToCreate);
                             tempPositionList.AddRange(currentPositionsList);
-                            currentPositionsList[deepX] = CreateUniqueGroupIdNameGroupPosition(tempPositionList, tempGroup?.Id ?? throw new InvalidOperationException("Cannot get group id"));
+                            currentPositionsList[deepX] = CreateUniqueGroupIdNameGroupPosition(
+                                tempPositionList,
+                                tempGroup?.Id
+                                    ?? throw new InvalidOperationException("Cannot get group id")
+                            );
                         }
                         listOfPositionsToCreate.AddRange(currentPositionsList);
                     }
-                    var createdGroupPositions = await _groupPositionRepository.Create(listOfPositionsToCreate) ?? throw new InvalidOperationException("Failed to create groups");
+                    var createdGroupPositions =
+                        await _groupPositionRepository.Create(listOfPositionsToCreate)
+                        ?? throw new InvalidOperationException("Failed to create groups");
                     return;
                 }
                 catch (Exception e)

@@ -1,8 +1,8 @@
-using fsCore.Common.Models;
 using DataImporter.DataImporters.ModelImporters.Abstract;
 using DataImporter.MockModelBuilders;
+using fsCore.Common.Models;
+using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using Microsoft.Extensions.Logging;
-using Persistence.EntityFramework.Repository.Abstract;
 
 namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
 {
@@ -12,24 +12,44 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
         private readonly IGroupRepository _groupRepository;
         private readonly IGroupMemberRepository _groupMemberRepository;
         private readonly ILogger<MockGroupCatchImporter> _logger;
-        public MockGroupCatchImporter(IGroupCatchRepository groupCatchRepository, IGroupRepository groupRepository, IGroupMemberRepository groupMemberRepository, ILogger<MockGroupCatchImporter> logger)
+
+        public MockGroupCatchImporter(
+            IGroupCatchRepository groupCatchRepository,
+            IGroupRepository groupRepository,
+            IGroupMemberRepository groupMemberRepository,
+            ILogger<MockGroupCatchImporter> logger
+        )
         {
             _logger = logger;
             _groupCatchRepository = groupCatchRepository;
             _groupRepository = groupRepository;
             _groupMemberRepository = groupMemberRepository;
         }
+
         private static (decimal, decimal) GetCloseByLatLng(decimal lat, decimal lng)
         {
             var random = new Random();
-            var latOffset = lat + (decimal)(random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (2.0 - 1.0)) : 1.0 + random.NextDouble() * (2.0 - 1.0));
-            var lngOffset = lng + (decimal)(random.Next(0, 2) == 1 ? -(1.0 + random.NextDouble() * (4.0 - 2.0)) : 2.0 + random.NextDouble() * (4.0 - 2.0));
+            var latOffset =
+                lat
+                + (decimal)(
+                    random.Next(0, 2) == 1
+                        ? -(1.0 + random.NextDouble() * (2.0 - 1.0))
+                        : 1.0 + random.NextDouble() * (2.0 - 1.0)
+                );
+            var lngOffset =
+                lng
+                + (decimal)(
+                    random.Next(0, 2) == 1
+                        ? -(1.0 + random.NextDouble() * (4.0 - 2.0))
+                        : 2.0 + random.NextDouble() * (4.0 - 2.0)
+                );
             if (latOffset < -90 || latOffset > 90 || lngOffset < -180 || lngOffset > 180)
             {
                 return GetCloseByLatLng(random.Next(-90, 90), random.Next(-180, 180));
             }
             return (latOffset, lngOffset);
         }
+
         public async Task Import()
         {
             int tryCount = 0;
@@ -44,19 +64,33 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
                     for (int i = 0; i < allGroups.Result?.Count; i++)
                     {
                         var random = new Random();
-                        var currentGroupCatchList = new GroupCatch[random.Next(0, (int)NumberOfMockModelToCreate.MaxCatchesPerGroup)];
-                        var randomGroupMemberList = allMembers.Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id).ToArray();
+                        var currentGroupCatchList = new GroupCatch[
+                            random.Next(0, (int)NumberOfMockModelToCreate.MaxCatchesPerGroup)
+                        ];
+                        var randomGroupMemberList = allMembers
+                            .Result?.Where(x => x.GroupId == allGroups.Result.ElementAt(i)?.Id)
+                            .ToArray();
                         if (randomGroupMemberList?.Length < 1)
                         {
                             continue;
                         }
-                        var randomGroupMember = randomGroupMemberList?.ElementAt(random.Next(0, randomGroupMemberList.Length));
+                        var randomGroupMember = randomGroupMemberList?.ElementAt(
+                            random.Next(0, randomGroupMemberList.Length)
+                        );
                         for (int deepI = 0; deepI < currentGroupCatchList.Length; deepI++)
                         {
-                            var tempGroupCatch = MockGroupCatchBuilder.Build(randomGroupMember?.GroupId ?? throw new InvalidDataException("No groupId on member"), randomGroupMember?.UserId ?? throw new InvalidDataException("No userId on member"));
+                            var tempGroupCatch = MockGroupCatchBuilder.Build(
+                                randomGroupMember?.GroupId
+                                    ?? throw new InvalidDataException("No groupId on member"),
+                                randomGroupMember?.UserId
+                                    ?? throw new InvalidDataException("No userId on member")
+                            );
                             if (deepI != 0)
                             {
-                                var (lat, lng) = GetCloseByLatLng(currentGroupCatchList[deepI - 1].Latitude, currentGroupCatchList[deepI - 1].Longitude);
+                                var (lat, lng) = GetCloseByLatLng(
+                                    currentGroupCatchList[deepI - 1].Latitude,
+                                    currentGroupCatchList[deepI - 1].Longitude
+                                );
                                 tempGroupCatch.Latitude = lat;
                                 tempGroupCatch.Longitude = lng;
                             }
@@ -64,7 +98,9 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
                         }
                         allGroupCatches.AddRange(currentGroupCatchList);
                     }
-                    var createdGroupCatches = await _groupCatchRepository.Create(allGroupCatches) ?? throw new InvalidOperationException("Failed to create group catches");
+                    var createdGroupCatches =
+                        await _groupCatchRepository.Create(allGroupCatches)
+                        ?? throw new InvalidOperationException("Failed to create group catches");
                     return;
                 }
                 catch (Exception e)
@@ -75,6 +111,5 @@ namespace DataImporter.DataImporters.ModelImporters.Concrete.Mock
             }
             throw new InvalidOperationException("Failed to create mock users");
         }
-
     }
 }
