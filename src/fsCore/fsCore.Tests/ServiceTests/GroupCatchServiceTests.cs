@@ -4,9 +4,9 @@ using fsCore.Common.Models;
 using fsCore.Common.Utils;
 using fsCore.DataImporter.MockModelBuilders;
 using fsCore.Persistence.EntityFramework.Repository.Abstract;
+using fsCore.Services.Abstract;
+using fsCore.Services.Concrete;
 using Moq;
-using Services.Abstract;
-using Services.Concrete;
 
 namespace fsCore.Tests.ServiceTests
 {

@@ -1,7 +1,7 @@
 using fsCore.Services.Concrete;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Services.Abstract
+namespace fsCore.Services.Abstract
 {
     public interface ICachingService
     {

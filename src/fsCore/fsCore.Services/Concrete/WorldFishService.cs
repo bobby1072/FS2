@@ -7,7 +7,7 @@ using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using fsCore.Services.Abstract;
 using Hangfire;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class WorldFishService : IWorldFishService
     {

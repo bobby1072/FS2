@@ -2,10 +2,10 @@ using FluentValidation;
 using fsCore.Common.Misc.Abstract;
 using fsCore.Common.Models;
 using fsCore.Persistence.EntityFramework.Repository.Abstract;
+using fsCore.Services.Abstract;
+using fsCore.Services.Concrete;
 using Hangfire;
 using Moq;
-using Services.Abstract;
-using Services.Concrete;
 
 namespace fsCore.Tests.ServiceTests
 {

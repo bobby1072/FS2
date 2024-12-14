@@ -7,7 +7,7 @@ using fsCore.Common.Utils;
 using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using fsCore.Services.Abstract;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class GroupService : IGroupService
     {

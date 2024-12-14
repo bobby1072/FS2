@@ -5,7 +5,7 @@ using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using fsCore.Services.Abstract;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class LiveMatchPersistenceService : ILiveMatchPersistenceService
     {

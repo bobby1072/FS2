@@ -30,8 +30,8 @@
     <ProjectReference Include="..\fsCore.Common\fsCore.Common.csproj" />
     <ProjectReference Include="..\fsCore.DataImporter\fsCore.DataImporter.csproj" />
     <ProjectReference Include="..\fsCore.Persistence\fsCore.Persistence.csproj" />
+    <ProjectReference Include="..\fsCore.Services\fsCore.Services.csproj" />
     <ProjectReference Include="..\fsCore\fsCore.csproj" />
-    <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
 
   <ItemGroup>

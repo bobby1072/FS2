@@ -2,7 +2,7 @@ using System.Text.Json;
 using fsCore.Services.Abstract;
 using Microsoft.Extensions.Caching.Distributed;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class DistributedCachingService : ICachingService
     {

@@ -2,7 +2,7 @@
 using fsCore.Services.Concrete;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Services
+namespace fsCore.Services
 {
     public static class BusinessServiceExtensions
     {

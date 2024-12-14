@@ -8,7 +8,7 @@ using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using fsCore.Persistence.EntityFramework.Repository.Concrete;
 using fsCore.Services.Abstract;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class GroupCatchService : IGroupCatchService
     {

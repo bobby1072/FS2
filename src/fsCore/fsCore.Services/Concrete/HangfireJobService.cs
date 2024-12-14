@@ -4,7 +4,7 @@ using fsCore.Services.Abstract;
 using Hangfire;
 using Microsoft.Extensions.Logging;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class HangfireJobService : IHangfireJobsService
     {

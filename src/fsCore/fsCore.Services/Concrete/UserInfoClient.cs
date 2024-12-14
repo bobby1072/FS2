@@ -5,7 +5,7 @@ using fsCore.Common.Models;
 using fsCore.Services.Abstract;
 using Microsoft.Extensions.Options;
 
-namespace Services.Concrete
+namespace fsCore.Services.Concrete
 {
     public class UserInfoClient : IUserInfoClient
     {
