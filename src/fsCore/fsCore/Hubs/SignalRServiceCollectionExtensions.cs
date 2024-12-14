@@ -1,4 +1,4 @@
-using Common.Misc.Abstract;
+using fsCore.Common.Misc.Abstract;
 using fsCore.Hubs.Contexts;
 using fsCore.Hubs.Filters;
 using Microsoft.AspNetCore.SignalR;

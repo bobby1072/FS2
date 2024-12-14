@@ -1,8 +1,8 @@
-using Common.Misc;
-using Common.Misc.Abstract;
-using Common.Models;
-using Common.Permissions;
-using Common.Utils;
+using fsCore.Common.Misc;
+using fsCore.Common.Misc.Abstract;
+using fsCore.Common.Models;
+using fsCore.Common.Permissions;
+using fsCore.Common.Utils;
 using FluentValidation;
 using Hangfire;
 using Persistence.EntityFramework.Repository.Abstract;

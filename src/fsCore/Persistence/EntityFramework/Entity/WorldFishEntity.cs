@@ -1,4 +1,4 @@
-﻿using Common.Models;
+﻿using fsCore.Common.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Persistence.EntityFramework.Entity

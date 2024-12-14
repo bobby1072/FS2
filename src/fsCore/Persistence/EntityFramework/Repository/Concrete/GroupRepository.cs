@@ -1,5 +1,5 @@
-using Common.Models;
-using Common.Utils;
+using fsCore.Common.Models;
+using fsCore.Common.Utils;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
 using Persistence.EntityFramework.Repository.Abstract;

@@ -1,5 +1,5 @@
-using Common.Models;
-using Common.Permissions;
+using fsCore.Common.Models;
+using fsCore.Common.Permissions;
 using System.Text.Json.Serialization;
 namespace fsCore.ApiModels
 {

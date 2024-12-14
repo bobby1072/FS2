@@ -1,4 +1,4 @@
-﻿using Common.Misc;
+﻿using fsCore.Common.Misc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

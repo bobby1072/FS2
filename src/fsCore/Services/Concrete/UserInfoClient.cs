@@ -1,5 +1,5 @@
-using Common.Authentication;
-using Common.Models;
+using fsCore.Common.Authentication;
+using fsCore.Common.Models;
 using Microsoft.Extensions.Options;
 using Services.Abstract;
 using System.Net;

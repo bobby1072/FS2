@@ -4,10 +4,10 @@ namespace DataImporter.MockModelBuilders
 {
     public static class MockGroupBuilder
     {
-        public static Common.Models.Group Build(Guid leaderId)
+        public static fsCore.Common.Models.Group Build(Guid leaderId)
         {
             var random = new Random();
-            return new Common.Models.Group(
+            return new fsCore.Common.Models.Group(
                 Regex.Replace(Faker.Name.First(), "[^a-zA-Z0-9]", ""),
                 null,
                 Faker.Lorem.Sentence(),

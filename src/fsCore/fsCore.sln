@@ -5,8 +5,6 @@ VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "fsCore", "fsCore\fsCore.csproj", "{3EB695CD-6996-4498-898D-29C0251F7A4B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "Common\Common.csproj", "{158FC388-EAEA-490D-9F86-C0DAC96F371D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{E9E7AA88-EB6E-4C6A-A7C6-A256D8629742}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataImporter", "DataImporter\DataImporter.csproj", "{B2D8D1EB-0A34-4264-B158-7228D0425DB2}"
@@ -21,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.FastArray", "..\S
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BT.Common.OperationTimer", "..\Submodules\BT.Common\src\BT.Common\BT.Common.OperationTimer\BT.Common.OperationTimer.csproj", "{27A9920B-4F13-4132-81FC-A6B75996306C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fsCore.Common", "fsCore.Common\fsCore.Common.csproj", "{DD75604C-2871-4008-9CFD-55EFBF2BE3FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +31,6 @@ Global
 		{3EB695CD-6996-4498-898D-29C0251F7A4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3EB695CD-6996-4498-898D-29C0251F7A4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3EB695CD-6996-4498-898D-29C0251F7A4B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{158FC388-EAEA-490D-9F86-C0DAC96F371D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{158FC388-EAEA-490D-9F86-C0DAC96F371D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{158FC388-EAEA-490D-9F86-C0DAC96F371D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{158FC388-EAEA-490D-9F86-C0DAC96F371D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E9E7AA88-EB6E-4C6A-A7C6-A256D8629742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E9E7AA88-EB6E-4C6A-A7C6-A256D8629742}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9E7AA88-EB6E-4C6A-A7C6-A256D8629742}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -59,6 +55,10 @@ Global
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27A9920B-4F13-4132-81FC-A6B75996306C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD75604C-2871-4008-9CFD-55EFBF2BE3FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD75604C-2871-4008-9CFD-55EFBF2BE3FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD75604C-2871-4008-9CFD-55EFBF2BE3FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD75604C-2871-4008-9CFD-55EFBF2BE3FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,4 +1,4 @@
-using Common.Models;
+using fsCore.Common.Models;
 using Persistence.EntityFramework.Repository.Concrete;
 
 namespace Persistence.EntityFramework.Repository.Abstract

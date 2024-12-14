@@ -1,5 +1,5 @@
-using Common.Models;
-using Common.Models.Validators;
+using fsCore.Common.Models;
+using fsCore.Common.Models.Validators;
 using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests

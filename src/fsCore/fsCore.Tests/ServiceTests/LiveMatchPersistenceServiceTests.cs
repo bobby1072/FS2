@@ -1,4 +1,4 @@
-using Common.Models;
+using fsCore.Common.Models;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;

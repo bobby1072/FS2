@@ -1,4 +1,4 @@
-using Common.Models;
+using fsCore.Common.Models;
 using fsCore.ApiModels;
 using fsCore.Attributes;
 using Microsoft.AspNetCore.Mvc;

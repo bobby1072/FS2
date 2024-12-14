@@ -1,6 +1,6 @@
-using Common.Misc;
-using Common.Models;
-using Common.Permissions;
+using fsCore.Common.Misc;
+using fsCore.Common.Models;
+using fsCore.Common.Permissions;
 using FluentValidation;
 using Persistence.EntityFramework.Repository.Abstract;
 using Persistence.EntityFramework.Repository.Concrete;

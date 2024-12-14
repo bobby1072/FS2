@@ -1,4 +1,4 @@
-using Common.Models;
+using fsCore.Common.Models;
 using Microsoft.EntityFrameworkCore;
 using Persistence.EntityFramework.Entity;
 using Persistence.EntityFramework.Repository.Abstract;

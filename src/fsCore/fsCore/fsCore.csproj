@@ -22,8 +22,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Submodules\BT.Common\src\BT.Common\BT.Common.OperationTimer\BT.Common.OperationTimer.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
     <ProjectReference Include="..\DataImporter\DataImporter.csproj" />
+    <ProjectReference Include="..\fsCore.Common\fsCore.Common.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\Services\Services.csproj" />
   </ItemGroup>
