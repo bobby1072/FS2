@@ -111,6 +111,7 @@ builder
     {
         options.Queues = HangfireConstants.Queues.FullList;
     });
+var useLiveMatch = bool.Parse(config.GetSection("UseLiveMatchService")?.Value ?? "false");
 
 var app = builder.Build();
 
@@ -135,7 +136,7 @@ app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseDefaultMiddleware();
-app.MapFsCoreHubs();
+app.MapFsCoreHubs(useLiveMatch);
 app.MapControllers();
 #pragma warning disable ASP0014
 if (bool.Parse(useStaticFiles) is true)

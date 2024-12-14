@@ -19,7 +19,6 @@ namespace fsCore.Hubs
                 opts.AddFilter<UserWithPermissionsSessionFilter>();
                 opts.AddFilter<RequiredSignalRUserConnectionIdFilter>();
             });
-
             return services;
         }
     }

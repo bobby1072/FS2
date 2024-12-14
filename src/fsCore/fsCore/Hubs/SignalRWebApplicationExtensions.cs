@@ -2,9 +2,14 @@ namespace fsCore.Hubs
 {
     public static class SignalRWebApplicationExtensions
     {
-        public static WebApplication MapFsCoreHubs(this WebApplication builder)
+        public static WebApplication MapFsCoreHubs(this WebApplication builder, bool useLiveMatch)
         {
-            builder.MapHub<LiveMatchHub>("Api/SignalR/LiveMatchHub");
+            if (useLiveMatch)
+            {
+                builder.MapHub<LiveMatchHub>("Api/SignalR/LiveMatchHub");
+                return builder;
+            }
+
             return builder;
         }
     }
