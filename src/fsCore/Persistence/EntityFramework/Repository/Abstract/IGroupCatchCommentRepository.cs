@@ -1,4 +1,5 @@
 using Common.Models;
+using Persistence.EntityFramework.Repository.Concrete;
 
 namespace Persistence.EntityFramework.Repository.Abstract
 {
@@ -9,7 +10,11 @@ namespace Persistence.EntityFramework.Repository.Abstract
         Task<ICollection<GroupCatchComment>?> Delete(ICollection<GroupCatchComment> GroupCatchCommentToDelete);
         Task<ICollection<GroupCatchComment>?> GetAllForCatch(Guid catchId);
         Task<GroupCatchComment?> GetOne(int id);
-        Task<ICollection<GroupCatchCommentTaggedUsers>?> DeleteTaggedUsers(ICollection<int> commentIds);
-        Task<ICollection<GroupCatchCommentTaggedUsers>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUsers> GroupCatchCommentTaggedUsersToCreate);
+
+        Task<GroupCatchComment?> SaveFullGroupCatchComment(GroupCatchComment groupCatchComment,
+            ICollection<GroupCatchCommentTaggedUser> users,
+            SaveFullGroupCatchCommentType saveFullGroupCatchCommentType);
+        Task<ICollection<GroupCatchCommentTaggedUser>?> DeleteTaggedUsers(ICollection<int> commentIds);
+        Task<ICollection<GroupCatchCommentTaggedUser>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUser> GroupCatchCommentTaggedUsersToCreate);
     }
 }

@@ -52,30 +52,30 @@ namespace Persistence.EntityFramework.Entity
         }
     }
     [Table("group_catch_comment_tagged_users", Schema = DbConstants.PublicSchema)]
-    internal record GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUsers>
+    internal record GroupCatchCommentTaggedUsersEntity : BaseEntity<GroupCatchCommentTaggedUser>
     {
         [Key]
         [Column("id")]
         public int Id { get; init; }
         [Column("comment_id")]
-        public int CommentId { get; init; }
+        public int CommentId { get; set; }
         [Column("user_id")]
         public Guid UserId { get; set; }
         [ForeignKey(nameof(UserId))]
         public UserEntity? User { get; set; }
-        public override GroupCatchCommentTaggedUsers ToRuntime()
+        public override GroupCatchCommentTaggedUser ToRuntime()
         {
-            return new GroupCatchCommentTaggedUsers(Id, CommentId, UserId, User?.ToRuntime());
+            return new GroupCatchCommentTaggedUser(Id, CommentId, UserId, User?.ToRuntime());
         }
-        public static GroupCatchCommentTaggedUsersEntity RuntimeToEntity(GroupCatchCommentTaggedUsers groupCatchCommentTaggedUsers)
+        public static GroupCatchCommentTaggedUsersEntity RuntimeToEntity(GroupCatchCommentTaggedUser groupCatchCommentTaggedUser)
         {
-            if (groupCatchCommentTaggedUsers.Id is not null)
+            if (groupCatchCommentTaggedUser.Id is not null)
             {
-                return new GroupCatchCommentTaggedUsersEntity { CommentId = groupCatchCommentTaggedUsers.CommentId, UserId = groupCatchCommentTaggedUsers.UserId, Id = groupCatchCommentTaggedUsers.Id!.Value };
+                return new GroupCatchCommentTaggedUsersEntity { CommentId = groupCatchCommentTaggedUser.CommentId, UserId = groupCatchCommentTaggedUser.UserId, Id = groupCatchCommentTaggedUser.Id!.Value };
             }
             else
             {
-                return new GroupCatchCommentTaggedUsersEntity { CommentId = groupCatchCommentTaggedUsers.CommentId, UserId = groupCatchCommentTaggedUsers.UserId };
+                return new GroupCatchCommentTaggedUsersEntity { CommentId = groupCatchCommentTaggedUser.CommentId, UserId = groupCatchCommentTaggedUser.UserId };
             }
         }
     }
