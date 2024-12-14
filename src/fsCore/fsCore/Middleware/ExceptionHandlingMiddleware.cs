@@ -1,9 +1,11 @@
+using BT.Common.OperationTimer.Common;
 using Common.Misc;
 using FluentValidation;
 using Npgsql;
 using System.Net;
 using System.Net.Mime;
 using System.Text;
+
 namespace fsCore.Middleware
 {
     internal class ExceptionHandlingMiddleware : BaseMiddleware
@@ -17,34 +19,49 @@ namespace fsCore.Middleware
         {
             try
             {
-                await _next.Invoke(httpContext);
+                try
+                {   
+                    await _next.Invoke(httpContext);
+                }
+                catch (OperationTimerException opEx)
+                {
+                    if (opEx.InnerException is not null)
+                    {   
+                        throw opEx.InnerException;
+                    }
+                    throw;
+                }
+            }
+            catch (OperationTimerException opEx)
+            {
+                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext, opEx);
             }
             catch (ApiException apiException)
             {
-                await HandleError(apiException.Message, apiException.StatusCode, httpContext, true);
+                await HandleError(apiException.Message, apiException.StatusCode, httpContext, apiException,true);
             }
             catch (ValidationException validationException)
             {
-                await HandleError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, HttpStatusCode.BadRequest, httpContext, true);
+                await HandleError(CreateValidationExceptionMessage(validationException) ?? ErrorConstants.BadRequest, HttpStatusCode.BadRequest, httpContext, validationException, true);
             }
-            catch (NpgsqlException)
+            catch (NpgsqlException e)
             {
-                await HandleError(ErrorConstants.FailedToPersistData, HttpStatusCode.InternalServerError, httpContext, true);
+                await HandleError(ErrorConstants.FailedToSaveData, HttpStatusCode.InternalServerError, httpContext, e, true);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext);
+                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext, e);
             }
         }
-        private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext, bool logAsInformation = false)
+        private async Task HandleError(string message, HttpStatusCode statusCode, HttpContext httpContext,Exception? actualException = null, bool logAsInformation = false)
         {
             if (logAsInformation)
             {
-                _logger.LogInformation("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+                _logger.LogInformation(actualException,"Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
             }
             else
             {
-                _logger.LogError("Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
+                _logger.LogError(actualException, "Request {Request} failed with message: {Exception}. Request from: {WebToken}", httpContext.Request.Path, message, httpContext.Request.Headers.Authorization.ToString());
             }
             httpContext.Response.Clear();
             httpContext.Response.ContentType = MediaTypeNames.Text.Plain;

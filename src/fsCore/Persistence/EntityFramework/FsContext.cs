@@ -18,7 +18,7 @@ namespace Persistence.EntityFramework
         }
         public FsContext(DbContextOptions options) : base(options) { }
         public virtual DbSet<WorldFishEntity> WorldFish { get; set; }
-        public virtual DbSet<GroupCatchCommentTaggedUsersEntity> CommentTaggedUsers { get; set; }
+        public virtual DbSet<GroupCatchCommentTaggedUsersEntity> GroupCatchCommentTaggedUsers { get; set; }
         public virtual DbSet<UserEntity> User { get; set; }
         public virtual DbSet<GroupCatchCommentEntity> GroupCatchComment { get; set; }
         public virtual DbSet<GroupEntity> Group { get; set; }

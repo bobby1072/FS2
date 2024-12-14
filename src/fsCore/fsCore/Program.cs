@@ -18,7 +18,6 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
 
-
 var config = builder.Configuration;
 var environment = builder.Environment;
 
@@ -28,14 +27,19 @@ var issuerHost = config.GetSection("JWT_ISSUER_HOST")?.Value;
 var authAudience = config.GetSection("JWT_AUDIENCE")?.Value;
 var useStaticFiles = config.GetSection("UseStaticFiles")?.Value;
 
-if (string.IsNullOrEmpty(useStaticFiles) || string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(issuerHost) || string.IsNullOrEmpty(authAudience) || string.IsNullOrEmpty(dbConnectString))
+if (
+    string.IsNullOrEmpty(useStaticFiles)
+    || string.IsNullOrEmpty(clientId)
+    || string.IsNullOrEmpty(issuerHost)
+    || string.IsNullOrEmpty(authAudience)
+    || string.IsNullOrEmpty(dbConnectString)
+)
 {
     throw new Exception(ErrorConstants.MissingEnvVars);
 }
 
-
-builder.Services
-    .AddDistributedMemoryCache()
+builder
+    .Services.AddDistributedMemoryCache()
     .AddHttpContextAccessor()
     .AddResponseCompression()
     .AddRequestTimeouts(opts =>
@@ -47,33 +51,38 @@ builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
     .AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+    );
 
-builder.Services
-    .AddModelValidators();
+builder.Services.AddModelValidators();
 
-builder.Services
-    .AddSqlPersistence(config);
+builder.Services.AddSqlPersistence(config);
 
-builder.Services
-    .AddDataImporter(config, environment);
+builder.Services.AddDataImporter(config, environment);
 
-
-
-builder.Services
-    .AddAuthorization()
-    .Configure<AuthoritySettings>(config.GetSection(AuthoritySettings.Key))
+builder
+    .Services.AddAuthorization()
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
 
-builder.Services
-    .AddSignalRFsCore();
+builder.Services.AddSignalRFsCore();
 
-builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
-{
-    builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-}));
+builder.Services.AddCors(p =>
+    p.AddPolicy(
+        "corsapp",
+        builder =>
+        {
+            builder
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials();
+        }
+    )
+);
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.Authority = issuerHost;
@@ -84,23 +93,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = false,
-            ValidIssuer = issuerHost
+            ValidIssuer = issuerHost,
         };
     });
 
 builder.Services.AddBusinessServiceExtensions();
 
-builder.Services
-    .AddHangfire(configuration => configuration?
-        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-        .UseSimpleAssemblyNameTypeSerializer()
-        .UseRecommendedSerializerSettings()
-        .UsePostgreSqlStorage(x => x.UseNpgsqlConnection(dbConnectString)))
-        .AddHangfireServer(options =>
-        {
-            options.Queues = HangfireConstants.Queues.FullList;
-        });
-
+builder
+    .Services.AddHangfire(configuration =>
+        configuration
+            ?.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(x => x.UseNpgsqlConnection(dbConnectString))
+    )
+    .AddHangfireServer(options =>
+    {
+        options.Queues = HangfireConstants.Queues.FullList;
+    });
 
 var app = builder.Build();
 
@@ -150,7 +160,7 @@ if (bool.Parse(useStaticFiles) is true)
                         NoCache = true,
                         NoStore = true,
                         MustRevalidate = true,
-                        MaxAge = TimeSpan.Zero
+                        MaxAge = TimeSpan.Zero,
                     };
                 }
                 else
@@ -161,13 +171,14 @@ if (bool.Parse(useStaticFiles) is true)
                         Private = false,
                         NoCache = false,
                         NoStore = false,
-                        MaxAge = TimeSpan.FromDays(365)
+                        MaxAge = TimeSpan.FromDays(365),
                     };
                 }
-            }
+            },
         };
     });
 }
 
-app.Run();
+await app.RunAsync();
+
 public static partial class Program { };

@@ -11,7 +11,7 @@ CREATE TABLE public."active_live_match" (
     ends_at TIMESTAMP WITHOUT TIME ZONE,
     created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT NOW(),
     CONSTRAINT active_live_match_group_id_fk FOREIGN KEY (group_id) REFERENCES public."group"(id) ON UPDATE CASCADE ON DELETE CASCADE,
-    CONSTRAINT active_live_match_match_leader_id_fk FOREIGN KEY (match_leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
+    CONSTRAINT active_live_match_match_leader_id_fk FOREIGN KEY (match_leader_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE,
     CONSTRAINT active_live_match_match_winner_id_fk FOREIGN KEY (match_winner_id) REFERENCES public."user"(id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 

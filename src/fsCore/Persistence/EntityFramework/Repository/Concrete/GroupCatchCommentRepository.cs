@@ -14,6 +14,58 @@ namespace Persistence.EntityFramework.Repository.Concrete
         {
             return GroupCatchCommentEntity.RuntimeToEntity(runtimeObj);
         }
+
+
+        public async Task<GroupCatchComment?> SaveFullGroupCatchComment(GroupCatchComment groupCatchComment,
+            ICollection<GroupCatchCommentTaggedUser> users, SaveFullGroupCatchCommentType saveFullGroupCatchCommentType)
+        {
+            await using var dbContext = await _contextFactory.CreateDbContextAsync();
+            await using var transaction = await dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                var groupCatchCommentEntity = RuntimeToEntity(groupCatchComment);
+                
+                
+                Func<Task> commentJob = saveFullGroupCatchCommentType == SaveFullGroupCatchCommentType.Create ? () => dbContext.GroupCatchComment.AddAsync(groupCatchCommentEntity).AsTask()
+                        : () => Task.FromResult(dbContext.GroupCatchComment.Update(groupCatchCommentEntity));
+                
+                await commentJob();
+                await dbContext.SaveChangesAsync();
+                
+                var newComment = dbContext.GroupCatchComment.Local.First();
+                if (users.Count > 0)
+                {
+                    var taggedEntities = users.Select(x =>
+                    {
+                        var ent = GroupCatchCommentTaggedUsersEntity.RuntimeToEntity(x);
+                        ent.CommentId = newComment.Id;
+                        return ent;
+                    }).ToArray();
+                    if (saveFullGroupCatchCommentType == SaveFullGroupCatchCommentType.Update)
+                    {
+                        await dbContext.GroupCatchCommentTaggedUsers
+                            .Where(x => x.CommentId == newComment.Id)
+                            .ExecuteDeleteAsync();
+
+                        await dbContext.SaveChangesAsync();
+                    }
+                    await dbContext.GroupCatchCommentTaggedUsers.AddRangeAsync(taggedEntities);
+                        
+                    await dbContext.SaveChangesAsync();
+                }
+                
+                await transaction.CommitAsync();
+                
+                return newComment.ToRuntime();
+                
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
         public async Task<ICollection<GroupCatchComment>?> GetAllForCatch(Guid catchId)
         {
             await using var dbContext = await _contextFactory.CreateDbContextAsync();
@@ -36,21 +88,25 @@ namespace Persistence.EntityFramework.Repository.Concrete
                 .FirstOrDefaultAsync(c => c.Id == id);
             return comment?.ToRuntime();
         }
-        public async Task<ICollection<GroupCatchCommentTaggedUsers>?> DeleteTaggedUsers(ICollection<int> commentIds)
+        public async Task<ICollection<GroupCatchCommentTaggedUser>?> DeleteTaggedUsers(ICollection<int> commentIds)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
-            var foundEntities = await context.CommentTaggedUsers.Where(x => commentIds.Contains(x.CommentId)).ToArrayAsync();
-            context.CommentTaggedUsers.RemoveRange(foundEntities);
+            var foundEntities = await context.GroupCatchCommentTaggedUsers.Where(x => commentIds.Contains(x.CommentId)).ToArrayAsync();
+            context.GroupCatchCommentTaggedUsers.RemoveRange(foundEntities);
             await context.SaveChangesAsync();
             return foundEntities.Select(x => x.ToRuntime()).ToArray();
         }
-        public async Task<ICollection<GroupCatchCommentTaggedUsers>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUsers> GroupCatchCommentTaggedUsersToCreate)
+        public async Task<ICollection<GroupCatchCommentTaggedUser>?> CreateTaggedUsers(ICollection<GroupCatchCommentTaggedUser> GroupCatchCommentTaggedUsersToCreate)
         {
             await using var context = await _contextFactory.CreateDbContextAsync();
             var entities = GroupCatchCommentTaggedUsersToCreate.Select(x => GroupCatchCommentTaggedUsersEntity.RuntimeToEntity(x)).ToArray();
-            await context.CommentTaggedUsers.AddRangeAsync(entities);
+            await context.GroupCatchCommentTaggedUsers.AddRangeAsync(entities);
             await context.SaveChangesAsync();
-            return context.CommentTaggedUsers.Local.Select(x => x.ToRuntime()).ToArray();
+            return context.GroupCatchCommentTaggedUsers.Local.Select(x => x.ToRuntime()).ToArray();
         }
+    }
+    public enum SaveFullGroupCatchCommentType
+    {
+        Update, Create
     }
 }

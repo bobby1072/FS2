@@ -3,6 +3,7 @@ using Common.Models;
 using Common.Permissions;
 using FluentValidation;
 using Persistence.EntityFramework.Repository.Abstract;
+using Persistence.EntityFramework.Repository.Concrete;
 using Services.Abstract;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -52,7 +53,7 @@ namespace Services.Concrete
                     throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
                 }
             }
-            return (await _repo.Delete(new[] { foundCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.FailedToDeleteFish, HttpStatusCode.InternalServerError);
+            return (await _repo.Delete([foundCatch]))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.FailedToDeleteFish, HttpStatusCode.InternalServerError);
         }
         public async Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForGroup(Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
@@ -65,7 +66,7 @@ namespace Services.Concrete
             {
                 x.User?.RemoveSensitive();
                 return x;
-            }).ToArray() ?? Array.Empty<PartialGroupCatch>();
+            }).ToArray() ?? [];
         }
         public async Task<GroupCatch> SaveGroupCatch(GroupCatch groupCatch, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
@@ -81,11 +82,11 @@ namespace Services.Concrete
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-                return (await _repo.Update(new[] { groupCatch }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
+                return (await _repo.Update([groupCatch]))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
             else
             {
-                return (await _repo.Create(new[] { groupCatch.ApplyDefaults() }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
+                return (await _repo.Create([groupCatch.ApplyDefaults()]))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.CouldntSaveCatch, HttpStatusCode.InternalServerError);
             }
         }
         public async Task<GroupCatch> GetFullGroupCatchByLatAndLngWithAssociatedWorldFish(LatLng latLng, Guid groupId, UserWithGroupPermissionSet userWithGroupPermissionSet)
@@ -108,7 +109,7 @@ namespace Services.Concrete
             {
                 x.User?.RemoveSensitive();
                 return x;
-            }).ToArray() ?? Array.Empty<PartialGroupCatch>();
+            }).ToArray() ?? [];
         }
         public async Task<ICollection<PartialGroupCatch>> GetAllPartialCatchesForUser(Guid userId, UserWithGroupPermissionSet currentUser)
         {
@@ -155,32 +156,27 @@ namespace Services.Concrete
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            if (groupCatchComment.Id is int foundId)
+
+            var foundId = groupCatchComment.Id is int ? groupCatchComment.Id : null;
+            if (foundId is not null)
             {
-                var foundComment = await _commentRepo.GetOne(foundId) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotFound, HttpStatusCode.NotFound);
+                var foundComment = await _commentRepo.GetOne((int)foundId!) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotFound, HttpStatusCode.NotFound);
                 if (groupCatchComment.ValidateAgainstOriginal(foundComment) is false)
                 {
                     throw new ApiException(ErrorConstants.NotAllowedToEditThoseFields, HttpStatusCode.BadRequest);
                 }
-
-                var taggedUsersJob = FindTaggedUsersFromComment(groupCatchComment.Comment);
-                if (groupCatchComment.TaggedUsers?.Any() == true)
-                {
-                    var deleteTaggedUsersJob = _commentRepo.DeleteTaggedUsers(new[] { foundId });
-                    await Task.WhenAll(deleteTaggedUsersJob, taggedUsersJob);
-                }
-                var taggedUsers = await taggedUsersJob;
-                var updatedComment = (await _commentRepo.Update(new[] { groupCatchComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
-                if (taggedUsers.Any()) await _commentRepo.CreateTaggedUsers(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(foundId, x.Id ?? throw new Exception())).ToArray());
-                return updatedComment;
             }
             else
             {
-                var taggedUsers = await FindTaggedUsersFromComment(groupCatchComment.Comment);
-                var createdComment = (await _commentRepo.Create(new[] { groupCatchComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved, HttpStatusCode.InternalServerError);
-                if (taggedUsers.Any()) await _commentRepo.CreateTaggedUsers(taggedUsers.Select(x => new GroupCatchCommentTaggedUsers(createdComment.Id ?? throw new Exception(), x.Id ?? throw new Exception())).ToArray());
-                return createdComment;
+                groupCatchComment.ApplyDefaults();
             }
+            var taggedUsers = await FindTaggedUsersFromComment(groupCatchComment.Comment);
+            var createdComment = await _commentRepo.SaveFullGroupCatchComment(
+                    groupCatchComment,
+                    taggedUsers.Select(x => new GroupCatchCommentTaggedUser(x.Id ?? throw new Exception())).ToArray(),
+                    foundId is not null ? SaveFullGroupCatchCommentType.Update: SaveFullGroupCatchCommentType.Create
+                ) ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotSaved);
+            return createdComment;
         }
         public async Task<GroupCatchComment> DeleteComment(int id, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {
@@ -190,7 +186,7 @@ namespace Services.Concrete
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _commentRepo.Delete(new[] { foundComment }))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotDeleted, HttpStatusCode.InternalServerError);
+            return (await _commentRepo.Delete([foundComment]))?.FirstOrDefault() ?? throw new ApiException(ErrorConstants.GroupCatchCommentNotDeleted, HttpStatusCode.InternalServerError);
         }
         public async Task<ICollection<GroupCatchComment>> GetCommentsForCatch(Guid catchId, UserWithGroupPermissionSet userWithGroupPermissionSet)
         {

@@ -28,8 +28,8 @@ namespace Common.Models
         [JsonPropertyName("createdAt")]
         public DateTime CreatedAt { get; set; }
         [JsonPropertyName("taggedUsers")]
-        public ICollection<GroupCatchCommentTaggedUsers>? TaggedUsers { get; set; }
-        public GroupCatchComment(int? id, Guid groupCatchId, Guid userId, string comment, DateTime createdAt, ICollection<GroupCatchCommentTaggedUsers>? taggedUsers = null, User? user = null)
+        public ICollection<GroupCatchCommentTaggedUser>? TaggedUsers { get; set; }
+        public GroupCatchComment(int? id, Guid groupCatchId, Guid userId, string comment, DateTime createdAt, ICollection<GroupCatchCommentTaggedUser>? taggedUsers = null, User? user = null)
         {
             Id = id;
             GroupCatchId = groupCatchId;
@@ -40,14 +40,18 @@ namespace Common.Models
             TaggedUsers = taggedUsers;
         }
     }
-    public class GroupCatchCommentTaggedUsers : BaseModel
+    public class GroupCatchCommentTaggedUser : BaseModel
     {
-        public GroupCatchCommentTaggedUsers(int commentId, Guid userId)
+        public GroupCatchCommentTaggedUser(Guid userId)
+        {
+            UserId = userId;
+        }
+        public GroupCatchCommentTaggedUser(int commentId, Guid userId)
         {
             CommentId = commentId;
             UserId = userId;
         }
-        public GroupCatchCommentTaggedUsers(int id, int commentId, Guid userId, User? user = null)
+        public GroupCatchCommentTaggedUser(int id, int commentId, Guid userId, User? user = null)
         {
             Id = id;
             CommentId = commentId;

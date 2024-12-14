@@ -1,8 +1,8 @@
-using System.Net;
-using System.Text.Json.Serialization;
 using Common.Misc;
 using Common.Models;
 using FluentValidation;
+using System.Net;
+using System.Text.Json.Serialization;
 
 namespace fsCore.ApiModels
 {

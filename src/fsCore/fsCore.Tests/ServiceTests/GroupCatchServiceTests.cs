@@ -12,23 +12,16 @@ namespace fsCore.Tests.ServiceTests
 {
     public class GroupCatchServiceTests : TestBase
     {
-        private readonly Mock<IWorldFishRepository> _worldFishRepository;
-        private readonly Mock<IGroupService> _groupService;
-        private readonly Mock<IGroupCatchRepository> _groupCatchRepository;
-        private readonly Mock<IUserService> _userService;
-        private readonly IValidator<GroupCatch> _catchValidator;
-        private readonly IValidator<GroupCatchComment> _commentValidator;
-        private readonly Mock<IGroupCatchCommentRepository> _commentRepo;
-        private readonly IGroupCatchService _groupCatchService;
+        private readonly Mock<IWorldFishRepository> _worldFishRepository = new();
+        private readonly Mock<IGroupService> _groupService = new();
+        private readonly Mock<IGroupCatchRepository> _groupCatchRepository = new();
+        private readonly Mock<IUserService> _userService = new();
+        private readonly IValidator<GroupCatch> _catchValidator = new MockGroupCatchValidator();
+        private readonly IValidator<GroupCatchComment> _commentValidator = new MockGroupCatchCommentValidator();
+        private readonly Mock<IGroupCatchCommentRepository> _commentRepo = new();
+        private readonly GroupCatchService _groupCatchService;
         public GroupCatchServiceTests()
         {
-            _groupCatchRepository = new Mock<IGroupCatchRepository>();
-            _worldFishRepository = new Mock<IWorldFishRepository>();
-            _groupService = new Mock<IGroupService>();
-            _userService = new Mock<IUserService>();
-            _commentRepo = new Mock<IGroupCatchCommentRepository>();
-            _catchValidator = new MockGroupCatchValidator();
-            _commentValidator = new MockGroupCatchCommentValidator();
             _groupCatchService = new GroupCatchService(_groupCatchRepository.Object, _worldFishRepository.Object, _groupService.Object, _userService.Object, _commentRepo.Object, _commentValidator, _catchValidator);
         }
         private class MockGroupCatchValidator : AbstractValidator<GroupCatch>, IValidator<GroupCatch> { }

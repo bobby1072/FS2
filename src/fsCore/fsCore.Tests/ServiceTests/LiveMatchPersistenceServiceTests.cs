@@ -1,6 +1,4 @@
-using AutoFixture;
 using Common.Models;
-using Common.Utils;
 using FluentAssertions;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
