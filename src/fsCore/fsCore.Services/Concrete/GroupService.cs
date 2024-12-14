@@ -49,7 +49,7 @@ namespace fsCore.Services.Concrete
             var foundGroup = await _groupMemberRepo.GetOne(userIds, groupId, true);
             return (
                 AllUsersInGroup: foundGroup?.Count == userIds.Count,
-                ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? Array.Empty<User>()
+                ActualUsers: foundGroup?.Select(x => x.User!).ToArray() ?? []
             );
         }
 
@@ -113,7 +113,7 @@ namespace fsCore.Services.Concrete
                         HttpStatusCode.Forbidden
                     );
                 }
-                return (await _repo.Update(new[] { group }))?.FirstOrDefault()
+                return (await _repo.Update([group]))?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
                         HttpStatusCode.InternalServerError
@@ -123,7 +123,7 @@ namespace fsCore.Services.Concrete
             {
                 var newGroup =
                     (
-                        await _repo.Create(new[] { group.ApplyDefaults(currentUser.Id) })
+                        await _repo.Create([group.ApplyDefaults(currentUser.Id)])
                     )?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
@@ -142,7 +142,7 @@ namespace fsCore.Services.Concrete
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _repo.Delete(new[] { foundGroup }))?.FirstOrDefault()
+            return (await _repo.Delete([foundGroup]))?.FirstOrDefault()
                 ?? throw new ApiException(
                     ErrorConstants.CouldntDeleteGroup,
                     HttpStatusCode.InternalServerError
@@ -161,7 +161,7 @@ namespace fsCore.Services.Concrete
             }
             if (position.Id is null)
             {
-                return (await _groupPositionRepo.Create(new[] { position }))?.FirstOrDefault()
+                return (await _groupPositionRepo.Create([position]))?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
                         HttpStatusCode.InternalServerError
@@ -186,7 +186,7 @@ namespace fsCore.Services.Concrete
                         HttpStatusCode.BadRequest
                     );
                 }
-                return (await _groupPositionRepo.Update(new[] { position }))?.FirstOrDefault()
+                return (await _groupPositionRepo.Update([position]))?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
                         HttpStatusCode.InternalServerError
@@ -213,7 +213,7 @@ namespace fsCore.Services.Concrete
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _groupPositionRepo.Delete(new[] { position }))?.FirstOrDefault()
+            return (await _groupPositionRepo.Delete([position]))?.FirstOrDefault()
                 ?? throw new ApiException(
                     ErrorConstants.CouldntDeleteGroup,
                     HttpStatusCode.InternalServerError
@@ -229,7 +229,7 @@ namespace fsCore.Services.Concrete
                 currentUser.Id,
                 _groupMemberType.GetProperty("userId".ToPascalCase())?.Name
                     ?? throw new Exception(),
-                new string[] { "Group", "Position" }
+                    ["Group", "Position"]
             );
             var allGroupsTask = _repo.ManyGroupWithoutEmblem(
                 currentUser.Id ?? throw new Exception()
@@ -243,7 +243,7 @@ namespace fsCore.Services.Concrete
                 .Where(x => x is not null)
                 .ToHashSet();
             return (
-                finalGroupArray?.OfType<Group>().ToArray() ?? Array.Empty<Group>(),
+                finalGroupArray?.OfType<Group>().ToArray() ?? [],
                 allMembers ?? Array.Empty<GroupMember>()
             );
         }
@@ -324,7 +324,7 @@ namespace fsCore.Services.Concrete
                 await _repo.GetOne(
                     groupId,
                     _groupType.GetProperty("Id".ToPascalCase())?.Name ?? throw new Exception(),
-                    new string[] { "Positions", "Leader" }
+                    ["Positions", "Leader"]
                 ) ?? throw new ApiException(ErrorConstants.NoGroupsFound, HttpStatusCode.NotFound);
             if (
                 foundGroup.Public is false
@@ -359,9 +359,9 @@ namespace fsCore.Services.Concrete
                 groupId,
                 _groupMemberType.GetProperty("groupId".ToPascalCase())?.Name
                     ?? throw new Exception(),
-                new string[] { "User" }
+                    ["User"]
             );
-            var finalMembersList = foundMembers?.ToArray() ?? Array.Empty<GroupMember>();
+            var finalMembersList = foundMembers?.ToArray() ?? [];
             finalMembersList.RemoveSensitive();
             return finalMembersList;
         }
@@ -383,7 +383,7 @@ namespace fsCore.Services.Concrete
             }
             if (groupMember.Id is null)
             {
-                return (await _groupMemberRepo.Create(new[] { groupMember }))?.FirstOrDefault()
+                return (await _groupMemberRepo.Create([groupMember]))?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
                         HttpStatusCode.InternalServerError
@@ -408,7 +408,7 @@ namespace fsCore.Services.Concrete
                         HttpStatusCode.BadRequest
                     );
                 }
-                return (await _groupMemberRepo.Update(new[] { groupMember }))?.FirstOrDefault()
+                return (await _groupMemberRepo.Update([groupMember]))?.FirstOrDefault()
                     ?? throw new ApiException(
                         ErrorConstants.CouldntSaveGroup,
                         HttpStatusCode.InternalServerError
@@ -438,7 +438,7 @@ namespace fsCore.Services.Concrete
             {
                 throw new ApiException(ErrorConstants.DontHavePermission, HttpStatusCode.Forbidden);
             }
-            return (await _groupMemberRepo.Delete(new[] { foundGroupMember }))?.FirstOrDefault()
+            return (await _groupMemberRepo.Delete([foundGroupMember]))?.FirstOrDefault()
                 ?? throw new ApiException(
                     ErrorConstants.CouldntDeleteGroup,
                     HttpStatusCode.InternalServerError
