@@ -25,11 +25,10 @@ var dbConnectString = config.GetConnectionString("DefaultConnection");
 var clientId = config.GetSection("ClientConfig").GetSection("AuthorityClientId")?.Value;
 var issuerHost = config.GetSection("JWT_ISSUER_HOST")?.Value;
 var authAudience = config.GetSection("JWT_AUDIENCE")?.Value;
-var useStaticFiles = config.GetSection("UseStaticFiles")?.Value;
+var useStaticFiles = bool.Parse(config.GetSection("UseStaticFiles")?.Value ?? "false");
 
 if (
-    string.IsNullOrEmpty(useStaticFiles)
-    || string.IsNullOrEmpty(clientId)
+    string.IsNullOrEmpty(clientId)
     || string.IsNullOrEmpty(issuerHost)
     || string.IsNullOrEmpty(authAudience)
     || string.IsNullOrEmpty(dbConnectString)
@@ -122,8 +121,11 @@ using (var scope = app.Services.CreateScope())
 }
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    if (!useStaticFiles)
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
     app.UseCors("corsapp");
     app.UseHangfireDashboard("/api/hangfire");
 }
@@ -139,7 +141,7 @@ app.UseDefaultMiddleware();
 app.MapFsCoreHubs(useLiveMatch);
 app.MapControllers();
 #pragma warning disable ASP0014
-if (bool.Parse(useStaticFiles) is true)
+if (useStaticFiles)
 {
     app.UseEndpoints(endpoint =>
     {
@@ -181,5 +183,3 @@ if (bool.Parse(useStaticFiles) is true)
 }
 
 await app.RunAsync();
-
-public static partial class Program { };

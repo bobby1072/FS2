@@ -17,6 +17,8 @@ import {
 } from "../models/IGroupCatchModel";
 import { IGroupCatchCommentModel } from "../models/IGroupCatchComment";
 import { SaveCommentInput } from "../components/CatchComponents/CatchCommentForm";
+import AppSettingsProvider from "./AppSettingsProvider";
+import { AppSettingsKeys } from "./AppSettingsKeys";
 interface ValidationErrorResponse {
   type: string;
   title: string;
@@ -61,16 +63,26 @@ export default abstract class BackendApiServiceProvider {
       .replaceAll("Bearer ", "")
       .replaceAll("bearer ", "")}`;
   }
+  private static _appendPath(baseUrl: string, segment: string): string {
+    const sanitizedBase = baseUrl.replace(/\/+$/, "");
+    const sanitizedSegment = segment.replace(/^\/+/, "");
+    return `${sanitizedBase}/${sanitizedSegment}`;
+  }
+
   private static _httpClient: AxiosInstance = axios.create({
     baseURL:
       import.meta.env.MODE === "development"
         ? "http://localhost:5234/api"
-        : import.meta.env.VITE_BASE_URL,
+        : BackendApiServiceProvider._appendPath(
+            AppSettingsProvider.TryGetValue(AppSettingsKeys.ApiBaseUrl) ??
+              "http://localhost:9999",
+            "api"
+          ),
   });
   public static async GetClientConfig() {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IClientConfigResponse>("ClientConfig")
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetSelfGroups(
@@ -78,16 +90,17 @@ export default abstract class BackendApiServiceProvider {
     startIndex: number,
     count: number
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupModel[]>(
         `Group/GetSelfGroups?startIndex=${startIndex}&count=${count}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetAllListedGroups(
@@ -95,56 +108,61 @@ export default abstract class BackendApiServiceProvider {
     startIndex: number,
     count: number
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupModel[]>(
         `Group/GetAllListedGroups?startIndex=${startIndex}&count=${count}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetSelf(accessToken: string): Promise<IUserModel> {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IUserModel>("User/Self", {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetUserWithGroupPermissions(accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IUserWithPermissionsRawModel>("User/SelfWithGroupPermissions", {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SaveGroup(accessToken: string, group: FormData) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .post<string>("Group/SaveGroup", group, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetGroupCount(accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<number>("Group/GetGroupCount", {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetUsersGroup(
@@ -152,134 +170,145 @@ export default abstract class BackendApiServiceProvider {
     startIndex: number,
     count: number
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupModel[]>(
         `Group/GetUsersGroups?startIndex=${startIndex}&count=${count}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SaveNewUsername(
     accessToken: string,
     newUsername: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<string>(`User/ChangeUsername?newUsername=${newUsername}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetGroupAndPositions(
     groupId: string,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupModel>(`Group/GetGroupWithPositions?groupId=${groupId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async DeleteGroup(groupId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get(`Group/DeleteGroup?groupId=${groupId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SaveGroupPosition(
     position: SaveGroupPositionInput,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .post<number>("Group/SavePosition", position, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetGroupMembers(groupId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupMemberModel[]>(`Group/GetGroupMembers?groupId=${groupId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SaveGroupMember(
     groupMember: SaveGroupMemberInput,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .post<number>("Group/SaveGroupMember", groupMember, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SearchUsers(searchTerm: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IUserWithoutEmailModel[]>(
         `User/SearchUsers?searchTerm=${searchTerm}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async DeleteGroupMember(
     groupMemberId: string,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<string>(`Group/DeleteGroupMember?groupMemberId=${groupMemberId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async DeletePosition(positionId: number, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<number>(`Group/DeletePosition?positionId=${positionId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static WorldFishClient = {
     FindSomeLike: async (fishAnyName: string, accessToken: string) => {
-      const { data } = await this._httpClient
+      const { data } = await BackendApiServiceProvider._httpClient
         .get<IWorldFishModel[]>(
           `WorldFish/FindSomeLike?fishAnyName=${fishAnyName}`,
           {
             headers: {
-              Authorization: this._formatAccessToken(accessToken),
+              Authorization:
+                BackendApiServiceProvider._formatAccessToken(accessToken),
             },
           }
         )
@@ -296,117 +325,137 @@ export default abstract class BackendApiServiceProvider {
     groupName: string,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupModel[]>(
         `Group/SearchAllListedGroups?groupName=${groupName}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async SaveGroupCatch(gc: FormData, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .post<string>(`GroupCatch/SaveGroupCatch`, gc, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetAllPartialCatchesForGroup(
     groupId: string,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IPartialGroupCatchModel[]>(
         `GroupCatch/GetCatchesInGroup?groupId=${groupId}`,
         {
           headers: {
-            Authorization: this._formatAccessToken(accessToken),
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
           },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetFullCatchById(catchId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupCatchModel>(`GroupCatch/GetFullCatchById?catchId=${catchId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async DeleteGroupCatch(catchId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<string>(`GroupCatch/DeleteGroupCatch?id=${catchId}`, {
         headers: {
-          Authorization: this._formatAccessToken(accessToken),
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
         },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetCatchComments(catchId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IGroupCatchCommentModel[]>(
         `GroupCatch/GetCommentsForCatch?catchId=${catchId}`,
         {
-          headers: { Authorization: this._formatAccessToken(accessToken) },
+          headers: {
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
+          },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async DeleteComment(id: number, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<string>(`GroupCatch/DeleteComment?id=${id}`, {
-        headers: { Authorization: this._formatAccessToken(accessToken) },
+        headers: {
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
+        },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return Number(data);
   }
   public static async SaveComment(
     comment: SaveCommentInput,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .post<string>("GroupCatch/CommentOnCatch", comment, {
-        headers: { Authorization: this._formatAccessToken(accessToken) },
+        headers: {
+          Authorization:
+            BackendApiServiceProvider._formatAccessToken(accessToken),
+        },
       })
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return Number(data);
   }
   public static async GetUser(userId: string, accessToken: string) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IUserWithoutEmailModel & { email?: string | null }>(
         `User/GetUser?userId=${userId}`,
         {
-          headers: { Authorization: this._formatAccessToken(accessToken) },
+          headers: {
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
+          },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
   public static async GetPartialCatchesForUser(
     userId: string,
     accessToken: string
   ) {
-    const { data } = await this._httpClient
+    const { data } = await BackendApiServiceProvider._httpClient
       .get<IPartialGroupCatchModel[]>(
         `GroupCatch/GetPartialCatchesForUser?userId=${userId}`,
         {
-          headers: { Authorization: this._formatAccessToken(accessToken) },
+          headers: {
+            Authorization:
+              BackendApiServiceProvider._formatAccessToken(accessToken),
+          },
         }
       )
-      .catch(this._generalErrorHandler);
+      .catch(BackendApiServiceProvider._generalErrorHandler);
     return data;
   }
 }
