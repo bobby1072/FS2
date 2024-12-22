@@ -51,10 +51,9 @@ namespace fsCore.Api.Controllers
             );
         }
 
-        [ProducesDefaultResponseType(typeof(Guid))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
         [RequiredUserWithGroupPermissions(true)]
         [HttpPost("SaveGroup")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> SaveGroup(
             [FromForm] IFormFile? emblem,
             [FromForm] Guid? id,

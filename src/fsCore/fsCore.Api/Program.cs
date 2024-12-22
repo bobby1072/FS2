@@ -1,4 +1,5 @@
 using System.Text.Json;
+using fsCore.Api.Extensions;
 using fsCore.Api.Hubs;
 using fsCore.Api.Middleware;
 using fsCore.Common.Authentication;
@@ -7,7 +8,6 @@ using fsCore.Common.Models.Validators;
 using fsCore.DataImporter;
 using fsCore.Persistence;
 using fsCore.Services;
-using fsCore.Services.Abstract;
 using Hangfire;
 using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -114,11 +114,8 @@ var useLiveMatch = bool.Parse(config.GetSection("UseLiveMatchService")?.Value ??
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var hangfireService = scope.ServiceProvider.GetRequiredService<IHangfireJobsService>();
-    hangfireService.RegisterJobs();
-}
+await app.Services.RegisterHangfireJobs();
+
 if (app.Environment.IsDevelopment())
 {
     if (!useStaticFiles)

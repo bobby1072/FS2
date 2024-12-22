@@ -17,9 +17,9 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/fsCore/fsCore/bin/Debug/net8.0/fsCore.dll",
+      "program": "${workspaceFolder}/src/fsCore/fsCore.Api/bin/Debug/net8.0/fsCore.Api.dll",
       "args": [],
-      "cwd": "${workspaceFolder}/src/fsCore/fsCore",
+      "cwd": "${workspaceFolder}/src/fsCore/fsCore.Api",
       "stopAtEntry": false,
       // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
       "serverReadyAction": {

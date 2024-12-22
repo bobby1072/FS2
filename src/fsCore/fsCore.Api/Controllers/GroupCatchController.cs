@@ -1,10 +1,11 @@
 using System.Net;
 using fsCore.Api.ApiModels;
+using fsCore.Api.Attributes;
 using fsCore.Common.Misc;
 using fsCore.Common.Models;
 using fsCore.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using fsCore.Api.Attributes;
+
 namespace fsCore.Api.Controllers
 {
     [RequiredUser]
@@ -96,9 +97,8 @@ namespace fsCore.Api.Controllers
             );
         }
 
-        [ProducesDefaultResponseType(typeof(Guid))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
         [HttpPost("SaveGroupCatch")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         public async Task<IActionResult> SaveGroupCatch(
             [FromForm] Guid? id,
             [FromForm] Guid groupId,

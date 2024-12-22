@@ -1,9 +1,9 @@
 using System.Net;
 using fsCore.Api.ApiModels;
+using fsCore.Api.Attributes;
 using fsCore.Common.Models;
 using fsCore.Services.Abstract;
 using Microsoft.AspNetCore.Mvc;
-using fsCore.Api.Attributes;
 
 namespace fsCore.Api.Controllers
 {
