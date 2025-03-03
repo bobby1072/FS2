@@ -8,7 +8,7 @@
     "@emotion/styled": "11.11.5",
     "@faker-js/faker": "8.4.1",
     "@hookform/resolvers": "3.10.0",
-    "@mui/icons-material": "5.14.19",
+    "@mui/icons-material": "5.16.14",
     "@mui/material": "5.16.14",
     "@mui/x-date-pickers": "6.18.4",
     "@vgrid/react-leaflet-heatmap-layer": "4.0.3",
