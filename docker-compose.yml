@@ -5,7 +5,7 @@ volumes:
 services:
   postgres:
     container_name: fs.db
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     ports:
       - 5560:5432
     volumes:
