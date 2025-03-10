@@ -30,7 +30,7 @@
     "react-router-dom": "7.3.0",
     "resize-observer-polyfill": "1.5.1",
     "typescript": "5.8.2",
-    "web-vitals": "2.1.4",
+    "web-vitals": "4.2.4",
     "zod": "3.24.2"
   },
   "devDependencies": {
