@@ -9,7 +9,7 @@
     "@faker-js/faker": "9.9.0",
     "@hookform/resolvers": "5.1.1",
     "@mui/icons-material": "5.18.0",
-    "@mui/material": "5.17.1",
+    "@mui/material": "5.18.0",
     "@mui/x-date-pickers": "7.29.4",
     "@vgrid/react-leaflet-heatmap-layer": "4.0.3",
     "axios": "1.10.0",
