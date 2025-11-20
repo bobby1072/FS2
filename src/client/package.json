@@ -10,7 +10,7 @@
     "@hookform/resolvers": "5.2.2",
     "@mui/icons-material": "5.18.0",
     "@mui/material": "5.18.0",
-    "@mui/x-date-pickers": "7.29.4",
+    "@mui/x-date-pickers": "8.19.0",
     "@vgrid/react-leaflet-heatmap-layer": "4.0.3",
     "axios": "1.13.2",
     "browser-image-compression": "2.0.2",
