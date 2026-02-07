@@ -1,5 +1,4 @@
 using System.Text.Json;
-using fsCore.Api.Hubs;
 using fsCore.Api.Middleware;
 using fsCore.Common.Authentication;
 using fsCore.Common.Misc;
@@ -64,8 +63,6 @@ builder.Services.AddDataImporter(config, environment);
 builder
     .Services.AddAuthorization()
     .Configure<ClientConfigSettings>(config.GetSection(ClientConfigSettings.Key));
-
-builder.Services.AddSignalRFsCore();
 
 builder.Services.AddCors(p =>
     p.AddPolicy(
@@ -136,7 +133,6 @@ app.UseResponseCompression();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseDefaultMiddleware();
-app.MapFsCoreHubs(useLiveMatch);
 app.MapControllers();
 #pragma warning disable ASP0014
 if (bool.Parse(useStaticFiles) is true)

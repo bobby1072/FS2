@@ -1,4 +1,3 @@
-using BT.Common.OperationTimer.Common;
 using fsCore.Common.Misc;
 using FluentValidation;
 using Npgsql;
@@ -19,22 +18,7 @@ namespace fsCore.Api.Middleware
         {
             try
             {
-                try
-                {
-                    await _next.Invoke(httpContext);
-                }
-                catch (OperationTimerException opEx)
-                {
-                    if (opEx.InnerException is not null)
-                    {
-                        throw opEx.InnerException;
-                    }
-                    throw;
-                }
-            }
-            catch (OperationTimerException opEx)
-            {
-                await HandleError(ErrorConstants.InternalServerError, HttpStatusCode.InternalServerError, httpContext, opEx);
+                await _next.Invoke(httpContext);
             }
             catch (ApiException apiException)
             {
