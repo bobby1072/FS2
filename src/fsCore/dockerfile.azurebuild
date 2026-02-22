@@ -19,7 +19,6 @@ COPY src/fsCore/fsCore.Api/*.csproj ./fsCore/fsCore.Api/
 COPY src/fsCore/fsCore.Persistence/*.csproj ./fsCore/fsCore.Persistence/
 COPY src/fsCore/fsCore.Services/*.csproj ./fsCore/fsCore.Services/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
-COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/*.csproj ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
 RUN dotnet restore fsCore/fsCore.Api/fsCore.Api.csproj 
 
@@ -30,7 +29,6 @@ COPY src/fsCore/fsCore.Api/ ./fsCore/fsCore.Api/
 COPY src/fsCore/fsCore.Persistence/ ./fsCore/fsCore.Persistence/
 COPY src/fsCore/fsCore.Services/ ./fsCore/fsCore.Services/
 COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/ ./Submodules/BT.Common/src/BT.Common/BT.Common.FastArray/
-COPY src/Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/ ./Submodules/BT.Common/src/BT.Common/BT.Common.OperationTimer/
 
 WORKDIR /src/fsCore/fsCore.Api
 ARG CONF=Release
