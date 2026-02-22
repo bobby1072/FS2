@@ -1,4 +1,3 @@
-using FluentAssertions;
 using FluentValidation;
 using fsCore.Common.Misc;
 using fsCore.Common.Models;
@@ -158,11 +157,11 @@ namespace fsCore.Tests.ServiceTests
             var foundSaveException = await Assert.ThrowsAsync<ApiException>(
                 () => _groupService.SaveGroup(editedGroup, currentUser)
             );
-            foundSaveException.Message.Should().Be(ErrorConstants.DontHavePermission);
+            Assert.Equal(ErrorConstants.DontHavePermission, foundSaveException.Message);
             var foundDeleteException = await Assert.ThrowsAsync<ApiException>(
                 () => _groupService.DeleteGroup((Guid)group.Id!, currentUser)
             );
-            foundDeleteException.Message.Should().Be(ErrorConstants.DontHavePermission);
+            Assert.Equal(ErrorConstants.DontHavePermission, foundDeleteException.Message);
         }
 
         [Theory]
@@ -189,14 +188,17 @@ namespace fsCore.Tests.ServiceTests
             var foundSaveGroupMemberException = await Assert.ThrowsAsync<ApiException>(
                 () => _groupService.SaveGroupMember(newMember, currentUser)
             );
-            foundSaveGroupMemberException.Message.Should().Be(ErrorConstants.DontHavePermission);
+            Assert.Equal(ErrorConstants.DontHavePermission, foundSaveGroupMemberException.Message);
             _mockGroupMemberRepository
                 .Setup(x => x.GetOne(newMember.Id ?? 2, "Id", It.IsAny<ICollection<string>>()))
                 .ReturnsAsync(newMember);
             var foundDeleteGroupMemberException = await Assert.ThrowsAsync<ApiException>(
                 () => _groupService.DeleteGroupMember(newMember.Id ?? 2, currentUser)
             );
-            foundDeleteGroupMemberException.Message.Should().Be(ErrorConstants.DontHavePermission);
+            Assert.Equal(
+                ErrorConstants.DontHavePermission,
+                foundDeleteGroupMemberException.Message
+            );
         }
     }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using fsCore.Common.Misc;
 using fsCore.Common.Models;
 using fsCore.Common.Utils;
@@ -376,7 +375,7 @@ namespace fsCore.Tests.UtilTests
             var winner = LiveMatchUtils.CalculateWinner(liveMatch);
 
             //Assert
-            winner.Should().BeEquivalentTo(expectedWinner);
+            Assert.Equal(expectedWinner, winner);
         }
     }
 }

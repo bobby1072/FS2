@@ -1,17 +1,19 @@
 using fsCore.Common.Models;
 using fsCore.Common.Models.Validators;
-using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests.ValidatorTests
 {
     public class SpecificSpeciesMatchCatchRuleValidatorTests : TestBase
     {
         private SpecificSpeciesMatchCatchRuleValidator _validator;
+
         public SpecificSpeciesMatchCatchRuleValidatorTests()
         {
             _validator = new SpecificSpeciesMatchCatchRuleValidator();
         }
-        private class SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data : TheoryData<SpecificSpeciesLiveMatchCatchRule, bool>
+
+        private class SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data
+            : TheoryData<SpecificSpeciesLiveMatchCatchRule, bool>
         {
             public SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data()
             {
@@ -20,7 +22,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                     new List<WorldFish>
                     {
                         new WorldFish("001", null, null, null, "Salmon", null),
-                        new WorldFish("002", null, null, null, "Trout", null)
+                        new WorldFish("002", null, null, null, "Trout", null),
                     }
                 );
                 Add(validRule, true);
@@ -35,20 +37,14 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                 // Rule with non-unique SpeciesNames
                 var nonUniqueSpeciesNames = new SpecificSpeciesLiveMatchCatchRule(
                     new List<string> { "Salmon", "Salmon" },
-                    new List<WorldFish>
-                    {
-                        new WorldFish("001", null, null, null, "Salmon", null)
-                    }
+                    new List<WorldFish> { new WorldFish("001", null, null, null, "Salmon", null) }
                 );
                 Add(nonUniqueSpeciesNames, false);
 
                 // Rule with empty species name string
                 var emptySpeciesNameString = new SpecificSpeciesLiveMatchCatchRule(
                     new List<string> { "Salmon", "" },
-                    new List<WorldFish>
-                    {
-                        new WorldFish("001", null, null, null, "Salmon", null)
-                    }
+                    new List<WorldFish> { new WorldFish("001", null, null, null, "Salmon", null) }
                 );
                 Add(emptySpeciesNameString, false);
 
@@ -58,7 +54,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                     new List<WorldFish>
                     {
                         new WorldFish("001", null, null, null, "Salmon", null),
-                        new WorldFish("003", null, null, null, "Bass", null)
+                        new WorldFish("003", null, null, null, "Bass", null),
                     }
                 );
                 Add(mismatchedWorldFish, false);
@@ -66,10 +62,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                 // Rule with special characters in species names
                 var specialCharSpeciesNames = new SpecificSpeciesLiveMatchCatchRule(
                     new List<string> { "Salmon", "Tr@ut" },
-                    new List<WorldFish>
-                    {
-                        new WorldFish("001", null, null, null, "Salmon", null)
-                    }
+                    new List<WorldFish> { new WorldFish("001", null, null, null, "Salmon", null) }
                 );
                 Add(specialCharSpeciesNames, false);
 
@@ -79,21 +72,25 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
                     new List<WorldFish>
                     {
                         new WorldFish("001", null, null, null, "Salmon", null),
-                        new WorldFish("002", null, null, null, "Trout", null)
+                        new WorldFish("002", null, null, null, "Trout", null),
                     }
                 );
                 Add(validSpeciesNamesAndWorldFish, true);
             }
         }
+
         [Theory]
         [ClassData(typeof(SpecificSpeciesMatchCatch_Should_Validate_Correctly_Class_Data))]
-        public void SpecificSpeciesMatchCatch_Should_Validate_Correctly(SpecificSpeciesLiveMatchCatchRule rule, bool expected)
+        public void SpecificSpeciesMatchCatch_Should_Validate_Correctly(
+            SpecificSpeciesLiveMatchCatchRule rule,
+            bool expected
+        )
         {
             //Act
             var result = _validator.Validate(rule);
 
             //Assert
-            result.IsValid.Should().Be(expected);
+            Assert.Equal(expected, result.IsValid);
         }
     }
 }

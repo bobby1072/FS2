@@ -1,5 +1,4 @@
 using fsCore.Common.Models;
-using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests
 {
@@ -11,7 +10,7 @@ namespace fsCore.Tests.ModelTests
             // Arrange
             var fourPointGeoAreas = new List<FourPointGeoArea>
             {
-                new(new(1, 1), new(1, 2), new(2, 1), new(2, 2))
+                new(new(1, 1), new(1, 2), new(2, 1), new(2, 2)),
             };
             var inAreaLiveMatchCatchRule = new InAreaLiveMatchCatchRule(fourPointGeoAreas);
 
@@ -19,7 +18,10 @@ namespace fsCore.Tests.ModelTests
             var result = inAreaLiveMatchCatchRule.BuildRuleDescription();
 
             // Assert
-            result.Should().Be("InAreaLiveMatchCatchRule: [{\"topLeft\":{\"latitude\":1,\"longitude\":1},\"bottomLeft\":{\"latitude\":1,\"longitude\":2},\"topRight\":{\"latitude\":2,\"longitude\":1},\"bottomRight\":{\"latitude\":2,\"longitude\":2}}]");
+            Assert.Equal(
+                "InAreaLiveMatchCatchRule: [{\"topLeft\":{\"latitude\":1,\"longitude\":1},\"bottomLeft\":{\"latitude\":1,\"longitude\":2},\"topRight\":{\"latitude\":2,\"longitude\":1},\"bottomRight\":{\"latitude\":2,\"longitude\":2}}]",
+                result
+            );
         }
     }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using fsCore.Common.Models;
 using fsCore.Persistence.EntityFramework.Repository.Abstract;
 using fsCore.Services.Abstract;
@@ -55,7 +54,7 @@ namespace fsCore.Tests.ServiceTests
                 x => x.GetFullOneById(It.IsAny<Guid>()),
                 Times.Never
             );
-            result.Should().BeEquivalentTo(liveMatch);
+            Assert.Equal(liveMatch, result);
         }
 
         [Fact]
@@ -79,7 +78,7 @@ namespace fsCore.Tests.ServiceTests
                 Times.Once
             );
             _mockActiveLiveMatchRepository.Verify(x => x.GetFullOneById(liveMatch.Id), Times.Once);
-            result.Should().BeEquivalentTo(liveMatch);
+            Assert.Equal(liveMatch, result);
         }
 
         [Fact]
@@ -105,7 +104,7 @@ namespace fsCore.Tests.ServiceTests
                 x => x.GetFullOneById(It.IsAny<Guid>()),
                 Times.Never
             );
-            result.Should().BeNull();
+            Assert.Null(result);
         }
 
         [Fact]
@@ -133,7 +132,7 @@ namespace fsCore.Tests.ServiceTests
                 x => x.GetFullOneById(It.IsAny<Guid>()),
                 Times.Once
             );
-            result.Should().BeNull();
+            Assert.Null(result);
         }
 
         [Theory]
