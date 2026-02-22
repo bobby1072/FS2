@@ -1,4 +1,5 @@
-using BT.Common.OperationTimer.Proto;
+
+using System.Diagnostics;
 
 namespace fsCore.Api.Middleware
 {
@@ -11,8 +12,10 @@ namespace fsCore.Api.Middleware
         }
         public async Task Invoke(HttpContext context)
         {
-            var completedOperation = await OperationTimerUtils.TimeAsync(_next.Invoke, context);
-            _logger.LogInformation("Request for {RequestPath} completed in {Time}ms", context.Request.Path, completedOperation.Milliseconds);
+            var stopWatch = Stopwatch.StartNew();
+            await _next.Invoke(context);
+            stopWatch.Stop();
+            _logger.LogInformation("Request for {RequestPath} completed in {Time}ms", context.Request.Path, stopWatch.ElapsedMilliseconds);
         }
     }
 }

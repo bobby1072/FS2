@@ -1,4 +1,3 @@
-using FluentAssertions;
 using fsCore.Common.Models;
 using fsCore.Common.Models.Validators;
 using fsCore.DataImporter.MockModelBuilders;
@@ -75,7 +74,7 @@ namespace fsCore.Tests.ModelTests.ValidatorTests
         {
             var result = _validator.Validate(user);
 
-            result.IsValid.Should().Be(expected);
+            Assert.Equal(expected, result.IsValid);
         }
     }
 }

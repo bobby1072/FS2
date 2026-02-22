@@ -1,5 +1,4 @@
 using fsCore.Common.Models;
-using FluentAssertions;
 
 namespace fsCore.Tests.ModelTests
 {
@@ -13,15 +12,18 @@ namespace fsCore.Tests.ModelTests
             var worldFish = new List<WorldFish>
             {
                 new WorldFish("taxo1", "name1", "tst", "ddccsdsd", "ffvfcv", "dcdfcds"),
-                new WorldFish("taxo2", "name2", "tdt", "ddcdd", "ffvfdvcdffcv", "gchecdbss")
+                new WorldFish("taxo2", "name2", "tdt", "ddcdd", "ffvfdvcdffcv", "gchecdbss"),
             };
-            var specificSpeciesLiveMatchCatchRule = new SpecificSpeciesLiveMatchCatchRule(speciesNames, worldFish);
+            var specificSpeciesLiveMatchCatchRule = new SpecificSpeciesLiveMatchCatchRule(
+                speciesNames,
+                worldFish
+            );
 
             // Act
             var result = specificSpeciesLiveMatchCatchRule.BuildRuleDescription();
 
             // Assert
-            result.Should().Be("SpecificSpeciesLiveMatchCatchRule: species1, species2");
+            Assert.Equal("SpecificSpeciesLiveMatchCatchRule: species1, species2", result);
         }
     }
 }
