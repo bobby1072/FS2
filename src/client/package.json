@@ -12,7 +12,7 @@
     "@mui/material": "5.18.0",
     "@mui/x-date-pickers": "7.29.4",
     "@vgrid/react-leaflet-heatmap-layer": "4.0.3",
-    "axios": "1.13.6",
+    "axios": "1.14.0",
     "browser-image-compression": "2.0.2",
     "date-fns": "2.30.0",
     "leaflet": "1.9.4",
@@ -30,7 +30,7 @@
     "react-router-dom": "7.13.2",
     "resize-observer-polyfill": "1.5.1",
     "typescript": "5.9.3",
-    "web-vitals": "5.1.0",
+    "web-vitals": "5.2.0",
     "zod": "4.3.6"
   },
   "devDependencies": {
@@ -50,7 +50,7 @@
     "vite": "7.3.1",
     "vite-plugin-svgr": "4.5.0",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "4.1.1"
+    "vitest": "4.1.2"
   },
   "scripts": {
     "start": "vite",
