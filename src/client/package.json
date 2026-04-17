@@ -29,7 +29,7 @@
     "react-query": "3.39.3",
     "react-router-dom": "7.14.1",
     "resize-observer-polyfill": "1.5.1",
-    "typescript": "5.9.3",
+    "typescript": "6.0.3",
     "web-vitals": "5.2.0",
     "zod": "4.3.6"
   },
